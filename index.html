@@ -161,7 +161,7 @@ const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${Str
 const monthKey=(y,m)=>`${y}-${String(m+1).padStart(2,'0')}`;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=v=>Math.max(0,Number(v)||0);
-const defaultState=()=>({version:VERSION,theme:'light',settings:{baseSalary:0,hourlyMode:'auto',hourlyDivisor:240,manualHourly:0,normalHours:12,attendanceBonus:0,dayAllowance:0,nightAllowance:0,extraAllowance:0,fixedAllowances:[{id:crypto.randomUUID?.()||'a1',name:'伙食津貼',amount:0}],deductions:[{id:crypto.randomUUID?.()||'d1',name:'勞健保 / 其他扣款',amount:0}],overtime:{weekday:[{hours:2,multiplier:1.34},{hours:2,multiplier:1.67},{hours:8,multiplier:1.67}],rest:[{hours:2,multiplier:1.34},{hours:6,multiplier:1.67},{hours:4,multiplier:2.67}],holiday:[{hours:8,multiplier:2}]},cycleStart:iso(new Date()),cycleIndex:1,cyclePattern:'日班,日班,休假,休假,夜班,夜班,休假,休假',companyNotes:''},records:{},months:{}});
+const defaultState=()=>({version:VERSION,theme:'light',settings:{baseSalary:0,hourlyMode:'auto',hourlyDivisor:240,manualHourly:0,normalHours:12,attendanceBonus:0,dayAllowance:0,nightAllowance:0,extraAllowance:0,simpleCyclePreset:'rotate',fixedAllowances:[{id:crypto.randomUUID?.()||'a1',name:'伙食津貼',amount:0}],deductions:[{id:crypto.randomUUID?.()||'d1',name:'勞健保 / 其他扣款',amount:0}],overtime:{weekday:[{hours:2,multiplier:1.34},{hours:2,multiplier:1.67},{hours:8,multiplier:1.67}],rest:[{hours:2,multiplier:1.34},{hours:6,multiplier:1.67},{hours:4,multiplier:2.67}],holiday:[{hours:8,multiplier:2}]},cycleStart:iso(new Date()),cycleIndex:1,cyclePattern:'日班,日班,休假,休假,夜班,夜班,休假,休假',companyNotes:''},records:{},months:{}});
 let state=load();
 let current=new Date();current.setDate(1);
 let activeTab='dashboard',activeOt='weekday';
@@ -198,6 +198,7 @@ function simplifyUI(){
   document.querySelectorAll('#tab-settings .section-title').forEach(t=>{const h=t.querySelector('h2');if(!h)return;const n=h.textContent.trim();if(['固定津貼','固定扣款','加班倍率','四班二輪週期'].includes(n)){t.classList.add('hidden');if(t.nextElementSibling)t.nextElementSibling.classList.add('hidden')}});
   ['editCustomName','editNormalHours','editOtHours','editOtType','editExtra','editNote'].forEach(id=>{const el=$(id);if(el&&el.closest('.field'))el.closest('.field').classList.add('hidden')});
   const cp=$('copyPrevDay');if(cp)cp.classList.add('hidden');
+  const att=$('attendanceEligible');if(att&&att.closest('.card')){att.closest('.card').classList.add('hidden');const tc=att.closest('.two-col');if(tc)tc.style.gridTemplateColumns='1fr'}
 }
 function simplePresetPattern(v){
   if(v==='day')return '日班,日班,休假,休假';
@@ -206,6 +207,7 @@ function simplePresetPattern(v){
   return state.settings.cyclePattern||'日班,日班,休假,休假';
 }
 function detectSimplePreset(){
+  if(state.settings.simpleCyclePreset)return state.settings.simpleCyclePreset;
   const p=String(state.settings.cyclePattern||'').replace(/\s/g,'');
   if(p==='日班,日班,休假,休假')return 'day';
   if(p==='夜班,夜班,休假,休假')return 'night';
@@ -238,12 +240,13 @@ function applyTheme(){document.documentElement.classList.toggle('dark',state.the
 simplifyUI();
 $('simpleCyclePreset').onchange=()=>{
   const v=$('simpleCyclePreset').value;
+  state.settings.simpleCyclePreset=v;
   if(v!=='custom')state.settings.cyclePattern=simplePresetPattern(v);
   save();renderSimpleCycle();
 };
 $('simpleCycleStart').onchange=()=>{state.settings.cycleStart=$('simpleCycleStart').value;save();renderSimpleCycle()};
 $('simpleCycleIndex').onchange=()=>{state.settings.cycleIndex=Math.max(1,parseInt($('simpleCycleIndex').value)||1);save()};
-$('simpleCyclePattern').onchange=()=>{state.settings.cyclePattern=$('simpleCyclePattern').value;state.settings.cycleIndex=1;save();renderSimpleCycle()};
+$('simpleCyclePattern').onchange=()=>{state.settings.cyclePattern=$('simpleCyclePattern').value;state.settings.simpleCyclePreset='custom';state.settings.cycleIndex=1;save();renderSimpleCycle()};
 applyTheme();render();
 })();
 </script>
