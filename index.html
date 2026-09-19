@@ -13,7 +13,7 @@
   aside{padding:22px 16px;border-right:1px solid var(--line);background:var(--card);position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;margin:4px 8px 24px}.logo{width:34px;height:34px;border-radius:11px;background:var(--brand);color:white;display:grid;place-items:center}.nav{display:grid;gap:8px}.nav button{border:0;background:transparent;color:var(--muted);padding:12px 14px;border-radius:12px;text-align:left;font-weight:650}.nav button.active{background:var(--accent);color:var(--brand)}.side-note{position:absolute;left:18px;right:18px;bottom:24px;color:var(--muted);font-size:12px;line-height:1.5}
   main{padding:26px 30px 110px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}.topbar h1{font-size:25px;margin:0}.month-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.btn,.iconbtn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:10px 14px;font-weight:650}.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}.btn.danger{color:var(--danger)}.iconbtn{width:42px;padding:10px}
   .grid{display:grid;gap:16px}.cards4{grid-template-columns:repeat(4,minmax(0,1fr))}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}.kicker{font-size:12px;color:var(--muted);margin-bottom:7px}.value{font-size:26px;font-weight:800;letter-spacing:-.5px}.sub{font-size:12px;color:var(--muted);margin-top:5px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:24px 0 12px}.section-title h2{font-size:18px;margin:0}.two-col{display:grid;grid-template-columns:1.35fr .65fr;gap:16px}.stat-list{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{padding:13px;border:1px solid var(--line);border-radius:14px}.stat b{display:block;font-size:20px;margin-top:4px}
-  .calendar{overflow:hidden}.weekdays,.days{display:grid;grid-template-columns:repeat(7,1fr)}.weekdays div{padding:9px;text-align:center;color:var(--muted);font-size:12px;font-weight:700;border-bottom:1px solid var(--line)}.day{min-height:110px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;position:relative;background:var(--card)}.day:nth-child(7n){border-right:0}.day.empty{background:color-mix(in srgb,var(--bg) 70%,var(--card))}.day button{position:absolute;inset:0;border:0;background:transparent}.date-num{font-weight:750;font-size:13px;position:relative;z-index:1;pointer-events:none}.chips{display:grid;gap:5px;margin-top:8px;position:relative;z-index:1;pointer-events:none}.chip{display:inline-flex;width:max-content;max-width:100%;padding:4px 7px;border-radius:999px;font-size:11px;font-weight:700;background:var(--accent);color:var(--brand)}
+  .calendar{overflow:hidden}.weekdays,.days{display:grid;grid-template-columns:repeat(7,1fr)}.weekdays div{padding:9px;text-align:center;color:var(--muted);font-size:12px;font-weight:700;border-bottom:1px solid var(--line)}.day{min-height:110px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;position:relative;background:var(--card)}.day:nth-child(7n){border-right:0}.day.empty{background:color-mix(in srgb,var(--bg) 70%,var(--card))}.day button{position:absolute;inset:0;border:0;background:transparent;z-index:3}.date-num{font-weight:750;font-size:13px;position:relative;z-index:1;pointer-events:none}.chips{display:grid;gap:5px;margin-top:8px;position:relative;z-index:1;pointer-events:none}.chip{display:inline-flex;width:max-content;max-width:100%;padding:4px 7px;border-radius:999px;font-size:11px;font-weight:700;background:var(--accent);color:var(--brand)}
   .chip.team-a{font-size:16px;font-weight:900;padding:7px 12px;background:#dbeafe;color:#0b4f9c;border:1px solid #93c5fd}
   .chip.team-b{font-size:16px;font-weight:900;padding:7px 12px;background:#ffedd5;color:#9a3412;border:1px solid #fdba74}
   .chip.off{font-size:14px;font-weight:800;padding:6px 10px;background:#eef2f7;color:#64748b;border:1px solid #d8dee8}
@@ -24,6 +24,16 @@
   html.dark .chip.off{background:#202b38;color:#b7c0cd;border-color:#334155}
   html.dark .day.team-a-cell{background:#101d2d}
   html.dark .day.team-b-cell{background:#21180f}
+  .chip.extra-ot{background:#ecfdf3;color:#166534;border:1px solid #86efac}
+  .chip.sick{background:#fef2f2;color:#b42318;border:1px solid #fecaca}
+  .chip.menstrual{background:#fdf2f8;color:#be185d;border:1px solid #f9a8d4}
+  .chip.annual{background:#f5f3ff;color:#6d28d9;border:1px solid #c4b5fd}
+  .chip.custom-status{background:#f8fafc;color:#475569;border:1px solid #cbd5e1}
+  html.dark .chip.extra-ot{background:#123524;color:#86efac;border-color:#166534}
+  html.dark .chip.sick{background:#3b1717;color:#fca5a5;border-color:#7f1d1d}
+  html.dark .chip.menstrual{background:#3b1630;color:#f9a8d4;border-color:#831843}
+  html.dark .chip.annual{background:#251747;color:#c4b5fd;border-color:#5b21b6}
+  html.dark .chip.custom-status{background:#1e293b;color:#cbd5e1;border-color:#475569}
   #teamSelect{font-size:18px;font-weight:900;padding:13px 14px}
   .day.today .date-num{background:var(--brand);color:white;width:24px;height:24px;border-radius:50%;display:grid;place-items:center}.day.hasdata{background:color-mix(in srgb,var(--accent) 25%,var(--card))}
   .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0 7px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:11px 12px;outline:none}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 13%,transparent)}
@@ -94,6 +104,7 @@
           <span class="chip team-b">B班</span>
           <span class="chip off">休假</span>
         </div>
+        <div class="sub" style="margin-top:10px">點日期可另外標記：加班、病假、生理假、特休，或輸入自訂項目。</div>
       </div>
       <div class="card calendar"><div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div><div class="days" id="calendarDays"></div></div>
     </section>
@@ -112,6 +123,10 @@
           <div class="field"><label>底薪</label><input id="calcBaseInput" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>夜班津貼 / 月</label><input id="calcNightInput" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>表現津貼 / 月</label><input id="calcPerformanceInput" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>伙食津貼 / 月</label><input id="calcMealAllowance" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>交通津貼 / 月</label><input id="calcTransportAllowance" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>全勤獎金 / 月</label><input id="calcAttendanceBonus" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>其他薪資 / 其他津貼</label><input id="calcOtherIncome" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>本月加班天數（1 天 = 10 小時）</label><input id="calcOtDaysInput" type="number" min="0" step="0.5" inputmode="decimal"></div>
           <div class="field"><label>另外加班小時</label><input id="calcOtHoursInput" type="number" min="0" step="0.5" inputmode="decimal"></div>
         </div>
@@ -170,14 +185,33 @@
 
 <div class="bottom-nav" id="bottomNav"><button data-tab="dashboard" class="active">總覽</button><button data-tab="schedule">排班</button><button data-tab="calculator">試算</button><button data-tab="settings">設定</button></div>
 
-<dialog id="dayDialog"><form method="dialog" id="dayForm"><div class="modal-head"><div><b id="dayTitle">編輯日期</b><div class="small muted" id="dayEstimate">當日變動薪資 NT$0</div></div><button class="close" value="cancel">×</button></div><div class="modal-body"><input type="hidden" id="editDate"><div class="form-grid">
-  <div class="field"><label>班別</label><select id="editShift"><option value="A">A班</option><option value="B">B班</option><option value="off">休假</option></select></div>
-  <div class="field"><label>自訂班別名稱</label><input id="editCustomName" type="text"></div>
-  <div class="field"><label>正常工時</label><input id="editNormalHours" type="number" min="0" step="0.5"></div>
-  <div class="field"><label>加班時數</label><input id="editOtHours" type="number" min="0" step="0.5"></div>
-  <div class="field"><label>加班類型</label><select id="editOtType"><option value="auto">自動判斷</option><option value="weekday">平日</option><option value="rest">休息日</option><option value="holiday">假日 / 例假</option></select></div>
-  <div class="field"><label>當日表現津貼</label><input id="editExtra" type="number" min="0" step="1"></div>
-</div><div class="field" style="margin-top:14px"><label>備註</label><textarea id="editNote"></textarea></div><div class="divider"></div><div class="row"><button type="button" class="btn" id="copyPrevDay">複製前一天</button><button type="button" class="btn danger" id="clearDay">清除此日</button></div></div><div class="modal-foot"><button class="btn" value="cancel">取消</button><button class="btn primary" value="save" id="saveDay">儲存</button></div></form></dialog>
+<dialog id="dayDialog"><form method="dialog" id="dayForm">
+  <div class="modal-head">
+    <div><b id="dayTitle">日期標記</b><div class="small muted" id="dayEstimate">班別固定，這裡只加額外狀態</div></div>
+    <button class="close" value="cancel">×</button>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="editDate">
+    <div class="field"><label>額外狀態</label>
+      <select id="editStatus">
+        <option value="none">無</option>
+        <option value="overtime">加班</option>
+        <option value="sick">病假</option>
+        <option value="menstrual">生理假</option>
+        <option value="annual">特休</option>
+        <option value="custom">自訂</option>
+      </select>
+    </div>
+    <div class="field" id="customStatusWrap" style="margin-top:14px">
+      <label>自訂項目名稱</label><input id="customStatusText" type="text" placeholder="例如：公假、補休、家庭照顧假">
+    </div>
+  </div>
+  <div class="modal-foot">
+    <button class="btn" value="cancel">取消</button>
+    <button type="button" class="btn danger" id="clearDayStatus">清除標記</button>
+    <button type="button" class="btn primary" id="saveDay">儲存</button>
+  </div>
+</form></dialog>
 
 <dialog id="cycleDialog"><form method="dialog"><div class="modal-head"><b>套用輪班週期</b><button class="close" value="cancel">×</button></div><div class="modal-body"><p>會依「設定 → 四班二輪週期」自動填入目前月份。</p><label class="toggle"><input id="onlyEmpty" type="checkbox" checked> 只填入空白日期，不覆蓋已輸入資料</label><div class="notice" id="cyclePreview" style="margin-top:14px"></div></div><div class="modal-foot"><button class="btn" value="cancel">取消</button><button class="btn primary" value="apply" id="confirmCycle">確認套用</button></div></form></dialog>
 
@@ -192,67 +226,57 @@ var pad=function(v){return String(v).padStart(2,'0');};
 var iso=function(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
 var monthKey=function(y,m){return y+'-'+pad(m+1);};
 var DAY_MS=86400000;
-var ANCHOR_UTC=Date.UTC(2026,8,19); // 2026-09-19 is A班第1個上班日.
+var ANCHOR_UTC=Date.UTC(2026,8,19);
 
 function defaultState(){
   return {
     theme:'light',
     team:'A',
-    settings:{
-      baseSalary:0,
-      nightAllowance:0,
-      extraAllowance:0
-    },
-    months:{}
+    settings:{baseSalary:0,nightAllowance:0,extraAllowance:0},
+    months:{},
+    dayStatus:{}
   };
 }
 
-// Intentionally start fresh on every page load.
-// No localStorage/sessionStorage is read or written.
 var state=defaultState();
 var current=new Date();
 current.setDate(1);
 var activeTab='dashboard';
+var editingDate='';
 
 function monthBucket(){
   var mk=monthKey(current.getFullYear(),current.getMonth());
-  if(!state.months[mk]) state.months[mk]={};
+  if(!state.months[mk])state.months[mk]={};
   return state.months[mk];
 }
 
-function setSalary(key,value){
-  state.settings[key]=num(value);
-  render();
-}
-
-function setMonthValue(key,value){
-  monthBucket()[key]=num(value);
-  render();
-}
+function setSalary(key,value){state.settings[key]=num(value);render();}
+function setMonthValue(key,value){monthBucket()[key]=num(value);render();}
 
 function scheduleForDate(dateObj,team){
   var utc=Date.UTC(dateObj.getFullYear(),dateObj.getMonth(),dateObj.getDate());
   var diff=Math.floor((utc-ANCHOR_UTC)/DAY_MS);
   var phase=((diff%4)+4)%4;
   var aWorks=(phase===0||phase===1);
-  if(team==='A') return aWorks?'A':'off';
-  return aWorks?'off':'B';
+  return team==='A'?(aWorks?'A':'off'):(aWorks?'off':'B');
 }
 
 function monthData(){
-  var y=current.getFullYear(),m=current.getMonth();
-  var mk=monthKey(y,m);
-  var mm=state.months[mk]||{};
+  var y=current.getFullYear(),m=current.getMonth(),mk=monthKey(y,m),mm=state.months[mk]||{};
   var base=num(state.settings.baseSalary);
   var night=num(state.settings.nightAllowance);
   var performance=num(state.settings.extraAllowance);
-  var salaryBase=base+night+performance;
-  var overtimeHourly=salaryBase/240*2;
+  var meal=num(mm.mealAllowance);
+  var transport=num(mm.transportAllowance);
+  var attendanceBonus=num(mm.attendanceBonusIncome);
+  var otherIncome=num(mm.otherIncome);
+  var overtimeBase=base+night+performance;
+  var overtimeHourly=overtimeBase/240*2;
   var overtimeDaily=overtimeHourly*10;
   var overtimeDays=num(mm.overtimeDays);
   var overtimeHours=num(mm.overtimeHours);
   var overtimePay=overtimeDays*overtimeDaily+overtimeHours*overtimeHourly;
-  var gross=salaryBase+overtimePay;
+  var gross=overtimeBase+meal+transport+attendanceBonus+otherIncome+overtimePay;
   var deductions={
     attendance:num(mm.dedAttendance),
     laborInsurance:num(mm.dedLaborInsurance),
@@ -265,15 +289,15 @@ function monthData(){
   };
   var deductionTotal=deductions.attendance+deductions.laborInsurance+deductions.healthInsurance+deductions.welfareFund+deductions.nonFixedTax+deductions.pension+deductions.healthSupplement+deductions.other;
   var netPay=Math.max(0,gross-deductionTotal);
-
   var workDays=0,offDays=0;
   var days=new Date(y,m+1,0).getDate();
   for(var d=1;d<=days;d++){
     var s=scheduleForDate(new Date(y,m,d),state.team);
-    if(s==='off')offDays++; else workDays++;
+    if(s==='off')offDays++;else workDays++;
   }
   return {
-    mk:mk,base:base,night:night,performance:performance,salaryBase:salaryBase,
+    mk:mk,base:base,night:night,performance:performance,meal:meal,transport:transport,
+    attendanceBonus:attendanceBonus,otherIncome:otherIncome,overtimeBase:overtimeBase,
     overtimeHourly:overtimeHourly,overtimeDaily:overtimeDaily,overtimeDays:overtimeDays,
     overtimeHours:overtimeHours,overtimePay:overtimePay,gross:gross,deductions:deductions,
     deductionTotal:deductionTotal,netPay:netPay,workDays:workDays,offDays:offDays
@@ -285,6 +309,10 @@ function breakdownHtml(mc){
     '<div class="split"><span>底薪</span><b>'+money(mc.base)+'</b></div>'+
     '<div class="split"><span>夜班津貼</span><b>'+money(mc.night)+'</b></div>'+
     '<div class="split"><span>表現津貼</span><b>'+money(mc.performance)+'</b></div>'+
+    '<div class="split"><span>伙食津貼</span><b>'+money(mc.meal)+'</b></div>'+
+    '<div class="split"><span>交通津貼</span><b>'+money(mc.transport)+'</b></div>'+
+    '<div class="split"><span>全勤獎金</span><b>'+money(mc.attendanceBonus)+'</b></div>'+
+    '<div class="split"><span>其他薪資</span><b>'+money(mc.otherIncome)+'</b></div>'+
     '<div class="split"><span>本月加班費</span><b>'+money(mc.overtimePay)+'</b></div>'+
     '</div><div class="divider"></div>'+
     '<div class="split"><b>應發總額</b><b>'+money(mc.gross)+'</b></div>'+
@@ -307,16 +335,20 @@ function renderSummary(){
   if($('monthOtFormula'))$('monthOtFormula').textContent='加班時薪 '+money(mc.overtimeHourly)+'；1 天（10 小時）'+money(mc.overtimeDaily)+'；本月加班費 '+money(mc.overtimePay)+'。';
   if($('breakdown'))$('breakdown').innerHTML=breakdownHtml(mc);
 
-  if($('calcBase'))$('calcBase').textContent=money(mc.salaryBase);
+  if($('calcBase'))$('calcBase').textContent=money(mc.overtimeBase);
   if($('calcAllowance'))$('calcAllowance').textContent=money(mc.overtimeHourly);
   if($('calcOT'))$('calcOT').textContent=money(mc.overtimeDaily);
   if($('calcDeduction'))$('calcDeduction').textContent=money(mc.overtimePay);
   if($('calcSummary'))$('calcSummary').innerHTML=breakdownHtml(mc);
-  if($('calcFormulaNote'))$('calcFormulaNote').textContent='加班時薪 =（'+money(mc.base)+' + '+money(mc.night)+' + '+money(mc.performance)+'）÷ 240 × 2 = '+money(mc.overtimeHourly)+'；加班 1 天 = '+money(mc.overtimeDaily)+'。';
+  if($('calcFormulaNote'))$('calcFormulaNote').textContent='加班時薪仍只用（底薪＋夜班津貼＋表現津貼）÷ 240 × 2 = '+money(mc.overtimeHourly)+'；伙食、交通、全勤與其他薪資不納入加班時薪基數。';
 
   if($('calcBaseInput'))$('calcBaseInput').value=mc.base;
   if($('calcNightInput'))$('calcNightInput').value=mc.night;
   if($('calcPerformanceInput'))$('calcPerformanceInput').value=mc.performance;
+  if($('calcMealAllowance'))$('calcMealAllowance').value=mc.meal;
+  if($('calcTransportAllowance'))$('calcTransportAllowance').value=mc.transport;
+  if($('calcAttendanceBonus'))$('calcAttendanceBonus').value=mc.attendanceBonus;
+  if($('calcOtherIncome'))$('calcOtherIncome').value=mc.otherIncome;
   if($('calcOtDaysInput'))$('calcOtDaysInput').value=mc.overtimeDays;
   if($('calcOtHoursInput'))$('calcOtHoursInput').value=mc.overtimeHours;
 
@@ -336,27 +368,35 @@ function renderSummary(){
   if($('extraAllowance'))$('extraAllowance').value=mc.performance;
 }
 
+function statusMeta(st){
+  if(!st||st.type==='none')return null;
+  if(st.type==='overtime')return{label:'加班',cls:'extra-ot'};
+  if(st.type==='sick')return{label:'病假',cls:'sick'};
+  if(st.type==='menstrual')return{label:'生理假',cls:'menstrual'};
+  if(st.type==='annual')return{label:'特休',cls:'annual'};
+  return{label:st.label||'自訂',cls:'custom-status'};
+}
+
 function renderCalendar(){
-  var wrap=$('calendarDays');
-  if(!wrap)return;
-  var y=current.getFullYear(),m=current.getMonth();
-  var first=new Date(y,m,1).getDay();
-  var days=new Date(y,m+1,0).getDate();
-  var today=iso(new Date());
-  var html='';
+  var wrap=$('calendarDays');if(!wrap)return;
+  var y=current.getFullYear(),m=current.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=iso(new Date()),html='';
   for(var i=0;i<first;i++)html+='<div class="day empty"></div>';
   for(var d=1;d<=days;d++){
-    var dateObj=new Date(y,m,d);
-    var date=iso(dateObj);
-    var s=scheduleForDate(dateObj,state.team);
+    var dateObj=new Date(y,m,d),date=iso(dateObj),s=scheduleForDate(dateObj,state.team);
     var label=s==='off'?'休假':s+'班';
     var cls='day'+(date===today?' today':'')+(s==='A'?' team-a-cell':s==='B'?' team-b-cell':'');
     var chipClass=s==='A'?'team-a':s==='B'?'team-b':'off';
-    html+='<div class="'+cls+'"><div class="date-num">'+d+'</div><div class="chips"><span class="chip '+chipClass+'">'+label+'</span></div></div>';
+    var extra=statusMeta(state.dayStatus[date]);
+    var extraHtml=extra?'<span class="chip '+extra.cls+'">'+extra.label+'</span>':'';
+    html+='<div class="'+cls+'"><div class="date-num">'+d+'</div><div class="chips"><span class="chip '+chipClass+'">'+label+'</span>'+extraHtml+'</div><button type="button" data-date="'+date+'" aria-label="編輯 '+date+'"></button></div>';
   }
   var rem=(7-((first+days)%7))%7;
   for(var j=0;j<rem;j++)html+='<div class="day empty"></div>';
   wrap.innerHTML=html;
+  wrap.querySelectorAll('button[data-date]').forEach(function(b){
+    b.addEventListener('click',function(){openDayStatus(b.getAttribute('data-date'));});
+  });
+
   var mc=monthData();
   if($('teamRuleNote')){
     $('teamRuleNote').textContent=(state.team==='A'
@@ -366,10 +406,45 @@ function renderCalendar(){
   }
 }
 
-function render(){
-  renderSummary();
-  if(activeTab==='schedule')renderCalendar();
+function openDayStatus(date){
+  editingDate=date;
+  var st=state.dayStatus[date]||{type:'none',label:''};
+  if($('dayTitle'))$('dayTitle').textContent=date+' 額外標記';
+  if($('editDate'))$('editDate').value=date;
+  if($('editStatus'))$('editStatus').value=st.type||'none';
+  if($('customStatusText'))$('customStatusText').value=st.label||'';
+  toggleCustomStatus();
+  var dlg=$('dayDialog');
+  if(dlg&&typeof dlg.showModal==='function')dlg.showModal();
 }
+
+function toggleCustomStatus(){
+  var isCustom=$('editStatus')&&$('editStatus').value==='custom';
+  if($('customStatusWrap'))$('customStatusWrap').classList.toggle('hidden',!isCustom);
+}
+
+function saveDayStatus(){
+  if(!editingDate)return;
+  var type=$('editStatus')?$('editStatus').value:'none';
+  if(type==='none'){
+    delete state.dayStatus[editingDate];
+  }else if(type==='custom'){
+    var label=($('customStatusText')&&$('customStatusText').value.trim())||'自訂';
+    state.dayStatus[editingDate]={type:'custom',label:label};
+  }else{
+    state.dayStatus[editingDate]={type:type,label:''};
+  }
+  var dlg=$('dayDialog');if(dlg&&typeof dlg.close==='function')dlg.close();
+  render();
+}
+
+function clearDayStatus(){
+  if(editingDate)delete state.dayStatus[editingDate];
+  var dlg=$('dayDialog');if(dlg&&typeof dlg.close==='function')dlg.close();
+  render();
+}
+
+function render(){renderSummary();if(activeTab==='schedule')renderCalendar();}
 
 function setTab(tab){
   activeTab=tab;
@@ -378,8 +453,8 @@ function setTab(tab){
   document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')===tab);});
   var meta={
     dashboard:['總覽','薪資、加班與做二休二班表'],
-    schedule:['排班月曆','A班／B班固定做二休二'],
-    calculator:['薪資試算','輸入薪資、加班與扣款，直接看預估實領'],
+    schedule:['排班月曆','A／B班固定循環，可逐日加上假別或加班標記'],
+    calculator:['薪資試算','輸入薪資、津貼、加班與扣款，直接看預估實領'],
     settings:['設定','底薪、夜班津貼、表現津貼']
   };
   if($('pageTitle'))$('pageTitle').textContent=meta[tab][0];
@@ -399,23 +474,17 @@ function hideOldUi(){
       if(t.nextElementSibling)t.nextElementSibling.classList.add('hidden');
     }
   });
-  var dlg=$('dayDialog');if(dlg)dlg.classList.add('hidden');
   var cdlg=$('cycleDialog');if(cdlg)cdlg.classList.add('hidden');
 }
 
-document.querySelectorAll('[data-tab]').forEach(function(b){
-  b.addEventListener('click',function(){setTab(b.getAttribute('data-tab'));});
-});
-document.querySelectorAll('[data-goto]').forEach(function(b){
-  b.addEventListener('click',function(){setTab(b.getAttribute('data-goto'));});
-});
+document.querySelectorAll('[data-tab]').forEach(function(b){b.addEventListener('click',function(){setTab(b.getAttribute('data-tab'));});});
+document.querySelectorAll('[data-goto]').forEach(function(b){b.addEventListener('click',function(){setTab(b.getAttribute('data-goto'));});});
 
 if($('prevMonth'))$('prevMonth').addEventListener('click',function(){current.setMonth(current.getMonth()-1);render();});
 if($('nextMonth'))$('nextMonth').addEventListener('click',function(){current.setMonth(current.getMonth()+1);render();});
 if($('todayBtn'))$('todayBtn').addEventListener('click',function(){current=new Date();current.setDate(1);render();});
 if($('monthLabel'))$('monthLabel').addEventListener('click',function(){current=new Date();current.setDate(1);render();});
 if($('themeBtn'))$('themeBtn').addEventListener('click',function(){state.theme=state.theme==='dark'?'light':'dark';document.documentElement.classList.toggle('dark',state.theme==='dark');});
-
 if($('teamSelect'))$('teamSelect').addEventListener('change',function(){state.team=this.value;render();});
 
 if($('baseSalary'))$('baseSalary').addEventListener('input',function(){setSalary('baseSalary',this.value);});
@@ -425,25 +494,30 @@ if($('calcBaseInput'))$('calcBaseInput').addEventListener('input',function(){set
 if($('calcNightInput'))$('calcNightInput').addEventListener('input',function(){setSalary('nightAllowance',this.value);});
 if($('calcPerformanceInput'))$('calcPerformanceInput').addEventListener('input',function(){setSalary('extraAllowance',this.value);});
 
-if($('monthOtDays'))$('monthOtDays').addEventListener('input',function(){setMonthValue('overtimeDays',this.value);});
-if($('monthOtHours'))$('monthOtHours').addEventListener('input',function(){setMonthValue('overtimeHours',this.value);});
-if($('calcOtDaysInput'))$('calcOtDaysInput').addEventListener('input',function(){setMonthValue('overtimeDays',this.value);});
-if($('calcOtHoursInput'))$('calcOtHoursInput').addEventListener('input',function(){setMonthValue('overtimeHours',this.value);});
-
 [
-  ['dedAttendance','dedAttendance'],
-  ['dedLaborInsurance','dedLaborInsurance'],
-  ['dedHealthInsurance','dedHealthInsurance'],
-  ['dedWelfareFund','dedWelfareFund'],
-  ['dedNonFixedTax','dedNonFixedTax'],
-  ['dedPension','dedPension'],
-  ['dedHealthSupplement','dedHealthSupplement'],
-  ['dedOther','dedOther']
+ ['calcMealAllowance','mealAllowance'],
+ ['calcTransportAllowance','transportAllowance'],
+ ['calcAttendanceBonus','attendanceBonusIncome'],
+ ['calcOtherIncome','otherIncome'],
+ ['monthOtDays','overtimeDays'],
+ ['monthOtHours','overtimeHours'],
+ ['calcOtDaysInput','overtimeDays'],
+ ['calcOtHoursInput','overtimeHours'],
+ ['dedAttendance','dedAttendance'],
+ ['dedLaborInsurance','dedLaborInsurance'],
+ ['dedHealthInsurance','dedHealthInsurance'],
+ ['dedWelfareFund','dedWelfareFund'],
+ ['dedNonFixedTax','dedNonFixedTax'],
+ ['dedPension','dedPension'],
+ ['dedHealthSupplement','dedHealthSupplement'],
+ ['dedOther','dedOther']
 ].forEach(function(pair){
-  var el=$(pair[0]);
-  if(el)el.addEventListener('input',function(){setMonthValue(pair[1],this.value);});
+  var el=$(pair[0]);if(el)el.addEventListener('input',function(){setMonthValue(pair[1],this.value);});
 });
 
+if($('editStatus'))$('editStatus').addEventListener('change',toggleCustomStatus);
+if($('saveDay'))$('saveDay').addEventListener('click',function(e){e.preventDefault();saveDayStatus();});
+if($('clearDayStatus'))$('clearDayStatus').addEventListener('click',clearDayStatus);
 if($('printBtn'))$('printBtn').addEventListener('click',function(){window.print();});
 
 hideOldUi();
