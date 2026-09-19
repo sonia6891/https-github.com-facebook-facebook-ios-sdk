@@ -49,9 +49,9 @@
 
     <section id="tab-dashboard" class="tab-section">
       <div class="grid cards4">
-        <div class="card"><div class="kicker">預估總薪資</div><div class="value" id="dashGross">NT$0</div><div class="sub">本薪＋津貼＋加班</div></div>
+        <div class="card"><div class="kicker">預估總薪資</div><div class="value" id="dashGross">NT$0</div><div class="sub">底薪＋夜班津貼＋額外津貼</div></div>
         <div class="card"><div class="kicker">預估實領</div><div class="value" id="dashNet">NT$0</div><div class="sub">扣除自訂扣款後</div></div>
-        <div class="card"><div class="kicker">本月加班</div><div class="value" id="dashOT">0 小時</div><div class="sub" id="dashOTMoney">加班費 NT$0</div></div>
+        <div class="card"><div class="kicker">本月休假</div><div class="value" id="dashOT">0 天</div><div class="sub" id="dashOTMoney">目標月休 15 天</div></div>
         <div class="card"><div class="kicker">夜班</div><div class="value" id="dashNight">0 班</div><div class="sub" id="dashNightMoney">夜班津貼 NT$0</div></div>
       </div>
       <div class="section-title"><h2>班別統計</h2><button class="btn primary" data-goto="schedule">編輯班表</button></div>
@@ -60,7 +60,7 @@
           <div class="stat"><span class="muted small">日班</span><b id="statDay">0</b></div>
           <div class="stat"><span class="muted small">夜班</span><b id="statNight">0</b></div>
           <div class="stat"><span class="muted small">休假</span><b id="statOff">0</b></div>
-          <div class="stat"><span class="muted small">請假/其他</span><b id="statOther">0</b></div>
+          <div class="stat"><span class="muted small">休假目標</span><b id="statOther">15</b></div>
         </div></div>
         <div class="card"><div class="split"><div><div class="kicker">本月全勤獎金</div><b id="attendanceAmount">NT$0</b></div><label class="toggle"><input type="checkbox" id="attendanceEligible"> 達成</label></div><div class="sub">可由你手動決定是否計入，不自動判斷公司規則。</div></div>
       </div>
@@ -70,8 +70,23 @@
     </section>
 
     <section id="tab-schedule" class="tab-section hidden">
+      <div class="card no-print" style="margin-bottom:14px">
+        <div class="section-title" style="margin-top:0"><h2>做二休二快速排班</h2><span class="muted small" id="simpleRestHint">目標月休 15 天</span></div>
+        <div class="form-grid">
+          <div class="field"><label>排班方式</label><select id="simpleCyclePreset">
+            <option value="rotate">日班2天 → 休2天 → 夜班2天 → 休2天</option>
+            <option value="day">固定日班：做2休2</option>
+            <option value="night">固定夜班：做2休2</option>
+            <option value="custom">自己設定循環</option>
+          </select></div>
+          <div class="field"><label>循環起始日</label><input id="simpleCycleStart" type="date"></div>
+          <div class="field"><label>這一天是循環第幾天</label><select id="simpleCycleIndex"></select></div>
+          <div class="field" id="simpleCustomWrap"><label>自訂循環（逗號分隔）</label><input id="simpleCyclePattern" type="text" placeholder="日班,日班,休假,休假"></div>
+        </div>
+        <div class="sub">例如你知道 9/20 是第一個日班，就把起始日選 9/20、位置選第 1 天；系統會一路排完整個月。</div>
+      </div>
       <div class="row no-print" style="margin-bottom:12px">
-        <button class="btn primary" id="applyCycleBtn">套用輪班週期</button>
+        <button class="btn primary" id="applyCycleBtn">套用做二休二到本月</button>
         <button class="btn" id="copyPrevBtn">複製前月班表</button>
         <span class="muted small">點日期即可編輯班別、加班與津貼。</span>
       </div>
@@ -92,7 +107,7 @@
     </section>
 
     <section id="tab-settings" class="tab-section hidden">
-      <div class="notice warn">以下預設僅是「範例值」，不是官方法規或你的公司制度。請依薪資單／公司規則修改。</div>
+      <div class="notice warn">簡單版只要設定「底薪、夜班津貼、額外津貼」。填多少就照多少計算。</div>
       <div class="section-title"><h2>基本薪資設定</h2></div>
       <div class="card"><div class="form-grid">
         <div class="field"><label>月薪 / 本薪（NT$）</label><input id="baseSalary" type="number" min="0" step="1"></div>
@@ -102,7 +117,7 @@
         <div class="field"><label>每班正常工時</label><input id="normalHours" type="number" min="0" step="0.5"></div>
         <div class="field"><label>全勤獎金（NT$）</label><input id="attendanceBonus" type="number" min="0" step="1"></div>
         <div class="field"><label>日班津貼 / 班</label><input id="dayAllowance" type="number" min="0" step="1"></div>
-        <div class="field"><label>夜班津貼 / 班</label><input id="nightAllowance" type="number" min="0" step="1"></div>
+        <div class="field"><label>夜班津貼 / 班</label><input id="nightAllowance" type="number" min="0" step="1"></div><div class="field"><label>額外津貼 / 月</label><input id="extraAllowance" type="number" min="0" step="1"></div>
       </div></div>
 
       <div class="section-title"><h2>固定津貼</h2><button class="btn" id="addAllowance">＋ 新增</button></div><div class="card"><div class="list" id="allowanceList"></div></div>
@@ -123,7 +138,7 @@
 <div class="bottom-nav" id="bottomNav"><button data-tab="dashboard" class="active">總覽</button><button data-tab="schedule">排班</button><button data-tab="calculator">試算</button><button data-tab="settings">設定</button></div>
 
 <dialog id="dayDialog"><form method="dialog" id="dayForm"><div class="modal-head"><div><b id="dayTitle">編輯日期</b><div class="small muted" id="dayEstimate">當日變動薪資 NT$0</div></div><button class="close" value="cancel">×</button></div><div class="modal-body"><input type="hidden" id="editDate"><div class="form-grid">
-  <div class="field"><label>班別</label><select id="editShift"><option value="none">未設定</option><option value="day">日班</option><option value="night">夜班</option><option value="off">休假</option><option value="annual">特休</option><option value="sick">病假</option><option value="personal">事假</option><option value="holiday">國定假日 / 公司假</option><option value="custom">自訂</option></select></div>
+  <div class="field"><label>班別</label><select id="editShift"><option value="none">未設定</option><option value="day">日班</option><option value="night">夜班</option><option value="off">休假</option></select></div>
   <div class="field"><label>自訂班別名稱</label><input id="editCustomName" type="text"></div>
   <div class="field"><label>正常工時</label><input id="editNormalHours" type="number" min="0" step="0.5"></div>
   <div class="field"><label>加班時數</label><input id="editOtHours" type="number" min="0" step="0.5"></div>
@@ -146,7 +161,7 @@ const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${Str
 const monthKey=(y,m)=>`${y}-${String(m+1).padStart(2,'0')}`;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=v=>Math.max(0,Number(v)||0);
-const defaultState=()=>({version:VERSION,theme:'light',settings:{baseSalary:0,hourlyMode:'auto',hourlyDivisor:240,manualHourly:0,normalHours:12,attendanceBonus:0,dayAllowance:0,nightAllowance:0,fixedAllowances:[{id:crypto.randomUUID?.()||'a1',name:'伙食津貼',amount:0}],deductions:[{id:crypto.randomUUID?.()||'d1',name:'勞健保 / 其他扣款',amount:0}],overtime:{weekday:[{hours:2,multiplier:1.34},{hours:2,multiplier:1.67},{hours:8,multiplier:1.67}],rest:[{hours:2,multiplier:1.34},{hours:6,multiplier:1.67},{hours:4,multiplier:2.67}],holiday:[{hours:8,multiplier:2}]},cycleStart:iso(new Date()),cycleIndex:1,cyclePattern:'日班,日班,休假,休假,夜班,夜班,休假,休假',companyNotes:''},records:{},months:{}});
+const defaultState=()=>({version:VERSION,theme:'light',settings:{baseSalary:0,hourlyMode:'auto',hourlyDivisor:240,manualHourly:0,normalHours:12,attendanceBonus:0,dayAllowance:0,nightAllowance:0,extraAllowance:0,fixedAllowances:[{id:crypto.randomUUID?.()||'a1',name:'伙食津貼',amount:0}],deductions:[{id:crypto.randomUUID?.()||'d1',name:'勞健保 / 其他扣款',amount:0}],overtime:{weekday:[{hours:2,multiplier:1.34},{hours:2,multiplier:1.67},{hours:8,multiplier:1.67}],rest:[{hours:2,multiplier:1.34},{hours:6,multiplier:1.67},{hours:4,multiplier:2.67}],holiday:[{hours:8,multiplier:2}]},cycleStart:iso(new Date()),cycleIndex:1,cyclePattern:'日班,日班,休假,休假,夜班,夜班,休假,休假',companyNotes:''},records:{},months:{}});
 let state=load();
 let current=new Date();current.setDate(1);
 let activeTab='dashboard',activeOt='weekday';
@@ -155,15 +170,15 @@ function save(){localStorage.setItem(KEY,JSON.stringify(state));}
 function hourly(){const s=state.settings;return s.hourlyMode==='manual'?num(s.manualHourly):(num(s.baseSalary)/(num(s.hourlyDivisor)||1));}
 function inferredOtType(r){if(r.otType&&r.otType!=='auto')return r.otType;if(r.shift==='off')return'rest';if(r.shift==='holiday')return'holiday';return'weekday';}
 function calcOt(hours,type){let left=num(hours),sum=0;const rate=hourly();for(const tier of (state.settings.overtime[type]||[])){if(left<=0)break;const h=Math.min(left,num(tier.hours));sum+=h*rate*num(tier.multiplier);left-=h}return sum;}
-function dayCalc(r){if(!r)return{shiftAllowance:0,extra:0,ot:0,total:0};const s=state.settings;let sa=0;if(r.shift==='day')sa+=num(s.dayAllowance);if(r.shift==='night')sa+=num(s.nightAllowance);const ot=calcOt(r.otHours,inferredOtType(r));const extra=num(r.extra);return{shiftAllowance:sa,extra,ot,total:sa+extra+ot};}
-function monthCalc(y,m){const mk=monthKey(y,m),days=new Date(y,m+1,0).getDate();let counts={day:0,night:0,off:0,other:0},otHours=0,otPay=0,shiftAllow=0,extra=0;const rows=[];for(let d=1;d<=days;d++){const date=`${mk}-${String(d).padStart(2,'0')}`,r=state.records[date]||null,c=dayCalc(r);if(r){if(r.shift==='day')counts.day++;else if(r.shift==='night')counts.night++;else if(r.shift==='off')counts.off++;else if(r.shift&&r.shift!=='none')counts.other++;otHours+=num(r.otHours);otPay+=c.ot;shiftAllow+=c.shiftAllowance;extra+=c.extra;}rows.push({date,r,c});}const fixed=(state.settings.fixedAllowances||[]).reduce((a,x)=>a+num(x.amount),0);const deductions=(state.settings.deductions||[]).reduce((a,x)=>a+num(x.amount),0);const attendance=state.months[mk]?.attendanceEligible?num(state.settings.attendanceBonus):0;const gross=num(state.settings.baseSalary)+fixed+shiftAllow+extra+otPay+attendance;return{mk,counts,otHours,otPay,shiftAllow,extra,fixed,deductions,attendance,gross,net:gross-deductions,rows};}
+function dayCalc(r){if(!r)return{shiftAllowance:0,extra:0,ot:0,total:0};const s=state.settings;const sa=r.shift==='night'?num(s.nightAllowance):0;return{shiftAllowance:sa,extra:0,ot:0,total:sa};}
+function monthCalc(y,m){const mk=monthKey(y,m),days=new Date(y,m+1,0).getDate();let counts={day:0,night:0,off:0,other:0},otHours=0,otPay=0,shiftAllow=0,extra=0;const rows=[];for(let d=1;d<=days;d++){const date=`${mk}-${String(d).padStart(2,'0')}`,r=state.records[date]||null,c=dayCalc(r);if(r){if(r.shift==='day')counts.day++;else if(r.shift==='night')counts.night++;else if(r.shift==='off')counts.off++;else if(r.shift&&r.shift!=='none')counts.other++;otHours+=num(r.otHours);otPay+=c.ot;shiftAllow+=c.shiftAllowance;extra+=c.extra;}rows.push({date,r,c});}const fixed=num(state.settings.extraAllowance);const deductions=0;const attendance=0;const gross=num(state.settings.baseSalary)+fixed+shiftAllow;return{mk,counts,otHours,otPay,shiftAllow,extra,fixed,deductions,attendance,gross,net:gross-deductions,rows};}
 function setTab(tab){activeTab=tab;document.querySelectorAll('.tab-section').forEach(x=>x.classList.add('hidden'));$('tab-'+tab).classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));const meta={dashboard:['總覽','本月薪資與班表摘要'],schedule:['排班月曆','點日期編輯班別、加班與津貼'],calculator:['薪資試算','逐日明細與月總結'],settings:['設定','薪資規則、輪班週期與資料備份']}[tab];$('pageTitle').textContent=meta[0];$('pageSub').textContent=meta[1];render();}
-function render(){const y=current.getFullYear(),m=current.getMonth(),mc=monthCalc(y,m);$('monthLabel').textContent=`${y} 年 ${m+1} 月`;$('printMonth').textContent=`${y} 年 ${m+1} 月`;$('dashGross').textContent=money(mc.gross);$('dashNet').textContent=money(mc.net);$('dashOT').textContent=`${mc.otHours} 小時`;$('dashOTMoney').textContent=`加班費 ${money(mc.otPay)}`;$('dashNight').textContent=`${mc.counts.night} 班`;$('dashNightMoney').textContent=`夜班津貼 ${money(mc.counts.night*num(state.settings.nightAllowance))}`;$('statDay').textContent=mc.counts.day;$('statNight').textContent=mc.counts.night;$('statOff').textContent=mc.counts.off;$('statOther').textContent=mc.counts.other;$('attendanceAmount').textContent=money(state.settings.attendanceBonus);$('attendanceEligible').checked=!!state.months[mc.mk]?.attendanceEligible;
-$('breakdown').innerHTML=breakdownHtml(mc);$('calcBase').textContent=money(state.settings.baseSalary);$('calcAllowance').textContent=money(mc.fixed+mc.shiftAllow+mc.extra+mc.attendance);$('calcOT').textContent=money(mc.otPay);$('calcDeduction').textContent=money(mc.deductions);$('calcSummary').innerHTML=breakdownHtml(mc,true);renderDetail(mc);if(activeTab==='schedule')renderCalendar();if(activeTab==='settings')renderSettings();}
-function breakdownHtml(mc,full=false){const lines=[['本薪',num(state.settings.baseSalary)],['固定津貼',mc.fixed],['日 / 夜班津貼',mc.shiftAllow],['每日額外津貼',mc.extra],['全勤獎金',mc.attendance],['加班費',mc.otPay]];let h='<div class="list">'+lines.map(([n,v])=>`<div class="split"><span>${esc(n)}</span><b>${money(v)}</b></div>`).join('')+'</div><div class="divider"></div><div class="split"><b>預估總薪資</b><b>'+money(mc.gross)+'</b></div><div class="split" style="margin-top:8px"><span>固定扣款</span><b>− '+money(mc.deductions)+'</b></div><div class="split" style="margin-top:10px;font-size:18px"><b>預估實領</b><b>'+money(mc.net)+'</b></div>';if(full)h+='<div class="sub" style="margin-top:12px">時薪基準：'+money(hourly())+' / 小時（依你的設定）</div>';return h;}
+function render(){const y=current.getFullYear(),m=current.getMonth(),mc=monthCalc(y,m);$('monthLabel').textContent=`${y} 年 ${m+1} 月`;$('printMonth').textContent=`${y} 年 ${m+1} 月`;$('dashGross').textContent=money(mc.gross);$('dashNet').textContent=money(mc.net);$('dashOT').textContent=mc.counts.off+' 天';$('dashOTMoney').textContent=mc.counts.off===15?'剛好月休 15 天':'目前 '+mc.counts.off+' 天・目標 15 天';$('dashNight').textContent=`${mc.counts.night} 班`;$('dashNightMoney').textContent=`夜班津貼 ${money(mc.counts.night*num(state.settings.nightAllowance))}`;$('statDay').textContent=mc.counts.day;$('statNight').textContent=mc.counts.night;$('statOff').textContent=mc.counts.off;$('statOther').textContent='15';$('attendanceAmount').textContent=money(state.settings.attendanceBonus);$('attendanceEligible').checked=!!state.months[mc.mk]?.attendanceEligible;
+$('breakdown').innerHTML=breakdownHtml(mc);$('calcBase').textContent=money(state.settings.baseSalary);$('calcAllowance').textContent=money(mc.fixed+mc.shiftAllow+mc.extra+mc.attendance);$('calcOT').textContent=money(mc.otPay);$('calcDeduction').textContent=money(mc.deductions);$('calcSummary').innerHTML=breakdownHtml(mc,true);renderDetail(mc);if(activeTab==='schedule'){renderSimpleCycle();renderCalendar();}if(activeTab==='settings')renderSettings();}
+function breakdownHtml(mc,full=false){const lines=[['底薪',num(state.settings.baseSalary)],['夜班津貼',mc.shiftAllow],['額外津貼',mc.fixed]];let h='<div class="list">'+lines.map(([n,v])=>'<div class="split"><span>'+esc(n)+'</span><b>'+money(v)+'</b></div>').join('')+'</div><div class="divider"></div><div class="split" style="font-size:18px"><b>預估月薪</b><b>'+money(mc.gross)+'</b></div>';return h;}
 function renderCalendar(){const y=current.getFullYear(),m=current.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=iso(new Date());let html='';for(let i=0;i<first;i++)html+='<div class="day empty"></div>';for(let d=1;d<=days;d++){const date=`${monthKey(y,m)}-${String(d).padStart(2,'0')}`,r=state.records[date],c=dayCalc(r),cls=['day'];if(date===today)cls.push('today');if(r)cls.push('hasdata');let chips='';if(r&&r.shift&&r.shift!=='none'){const name=r.shift==='custom'?(r.customName||'自訂'):shiftMap[r.shift];chips+=`<span class="chip ${r.shift==='night'?'night':r.shift==='off'?'off':''}">${esc(name)}</span>`}if(r&&num(r.otHours)>0)chips+=`<span class="chip ot">OT ${num(r.otHours)}h</span>`;if(c.total>0)chips+=`<span class="chip money">+${money(c.total).replace('NT$','')}</span>`;html+=`<div class="${cls.join(' ')}"><div class="date-num">${d}</div><div class="chips">${chips}</div><button aria-label="編輯 ${date}" data-date="${date}"></button></div>`}const rem=(7-((first+days)%7))%7;for(let i=0;i<rem;i++)html+='<div class="day empty"></div>';$('calendarDays').innerHTML=html;$('calendarDays').querySelectorAll('button[data-date]').forEach(b=>b.onclick=()=>openDay(b.dataset.date));}
 function renderDetail(mc){$('detailRows').innerHTML=mc.rows.map(({date,r,c})=>{const d=new Date(date+'T00:00:00');const shift=r?(r.shift==='custom'?(r.customName||'自訂'):shiftMap[r.shift]):'';return`<tr><td>${date.slice(5)}</td><td>${week[d.getDay()]}</td><td>${esc(shift||'')}</td><td class="right">${r?num(r.normalHours):0}</td><td class="right">${r?num(r.otHours):0}</td><td class="right">${money(c.shiftAllowance+c.extra)}</td><td class="right">${money(c.ot)}</td><td class="right"><b>${money(c.total)}</b></td><td>${esc(r?.note||'')}</td></tr>`}).join('');}
-function renderSettings(){const s=state.settings;['baseSalary','hourlyDivisor','manualHourly','normalHours','attendanceBonus','dayAllowance','nightAllowance','cycleIndex','cyclePattern','cycleStart','companyNotes'].forEach(id=>{if($(id))$(id).value=s[id]??''});$('hourlyMode').value=s.hourlyMode;$('allowanceList').innerHTML=(s.fixedAllowances||[]).map(x=>listItemHtml(x,'allow')).join('')||'<div class="muted">尚無固定津貼</div>';$('deductionList').innerHTML=(s.deductions||[]).map(x=>listItemHtml(x,'deduct')).join('')||'<div class="muted">尚無固定扣款</div>';bindListEditors();document.querySelectorAll('#otTabs button').forEach(b=>b.classList.toggle('active',b.dataset.ot===activeOt));$('otRuleList').innerHTML=(s.overtime[activeOt]||[]).map((x,i)=>`<div class="list-item rule"><div class="field"><label>最多小時</label><input data-rule-i="${i}" data-rule-k="hours" type="number" min="0" step="0.5" value="${num(x.hours)}"></div><div class="field"><label>倍率</label><input data-rule-i="${i}" data-rule-k="multiplier" type="number" min="0" step="0.01" value="${num(x.multiplier)}"></div><button class="btn danger" data-del-rule="${i}">刪</button></div>`).join('');$('otRuleList').querySelectorAll('input').forEach(inp=>inp.onchange=()=>{state.settings.overtime[activeOt][+inp.dataset.ruleI][inp.dataset.ruleK]=num(inp.value);save();render()});$('otRuleList').querySelectorAll('[data-del-rule]').forEach(b=>b.onclick=()=>{state.settings.overtime[activeOt].splice(+b.dataset.delRule,1);save();renderSettings()});}
+function renderSettings(){const s=state.settings;['baseSalary','hourlyDivisor','manualHourly','normalHours','attendanceBonus','dayAllowance','nightAllowance','extraAllowance','cycleIndex','cyclePattern','cycleStart','companyNotes'].forEach(id=>{if($(id))$(id).value=s[id]??''});$('hourlyMode').value=s.hourlyMode;$('allowanceList').innerHTML=(s.fixedAllowances||[]).map(x=>listItemHtml(x,'allow')).join('')||'<div class="muted">尚無固定津貼</div>';$('deductionList').innerHTML=(s.deductions||[]).map(x=>listItemHtml(x,'deduct')).join('')||'<div class="muted">尚無固定扣款</div>';bindListEditors();document.querySelectorAll('#otTabs button').forEach(b=>b.classList.toggle('active',b.dataset.ot===activeOt));$('otRuleList').innerHTML=(s.overtime[activeOt]||[]).map((x,i)=>`<div class="list-item rule"><div class="field"><label>最多小時</label><input data-rule-i="${i}" data-rule-k="hours" type="number" min="0" step="0.5" value="${num(x.hours)}"></div><div class="field"><label>倍率</label><input data-rule-i="${i}" data-rule-k="multiplier" type="number" min="0" step="0.01" value="${num(x.multiplier)}"></div><button class="btn danger" data-del-rule="${i}">刪</button></div>`).join('');$('otRuleList').querySelectorAll('input').forEach(inp=>inp.onchange=()=>{state.settings.overtime[activeOt][+inp.dataset.ruleI][inp.dataset.ruleK]=num(inp.value);save();render()});$('otRuleList').querySelectorAll('[data-del-rule]').forEach(b=>b.onclick=()=>{state.settings.overtime[activeOt].splice(+b.dataset.delRule,1);save();renderSettings()});}
 function listItemHtml(x,type){return`<div class="list-item"><div class="field"><label>名稱</label><input data-${type}-id="${x.id}" data-k="name" value="${esc(x.name)}"></div><div class="field"><label>金額</label><input data-${type}-id="${x.id}" data-k="amount" type="number" min="0" step="1" value="${num(x.amount)}"></div><button class="btn danger" data-del-${type}="${x.id}">刪</button></div>`}
 function bindListEditors(){for(const [type,key] of [['allow','fixedAllowances'],['deduct','deductions']]){document.querySelectorAll(`[data-${type}-id]`).forEach(inp=>inp.onchange=()=>{const x=state.settings[key].find(i=>i.id===inp.dataset[type+'Id']);if(x){x[inp.dataset.k]=inp.dataset.k==='amount'?num(inp.value):inp.value;save();render()}});document.querySelectorAll(`[data-del-${type}]`).forEach(b=>b.onclick=()=>{state.settings[key]=state.settings[key].filter(x=>x.id!==b.dataset['del'+type.charAt(0).toUpperCase()+type.slice(1)]);save();render()})}}
 function openDay(date){const r=state.records[date]||{shift:'none',customName:'',normalHours:state.settings.normalHours,otHours:0,otType:'auto',extra:0,note:''};$('editDate').value=date;$('dayTitle').textContent=`${date.slice(0,4)} / ${+date.slice(5,7)} / ${+date.slice(8,10)}（${week[new Date(date+'T00:00:00').getDay()]}）`;$('editShift').value=r.shift||'none';$('editCustomName').value=r.customName||'';$('editNormalHours').value=r.normalHours??state.settings.normalHours;$('editOtHours').value=r.otHours||0;$('editOtType').value=r.otType||'auto';$('editExtra').value=r.extra||0;$('editNote').value=r.note||'';updateDayEstimate();$('dayDialog').showModal();}
@@ -178,8 +193,40 @@ function applyCycle(){const s=state.settings,parts=String(s.cyclePattern||'').sp
 $('applyCycleBtn').onclick=()=>{const s=state.settings;$('cyclePreview').textContent=`起始：${s.cycleStart}｜序列：${s.cyclePattern||'尚未設定'}`;$('cycleDialog').showModal()};$('confirmCycle').onclick=e=>{e.preventDefault();applyCycle();$('cycleDialog').close()};
 $('copyPrevBtn').onclick=()=>{if(!confirm('將前一個月的同日期班表複製到本月？現有日期不覆蓋。'))return;const y=current.getFullYear(),m=current.getMonth(),prev=new Date(y,m-1,1),days=new Date(y,m+1,0).getDate();for(let d=1;d<=days;d++){const cur=`${monthKey(y,m)}-${String(d).padStart(2,'0')}`,prevDate=new Date(prev.getFullYear(),prev.getMonth(),d);if(prevDate.getMonth()!==prev.getMonth())continue;const p=state.records[iso(prevDate)];if(p&&!state.records[cur])state.records[cur]=structuredClone(p)}save();render()};
 $('attendanceEligible').onchange=()=>{const mk=monthKey(current.getFullYear(),current.getMonth());state.months[mk]=state.months[mk]||{};state.months[mk].attendanceEligible=$('attendanceEligible').checked;save();render()};
+function simplifyUI(){
+  ['hourlyMode','hourlyDivisor','manualHourly','normalHours','attendanceBonus','dayAllowance'].forEach(id=>{const el=$(id);if(el&&el.closest('.field'))el.closest('.field').classList.add('hidden')});
+  document.querySelectorAll('#tab-settings .section-title').forEach(t=>{const h=t.querySelector('h2');if(!h)return;const n=h.textContent.trim();if(['固定津貼','固定扣款','加班倍率','四班二輪週期'].includes(n)){t.classList.add('hidden');if(t.nextElementSibling)t.nextElementSibling.classList.add('hidden')}});
+  ['editCustomName','editNormalHours','editOtHours','editOtType','editExtra','editNote'].forEach(id=>{const el=$(id);if(el&&el.closest('.field'))el.closest('.field').classList.add('hidden')});
+  const cp=$('copyPrevDay');if(cp)cp.classList.add('hidden');
+}
+function simplePresetPattern(v){
+  if(v==='day')return '日班,日班,休假,休假';
+  if(v==='night')return '夜班,夜班,休假,休假';
+  if(v==='rotate')return '日班,日班,休假,休假,夜班,夜班,休假,休假';
+  return state.settings.cyclePattern||'日班,日班,休假,休假';
+}
+function detectSimplePreset(){
+  const p=String(state.settings.cyclePattern||'').replace(/\s/g,'');
+  if(p==='日班,日班,休假,休假')return 'day';
+  if(p==='夜班,夜班,休假,休假')return 'night';
+  if(p==='日班,日班,休假,休假,夜班,夜班,休假,休假')return 'rotate';
+  return 'custom';
+}
+function renderSimpleCycle(){
+  if(!$('simpleCyclePreset'))return;
+  const preset=detectSimplePreset();
+  $('simpleCyclePreset').value=preset;
+  $('simpleCycleStart').value=state.settings.cycleStart||iso(new Date());
+  $('simpleCyclePattern').value=state.settings.cyclePattern||'';
+  $('simpleCustomWrap').classList.toggle('hidden',preset!=='custom');
+  const parts=String(state.settings.cyclePattern||'').split(',').map(x=>x.trim()).filter(Boolean);
+  $('simpleCycleIndex').innerHTML=parts.map((x,i)=>'<option value="'+(i+1)+'">第 '+(i+1)+' 天（'+esc(x)+'）</option>').join('');
+  $('simpleCycleIndex').value=String(Math.min(Math.max(1,parseInt(state.settings.cycleIndex)||1),Math.max(1,parts.length)));
+  const mc=monthCalc(current.getFullYear(),current.getMonth());
+  $('simpleRestHint').textContent=mc.counts.off===15?'本月剛好休 15 天':'目前休 '+mc.counts.off+' 天・目標 15 天';
+}
 function bindSetting(id,key,number=false){$(id).onchange=()=>{state.settings[key]=number?num($(id).value):$(id).value;save();render()}}
-[['baseSalary','baseSalary',1],['hourlyDivisor','hourlyDivisor',1],['manualHourly','manualHourly',1],['normalHours','normalHours',1],['attendanceBonus','attendanceBonus',1],['dayAllowance','dayAllowance',1],['nightAllowance','nightAllowance',1],['cycleIndex','cycleIndex',1],['cyclePattern','cyclePattern',0],['cycleStart','cycleStart',0],['companyNotes','companyNotes',0],['hourlyMode','hourlyMode',0]].forEach(x=>bindSetting(x[0],x[1],!!x[2]));
+[['baseSalary','baseSalary',1],['hourlyDivisor','hourlyDivisor',1],['manualHourly','manualHourly',1],['normalHours','normalHours',1],['attendanceBonus','attendanceBonus',1],['dayAllowance','dayAllowance',1],['nightAllowance','nightAllowance',1],['extraAllowance','extraAllowance',1],['cycleIndex','cycleIndex',1],['cyclePattern','cyclePattern',0],['cycleStart','cycleStart',0],['companyNotes','companyNotes',0],['hourlyMode','hourlyMode',0]].forEach(x=>bindSetting(x[0],x[1],!!x[2]));
 $('addAllowance').onclick=()=>{state.settings.fixedAllowances.push({id:crypto.randomUUID?.()||String(Date.now()),name:'新津貼',amount:0});save();renderSettings()};$('addDeduction').onclick=()=>{state.settings.deductions.push({id:crypto.randomUUID?.()||String(Date.now()),name:'新扣款',amount:0});save();renderSettings()};$('otTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{activeOt=b.dataset.ot;renderSettings()});$('addOtRule').onclick=()=>{state.settings.overtime[activeOt].push({hours:2,multiplier:1});save();renderSettings()};
 function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500)}
 $('exportJson').onclick=()=>download(`四班二輪計薪備份-${iso(new Date())}.json`,JSON.stringify(state,null,2),'application/json');$('importJson').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.settings||!x.records)throw new Error();if(confirm('匯入會覆蓋目前資料，確定繼續？')){state=x;save();render();alert('匯入完成')}}catch(err){alert('檔案格式不正確')}e.target.value=''};
@@ -188,6 +235,15 @@ $('resetMonth').onclick=()=>{const mk=monthKey(current.getFullYear(),current.get
 function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}$('prevMonth').onclick=()=>changeMonth(-1);$('nextMonth').onclick=()=>changeMonth(1);$('todayBtn').onclick=()=>{current=new Date();current.setDate(1);render()};$('monthLabel').onclick=()=>{current=new Date();current.setDate(1);render()};
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
 function applyTheme(){document.documentElement.classList.toggle('dark',state.theme==='dark')}$('themeBtn').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme()};
+simplifyUI();
+$('simpleCyclePreset').onchange=()=>{
+  const v=$('simpleCyclePreset').value;
+  if(v!=='custom')state.settings.cyclePattern=simplePresetPattern(v);
+  save();renderSimpleCycle();
+};
+$('simpleCycleStart').onchange=()=>{state.settings.cycleStart=$('simpleCycleStart').value;save();renderSimpleCycle()};
+$('simpleCycleIndex').onchange=()=>{state.settings.cycleIndex=Math.max(1,parseInt($('simpleCycleIndex').value)||1);save()};
+$('simpleCyclePattern').onchange=()=>{state.settings.cyclePattern=$('simpleCyclePattern').value;state.settings.cycleIndex=1;save();renderSimpleCycle()};
 applyTheme();render();
 })();
 </script>
