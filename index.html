@@ -99,8 +99,17 @@
         <div class="card"><div class="kicker">夜班加班 1 天</div><div class="value" id="calcOT">NT$0</div><div class="sub">10 小時</div></div>
         <div class="card"><div class="kicker">本月加班費</div><div class="value" id="calcDeduction">NT$0</div></div>
       </div>
-      <div class="section-title"><h2>本月逐日明細</h2><div class="row no-print"><button class="btn" id="exportCsv">匯出 CSV</button><button class="btn" id="printBtn">列印 / 存 PDF</button></div></div>
-      <div class="card" style="overflow:auto"><table class="report-table"><thead><tr><th>日期</th><th>星期</th><th>班別</th><th class="right">正常工時</th><th class="right">加班</th><th class="right">班別/表現津貼</th><th class="right">加班費</th><th class="right">當日變動薪資</th><th>備註</th></tr></thead><tbody id="detailRows"></tbody></table></div>
+      <div class="section-title"><h2>直接試算</h2><div class="row no-print"><button class="btn" id="printBtn">列印 / 存 PDF</button></div></div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="field"><label>底薪</label><input id="calcBaseInput" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>夜班津貼 / 月</label><input id="calcNightInput" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>表現津貼 / 月</label><input id="calcPerformanceInput" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>本月加班天數（1 天 = 10 小時）</label><input id="calcOtDaysInput" type="number" min="0" step="0.5" inputmode="decimal"></div>
+          <div class="field"><label>另外加班小時</label><input id="calcOtHoursInput" type="number" min="0" step="0.5" inputmode="decimal"></div>
+        </div>
+        <div class="notice" id="calcFormulaNote" style="margin-top:14px"></div>
+      </div>
       <div class="section-title"><h2>月總結</h2></div><div class="card" id="calcSummary"></div>
     </section>
 
@@ -147,108 +156,434 @@
 <dialog id="cycleDialog"><form method="dialog"><div class="modal-head"><b>套用輪班週期</b><button class="close" value="cancel">×</button></div><div class="modal-body"><p>會依「設定 → 四班二輪週期」自動填入目前月份。</p><label class="toggle"><input id="onlyEmpty" type="checkbox" checked> 只填入空白日期，不覆蓋已輸入資料</label><div class="notice" id="cyclePreview" style="margin-top:14px"></div></div><div class="modal-foot"><button class="btn" value="cancel">取消</button><button class="btn primary" value="apply" id="confirmCycle">確認套用</button></div></form></dialog>
 
 <script>
-(()=>{
+(function(){
 'use strict';
-const KEY='four-team-two-shift-pay-v1';
-const VERSION=1;
-const shiftMap={none:'未設定',day:'日班',night:'夜班',off:'休假',annual:'特休',sick:'病假',personal:'事假',holiday:'國定假日 / 公司假',custom:'自訂'};
-const week=['日','一','二','三','四','五','六'];
-const $=id=>document.getElementById(id);
-const money=n=>'NT$'+Math.round(Number(n)||0).toLocaleString('zh-TW');
-const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-const monthKey=(y,m)=>`${y}-${String(m+1).padStart(2,'0')}`;
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const num=v=>Math.max(0,Number(v)||0);
-const defaultState=()=>({version:VERSION,theme:'light',settings:{baseSalary:0,hourlyMode:'auto',hourlyDivisor:240,manualHourly:0,normalHours:12,attendanceBonus:0,dayAllowance:0,nightAllowance:0,extraAllowance:0,simpleCyclePreset:'rotate',fixedAllowances:[{id:crypto.randomUUID?.()||'a1',name:'伙食津貼',amount:0}],deductions:[{id:crypto.randomUUID?.()||'d1',name:'勞健保 / 其他扣款',amount:0}],overtime:{weekday:[{hours:2,multiplier:1.34},{hours:2,multiplier:1.67},{hours:8,multiplier:1.67}],rest:[{hours:2,multiplier:1.34},{hours:6,multiplier:1.67},{hours:4,multiplier:2.67}],holiday:[{hours:8,multiplier:2}]},cycleStart:iso(new Date()),cycleIndex:1,cyclePattern:'日班,日班,休假,休假,夜班,夜班,休假,休假',companyNotes:''},records:{},months:{}});
-let state=load();
-let current=new Date();current.setDate(1);
-let activeTab='dashboard',activeOt='weekday';
-function load(){try{const raw=localStorage.getItem(KEY);if(!raw)return defaultState();const x=JSON.parse(raw);return {...defaultState(),...x,settings:{...defaultState().settings,...x.settings}}}catch(e){return defaultState()}}
-function save(){localStorage.setItem(KEY,JSON.stringify(state));}
-function hourly(){const s=state.settings;return s.hourlyMode==='manual'?num(s.manualHourly):(num(s.baseSalary)/(num(s.hourlyDivisor)||1));}
-function inferredOtType(r){if(r.otType&&r.otType!=='auto')return r.otType;if(r.shift==='off')return'rest';if(r.shift==='holiday')return'holiday';return'weekday';}
-function calcOt(hours,type){let left=num(hours),sum=0;const rate=hourly();for(const tier of (state.settings.overtime[type]||[])){if(left<=0)break;const h=Math.min(left,num(tier.hours));sum+=h*rate*num(tier.multiplier);left-=h}return sum;}
-function dayCalc(r){return{shiftAllowance:0,extra:0,ot:0,total:0};}
-function monthCalc(y,m){const mk=monthKey(y,m),days=new Date(y,m+1,0).getDate();let counts={day:0,night:0,off:0,other:0};const rows=[];for(let d=1;d<=days;d++){const date=`${mk}-${String(d).padStart(2,'0')}`,r=state.records[date]||null,c=dayCalc(r);if(r){if(r.shift==='day')counts.day++;else if(r.shift==='night')counts.night++;else if(r.shift==='off')counts.off++;else if(r.shift&&r.shift!=='none')counts.other++;}rows.push({date,r,c});}const base=num(state.settings.baseSalary),nightAllowance=num(state.settings.nightAllowance),performance=num(state.settings.extraAllowance),salaryBase=base+nightAllowance+performance,overtimeHourly=salaryBase/240*2,overtimeDaily=overtimeHourly*10,month=state.months[mk]||{},overtimeDays=num(month.overtimeDays),overtimeHours=num(month.overtimeHours),otPay=overtimeDays*overtimeDaily+overtimeHours*overtimeHourly,gross=salaryBase+otPay;return{mk,counts,base,nightAllowance,performance,salaryBase,overtimeHourly,overtimeDaily,overtimeDays,overtimeHours,otPay,gross,net:gross,rows,shiftAllow:0,extra:0,fixed:performance,deductions:0,attendance:0,otHours:overtimeDays*10+overtimeHours};}
-function setTab(tab){activeTab=tab;document.querySelectorAll('.tab-section').forEach(x=>x.classList.add('hidden'));$('tab-'+tab).classList.remove('hidden');document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));const meta={dashboard:['總覽','本月薪資與班表摘要'],schedule:['排班月曆','點日期只調整日班、夜班或休假'],calculator:['薪資試算','依公司公式計算加班與月薪'],settings:['設定','底薪、夜班津貼、表現津貼與備份']}[tab];$('pageTitle').textContent=meta[0];$('pageSub').textContent=meta[1];render();}
-function render(){const y=current.getFullYear(),m=current.getMonth(),mc=monthCalc(y,m);$('monthLabel').textContent=`${y} 年 ${m+1} 月`;$('printMonth').textContent=`${y} 年 ${m+1} 月`;$('dashGross').textContent=money(mc.gross);$('dashNet').textContent=money(mc.overtimeHourly);$('dashOT').textContent=money(mc.overtimeDaily);$('dashOTMoney').textContent='加班時薪 × 10 小時';$('dashNight').textContent=money(mc.otPay);$('dashNightMoney').textContent=`${mc.overtimeDays} 天 ＋ ${mc.overtimeHours} 小時`;if($('monthOtDays'))$('monthOtDays').value=mc.overtimeDays;if($('monthOtHours'))$('monthOtHours').value=mc.overtimeHours;if($('monthOtFormula'))$('monthOtFormula').textContent=`加班時薪 ${money(mc.overtimeHourly)}；1 天（10 小時）${money(mc.overtimeDaily)}；本月加班費 ${money(mc.otPay)}。`;$('breakdown').innerHTML=breakdownHtml(mc);$('calcBase').textContent=money(mc.salaryBase);$('calcAllowance').textContent=money(mc.overtimeHourly);$('calcOT').textContent=money(mc.overtimeDaily);$('calcDeduction').textContent=money(mc.otPay);$('calcSummary').innerHTML=breakdownHtml(mc,true);renderDetail(mc);if(activeTab==='schedule'){renderSimpleCycle();renderCalendar();}if(activeTab==='settings')renderSettings();}`;$('statDay').textContent=mc.counts.day;$('statNight').textContent=mc.counts.night;$('statOff').textContent=mc.counts.off;$('statOther').textContent='15';$('attendanceAmount').textContent=money(state.settings.attendanceBonus);$('attendanceEligible').checked=!!state.months[mc.mk]?.attendanceEligible;
-$('breakdown').innerHTML=breakdownHtml(mc);$('calcBase').textContent=money(state.settings.baseSalary);$('calcAllowance').textContent=money(mc.fixed+mc.shiftAllow+mc.extra+mc.attendance);$('calcOT').textContent=money(mc.otPay);$('calcDeduction').textContent=money(mc.deductions);$('calcSummary').innerHTML=breakdownHtml(mc,true);renderDetail(mc);if(activeTab==='schedule'){renderSimpleCycle();renderCalendar();}if(activeTab==='settings')renderSettings();}
-function breakdownHtml(mc,full=false){const lines=[['底薪',mc.base],['夜班津貼',mc.nightAllowance],['表現津貼',mc.performance],['本月加班費',mc.otPay]];let h='<div class="list">'+lines.map(([n,v])=>'<div class="split"><span>'+esc(n)+'</span><b>'+money(v)+'</b></div>').join('')+'</div><div class="divider"></div><div class="split" style="font-size:18px"><b>預估總薪資</b><b>'+money(mc.gross)+'</b></div>';if(full)h+='<div class="sub" style="margin-top:12px">加班時薪：'+money(mc.overtimeHourly)+'｜夜班加班 1 天（10 小時）：'+money(mc.overtimeDaily)+'｜本月輸入：'+mc.overtimeDays+' 天＋'+mc.overtimeHours+' 小時</div>';return h;}
-function renderCalendar(){const y=current.getFullYear(),m=current.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=iso(new Date());let html='';for(let i=0;i<first;i++)html+='<div class="day empty"></div>';for(let d=1;d<=days;d++){const date=`${monthKey(y,m)}-${String(d).padStart(2,'0')}`,r=state.records[date],c=dayCalc(r),cls=['day'];if(date===today)cls.push('today');if(r)cls.push('hasdata');let chips='';if(r&&r.shift&&r.shift!=='none'){const name=r.shift==='custom'?(r.customName||'自訂'):shiftMap[r.shift];chips+=`<span class="chip ${r.shift==='night'?'night':r.shift==='off'?'off':''}">${esc(name)}</span>`}html+=`<div class="${cls.join(' ')}"><div class="date-num">${d}</div><div class="chips">${chips}</div><button aria-label="編輯 ${date}" data-date="${date}"></button></div>`}const rem=(7-((first+days)%7))%7;for(let i=0;i<rem;i++)html+='<div class="day empty"></div>';$('calendarDays').innerHTML=html;$('calendarDays').querySelectorAll('button[data-date]').forEach(b=>b.onclick=()=>openDay(b.dataset.date));}
-function renderDetail(mc){$('detailRows').innerHTML=mc.rows.map(({date,r,c})=>{const d=new Date(date+'T00:00:00');const shift=r?(r.shift==='custom'?(r.customName||'自訂'):shiftMap[r.shift]):'';return`<tr><td>${date.slice(5)}</td><td>${week[d.getDay()]}</td><td>${esc(shift||'')}</td><td class="right">${r?num(r.normalHours):0}</td><td class="right">${r?num(r.otHours):0}</td><td class="right">${money(c.shiftAllowance+c.extra)}</td><td class="right">${money(c.ot)}</td><td class="right"><b>${money(c.total)}</b></td><td>${esc(r?.note||'')}</td></tr>`}).join('');}
-function renderSettings(){const s=state.settings;['baseSalary','hourlyDivisor','manualHourly','normalHours','attendanceBonus','dayAllowance','nightAllowance','extraAllowance','cycleIndex','cyclePattern','cycleStart','companyNotes'].forEach(id=>{if($(id))$(id).value=s[id]??''});$('hourlyMode').value=s.hourlyMode;$('allowanceList').innerHTML=(s.fixedAllowances||[]).map(x=>listItemHtml(x,'allow')).join('')||'<div class="muted">尚無固定津貼</div>';$('deductionList').innerHTML=(s.deductions||[]).map(x=>listItemHtml(x,'deduct')).join('')||'<div class="muted">尚無固定扣款</div>';bindListEditors();document.querySelectorAll('#otTabs button').forEach(b=>b.classList.toggle('active',b.dataset.ot===activeOt));$('otRuleList').innerHTML=(s.overtime[activeOt]||[]).map((x,i)=>`<div class="list-item rule"><div class="field"><label>最多小時</label><input data-rule-i="${i}" data-rule-k="hours" type="number" min="0" step="0.5" value="${num(x.hours)}"></div><div class="field"><label>倍率</label><input data-rule-i="${i}" data-rule-k="multiplier" type="number" min="0" step="0.01" value="${num(x.multiplier)}"></div><button class="btn danger" data-del-rule="${i}">刪</button></div>`).join('');$('otRuleList').querySelectorAll('input').forEach(inp=>inp.onchange=()=>{state.settings.overtime[activeOt][+inp.dataset.ruleI][inp.dataset.ruleK]=num(inp.value);save();render()});$('otRuleList').querySelectorAll('[data-del-rule]').forEach(b=>b.onclick=()=>{state.settings.overtime[activeOt].splice(+b.dataset.delRule,1);save();renderSettings()});}
-function listItemHtml(x,type){return`<div class="list-item"><div class="field"><label>名稱</label><input data-${type}-id="${x.id}" data-k="name" value="${esc(x.name)}"></div><div class="field"><label>金額</label><input data-${type}-id="${x.id}" data-k="amount" type="number" min="0" step="1" value="${num(x.amount)}"></div><button class="btn danger" data-del-${type}="${x.id}">刪</button></div>`}
-function bindListEditors(){for(const [type,key] of [['allow','fixedAllowances'],['deduct','deductions']]){document.querySelectorAll(`[data-${type}-id]`).forEach(inp=>inp.onchange=()=>{const x=state.settings[key].find(i=>i.id===inp.dataset[type+'Id']);if(x){x[inp.dataset.k]=inp.dataset.k==='amount'?num(inp.value):inp.value;save();render()}});document.querySelectorAll(`[data-del-${type}]`).forEach(b=>b.onclick=()=>{state.settings[key]=state.settings[key].filter(x=>x.id!==b.dataset['del'+type.charAt(0).toUpperCase()+type.slice(1)]);save();render()})}}
-function openDay(date){const r=state.records[date]||{shift:'none',customName:'',normalHours:state.settings.normalHours,otHours:0,otType:'auto',extra:0,note:''};$('editDate').value=date;$('dayTitle').textContent=`${date.slice(0,4)} / ${+date.slice(5,7)} / ${+date.slice(8,10)}（${week[new Date(date+'T00:00:00').getDay()]}）`;$('editShift').value=r.shift||'none';$('editCustomName').value=r.customName||'';$('editNormalHours').value=r.normalHours??state.settings.normalHours;$('editOtHours').value=r.otHours||0;$('editOtType').value=r.otType||'auto';$('editExtra').value=r.extra||0;$('editNote').value=r.note||'';updateDayEstimate();$('dayDialog').showModal();}
-function editorRecord(){return{shift:$('editShift').value,customName:'',normalHours:0,otHours:0,otType:'auto',extra:0,note:''}}
-function updateDayEstimate(){$('dayEstimate').textContent='此處只調整班別；加班請在總覽手動輸入'}
-['editShift','editNormalHours','editOtHours','editOtType','editExtra'].forEach(id=>$(id).addEventListener('input',updateDayEstimate));
-$('saveDay').addEventListener('click',e=>{e.preventDefault();const date=$('editDate').value,r=editorRecord();if(r.shift==='none'&&!r.otHours&&!r.extra&&!r.note){delete state.records[date]}else state.records[date]=r;save();$('dayDialog').close();render()});
-$('copyPrevDay').onclick=()=>{const date=new Date($('editDate').value+'T00:00:00');date.setDate(date.getDate()-1);const r=state.records[iso(date)];if(!r)return alert('前一天沒有可複製的資料');$('editShift').value=r.shift||'none';$('editCustomName').value=r.customName||'';$('editNormalHours').value=r.normalHours??state.settings.normalHours;$('editOtHours').value=r.otHours||0;$('editOtType').value=r.otType||'auto';$('editExtra').value=r.extra||0;$('editNote').value=r.note||'';updateDayEstimate();};
-$('clearDay').onclick=()=>{if(confirm('清除此日所有資料？')){delete state.records[$('editDate').value];save();$('dayDialog').close();render()}};
-function patternToShift(token){const t=token.trim();if(['日','日班','白班'].includes(t))return'day';if(['夜','夜班','大夜'].includes(t))return'night';if(['休','休假','休息'].includes(t))return'off';if(['特休'].includes(t))return'annual';if(['病假'].includes(t))return'sick';if(['事假'].includes(t))return'personal';if(['假日','國定假日','公司假'].includes(t))return'holiday';return'custom';}
-function applyCycle(){const s=state.settings,parts=String(s.cyclePattern||'').split(',').map(x=>x.trim()).filter(Boolean);if(!parts.length)return alert('請先設定輪班循環序列');const start=new Date((s.cycleStart||iso(new Date()))+'T00:00:00'),startIndex=Math.max(0,(parseInt(s.cycleIndex)||1)-1);const y=current.getFullYear(),m=current.getMonth(),days=new Date(y,m+1,0).getDate(),only=$('onlyEmpty').checked;for(let d=1;d<=days;d++){const dt=new Date(y,m,d),date=iso(dt);if(only&&state.records[date])continue;const diff=Math.round((dt-start)/86400000),idx=((startIndex+diff)%parts.length+parts.length)%parts.length,token=parts[idx],sh=patternToShift(token);state.records[date]={shift:sh,customName:sh==='custom'?token:'',normalHours:['day','night','custom'].includes(sh)?num(s.normalHours):0,otHours:0,otType:'auto',extra:0,note:''}}save();render();}
-$('applyCycleBtn').onclick=()=>{const s=state.settings;$('cyclePreview').textContent=`起始：${s.cycleStart}｜序列：${s.cyclePattern||'尚未設定'}`;$('cycleDialog').showModal()};$('confirmCycle').onclick=e=>{e.preventDefault();applyCycle();$('cycleDialog').close()};
-$('copyPrevBtn').onclick=()=>{if(!confirm('將前一個月的同日期班表複製到本月？現有日期不覆蓋。'))return;const y=current.getFullYear(),m=current.getMonth(),prev=new Date(y,m-1,1),days=new Date(y,m+1,0).getDate();for(let d=1;d<=days;d++){const cur=`${monthKey(y,m)}-${String(d).padStart(2,'0')}`,prevDate=new Date(prev.getFullYear(),prev.getMonth(),d);if(prevDate.getMonth()!==prev.getMonth())continue;const p=state.records[iso(prevDate)];if(p&&!state.records[cur])state.records[cur]=structuredClone(p)}save();render()};
-$('attendanceEligible').onchange=()=>{const mk=monthKey(current.getFullYear(),current.getMonth());state.months[mk]=state.months[mk]||{};state.months[mk].attendanceEligible=$('attendanceEligible').checked;save();render()};
-function simplifyUI(){
-  ['hourlyMode','hourlyDivisor','manualHourly','normalHours','attendanceBonus','dayAllowance'].forEach(id=>{const el=$(id);if(el&&el.closest('.field'))el.closest('.field').classList.add('hidden')});
-  document.querySelectorAll('#tab-settings .section-title').forEach(t=>{const h=t.querySelector('h2');if(!h)return;const n=h.textContent.trim();if(['固定津貼','固定扣款','加班倍率','四班二輪週期'].includes(n)){t.classList.add('hidden');if(t.nextElementSibling)t.nextElementSibling.classList.add('hidden')}});
-  ['editCustomName','editNormalHours','editOtHours','editOtType','editExtra','editNote'].forEach(id=>{const el=$(id);if(el&&el.closest('.field'))el.closest('.field').classList.add('hidden')});
-  const cp=$('copyPrevDay');if(cp)cp.classList.add('hidden');
-  const detailTitle=[...document.querySelectorAll('#tab-calculator .section-title')].find(t=>t.textContent.includes('本月逐日明細'));if(detailTitle){detailTitle.classList.add('hidden');if(detailTitle.nextElementSibling)detailTitle.nextElementSibling.classList.add('hidden')}
+
+var KEY='four-team-two-shift-pay-v1';
+var $=function(id){return document.getElementById(id);};
+var num=function(v){var n=Number(v);return Number.isFinite(n)&&n>0?n:0;};
+var money=function(v){return 'NT$'+Math.round(num(v)).toLocaleString('zh-TW');};
+var pad=function(v){return String(v).padStart(2,'0');};
+var iso=function(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
+var monthKey=function(y,m){return y+'-'+pad(m+1);};
+var shiftNames={none:'未設定',day:'日班',night:'夜班',off:'休假'};
+var week=['日','一','二','三','四','五','六'];
+
+function defaultState(){
+  return {
+    version:2,
+    theme:'light',
+    settings:{
+      baseSalary:0,
+      nightAllowance:0,
+      extraAllowance:0,
+      simpleCyclePreset:'rotate',
+      cycleStart:iso(new Date()),
+      cycleIndex:1,
+      cyclePattern:'日班,日班,休假,休假,夜班,夜班,休假,休假'
+    },
+    records:{},
+    months:{}
+  };
 }
-function simplePresetPattern(v){
-  if(v==='day')return '日班,日班,休假,休假';
-  if(v==='night')return '夜班,夜班,休假,休假';
-  if(v==='rotate')return '日班,日班,休假,休假,夜班,夜班,休假,休假';
+
+function loadState(){
+  var d=defaultState();
+  try{
+    var raw=localStorage.getItem(KEY);
+    if(!raw) return d;
+    var x=JSON.parse(raw);
+    d.theme=x.theme||d.theme;
+    d.settings=Object.assign({},d.settings,x.settings||{});
+    d.records=x.records||{};
+    d.months=x.months||{};
+    return d;
+  }catch(e){
+    return d;
+  }
+}
+
+var state=loadState();
+var current=new Date();
+current.setDate(1);
+var activeTab='dashboard';
+var editingDate='';
+
+function save(){
+  localStorage.setItem(KEY,JSON.stringify(state));
+}
+
+function monthData(y,m){
+  var mk=monthKey(y,m);
+  var mm=state.months[mk]||{};
+  var base=num(state.settings.baseSalary);
+  var night=num(state.settings.nightAllowance);
+  var performance=num(state.settings.extraAllowance);
+  var salaryBase=base+night+performance;
+  var overtimeHourly=salaryBase/240*2;
+  var overtimeDaily=overtimeHourly*10;
+  var overtimeDays=num(mm.overtimeDays);
+  var overtimeHours=num(mm.overtimeHours);
+  var overtimePay=overtimeDays*overtimeDaily+overtimeHours*overtimeHourly;
+  var total=salaryBase+overtimePay;
+  var counts={day:0,night:0,off:0,unset:0};
+  var days=new Date(y,m+1,0).getDate();
+  for(var d=1;d<=days;d++){
+    var key=mk+'-'+pad(d);
+    var r=state.records[key];
+    var s=r&&r.shift?r.shift:'none';
+    if(s==='day')counts.day++;
+    else if(s==='night')counts.night++;
+    else if(s==='off')counts.off++;
+    else counts.unset++;
+  }
+  return {
+    mk:mk,
+    base:base,
+    night:night,
+    performance:performance,
+    salaryBase:salaryBase,
+    overtimeHourly:overtimeHourly,
+    overtimeDaily:overtimeDaily,
+    overtimeDays:overtimeDays,
+    overtimeHours:overtimeHours,
+    overtimePay:overtimePay,
+    total:total,
+    counts:counts
+  };
+}
+
+function ensureMonth(){
+  var mk=monthKey(current.getFullYear(),current.getMonth());
+  if(!state.months[mk]) state.months[mk]={};
+  return state.months[mk];
+}
+
+function setMonthOvertime(kind,value){
+  var m=ensureMonth();
+  m[kind]=num(value);
+  save();
+  render();
+}
+
+function setSalary(kind,value){
+  state.settings[kind]=num(value);
+  save();
+  render();
+}
+
+function applyTheme(){
+  document.documentElement.classList.toggle('dark',state.theme==='dark');
+}
+
+function breakdownHtml(mc){
+  return '<div class="list">'+
+    '<div class="split"><span>底薪</span><b>'+money(mc.base)+'</b></div>'+
+    '<div class="split"><span>夜班津貼</span><b>'+money(mc.night)+'</b></div>'+
+    '<div class="split"><span>表現津貼</span><b>'+money(mc.performance)+'</b></div>'+
+    '<div class="split"><span>本月加班費</span><b>'+money(mc.overtimePay)+'</b></div>'+
+    '</div><div class="divider"></div>'+
+    '<div class="split" style="font-size:18px"><b>預估總薪資</b><b>'+money(mc.total)+'</b></div>';
+}
+
+function renderSummary(){
+  var mc=monthData(current.getFullYear(),current.getMonth());
+  if($('monthLabel')) $('monthLabel').textContent=current.getFullYear()+' 年 '+(current.getMonth()+1)+' 月';
+  if($('printMonth')) $('printMonth').textContent=current.getFullYear()+' 年 '+(current.getMonth()+1)+' 月';
+  if($('dashGross')) $('dashGross').textContent=money(mc.total);
+  if($('dashNet')) $('dashNet').textContent=money(mc.overtimeHourly);
+  if($('dashOT')) $('dashOT').textContent=money(mc.overtimeDaily);
+  if($('dashNight')) $('dashNight').textContent=money(mc.overtimePay);
+  if($('dashNightMoney')) $('dashNightMoney').textContent=mc.overtimeDays+' 天 ＋ '+mc.overtimeHours+' 小時';
+  if($('monthOtDays')) $('monthOtDays').value=mc.overtimeDays;
+  if($('monthOtHours')) $('monthOtHours').value=mc.overtimeHours;
+  if($('monthOtFormula')) $('monthOtFormula').textContent='加班時薪 '+money(mc.overtimeHourly)+'；1 天（10 小時）'+money(mc.overtimeDaily)+'；本月加班費 '+money(mc.overtimePay)+'。';
+  if($('breakdown')) $('breakdown').innerHTML=breakdownHtml(mc);
+
+  if($('calcBase')) $('calcBase').textContent=money(mc.salaryBase);
+  if($('calcAllowance')) $('calcAllowance').textContent=money(mc.overtimeHourly);
+  if($('calcOT')) $('calcOT').textContent=money(mc.overtimeDaily);
+  if($('calcDeduction')) $('calcDeduction').textContent=money(mc.overtimePay);
+  if($('calcSummary')) $('calcSummary').innerHTML=breakdownHtml(mc);
+  if($('calcFormulaNote')) $('calcFormulaNote').textContent='加班時薪 =（'+money(mc.base)+' + '+money(mc.night)+' + '+money(mc.performance)+'）÷ 240 × 2 = '+money(mc.overtimeHourly)+'；加班 1 天 = '+money(mc.overtimeDaily)+'。';
+
+  if($('calcBaseInput')) $('calcBaseInput').value=mc.base;
+  if($('calcNightInput')) $('calcNightInput').value=mc.night;
+  if($('calcPerformanceInput')) $('calcPerformanceInput').value=mc.performance;
+  if($('calcOtDaysInput')) $('calcOtDaysInput').value=mc.overtimeDays;
+  if($('calcOtHoursInput')) $('calcOtHoursInput').value=mc.overtimeHours;
+
+  if($('baseSalary')) $('baseSalary').value=mc.base;
+  if($('nightAllowance')) $('nightAllowance').value=mc.night;
+  if($('extraAllowance')) $('extraAllowance').value=mc.performance;
+}
+
+function renderCalendar(){
+  var wrap=$('calendarDays');
+  if(!wrap) return;
+  var y=current.getFullYear();
+  var m=current.getMonth();
+  var first=new Date(y,m,1).getDay();
+  var days=new Date(y,m+1,0).getDate();
+  var today=iso(new Date());
+  var html='';
+  for(var i=0;i<first;i++) html+='<div class="day empty"></div>';
+  for(var d=1;d<=days;d++){
+    var date=monthKey(y,m)+'-'+pad(d);
+    var r=state.records[date]||null;
+    var shift=r&&r.shift?r.shift:'none';
+    var classes='day'+(date===today?' today':'')+(r?' hasdata':'');
+    var chip='';
+    if(shift!=='none'){
+      chip='<span class="chip '+(shift==='night'?'night':shift==='off'?'off':'')+'">'+shiftNames[shift]+'</span>';
+    }
+    html+='<div class="'+classes+'"><div class="date-num">'+d+'</div><div class="chips">'+chip+'</div><button type="button" data-date="'+date+'" aria-label="編輯 '+date+'"></button></div>';
+  }
+  var rem=(7-((first+days)%7))%7;
+  for(var j=0;j<rem;j++) html+='<div class="day empty"></div>';
+  wrap.innerHTML=html;
+  wrap.querySelectorAll('button[data-date]').forEach(function(b){
+    b.addEventListener('click',function(){openDay(b.getAttribute('data-date'));});
+  });
+}
+
+function presetPattern(v){
+  if(v==='day') return '日班,日班,休假,休假';
+  if(v==='night') return '夜班,夜班,休假,休假';
+  if(v==='rotate') return '日班,日班,休假,休假,夜班,夜班,休假,休假';
   return state.settings.cyclePattern||'日班,日班,休假,休假';
 }
-function detectSimplePreset(){
-  if(state.settings.simpleCyclePreset)return state.settings.simpleCyclePreset;
-  const p=String(state.settings.cyclePattern||'').replace(/\s/g,'');
-  if(p==='日班,日班,休假,休假')return 'day';
-  if(p==='夜班,夜班,休假,休假')return 'night';
-  if(p==='日班,日班,休假,休假,夜班,夜班,休假,休假')return 'rotate';
-  return 'custom';
+
+function parts(){
+  return String(state.settings.cyclePattern||'').split(',').map(function(x){return x.trim();}).filter(Boolean);
 }
-function renderSimpleCycle(){
-  if(!$('simpleCyclePreset'))return;
-  const preset=detectSimplePreset();
-  $('simpleCyclePreset').value=preset;
+
+function tokenShift(token){
+  if(['日','日班','白班'].includes(token)) return 'day';
+  if(['夜','夜班','大夜'].includes(token)) return 'night';
+  if(['休','休假','休息'].includes(token)) return 'off';
+  return 'off';
+}
+
+function renderCycle(){
+  if(!$('simpleCyclePreset')) return;
+  $('simpleCyclePreset').value=state.settings.simpleCyclePreset||'rotate';
   $('simpleCycleStart').value=state.settings.cycleStart||iso(new Date());
   $('simpleCyclePattern').value=state.settings.cyclePattern||'';
-  $('simpleCustomWrap').classList.toggle('hidden',preset!=='custom');
-  const parts=String(state.settings.cyclePattern||'').split(',').map(x=>x.trim()).filter(Boolean);
-  $('simpleCycleIndex').innerHTML=parts.map((x,i)=>'<option value="'+(i+1)+'">第 '+(i+1)+' 天（'+esc(x)+'）</option>').join('');
-  $('simpleCycleIndex').value=String(Math.min(Math.max(1,parseInt(state.settings.cycleIndex)||1),Math.max(1,parts.length)));
-  const mc=monthCalc(current.getFullYear(),current.getMonth());
-  $('simpleRestHint').textContent=mc.counts.off===15?'本月剛好休 15 天':'目前休 '+mc.counts.off+' 天・目標 15 天';
+  $('simpleCustomWrap').classList.toggle('hidden',state.settings.simpleCyclePreset!=='custom');
+  var p=parts();
+  $('simpleCycleIndex').innerHTML=p.map(function(x,i){
+    return '<option value="'+(i+1)+'">第 '+(i+1)+' 天（'+x+'）</option>';
+  }).join('');
+  var idx=Math.min(Math.max(1,parseInt(state.settings.cycleIndex||1,10)),Math.max(1,p.length));
+  $('simpleCycleIndex').value=String(idx);
+  var mc=monthData(current.getFullYear(),current.getMonth());
+  if($('simpleRestHint')) $('simpleRestHint').textContent='目前班表休 '+mc.counts.off+' 天';
 }
-function bindSetting(id,key,number=false){$(id).onchange=()=>{state.settings[key]=number?num($(id).value):$(id).value;save();render()}}
-[['baseSalary','baseSalary',1],['hourlyDivisor','hourlyDivisor',1],['manualHourly','manualHourly',1],['normalHours','normalHours',1],['attendanceBonus','attendanceBonus',1],['dayAllowance','dayAllowance',1],['nightAllowance','nightAllowance',1],['extraAllowance','extraAllowance',1],['cycleIndex','cycleIndex',1],['cyclePattern','cyclePattern',0],['cycleStart','cycleStart',0],['companyNotes','companyNotes',0],['hourlyMode','hourlyMode',0]].forEach(x=>bindSetting(x[0],x[1],!!x[2]));
-$('addAllowance').onclick=()=>{state.settings.fixedAllowances.push({id:crypto.randomUUID?.()||String(Date.now()),name:'新津貼',amount:0});save();renderSettings()};$('addDeduction').onclick=()=>{state.settings.deductions.push({id:crypto.randomUUID?.()||String(Date.now()),name:'新扣款',amount:0});save();renderSettings()};$('otTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{activeOt=b.dataset.ot;renderSettings()});$('addOtRule').onclick=()=>{state.settings.overtime[activeOt].push({hours:2,multiplier:1});save();renderSettings()};
-function download(name,content,type){const blob=new Blob([content],{type}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),500)}
-$('exportJson').onclick=()=>download(`四班二輪計薪備份-${iso(new Date())}.json`,JSON.stringify(state,null,2),'application/json');$('importJson').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const x=JSON.parse(await f.text());if(!x.settings||!x.records)throw new Error();if(confirm('匯入會覆蓋目前資料，確定繼續？')){state=x;save();render();alert('匯入完成')}}catch(err){alert('檔案格式不正確')}e.target.value=''};
-$('exportCsv').onclick=()=>{const mc=monthCalc(current.getFullYear(),current.getMonth());const rows=[['日期','星期','班別','正常工時','加班時數','表現津貼','班別津貼','加班費','當日變動薪資','備註']];mc.rows.forEach(({date,r,c})=>rows.push([date,week[new Date(date+'T00:00:00').getDay()],r?(r.shift==='custom'?(r.customName||'自訂'):shiftMap[r.shift]):'',r?num(r.normalHours):0,r?num(r.otHours):0,r?num(r.extra):0,c.shiftAllowance,Math.round(c.ot),Math.round(c.total),r?.note||'']));const csv='\ufeff'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');download(`四班二輪-${mc.mk}.csv`,csv,'text/csv;charset=utf-8')};$('printBtn').onclick=()=>window.print();
-$('resetMonth').onclick=()=>{const mk=monthKey(current.getFullYear(),current.getMonth());if(!confirm(`確定清除 ${mk} 的班表資料？`))return;Object.keys(state.records).filter(k=>k.startsWith(mk+'-')).forEach(k=>delete state.records[k]);delete state.months[mk];save();render()};$('clearAll').onclick=()=>{if(confirm('確定清除全部設定與所有月份資料？此動作無法復原。')&&confirm('再次確認：真的要全部清除？')){state=defaultState();save();location.reload()}};
-function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}$('prevMonth').onclick=()=>changeMonth(-1);$('nextMonth').onclick=()=>changeMonth(1);$('todayBtn').onclick=()=>{current=new Date();current.setDate(1);render()};$('monthLabel').onclick=()=>{current=new Date();current.setDate(1);render()};
-document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));document.querySelectorAll('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
-function applyTheme(){document.documentElement.classList.toggle('dark',state.theme==='dark')}$('themeBtn').onclick=()=>{state.theme=state.theme==='dark'?'light':'dark';save();applyTheme()};
-simplifyUI();
-$('simpleCyclePreset').onchange=()=>{
-  const v=$('simpleCyclePreset').value;
-  state.settings.simpleCyclePreset=v;
-  if(v!=='custom')state.settings.cyclePattern=simplePresetPattern(v);
-  save();renderSimpleCycle();
-};
-$('simpleCycleStart').onchange=()=>{state.settings.cycleStart=$('simpleCycleStart').value;save();renderSimpleCycle()};
-$('simpleCycleIndex').onchange=()=>{state.settings.cycleIndex=Math.max(1,parseInt($('simpleCycleIndex').value)||1);save()};
-$('simpleCyclePattern').onchange=()=>{state.settings.cyclePattern=$('simpleCyclePattern').value;state.settings.simpleCyclePreset='custom';state.settings.cycleIndex=1;save();renderSimpleCycle()};
-function saveMonthOvertime(key,value){const mk=monthKey(current.getFullYear(),current.getMonth());state.months[mk]=state.months[mk]||{};state.months[mk][key]=num(value);save();render();}
-$('monthOtDays').onchange=()=>saveMonthOvertime('overtimeDays',$('monthOtDays').value);
-$('monthOtHours').onchange=()=>saveMonthOvertime('overtimeHours',$('monthOtHours').value);
-applyTheme();render();
+
+function applyCycle(){
+  var p=parts();
+  if(!p.length){alert('請先設定循環');return;}
+  var start=new Date((state.settings.cycleStart||iso(new Date()))+'T00:00:00');
+  var startIndex=Math.max(0,(parseInt(state.settings.cycleIndex||1,10)-1));
+  var y=current.getFullYear();
+  var m=current.getMonth();
+  var days=new Date(y,m+1,0).getDate();
+  if(!confirm('確定套用目前做二休二設定到這個月？這會覆蓋本月現有班表。')) return;
+  for(var d=1;d<=days;d++){
+    var dt=new Date(y,m,d);
+    var diff=Math.round((dt-start)/86400000);
+    var idx=((startIndex+diff)%p.length+p.length)%p.length;
+    state.records[iso(dt)]={shift:tokenShift(p[idx])};
+  }
+  save();
+  render();
+}
+
+function openDay(date){
+  editingDate=date;
+  var r=state.records[date]||{shift:'none'};
+  if($('editShift')) $('editShift').value=r.shift||'none';
+  if($('dayTitle')) $('dayTitle').textContent=date+' 修改班別';
+  if($('dayEstimate')) $('dayEstimate').textContent='這裡只調整日班、夜班或休假';
+  var dlg=$('dayDialog');
+  if(dlg){
+    if(typeof dlg.showModal==='function') dlg.showModal();
+    else dlg.setAttribute('open','');
+  }
+}
+
+function saveDay(){
+  if(!editingDate) return;
+  var s=$('editShift')?$('editShift').value:'none';
+  if(s==='none') delete state.records[editingDate];
+  else state.records[editingDate]={shift:s};
+  save();
+  var dlg=$('dayDialog');
+  if(dlg){
+    if(typeof dlg.close==='function') dlg.close();
+    else dlg.removeAttribute('open');
+  }
+  render();
+}
+
+function setTab(tab){
+  activeTab=tab;
+  document.querySelectorAll('.tab-section').forEach(function(x){x.classList.add('hidden');});
+  var sec=$('tab-'+tab);
+  if(sec) sec.classList.remove('hidden');
+  document.querySelectorAll('[data-tab]').forEach(function(b){
+    b.classList.toggle('active',b.getAttribute('data-tab')===tab);
+  });
+  var meta={
+    dashboard:['總覽','薪資、加班與做二休二班表'],
+    schedule:['排班月曆','點日期只調整日班、夜班或休假'],
+    calculator:['薪資試算','直接輸入薪資與加班資料即可試算'],
+    settings:['設定','底薪、夜班津貼、表現津貼與備份']
+  };
+  if($('pageTitle')) $('pageTitle').textContent=meta[tab][0];
+  if($('pageSub')) $('pageSub').textContent=meta[tab][1];
+  render();
+}
+
+function hideOldUi(){
+  ['hourlyMode','hourlyDivisor','manualHourly','normalHours','attendanceBonus','dayAllowance'].forEach(function(id){
+    var e=$(id);if(e&&e.closest('.field'))e.closest('.field').classList.add('hidden');
+  });
+  document.querySelectorAll('#tab-settings .section-title').forEach(function(t){
+    var h=t.querySelector('h2');
+    if(!h)return;
+    var n=h.textContent.trim();
+    if(['固定津貼','固定扣款','加班倍率','四班二輪週期'].includes(n)){
+      t.classList.add('hidden');
+      if(t.nextElementSibling)t.nextElementSibling.classList.add('hidden');
+    }
+  });
+  ['editCustomName','editNormalHours','editOtHours','editOtType','editExtra','editNote'].forEach(function(id){
+    var e=$(id);if(e&&e.closest('.field'))e.closest('.field').classList.add('hidden');
+  });
+  if($('copyPrevDay')) $('copyPrevDay').classList.add('hidden');
+}
+
+function exportJson(){
+  var blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a');
+  a.href=url;
+  a.download='四班二輪計薪備份-'+iso(new Date())+'.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(function(){URL.revokeObjectURL(url);},500);
+}
+
+function importJson(file){
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    try{
+      var x=JSON.parse(String(reader.result||''));
+      if(!x.settings||!x.records) throw new Error('bad');
+      if(confirm('匯入會覆蓋目前資料，確定嗎？')){
+        var d=defaultState();
+        state={
+          version:2,
+          theme:x.theme||d.theme,
+          settings:Object.assign({},d.settings,x.settings||{}),
+          records:x.records||{},
+          months:x.months||{}
+        };
+        save();
+        applyTheme();
+        render();
+        alert('匯入完成');
+      }
+    }catch(e){alert('備份檔格式不正確');}
+  };
+  reader.readAsText(file);
+}
+
+function render(){
+  renderSummary();
+  if(activeTab==='schedule'){
+    renderCycle();
+    renderCalendar();
+  }
+}
+
+document.querySelectorAll('[data-tab]').forEach(function(b){
+  b.addEventListener('click',function(){setTab(b.getAttribute('data-tab'));});
+});
+document.querySelectorAll('[data-goto]').forEach(function(b){
+  b.addEventListener('click',function(){setTab(b.getAttribute('data-goto'));});
+});
+
+if($('prevMonth')) $('prevMonth').addEventListener('click',function(){current.setMonth(current.getMonth()-1);render();});
+if($('nextMonth')) $('nextMonth').addEventListener('click',function(){current.setMonth(current.getMonth()+1);render();});
+if($('todayBtn')) $('todayBtn').addEventListener('click',function(){current=new Date();current.setDate(1);render();});
+if($('monthLabel')) $('monthLabel').addEventListener('click',function(){current=new Date();current.setDate(1);render();});
+if($('themeBtn')) $('themeBtn').addEventListener('click',function(){state.theme=state.theme==='dark'?'light':'dark';save();applyTheme();});
+
+if($('baseSalary')) $('baseSalary').addEventListener('input',function(){setSalary('baseSalary',this.value);});
+if($('nightAllowance')) $('nightAllowance').addEventListener('input',function(){setSalary('nightAllowance',this.value);});
+if($('extraAllowance')) $('extraAllowance').addEventListener('input',function(){setSalary('extraAllowance',this.value);});
+
+if($('monthOtDays')) $('monthOtDays').addEventListener('input',function(){setMonthOvertime('overtimeDays',this.value);});
+if($('monthOtHours')) $('monthOtHours').addEventListener('input',function(){setMonthOvertime('overtimeHours',this.value);});
+
+if($('calcBaseInput')) $('calcBaseInput').addEventListener('input',function(){setSalary('baseSalary',this.value);});
+if($('calcNightInput')) $('calcNightInput').addEventListener('input',function(){setSalary('nightAllowance',this.value);});
+if($('calcPerformanceInput')) $('calcPerformanceInput').addEventListener('input',function(){setSalary('extraAllowance',this.value);});
+if($('calcOtDaysInput')) $('calcOtDaysInput').addEventListener('input',function(){setMonthOvertime('overtimeDays',this.value);});
+if($('calcOtHoursInput')) $('calcOtHoursInput').addEventListener('input',function(){setMonthOvertime('overtimeHours',this.value);});
+
+if($('simpleCyclePreset')) $('simpleCyclePreset').addEventListener('change',function(){
+  state.settings.simpleCyclePreset=this.value;
+  if(this.value!=='custom') state.settings.cyclePattern=presetPattern(this.value);
+  state.settings.cycleIndex=1;
+  save();
+  renderCycle();
+});
+if($('simpleCycleStart')) $('simpleCycleStart').addEventListener('change',function(){state.settings.cycleStart=this.value;save();renderCycle();});
+if($('simpleCycleIndex')) $('simpleCycleIndex').addEventListener('change',function(){state.settings.cycleIndex=Math.max(1,parseInt(this.value||1,10));save();});
+if($('simpleCyclePattern')) $('simpleCyclePattern').addEventListener('input',function(){state.settings.simpleCyclePreset='custom';state.settings.cyclePattern=this.value;state.settings.cycleIndex=1;save();renderCycle();});
+if($('applyCycleBtn')) $('applyCycleBtn').addEventListener('click',applyCycle);
+
+if($('saveDay')) $('saveDay').addEventListener('click',function(e){e.preventDefault();saveDay();});
+if($('clearDay')) $('clearDay').addEventListener('click',function(){
+  if(!editingDate)return;
+  if(confirm('清除這一天的班別？')){
+    delete state.records[editingDate];
+    save();
+    var dlg=$('dayDialog');
+    if(dlg&&typeof dlg.close==='function')dlg.close();
+    render();
+  }
+});
+
+if($('printBtn')) $('printBtn').addEventListener('click',function(){window.print();});
+if($('exportJson')) $('exportJson').addEventListener('click',exportJson);
+if($('importJson')) $('importJson').addEventListener('change',function(){importJson(this.files&&this.files[0]);this.value='';});
+if($('resetMonth')) $('resetMonth').addEventListener('click',function(){
+  var mk=monthKey(current.getFullYear(),current.getMonth());
+  if(!confirm('確定清除這個月的班表與加班輸入？'))return;
+  Object.keys(state.records).forEach(function(k){if(k.indexOf(mk+'-')===0)delete state.records[k];});
+  delete state.months[mk];
+  save();
+  render();
+});
+if($('clearAll')) $('clearAll').addEventListener('click',function(){
+  if(confirm('確定清除全部資料？')&&confirm('再次確認：真的全部清除？')){
+    state=defaultState();
+    save();
+    applyTheme();
+    render();
+  }
+});
+
+hideOldUi();
+applyTheme();
+render();
 })();
 </script>
 </body>
