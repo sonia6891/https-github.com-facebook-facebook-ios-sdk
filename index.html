@@ -110,6 +110,25 @@
         </div>
         <div class="notice" id="calcFormulaNote" style="margin-top:14px"></div>
       </div>
+
+      <div class="section-title"><h2>扣款項目</h2><span class="muted small">每月手動輸入</span></div>
+      <div class="card">
+        <div class="form-grid">
+          <div class="field"><label>考勤扣款</label><input id="dedAttendance" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>勞保費</label><input id="dedLaborInsurance" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>健保費</label><input id="dedHealthInsurance" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>福利金</label><input id="dedWelfareFund" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>非固定所得稅</label><input id="dedNonFixedTax" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>個人提撥勞退金</label><input id="dedPension" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>健保費補扣</label><input id="dedHealthSupplement" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>其他扣款</label><input id="dedOther" type="number" min="0" step="1" inputmode="decimal"></div>
+        </div>
+        <div class="divider"></div>
+        <div class="split"><b>扣款合計</b><b id="calcDeductionTotal">NT$0</b></div>
+        <div class="split" style="margin-top:10px;font-size:18px"><b>預估實領</b><b id="calcNetPay">NT$0</b></div>
+        <div class="sub">以上皆為手動輸入估算，實際金額以當月薪資單為準。</div>
+      </div>
+
       <div class="section-title"><h2>月總結</h2></div><div class="card" id="calcSummary"></div>
     </section>
 
@@ -226,6 +245,18 @@ function monthData(y,m){
   var overtimeHours=num(mm.overtimeHours);
   var overtimePay=overtimeDays*overtimeDaily+overtimeHours*overtimeHourly;
   var total=salaryBase+overtimePay;
+  var deductions={
+    attendance:num(mm.dedAttendance),
+    laborInsurance:num(mm.dedLaborInsurance),
+    healthInsurance:num(mm.dedHealthInsurance),
+    welfareFund:num(mm.dedWelfareFund),
+    nonFixedTax:num(mm.dedNonFixedTax),
+    pension:num(mm.dedPension),
+    healthSupplement:num(mm.dedHealthSupplement),
+    other:num(mm.dedOther)
+  };
+  var deductionTotal=deductions.attendance+deductions.laborInsurance+deductions.healthInsurance+deductions.welfareFund+deductions.nonFixedTax+deductions.pension+deductions.healthSupplement+deductions.other;
+  var netPay=Math.max(0,total-deductionTotal);
   var counts={day:0,night:0,off:0,unset:0};
   var days=new Date(y,m+1,0).getDate();
   for(var d=1;d<=days;d++){
@@ -249,6 +280,9 @@ function monthData(y,m){
     overtimeHours:overtimeHours,
     overtimePay:overtimePay,
     total:total,
+    deductions:deductions,
+    deductionTotal:deductionTotal,
+    netPay:netPay,
     counts:counts
   };
 }
@@ -260,6 +294,13 @@ function ensureMonth(){
 }
 
 function setMonthOvertime(kind,value){
+  var m=ensureMonth();
+  m[kind]=num(value);
+  save();
+  render();
+}
+
+function setMonthDeduction(kind,value){
   var m=ensureMonth();
   m[kind]=num(value);
   save();
@@ -283,7 +324,9 @@ function breakdownHtml(mc){
     '<div class="split"><span>表現津貼</span><b>'+money(mc.performance)+'</b></div>'+
     '<div class="split"><span>本月加班費</span><b>'+money(mc.overtimePay)+'</b></div>'+
     '</div><div class="divider"></div>'+
-    '<div class="split" style="font-size:18px"><b>預估總薪資</b><b>'+money(mc.total)+'</b></div>';
+    '<div class="split"><b>應發總額</b><b>'+money(mc.total)+'</b></div>'+
+    '<div class="split" style="margin-top:8px"><span>扣款合計</span><b>− '+money(mc.deductionTotal)+'</b></div>'+
+    '<div class="split" style="margin-top:10px;font-size:18px"><b>預估實領</b><b>'+money(mc.netPay)+'</b></div>';
 }
 
 function renderSummary(){
@@ -312,6 +355,17 @@ function renderSummary(){
   if($('calcPerformanceInput')) $('calcPerformanceInput').value=mc.performance;
   if($('calcOtDaysInput')) $('calcOtDaysInput').value=mc.overtimeDays;
   if($('calcOtHoursInput')) $('calcOtHoursInput').value=mc.overtimeHours;
+
+  if($('dedAttendance')) $('dedAttendance').value=mc.deductions.attendance;
+  if($('dedLaborInsurance')) $('dedLaborInsurance').value=mc.deductions.laborInsurance;
+  if($('dedHealthInsurance')) $('dedHealthInsurance').value=mc.deductions.healthInsurance;
+  if($('dedWelfareFund')) $('dedWelfareFund').value=mc.deductions.welfareFund;
+  if($('dedNonFixedTax')) $('dedNonFixedTax').value=mc.deductions.nonFixedTax;
+  if($('dedPension')) $('dedPension').value=mc.deductions.pension;
+  if($('dedHealthSupplement')) $('dedHealthSupplement').value=mc.deductions.healthSupplement;
+  if($('dedOther')) $('dedOther').value=mc.deductions.other;
+  if($('calcDeductionTotal')) $('calcDeductionTotal').textContent=money(mc.deductionTotal);
+  if($('calcNetPay')) $('calcNetPay').textContent=money(mc.netPay);
 
   if($('baseSalary')) $('baseSalary').value=mc.base;
   if($('nightAllowance')) $('nightAllowance').value=mc.night;
@@ -438,7 +492,7 @@ function setTab(tab){
   var meta={
     dashboard:['總覽','薪資、加班與做二休二班表'],
     schedule:['排班月曆','點日期只調整日班、夜班或休假'],
-    calculator:['薪資試算','直接輸入薪資與加班資料即可試算'],
+    calculator:['薪資試算','輸入薪資、加班與扣款，直接看預估實領'],
     settings:['設定','底薪、夜班津貼、表現津貼與備份']
   };
   if($('pageTitle')) $('pageTitle').textContent=meta[tab][0];
@@ -536,6 +590,20 @@ if($('calcNightInput')) $('calcNightInput').addEventListener('input',function(){
 if($('calcPerformanceInput')) $('calcPerformanceInput').addEventListener('input',function(){setSalary('extraAllowance',this.value);});
 if($('calcOtDaysInput')) $('calcOtDaysInput').addEventListener('input',function(){setMonthOvertime('overtimeDays',this.value);});
 if($('calcOtHoursInput')) $('calcOtHoursInput').addEventListener('input',function(){setMonthOvertime('overtimeHours',this.value);});
+
+[
+  ['dedAttendance','dedAttendance'],
+  ['dedLaborInsurance','dedLaborInsurance'],
+  ['dedHealthInsurance','dedHealthInsurance'],
+  ['dedWelfareFund','dedWelfareFund'],
+  ['dedNonFixedTax','dedNonFixedTax'],
+  ['dedPension','dedPension'],
+  ['dedHealthSupplement','dedHealthSupplement'],
+  ['dedOther','dedOther']
+].forEach(function(pair){
+  var el=$(pair[0]);
+  if(el) el.addEventListener('input',function(){setMonthDeduction(pair[1],this.value);});
+});
 
 if($('simpleCyclePreset')) $('simpleCyclePreset').addEventListener('change',function(){
   state.settings.simpleCyclePreset=this.value;
