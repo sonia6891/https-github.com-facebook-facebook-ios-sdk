@@ -72,17 +72,16 @@
     <section id="tab-dashboard" class="tab-section">
       <div class="grid cards4">
         <div class="card"><div class="kicker">預估總薪資</div><div class="value" id="dashGross">NT$0</div><div class="sub">底薪＋夜班津貼＋表現津貼＋加班費</div></div>
-        <div class="card"><div class="kicker">加班時薪</div><div class="value" id="dashNet">NT$0</div><div class="sub">（底薪＋夜班津貼＋表現津貼）÷ 240 × 2</div></div>
-        <div class="card"><div class="kicker">夜班加班 1 天</div><div class="value" id="dashOT">NT$0</div><div class="sub" id="dashOTMoney">加班時薪 × 10 小時</div></div>
-        <div class="card"><div class="kicker">本月加班費</div><div class="value" id="dashNight">NT$0</div><div class="sub" id="dashNightMoney">手動輸入加班天數／小時</div></div>
+        <div class="card"><div class="kicker">加班時薪</div><div class="value" id="dashNet">NT$0</div><div class="sub">（底薪＋夜班津貼＋表現津貼＋護士津貼）÷ 240 × 2</div></div>
+        <div class="card"><div class="kicker">本月加班總時數</div><div class="value" id="dashOT">0 小時</div><div class="sub" id="dashOTMoney">只輸入總時數</div></div>
+        <div class="card"><div class="kicker">本月加班費</div><div class="value" id="dashNight">NT$0</div><div class="sub" id="dashNightMoney">加班時薪 × 總時數</div></div>
       </div>
       <div class="section-title"><h2>本月加班</h2><button class="btn primary" data-goto="schedule">查看班表</button></div>
       <div class="card">
         <div class="form-grid">
-          <div class="field"><label>加班天數（1 天 = 10 小時）</label><input id="monthOtDays" type="number" min="0" step="0.5" inputmode="decimal" placeholder="例如 2"></div>
-          <div class="field"><label>另外加班小時</label><input id="monthOtHours" type="number" min="0" step="0.5" inputmode="decimal" placeholder="例如 3.5"></div>
+          <div class="field"><label>本月加班總時數</label><input id="monthOtHours" type="number" min="0" step="0.5" inputmode="decimal" placeholder="例如 24"></div>
         </div>
-        <div class="notice" id="monthOtFormula" style="margin-top:14px">加班時薪會依你的底薪、夜班津貼與表現津貼自動計算。</div>
+        <div class="notice" id="monthOtFormula" style="margin-top:14px">加班時薪會依底薪、夜班津貼、表現津貼與護士津貼自動計算。</div>
       </div>
       <div class="section-title"><h2>薪資組成</h2><button class="btn" data-goto="calculator">看完整明細</button></div>
       <div class="card" id="breakdown"></div>
@@ -112,9 +111,9 @@
     <section id="tab-calculator" class="tab-section hidden">
       <div class="print-only hidden"><h2>四班二輪計薪助手｜月薪明細</h2><p id="printMonth"></p></div>
       <div class="grid cards4">
-        <div class="card"><div class="kicker">薪資基數</div><div class="value" id="calcBase">NT$0</div><div class="sub">底薪＋夜班津貼＋表現津貼</div></div>
+        <div class="card"><div class="kicker">加班計算基數</div><div class="value" id="calcBase">NT$0</div><div class="sub">底薪＋夜班津貼＋表現津貼＋護士津貼</div></div>
         <div class="card"><div class="kicker">加班時薪</div><div class="value" id="calcAllowance">NT$0</div></div>
-        <div class="card"><div class="kicker">夜班加班 1 天</div><div class="value" id="calcOT">NT$0</div><div class="sub">10 小時</div></div>
+        <div class="card"><div class="kicker">本月加班總時數</div><div class="value" id="calcOT">0 小時</div></div>
         <div class="card"><div class="kicker">本月加班費</div><div class="value" id="calcDeduction">NT$0</div></div>
       </div>
       <div class="section-title"><h2>直接試算</h2><div class="row no-print"><button class="btn" id="printBtn">列印 / 存 PDF</button></div></div>
@@ -123,12 +122,12 @@
           <div class="field"><label>底薪</label><input id="calcBaseInput" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>夜班津貼 / 月</label><input id="calcNightInput" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>表現津貼 / 月</label><input id="calcPerformanceInput" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>護士津貼 / 月</label><input id="calcNurseAllowance" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>伙食津貼 / 月</label><input id="calcMealAllowance" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>交通津貼 / 月</label><input id="calcTransportAllowance" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>全勤獎金 / 月</label><input id="calcAttendanceBonus" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>其他薪資 / 其他津貼</label><input id="calcOtherIncome" type="number" min="0" step="1" inputmode="decimal"></div>
-          <div class="field"><label>本月加班天數（1 天 = 10 小時）</label><input id="calcOtDaysInput" type="number" min="0" step="0.5" inputmode="decimal"></div>
-          <div class="field"><label>另外加班小時</label><input id="calcOtHoursInput" type="number" min="0" step="0.5" inputmode="decimal"></div>
+          <div class="field"><label>本月加班總時數</label><input id="calcOtHoursInput" type="number" min="0" step="0.5" inputmode="decimal"></div>
         </div>
         <div class="notice" id="calcFormulaNote" style="margin-top:14px"></div>
       </div>
@@ -155,7 +154,7 @@
     </section>
 
     <section id="tab-settings" class="tab-section hidden">
-      <div class="notice warn">只要設定「底薪、夜班津貼、表現津貼」。加班時薪固定照：（三項合計 ÷ 240 × 2）計算。</div>
+      <div class="notice warn">加班時薪固定照：「底薪＋夜班津貼＋表現津貼＋護士津貼」÷ 240 × 2 計算。</div>
       <div class="section-title"><h2>基本薪資設定</h2></div>
       <div class="card"><div class="form-grid">
         <div class="field"><label>月薪 / 本薪（NT$）</label><input id="baseSalary" type="number" min="0" step="1"></div>
@@ -165,8 +164,10 @@
         <div class="field"><label>每班正常工時</label><input id="normalHours" type="number" min="0" step="0.5"></div>
         <div class="field"><label>全勤獎金（NT$）</label><input id="attendanceBonus" type="number" min="0" step="1"></div>
         <div class="field"><label>日班津貼 / 班</label><input id="dayAllowance" type="number" min="0" step="1"></div>
-        <div class="field"><label>夜班津貼 / 月</label><input id="nightAllowance" type="number" min="0" step="1"></div><div class="field"><label>表現津貼 / 月</label><input id="extraAllowance" type="number" min="0" step="1"></div>
-      </div><div class="notice" style="margin-top:14px">加班時薪 =（底薪＋夜班津貼＋表現津貼）÷ 240 × 2；夜班加班 1 天 = 加班時薪 × 10。</div></div>
+        <div class="field"><label>夜班津貼 / 月</label><input id="nightAllowance" type="number" min="0" step="1"></div>
+        <div class="field"><label>表現津貼 / 月</label><input id="extraAllowance" type="number" min="0" step="1"></div>
+        <div class="field"><label>護士津貼 / 月</label><input id="nurseAllowance" type="number" min="0" step="1"></div>
+      </div><div class="notice" style="margin-top:14px">加班時薪 =（底薪＋夜班津貼＋表現津貼＋護士津貼）÷ 240 × 2；本月加班費 = 加班時薪 × 加班總時數。</div></div>
 
       <div class="section-title"><h2>固定津貼</h2><button class="btn" id="addAllowance">＋ 新增</button></div><div class="card"><div class="list" id="allowanceList"></div></div>
       <div class="section-title"><h2>固定扣款</h2><button class="btn" id="addDeduction">＋ 新增</button></div><div class="card"><div class="list" id="deductionList"></div></div>
@@ -232,7 +233,7 @@ function defaultState(){
   return {
     theme:'light',
     team:'A',
-    settings:{baseSalary:0,nightAllowance:0,extraAllowance:0},
+    settings:{baseSalary:0,nightAllowance:0,extraAllowance:0,nurseAllowance:0},
     months:{},
     dayStatus:{}
   };
@@ -266,16 +267,15 @@ function monthData(){
   var base=num(state.settings.baseSalary);
   var night=num(state.settings.nightAllowance);
   var performance=num(state.settings.extraAllowance);
+  var nurse=num(state.settings.nurseAllowance);
   var meal=num(mm.mealAllowance);
   var transport=num(mm.transportAllowance);
   var attendanceBonus=num(mm.attendanceBonusIncome);
   var otherIncome=num(mm.otherIncome);
-  var overtimeBase=base+night+performance;
+  var overtimeBase=base+night+performance+nurse;
   var overtimeHourly=overtimeBase/240*2;
-  var overtimeDaily=overtimeHourly*10;
-  var overtimeDays=num(mm.overtimeDays);
   var overtimeHours=num(mm.overtimeHours);
-  var overtimePay=overtimeDays*overtimeDaily+overtimeHours*overtimeHourly;
+  var overtimePay=overtimeHours*overtimeHourly;
   var gross=overtimeBase+meal+transport+attendanceBonus+otherIncome+overtimePay;
   var deductions={
     attendance:num(mm.dedAttendance),
@@ -296,10 +296,9 @@ function monthData(){
     if(s==='off')offDays++;else workDays++;
   }
   return {
-    mk:mk,base:base,night:night,performance:performance,meal:meal,transport:transport,
+    mk:mk,base:base,night:night,performance:performance,nurse:nurse,meal:meal,transport:transport,
     attendanceBonus:attendanceBonus,otherIncome:otherIncome,overtimeBase:overtimeBase,
-    overtimeHourly:overtimeHourly,overtimeDaily:overtimeDaily,overtimeDays:overtimeDays,
-    overtimeHours:overtimeHours,overtimePay:overtimePay,gross:gross,deductions:deductions,
+    overtimeHourly:overtimeHourly,overtimeHours:overtimeHours,overtimePay:overtimePay,gross:gross,deductions:deductions,
     deductionTotal:deductionTotal,netPay:netPay,workDays:workDays,offDays:offDays
   };
 }
@@ -309,6 +308,7 @@ function breakdownHtml(mc){
     '<div class="split"><span>底薪</span><b>'+money(mc.base)+'</b></div>'+
     '<div class="split"><span>夜班津貼</span><b>'+money(mc.night)+'</b></div>'+
     '<div class="split"><span>表現津貼</span><b>'+money(mc.performance)+'</b></div>'+
+    '<div class="split"><span>護士津貼</span><b>'+money(mc.nurse)+'</b></div>'+
     '<div class="split"><span>伙食津貼</span><b>'+money(mc.meal)+'</b></div>'+
     '<div class="split"><span>交通津貼</span><b>'+money(mc.transport)+'</b></div>'+
     '<div class="split"><span>全勤獎金</span><b>'+money(mc.attendanceBonus)+'</b></div>'+
@@ -327,29 +327,28 @@ function renderSummary(){
 
   if($('dashGross'))$('dashGross').textContent=money(mc.gross);
   if($('dashNet'))$('dashNet').textContent=money(mc.overtimeHourly);
-  if($('dashOT'))$('dashOT').textContent=money(mc.overtimeDaily);
+  if($('dashOT'))$('dashOT').textContent=mc.overtimeHours+' 小時';
   if($('dashNight'))$('dashNight').textContent=money(mc.overtimePay);
-  if($('dashNightMoney'))$('dashNightMoney').textContent=mc.overtimeDays+' 天 ＋ '+mc.overtimeHours+' 小時';
-  if($('monthOtDays'))$('monthOtDays').value=mc.overtimeDays;
+  if($('dashNightMoney'))$('dashNightMoney').textContent='加班時薪 × '+mc.overtimeHours+' 小時';
   if($('monthOtHours'))$('monthOtHours').value=mc.overtimeHours;
-  if($('monthOtFormula'))$('monthOtFormula').textContent='加班時薪 '+money(mc.overtimeHourly)+'；1 天（10 小時）'+money(mc.overtimeDaily)+'；本月加班費 '+money(mc.overtimePay)+'。';
+  if($('monthOtFormula'))$('monthOtFormula').textContent='加班時薪 '+money(mc.overtimeHourly)+' × '+mc.overtimeHours+' 小時 = 本月加班費 '+money(mc.overtimePay)+'。';
   if($('breakdown'))$('breakdown').innerHTML=breakdownHtml(mc);
 
   if($('calcBase'))$('calcBase').textContent=money(mc.overtimeBase);
   if($('calcAllowance'))$('calcAllowance').textContent=money(mc.overtimeHourly);
-  if($('calcOT'))$('calcOT').textContent=money(mc.overtimeDaily);
+  if($('calcOT'))$('calcOT').textContent=mc.overtimeHours+' 小時';
   if($('calcDeduction'))$('calcDeduction').textContent=money(mc.overtimePay);
   if($('calcSummary'))$('calcSummary').innerHTML=breakdownHtml(mc);
-  if($('calcFormulaNote'))$('calcFormulaNote').textContent='加班時薪仍只用（底薪＋夜班津貼＋表現津貼）÷ 240 × 2 = '+money(mc.overtimeHourly)+'；伙食、交通、全勤與其他薪資不納入加班時薪基數。';
+  if($('calcFormulaNote'))$('calcFormulaNote').textContent='加班時薪 =（底薪＋夜班津貼＋表現津貼＋護士津貼）÷ 240 × 2 = '+money(mc.overtimeHourly)+'；本月加班費 = '+money(mc.overtimeHourly)+' × '+mc.overtimeHours+' 小時 = '+money(mc.overtimePay)+'。伙食、交通、全勤與其他薪資不納入加班時薪基數。';
 
   if($('calcBaseInput'))$('calcBaseInput').value=mc.base;
   if($('calcNightInput'))$('calcNightInput').value=mc.night;
   if($('calcPerformanceInput'))$('calcPerformanceInput').value=mc.performance;
+  if($('calcNurseAllowance'))$('calcNurseAllowance').value=mc.nurse;
   if($('calcMealAllowance'))$('calcMealAllowance').value=mc.meal;
   if($('calcTransportAllowance'))$('calcTransportAllowance').value=mc.transport;
   if($('calcAttendanceBonus'))$('calcAttendanceBonus').value=mc.attendanceBonus;
   if($('calcOtherIncome'))$('calcOtherIncome').value=mc.otherIncome;
-  if($('calcOtDaysInput'))$('calcOtDaysInput').value=mc.overtimeDays;
   if($('calcOtHoursInput'))$('calcOtHoursInput').value=mc.overtimeHours;
 
   if($('dedAttendance'))$('dedAttendance').value=mc.deductions.attendance;
@@ -366,6 +365,7 @@ function renderSummary(){
   if($('baseSalary'))$('baseSalary').value=mc.base;
   if($('nightAllowance'))$('nightAllowance').value=mc.night;
   if($('extraAllowance'))$('extraAllowance').value=mc.performance;
+  if($('nurseAllowance'))$('nurseAllowance').value=mc.nurse;
 }
 
 function statusMeta(st){
@@ -455,7 +455,7 @@ function setTab(tab){
     dashboard:['總覽','薪資、加班與做二休二班表'],
     schedule:['排班月曆','A／B班固定循環，可逐日加上假別或加班標記'],
     calculator:['薪資試算','輸入薪資、津貼、加班與扣款，直接看預估實領'],
-    settings:['設定','底薪、夜班津貼、表現津貼']
+    settings:['設定','底薪、夜班津貼、表現津貼、護士津貼']
   };
   if($('pageTitle'))$('pageTitle').textContent=meta[tab][0];
   if($('pageSub'))$('pageSub').textContent=meta[tab][1];
@@ -490,18 +490,18 @@ if($('teamSelect'))$('teamSelect').addEventListener('change',function(){state.te
 if($('baseSalary'))$('baseSalary').addEventListener('input',function(){setSalary('baseSalary',this.value);});
 if($('nightAllowance'))$('nightAllowance').addEventListener('input',function(){setSalary('nightAllowance',this.value);});
 if($('extraAllowance'))$('extraAllowance').addEventListener('input',function(){setSalary('extraAllowance',this.value);});
+if($('nurseAllowance'))$('nurseAllowance').addEventListener('input',function(){setSalary('nurseAllowance',this.value);});
 if($('calcBaseInput'))$('calcBaseInput').addEventListener('input',function(){setSalary('baseSalary',this.value);});
 if($('calcNightInput'))$('calcNightInput').addEventListener('input',function(){setSalary('nightAllowance',this.value);});
 if($('calcPerformanceInput'))$('calcPerformanceInput').addEventListener('input',function(){setSalary('extraAllowance',this.value);});
+if($('calcNurseAllowance'))$('calcNurseAllowance').addEventListener('input',function(){setSalary('nurseAllowance',this.value);});
 
 [
  ['calcMealAllowance','mealAllowance'],
  ['calcTransportAllowance','transportAllowance'],
  ['calcAttendanceBonus','attendanceBonusIncome'],
  ['calcOtherIncome','otherIncome'],
- ['monthOtDays','overtimeDays'],
  ['monthOtHours','overtimeHours'],
- ['calcOtDaysInput','overtimeDays'],
  ['calcOtHoursInput','overtimeHours'],
  ['dedAttendance','dedAttendance'],
  ['dedLaborInsurance','dedLaborInsurance'],
