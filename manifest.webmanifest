@@ -1,0 +1,21 @@
+{
+  "name": "輪班薪資助手",
+  "short_name": "輪班薪資",
+  "description": "通用做X休Y排班、加班與薪資試算工具",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7fb",
+  "theme_color": "#173a67",
+  "lang": "zh-Hant",
+  "orientation": "any",
+  "categories": ["productivity", "finance"],
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
