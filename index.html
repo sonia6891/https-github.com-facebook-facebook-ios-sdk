@@ -98,6 +98,9 @@
     .base-reveal summary{font-size:8px;padding:1px 0}
     .base-reveal-body{gap:2px}
     .form-grid{grid-template-columns:1fr}
+    .attendance-grid{grid-template-columns:1fr 1fr;gap:10px}
+    .attendance-grid .card{padding:12px}
+    .attendance-grid .notice{font-size:11px;padding:9px 10px}
     .field input,.field select,.field textarea{font-size:16px}
     .list-item{grid-template-columns:1fr}
     .list-item .btn{width:100%}
@@ -111,6 +114,7 @@
   @media(max-width:430px){
     main{padding-left:10px;padding-right:10px}
     .cards4{grid-template-columns:1fr}
+    .attendance-grid{grid-template-columns:1fr}
     .value{font-size:20px}
     .stat-list{grid-template-columns:1fr 1fr}
     .calendar{margin-left:-10px;margin-right:-10px}
@@ -162,12 +166,19 @@
         <div class="card"><div class="kicker">本月加班總時數</div><div class="value" id="dashOT">0 小時</div><div class="sub" id="dashOTMoney">只輸入總時數</div></div>
         <div class="card"><div class="kicker">本月加班費</div><div class="value" id="dashNight">NT$0</div><div class="sub" id="dashNightMoney">加班時薪 × 總時數</div></div>
       </div>
-      <div class="section-title"><h2>本月加班</h2><button class="btn primary" data-goto="schedule">查看班表</button></div>
-      <div class="card">
-        <div class="form-grid">
+      <div class="section-title"><h2>本月出勤</h2><button class="btn primary" data-goto="schedule">查看班表</button></div>
+      <div class="two-col attendance-grid">
+        <div class="card">
+          <div class="kicker">本月加班</div>
           <div class="field"><label>本月加班總時數</label><input id="monthOtHours" type="number" min="0" step="0.5" inputmode="decimal" placeholder="例如 24"></div>
+          <div class="notice" id="monthOtFormula" style="margin-top:14px">加班時薪會依底薪、輪班津貼、伙食津貼與表現津貼自動計算。</div>
         </div>
-        <div class="notice" id="monthOtFormula" style="margin-top:14px">加班時薪會依底薪、輪班津貼、伙食津貼與表現津貼自動計算。</div>
+        <div class="card">
+          <div class="split"><div class="kicker">本月請假</div><b id="leaveTotalHours">0 小時</b></div>
+          <div id="leaveSummary" class="list" style="margin-top:10px">
+            <div class="muted small">本月尚無請假紀錄</div>
+          </div>
+        </div>
       </div>
       <div class="section-title"><h2>薪資組成</h2><button class="btn" data-goto="calculator">看完整明細</button></div>
       <div class="card" id="breakdown"></div>
@@ -319,6 +330,9 @@
     <div class="field" id="customStatusWrap" style="margin-top:14px">
       <label>自訂項目名稱</label><input id="customStatusText" type="text" placeholder="例如：公假、補休、家庭照顧假">
     </div>
+    <div class="field" id="statusHoursWrap" style="margin-top:14px">
+      <label>時數</label><input id="statusHours" type="number" min="0" step="0.5" inputmode="decimal" placeholder="例如：8">
+    </div>
   </div>
   <div class="modal-foot">
     <button class="btn" value="cancel">取消</button>
@@ -468,6 +482,22 @@ function otherShiftName(name){
   return '另一班';
 }
 
+function monthlyLeaveSummary(y,m){
+  var result={total:0,items:{}};
+  var prefix=y+'-'+pad(m+1)+'-';
+  Object.keys(state.dayStatus||{}).forEach(function(date){
+    if(date.indexOf(prefix)!==0)return;
+    var st=state.dayStatus[date];
+    if(!st||st.type==='none'||st.type==='overtime')return;
+    var meta=statusMeta(st);
+    var label=meta?meta.label:(st.label||'其他');
+    var hours=num(st.hours);
+    result.total+=hours;
+    result.items[label]=(result.items[label]||0)+hours;
+  });
+  return result;
+}
+
 function monthData(){
   var y=current.getFullYear(),m=current.getMonth(),mk=monthKey(y,m),mm=state.months[mk]||{};
   var base=num(state.settings.baseSalary);
@@ -494,6 +524,7 @@ function monthData(){
   };
   var deductionTotal=deductions.attendance+deductions.laborInsurance+deductions.healthInsurance+deductions.welfareFund+deductions.nonFixedTax+deductions.pension+deductions.healthSupplement+deductions.other;
   var netPay=Math.max(0,gross-deductionTotal);
+  var leaveSummary=monthlyLeaveSummary(y,m);
   var workDays=0,offDays=0;
   var days=new Date(y,m+1,0).getDate();
   for(var d=1;d<=days;d++){
@@ -504,7 +535,7 @@ function monthData(){
     mk:mk,base:base,night:night,performance:performance,meal:meal,transport:transport,
     attendanceBonus:attendanceBonus,otherIncome:otherIncome,overtimeBase:overtimeBase,
     overtimeHourly:overtimeHourly,overtimeHours:overtimeHours,overtimePay:overtimePay,gross:gross,deductions:deductions,
-    deductionTotal:deductionTotal,netPay:netPay,workDays:workDays,offDays:offDays
+    deductionTotal:deductionTotal,netPay:netPay,leaveSummary:leaveSummary,workDays:workDays,offDays:offDays
   };
 }
 
@@ -536,6 +567,13 @@ function renderSummary(){
   if($('dashNightMoney'))$('dashNightMoney').textContent='加班時薪 × '+mc.overtimeHours+' 小時';
   if($('monthOtHours'))$('monthOtHours').value=mc.overtimeHours;
   if($('monthOtFormula'))$('monthOtFormula').textContent='加班時薪 '+money(mc.overtimeHourly)+' × '+mc.overtimeHours+' 小時 = 本月加班費 '+money(mc.overtimePay)+'。';
+  if($('leaveTotalHours'))$('leaveTotalHours').textContent=mc.leaveSummary.total+' 小時';
+  if($('leaveSummary')){
+    var leaveEntries=Object.keys(mc.leaveSummary.items);
+    $('leaveSummary').innerHTML=leaveEntries.length
+      ? leaveEntries.map(function(label){return '<div class="split"><span>'+label+'</span><b>'+mc.leaveSummary.items[label]+' 小時</b></div>';}).join('')
+      : '<div class="muted small">本月尚無請假紀錄</div>';
+  }
   if($('breakdown'))$('breakdown').innerHTML=breakdownHtml(mc);
 
   if($('calcBase'))$('calcBase').textContent=money(mc.overtimeBase);
@@ -642,14 +680,17 @@ function openDayStatus(date){
   if($('editDate'))$('editDate').value=date;
   if($('editStatus'))$('editStatus').value=st.type||'none';
   if($('customStatusText'))$('customStatusText').value=st.label||'';
+  if($('statusHours'))$('statusHours').value=num(st.hours)||'';
   toggleCustomStatus();
   var dlg=$('dayDialog');
   if(dlg&&typeof dlg.showModal==='function')dlg.showModal();
 }
 
 function toggleCustomStatus(){
-  var isCustom=$('editStatus')&&$('editStatus').value==='custom';
+  var type=$('editStatus')?$('editStatus').value:'none';
+  var isCustom=type==='custom';
   if($('customStatusWrap'))$('customStatusWrap').classList.toggle('hidden',!isCustom);
+  if($('statusHoursWrap'))$('statusHoursWrap').classList.toggle('hidden',type==='none');
 }
 
 function saveDayStatus(){
@@ -659,9 +700,9 @@ function saveDayStatus(){
     delete state.dayStatus[editingDate];
   }else if(type==='custom'){
     var label=($('customStatusText')&&$('customStatusText').value.trim())||'自訂';
-    state.dayStatus[editingDate]={type:'custom',label:label};
+    state.dayStatus[editingDate]={type:'custom',label:label,hours:num($('statusHours')&&$('statusHours').value)};
   }else{
-    state.dayStatus[editingDate]={type:type,label:''};
+    state.dayStatus[editingDate]={type:type,label:'',hours:num($('statusHours')&&$('statusHours').value)};
   }
   var dlg=$('dayDialog');if(dlg&&typeof dlg.close==='function')dlg.close();
   render();
@@ -669,6 +710,7 @@ function saveDayStatus(){
 
 function clearDayStatus(){
   if(editingDate)delete state.dayStatus[editingDate];
+  if($('statusHours'))$('statusHours').value='';
   var dlg=$('dayDialog');if(dlg&&typeof dlg.close==='function')dlg.close();
   render();
 }
