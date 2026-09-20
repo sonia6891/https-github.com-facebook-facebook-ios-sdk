@@ -34,7 +34,15 @@
   html.dark .chip.menstrual{background:#3b1630;color:#f9a8d4;border-color:#831843}
   html.dark .chip.annual{background:#251747;color:#c4b5fd;border-color:#5b21b6}
   html.dark .chip.custom-status{background:#1e293b;color:#cbd5e1;border-color:#475569}
-  #teamSelect{font-size:18px;font-weight:900;padding:13px 14px}
+  #patternPreset,#scheduleSide{font-size:17px;font-weight:850;padding:12px 14px}
+  .chip.work-main{font-size:16px;font-weight:900;padding:7px 12px;background:#dbeafe;color:#0b4f9c;border:1px solid #93c5fd}
+  .chip.work-reverse{font-size:16px;font-weight:900;padding:7px 12px;background:#ffedd5;color:#9a3412;border:1px solid #fdba74}
+  .day.work-main-cell{background:#f4f8ff}
+  .day.work-reverse-cell{background:#fff8ef}
+  html.dark .chip.work-main{background:#17365f;color:#bfdbfe;border-color:#315d93}
+  html.dark .chip.work-reverse{background:#4a2a14;color:#fed7aa;border-color:#8a4b20}
+  html.dark .day.work-main-cell{background:#101d2d}
+  html.dark .day.work-reverse-cell{background:#21180f}
   .day.today .date-num{background:var(--brand);color:white;width:24px;height:24px;border-radius:50%;display:grid;place-items:center}.day.hasdata{background:color-mix(in srgb,var(--accent) 25%,var(--card))}
   .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.field label{display:block;font-size:12px;color:var(--muted);font-weight:700;margin:0 0 7px}.field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:11px 12px;outline:none}.field textarea{min-height:90px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--brand2);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 13%,transparent)}
   .row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.split{display:flex;align-items:center;justify-content:space-between;gap:12px}.list{display:grid;gap:10px}.list-item{display:grid;grid-template-columns:1fr 150px auto;gap:8px;align-items:end}.list-item.rule{grid-template-columns:120px 120px auto}.muted{color:var(--muted)}.small{font-size:12px}.notice{padding:12px 14px;border-radius:12px;background:var(--accent);color:var(--brand);font-size:13px;line-height:1.55}.warn{background:#fff7ed;color:#9a3412}.divider{height:1px;background:var(--line);margin:18px 0}.toggle{display:flex;align-items:center;gap:9px}.toggle input{width:18px;height:18px}.pilltabs{display:flex;gap:6px;flex-wrap:wrap}.pilltabs button{border:1px solid var(--line);background:var(--card);color:var(--muted);padding:8px 11px;border-radius:999px}.pilltabs button.active{background:var(--accent);color:var(--brand);border-color:transparent}
@@ -90,20 +98,32 @@
 
     <section id="tab-schedule" class="tab-section hidden">
       <div class="card no-print" style="margin-bottom:14px">
-        <div class="section-title" style="margin-top:0"><h2>A／B 班做二休二</h2><span class="muted small">固定循環</span></div>
+        <div class="section-title" style="margin-top:0"><h2>通用循環排班</h2><span class="muted small">做 X 休 Y</span></div>
         <div class="form-grid">
-          <div class="field"><label>查看班別</label><select id="teamSelect">
-            <option value="A">A班</option>
-            <option value="B">B班</option>
-          </select></div>
+          <div class="field"><label>排班模式</label>
+            <select id="patternPreset">
+              <option value="2-2">做2休2</option>
+              <option value="4-3">做4休3</option>
+              <option value="custom">自訂做X休Y</option>
+            </select>
+          </div>
+          <div class="field"><label>班別方向</label>
+            <select id="scheduleSide">
+              <option value="main">正班</option>
+              <option value="reverse">反班（上班／休假完全相反）</option>
+            </select>
+          </div>
+          <div class="field" id="customWorkWrap"><label>連續上班天數</label><input id="customWorkDays" type="number" min="1" step="1" value="2"></div>
+          <div class="field" id="customOffWrap"><label>連續休假天數</label><input id="customOffDays" type="number" min="1" step="1" value="2"></div>
+          <div class="field"><label>第一個上班日</label><input id="scheduleStartDate" type="date"></div>
         </div>
-        <div class="notice" id="teamRuleNote" style="margin-top:14px">A班：19、20上班，21、22休假，之後每兩天上班、兩天休假；B班完全相反。</div>
+        <div class="notice" id="teamRuleNote" style="margin-top:14px"></div>
         <div class="row" style="margin-top:12px">
-          <span class="chip team-a">A班</span>
-          <span class="chip team-b">B班</span>
+          <span class="chip work-main">正班上班</span>
+          <span class="chip work-reverse">反班上班</span>
           <span class="chip off">休假</span>
         </div>
-        <div class="sub" style="margin-top:10px">點日期可另外標記：加班、病假、生理假、特休，或輸入自訂項目。</div>
+        <div class="sub" style="margin-top:10px">例如做2休2：選一個你確定是「第一個上班日」的日期，系統會自動往前、往後排。點日期仍可另外標記加班、病假、生理假、特休或自訂項目。</div>
       </div>
       <div class="card calendar"><div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div><div class="days" id="calendarDays"></div></div>
     </section>
@@ -225,12 +245,17 @@ var pad=function(v){return String(v).padStart(2,'0');};
 var iso=function(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());};
 var monthKey=function(y,m){return y+'-'+pad(m+1);};
 var DAY_MS=86400000;
-var ANCHOR_UTC=Date.UTC(2026,8,19);
 
 function defaultState(){
   return {
     theme:'light',
-    team:'A',
+    schedule:{
+      preset:'2-2',
+      side:'main',
+      workDays:2,
+      offDays:2,
+      startDate:iso(new Date())
+    },
     settings:{baseSalary:0,nightAllowance:0,extraAllowance:0},
     months:{},
     dayStatus:{}
@@ -252,12 +277,19 @@ function monthBucket(){
 function setSalary(key,value){state.settings[key]=num(value);render();}
 function setMonthValue(key,value){monthBucket()[key]=num(value);render();}
 
-function scheduleForDate(dateObj,team){
-  var utc=Date.UTC(dateObj.getFullYear(),dateObj.getMonth(),dateObj.getDate());
-  var diff=Math.floor((utc-ANCHOR_UTC)/DAY_MS);
-  var phase=((diff%4)+4)%4;
-  var aWorks=(phase===0||phase===1);
-  return team==='A'?(aWorks?'A':'off'):(aWorks?'off':'B');
+function scheduleForDate(dateObj){
+  var cfg=state.schedule;
+  var workDays=Math.max(1,parseInt(cfg.workDays,10)||1);
+  var offDays=Math.max(1,parseInt(cfg.offDays,10)||1);
+  var cycle=workDays+offDays;
+  var start=new Date((cfg.startDate||iso(new Date()))+'T00:00:00');
+  var dateUtc=Date.UTC(dateObj.getFullYear(),dateObj.getMonth(),dateObj.getDate());
+  var startUtc=Date.UTC(start.getFullYear(),start.getMonth(),start.getDate());
+  var diff=Math.floor((dateUtc-startUtc)/DAY_MS);
+  var phase=((diff%cycle)+cycle)%cycle;
+  var mainWorks=phase<workDays;
+  var works=cfg.side==='reverse'?!mainWorks:mainWorks;
+  return works?'work':'off';
 }
 
 function monthData(){
@@ -289,7 +321,7 @@ function monthData(){
   var workDays=0,offDays=0;
   var days=new Date(y,m+1,0).getDate();
   for(var d=1;d<=days;d++){
-    var s=scheduleForDate(new Date(y,m,d),state.team);
+    var s=scheduleForDate(new Date(y,m,d));
     if(s==='off')offDays++;else workDays++;
   }
   return {
@@ -376,10 +408,11 @@ function renderCalendar(){
   var y=current.getFullYear(),m=current.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=iso(new Date()),html='';
   for(var i=0;i<first;i++)html+='<div class="day empty"></div>';
   for(var d=1;d<=days;d++){
-    var dateObj=new Date(y,m,d),date=iso(dateObj),s=scheduleForDate(dateObj,state.team);
-    var label=s==='off'?'休假':s+'班';
-    var cls='day'+(date===today?' today':'')+(s==='A'?' team-a-cell':s==='B'?' team-b-cell':'');
-    var chipClass=s==='A'?'team-a':s==='B'?'team-b':'off';
+    var dateObj=new Date(y,m,d),date=iso(dateObj),s=scheduleForDate(dateObj);
+    var label=s==='off'?'休假':'上班';
+    var reverse=state.schedule.side==='reverse';
+    var cls='day'+(date===today?' today':'')+(s==='work'?(reverse?' work-reverse-cell':' work-main-cell'):'');
+    var chipClass=s==='work'?(reverse?'work-reverse':'work-main'):'off';
     var extra=statusMeta(state.dayStatus[date]);
     var extraHtml=extra?'<span class="chip '+extra.cls+'">'+extra.label+'</span>':'';
     html+='<div class="'+cls+'"><div class="date-num">'+d+'</div><div class="chips"><span class="chip '+chipClass+'">'+label+'</span>'+extraHtml+'</div><button type="button" data-date="'+date+'" aria-label="編輯 '+date+'"></button></div>';
@@ -393,10 +426,12 @@ function renderCalendar(){
 
   var mc=monthData();
   if($('teamRuleNote')){
-    $('teamRuleNote').textContent=(state.team==='A'
-      ?'A班：19、20上班，21、22休假，之後每兩天上班、兩天休假。'
-      :'B班：A班上班時休假；A班休假時上班，固定做二休二。')+
-      ' 本月上班 '+mc.workDays+' 天、休假 '+mc.offDays+' 天。';
+    var cfg=state.schedule;
+    var text='做'+cfg.workDays+'休'+cfg.offDays+'｜'+(cfg.side==='reverse'?'反班':'正班')+
+      '｜第一個上班日：'+cfg.startDate+
+      '｜本月上班 '+mc.workDays+' 天、休假 '+mc.offDays+' 天。';
+    if(cfg.side==='reverse')text+=' 反班會把正班的上班／休假完全互換。';
+    $('teamRuleNote').textContent=text;
   }
 }
 
@@ -438,7 +473,17 @@ function clearDayStatus(){
   render();
 }
 
-function render(){renderSummary();if(activeTab==='schedule')renderCalendar();}
+function renderScheduleControls(){
+  if(!$('patternPreset'))return;
+  $('patternPreset').value=state.schedule.preset;
+  $('scheduleSide').value=state.schedule.side;
+  $('customWorkDays').value=state.schedule.workDays;
+  $('customOffDays').value=state.schedule.offDays;
+  $('scheduleStartDate').value=state.schedule.startDate;
+  $('customWorkWrap').classList.toggle('hidden',state.schedule.preset!=='custom');
+  $('customOffWrap').classList.toggle('hidden',state.schedule.preset!=='custom');
+}
+function render(){renderSummary();if(activeTab==='schedule'){renderScheduleControls();renderCalendar();}}
 
 function setTab(tab){
   activeTab=tab;
@@ -447,7 +492,7 @@ function setTab(tab){
   document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')===tab);});
   var meta={
     dashboard:['總覽','薪資、加班與做二休二班表'],
-    schedule:['排班月曆','A／B班固定循環，可逐日加上假別或加班標記'],
+    schedule:['排班月曆','做X休Y通用循環，可切換正班／反班'],
     calculator:['薪資試算','輸入薪資、津貼、加班與扣款，直接看預估實領'],
     settings:['設定','底薪、輪班津貼、伙食津貼、表現津貼']
   };
@@ -479,7 +524,20 @@ if($('nextMonth'))$('nextMonth').addEventListener('click',function(){current.set
 if($('todayBtn'))$('todayBtn').addEventListener('click',function(){current=new Date();current.setDate(1);render();});
 if($('monthLabel'))$('monthLabel').addEventListener('click',function(){current=new Date();current.setDate(1);render();});
 if($('themeBtn'))$('themeBtn').addEventListener('click',function(){state.theme=state.theme==='dark'?'light':'dark';document.documentElement.classList.toggle('dark',state.theme==='dark');});
-if($('teamSelect'))$('teamSelect').addEventListener('change',function(){state.team=this.value;render();});
+function applyPreset(){
+  var p=$('patternPreset')?$('patternPreset').value:'2-2';
+  state.schedule.preset=p;
+  if(p==='2-2'){state.schedule.workDays=2;state.schedule.offDays=2;}
+  else if(p==='4-3'){state.schedule.workDays=4;state.schedule.offDays=3;}
+  if($('customWorkWrap'))$('customWorkWrap').classList.toggle('hidden',p!=='custom');
+  if($('customOffWrap'))$('customOffWrap').classList.toggle('hidden',p!=='custom');
+  render();
+}
+if($('patternPreset'))$('patternPreset').addEventListener('change',applyPreset);
+if($('scheduleSide'))$('scheduleSide').addEventListener('change',function(){state.schedule.side=this.value;render();});
+if($('customWorkDays'))$('customWorkDays').addEventListener('input',function(){state.schedule.workDays=Math.max(1,parseInt(this.value||1,10));render();});
+if($('customOffDays'))$('customOffDays').addEventListener('input',function(){state.schedule.offDays=Math.max(1,parseInt(this.value||1,10));render();});
+if($('scheduleStartDate'))$('scheduleStartDate').addEventListener('change',function(){state.schedule.startDate=this.value||iso(new Date());render();});
 
 if($('baseSalary'))$('baseSalary').addEventListener('input',function(){setSalary('baseSalary',this.value);});
 if($('nightAllowance'))$('nightAllowance').addEventListener('input',function(){setSalary('nightAllowance',this.value);});
