@@ -72,8 +72,10 @@
     .card{padding:14px;border-radius:16px}
     .value{font-size:22px}
     .split{align-items:flex-start}
-    #installCard .split{flex-direction:column}
+    #installCard .split,#saveCard .split{flex-direction:column}
     #installAppBtn{width:100%}
+    #saveCard .row{width:100%}
+    #saveCard .row .btn{flex:1 1 160px}
     .calendar{margin-left:-12px;margin-right:-12px;border-radius:0;border-left:0;border-right:0}
     .day{min-height:90px;padding:5px 3px}
     .date-num{font-size:12px}
@@ -116,7 +118,7 @@
       <button data-tab="calculator">＄　薪資試算</button>
       <button data-tab="settings">⚙　設定</button>
     </div>
-    <div class="side-note">可安裝成手機 App。<br>本頁不保存個人資料；重新整理或重新開啟後會全部歸零。</div>
+    <div class="side-note">可安裝成手機 App。<br>預設不保存；按「儲存到此裝置」後，下次可繼續使用。</div>
   </aside>
   <main>
     <div class="topbar">
@@ -138,6 +140,19 @@
             <div class="sub" id="installHint">Android／電腦可使用 Chrome 或 Edge 安裝；iPhone 請用 Safari 加入主畫面。</div>
           </div>
           <button class="btn primary" id="installAppBtn" type="button">安裝 App</button>
+        </div>
+      </div>
+      <div class="card no-print" id="saveCard" style="margin-bottom:16px">
+        <div class="split">
+          <div>
+            <div class="kicker">個人資料保存</div>
+            <b style="font-size:18px">需要時才手動保存</b>
+            <div class="sub" id="saveStatus">目前尚未儲存。只有按下儲存後，下次開啟才會保留這台裝置的資料。</div>
+          </div>
+          <div class="row">
+            <button class="btn primary" id="saveToDeviceBtn" type="button">儲存到此裝置</button>
+            <button class="btn danger" id="clearSavedBtn" type="button">清除已儲存資料</button>
+          </div>
         </div>
       </div>
       <div class="grid cards4">
@@ -319,11 +334,83 @@ function defaultState(){
   };
 }
 
-var state=defaultState();
+var SAVE_KEY='shift-pay-manual-save-v1';
+
+function mergeSavedState(saved){
+  var d=defaultState();
+  if(!saved||typeof saved!=='object')return d;
+  d.theme=saved.theme||d.theme;
+  d.schedule=Object.assign({},d.schedule,saved.schedule||{});
+  d.settings=Object.assign({},d.settings,saved.settings||{});
+  d.months=(saved.months&&typeof saved.months==='object')?saved.months:{};
+  d.dayStatus=(saved.dayStatus&&typeof saved.dayStatus==='object')?saved.dayStatus:{};
+  return d;
+}
+
+function loadSavedState(){
+  try{
+    var raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return {state:defaultState(),savedAt:null};
+    var parsed=JSON.parse(raw);
+    if(parsed&&parsed.state){
+      return {state:mergeSavedState(parsed.state),savedAt:parsed.savedAt||null};
+    }
+    return {state:mergeSavedState(parsed),savedAt:null};
+  }catch(e){
+    return {state:defaultState(),savedAt:null};
+  }
+}
+
+var loadedSave=loadSavedState();
+var state=loadedSave.state;
+var lastSavedAt=loadedSave.savedAt;
 var current=new Date();
 current.setDate(1);
 var activeTab='dashboard';
 var editingDate='';
+
+function formatSavedTime(value){
+  if(!value)return '';
+  try{
+    var d=new Date(value);
+    return d.toLocaleString('zh-TW',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'});
+  }catch(e){return '';}
+}
+
+function renderSaveStatus(message){
+  var el=$('saveStatus');
+  if(!el)return;
+  if(message){
+    el.textContent=message;
+    return;
+  }
+  if(lastSavedAt){
+    el.textContent='已載入此裝置的儲存資料。上次儲存：'+formatSavedTime(lastSavedAt)+'。修改後若要下次保留，請再按一次「儲存到此裝置」。';
+  }else{
+    el.textContent='目前尚未儲存。只有按下儲存後，下次開啟才會保留這台裝置的資料。';
+  }
+}
+
+function saveToDevice(){
+  try{
+    lastSavedAt=new Date().toISOString();
+    localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state:state}));
+    renderSaveStatus('已儲存到這台裝置。儲存時間：'+formatSavedTime(lastSavedAt)+'。');
+  }catch(e){
+    alert('儲存失敗。請確認瀏覽器沒有封鎖網站儲存空間。');
+  }
+}
+
+function clearSavedFromDevice(){
+  if(!confirm('確定清除這台裝置已儲存的班表與薪資設定？目前畫面上的資料不會立刻消失，但下次重新開啟會回到空白。'))return;
+  try{
+    localStorage.removeItem(SAVE_KEY);
+    lastSavedAt=null;
+    renderSaveStatus('已清除儲存資料。現在畫面仍可繼續使用；下次重新開啟會從空白開始。');
+  }catch(e){
+    alert('清除儲存資料失敗。');
+  }
+}
 
 function monthBucket(){
   var mk=monthKey(current.getFullYear(),current.getMonth());
@@ -554,7 +641,7 @@ function renderScheduleControls(){
   $('customWorkWrap').classList.toggle('hidden',state.schedule.preset!=='custom');
   $('customOffWrap').classList.toggle('hidden',state.schedule.preset!=='custom');
 }
-function render(){renderSummary();if(activeTab==='schedule'){renderScheduleControls();renderCalendar();}}
+function render(){renderSummary();renderSaveStatus();if(activeTab==='schedule'){renderScheduleControls();renderCalendar();}}
 
 function setTab(tab){
   activeTab=tab;
@@ -640,6 +727,8 @@ if($('editStatus'))$('editStatus').addEventListener('change',toggleCustomStatus)
 if($('saveDay'))$('saveDay').addEventListener('click',function(e){e.preventDefault();saveDayStatus();});
 if($('clearDayStatus'))$('clearDayStatus').addEventListener('click',clearDayStatus);
 if($('printBtn'))$('printBtn').addEventListener('click',function(){window.print();});
+if($('saveToDeviceBtn'))$('saveToDeviceBtn').addEventListener('click',saveToDevice);
+if($('clearSavedBtn'))$('clearSavedBtn').addEventListener('click',clearSavedFromDevice);
 
 // PWA install flow
 var deferredInstallPrompt=null;
@@ -700,6 +789,7 @@ if('serviceWorker' in navigator){
 }
 
 hideOldUi();
+document.documentElement.classList.toggle('dark',state.theme==='dark');
 refreshInstallUi();
 render();
 })();
