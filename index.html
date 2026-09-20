@@ -563,13 +563,31 @@ function renderCalendar(){
     var dateObj=new Date(y,m,d),date=iso(dateObj),s=scheduleForDate(dateObj);
     var myName=state.schedule.shiftName||'A班';
     var otherName=otherShiftName(myName);
+    var extra=statusMeta(state.dayStatus[date]);
+    var hasExtra=!!extra;
+    var isOvertime=hasExtra&&state.dayStatus[date].type==='overtime';
     var label=s==='work'?myName:otherName;
     var cls='day'+(date===today?' today':'')+(s==='work'?' work-main-cell':' work-reverse-cell');
     var chipClass=s==='work'?'work-main':'work-reverse';
+
+    var baseHtml='<span class="chip '+chipClass+'">'+label+'</span>';
     var restHtml=s==='off'?'<span class="chip off">休假</span>':'';
-    var extra=statusMeta(state.dayStatus[date]);
-    var extraHtml=extra?'<span class="chip '+extra.cls+'">'+extra.label+'</span>':'';
-    html+='<div class="'+cls+'"><div class="date-num">'+d+'</div><div class="chips"><span class="chip '+chipClass+'">'+label+'</span>'+restHtml+extraHtml+'</div><button type="button" data-date="'+date+'" aria-label="編輯 '+date+'"></button></div>';
+    var extraHtml=hasExtra?'<span class="chip '+extra.cls+'">'+extra.label+'</span>':'';
+
+    // 額外狀態會依實際出勤邏輯覆蓋原班別：
+    // 1. 上班日請假 → 隱藏原班別，只顯示假別。
+    // 2. 休假日加班 → 隱藏另一班與「休假」，只顯示加班。
+    // 3. 上班日加班 → 保留原班別，再顯示加班。
+    var chipsHtml='';
+    if(s==='work'&&hasExtra&&!isOvertime){
+      chipsHtml=extraHtml;
+    }else if(s==='off'&&isOvertime){
+      chipsHtml=extraHtml;
+    }else{
+      chipsHtml=baseHtml+restHtml+extraHtml;
+    }
+
+    html+='<div class="'+cls+'"><div class="date-num">'+d+'</div><div class="chips">'+chipsHtml+'</div><button type="button" data-date="'+date+'" aria-label="編輯 '+date+'"></button></div>';
   }
   var rem=(7-((first+days)%7))%7;
   for(var j=0;j<rem;j++)html+='<div class="day empty"></div>';
