@@ -76,6 +76,9 @@
     #installAppBtn{width:100%}
     #saveCard .row{width:100%}
     #saveCard .row .btn{flex:1 1 160px}
+    #scheduleConfigCard .split{align-items:center;gap:8px}
+    #scheduleConfigCard .btn{flex:0 0 auto;padding:8px 10px}
+    #scheduleSummary{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
     .calendar{margin-left:-12px;margin-right:-12px;border-radius:0;border-left:0;border-right:0}
     .day{min-height:90px;padding:5px 3px}
     .date-num{font-size:12px}
@@ -174,28 +177,36 @@
     </section>
 
     <section id="tab-schedule" class="tab-section hidden">
-      <div class="card no-print" style="margin-bottom:14px">
-        <div class="section-title" style="margin-top:0"><h2>通用循環排班</h2><span class="muted small">做 X 休 Y</span></div>
-        <div class="form-grid">
-          <div class="field"><label>排班模式</label>
-            <select id="patternPreset">
-              <option value="2-2">做2休2</option>
-              <option value="4-3">做4休3</option>
-              <option value="custom">自訂做X休Y</option>
-            </select>
+      <div class="card no-print" id="scheduleConfigCard" style="margin-bottom:10px;padding:12px 14px">
+        <div class="split">
+          <div style="min-width:0">
+            <b>排班設定</b>
+            <div class="sub" id="scheduleSummary">做2休2｜A班｜第一個上班日</div>
           </div>
-          <div class="field"><label>你的班別名稱</label><input id="myShiftName" type="text" value="A班" maxlength="12" placeholder="例如：A班 或 B班"></div>
-          <div class="field" id="customWorkWrap"><label>連續上班天數</label><input id="customWorkDays" type="number" min="1" step="1" value="2"></div>
-          <div class="field" id="customOffWrap"><label>連續休假天數</label><input id="customOffDays" type="number" min="1" step="1" value="2"></div>
-          <div class="field"><label>第一個上班日</label><input id="scheduleStartDate" type="date"></div>
+          <button class="btn" id="toggleScheduleSettings" type="button" aria-expanded="false">展開設定</button>
         </div>
-        <div class="notice" id="teamRuleNote" style="margin-top:14px"></div>
-        <div class="row" style="margin-top:12px">
-          <span class="chip work-main" id="myShiftLegend">A班</span>
-          <span class="chip work-reverse" id="otherShiftLegend">B班</span>
-          <span class="chip off">你的休假</span>
+        <div id="scheduleSettingsBody" class="hidden" style="margin-top:14px">
+          <div class="form-grid">
+            <div class="field"><label>排班模式</label>
+              <select id="patternPreset">
+                <option value="2-2">做2休2</option>
+                <option value="4-3">做4休3</option>
+                <option value="custom">自訂做X休Y</option>
+              </select>
+            </div>
+            <div class="field"><label>你的班別名稱</label><input id="myShiftName" type="text" value="A班" maxlength="12" placeholder="例如：A班 或 B班"></div>
+            <div class="field" id="customWorkWrap"><label>連續上班天數</label><input id="customWorkDays" type="number" min="1" step="1" value="2"></div>
+            <div class="field" id="customOffWrap"><label>連續休假天數</label><input id="customOffDays" type="number" min="1" step="1" value="2"></div>
+            <div class="field"><label>第一個上班日</label><input id="scheduleStartDate" type="date"></div>
+          </div>
+          <div class="notice" id="teamRuleNote" style="margin-top:14px"></div>
+          <div class="row" style="margin-top:12px">
+            <span class="chip work-main" id="myShiftLegend">A班</span>
+            <span class="chip work-reverse" id="otherShiftLegend">B班</span>
+            <span class="chip off">你的休假</span>
+          </div>
+          <div class="sub" style="margin-top:10px">設定完成後可以收起來，月曆會保留目前班表。點日期仍可標記加班、病假、生理假、特休或自訂項目。</div>
         </div>
-        <div class="sub" style="margin-top:10px">例如做2休2：你只要輸入「A班」，再選一個確定的第一個上班日；系統會把你的上班日顯示為 A班，相反日期自動顯示另一班（A班會自動對應 B班）。不需要再設定班別方向。</div>
       </div>
       <div class="card calendar"><div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div><div class="days" id="calendarDays"></div></div>
     </section>
@@ -368,6 +379,7 @@ var current=new Date();
 current.setDate(1);
 var activeTab='dashboard';
 var editingDate='';
+var scheduleSettingsOpen=false;
 
 function formatSavedTime(value){
   if(!value)return '';
@@ -658,6 +670,16 @@ function renderScheduleControls(){
   $('scheduleStartDate').value=state.schedule.startDate;
   $('customWorkWrap').classList.toggle('hidden',state.schedule.preset!=='custom');
   $('customOffWrap').classList.toggle('hidden',state.schedule.preset!=='custom');
+
+  var mode='做'+state.schedule.workDays+'休'+state.schedule.offDays;
+  var name=state.schedule.shiftName||'A班';
+  var start=state.schedule.startDate||'尚未設定';
+  if($('scheduleSummary'))$('scheduleSummary').textContent=mode+'｜'+name+'｜第一個上班日 '+start;
+  if($('scheduleSettingsBody'))$('scheduleSettingsBody').classList.toggle('hidden',!scheduleSettingsOpen);
+  if($('toggleScheduleSettings')){
+    $('toggleScheduleSettings').textContent=scheduleSettingsOpen?'收起設定':'展開設定';
+    $('toggleScheduleSettings').setAttribute('aria-expanded',scheduleSettingsOpen?'true':'false');
+  }
 }
 function render(){renderSummary();renderSaveStatus();if(activeTab==='schedule'){renderScheduleControls();renderCalendar();}}
 
@@ -709,6 +731,10 @@ function applyPreset(){
   if($('customOffWrap'))$('customOffWrap').classList.toggle('hidden',p!=='custom');
   render();
 }
+if($('toggleScheduleSettings'))$('toggleScheduleSettings').addEventListener('click',function(){
+  scheduleSettingsOpen=!scheduleSettingsOpen;
+  renderScheduleControls();
+});
 if($('patternPreset'))$('patternPreset').addEventListener('change',applyPreset);
 if($('myShiftName'))$('myShiftName').addEventListener('input',function(){state.schedule.shiftName=this.value.trim()||'A班';render();});
 if($('customWorkDays'))$('customWorkDays').addEventListener('input',function(){state.schedule.workDays=Math.max(1,parseInt(this.value||1,10));render();});
