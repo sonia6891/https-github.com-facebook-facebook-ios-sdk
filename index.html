@@ -154,19 +154,6 @@
           <button class="btn primary" id="installAppBtn" type="button">安裝 App</button>
         </div>
       </div>
-      <div class="card no-print" id="saveCard" style="margin-bottom:16px">
-        <div class="split">
-          <div>
-            <div class="kicker">個人資料保存</div>
-            <b style="font-size:18px">需要時才手動保存</b>
-            <div class="sub" id="saveStatus">目前尚未儲存。只有按下儲存後，下次開啟才會保留這台裝置的資料。</div>
-          </div>
-          <div class="row">
-            <button class="btn primary" id="saveToDeviceBtn" type="button">儲存到此裝置</button>
-            <button class="btn danger" id="clearSavedBtn" type="button">清除已儲存資料</button>
-          </div>
-        </div>
-      </div>
       <div class="grid cards4">
         <div class="card"><div class="kicker">預估總薪資</div><div class="value" id="dashGross">NT$0</div><div class="sub">底薪＋輪班津貼＋表現津貼＋加班費</div></div>
         <div class="card"><div class="kicker">加班時薪</div><div class="value" id="dashNet">NT$0</div><div class="sub">（底薪＋輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2</div></div>
@@ -265,6 +252,20 @@
     </section>
 
     <section id="tab-settings" class="tab-section hidden">
+      <div class="section-title" style="margin-top:0"><h2>個人資料保存</h2></div>
+      <div class="card no-print" id="saveCard" style="margin-bottom:16px">
+        <div class="split">
+          <div>
+            <div class="kicker">個人資料保存</div>
+            <b style="font-size:18px">需要時才手動保存</b>
+            <div class="sub" id="saveStatus">目前尚未儲存。只有按下儲存後，下次開啟才會保留這台裝置的資料。</div>
+          </div>
+          <div class="row">
+            <button class="btn primary" id="saveToDeviceBtn" type="button">儲存到此裝置</button>
+            <button class="btn danger" id="clearSavedBtn" type="button">清除已儲存資料</button>
+          </div>
+        </div>
+      </div>
       <div class="notice warn">加班時薪固定照：「底薪＋輪班津貼＋伙食津貼＋表現津貼」÷ 240 × 2 計算。</div>
       <div class="section-title"><h2>基本薪資設定</h2></div>
       <div class="card"><div class="form-grid">
