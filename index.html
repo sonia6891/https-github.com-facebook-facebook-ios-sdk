@@ -22,7 +22,13 @@
   aside{padding:22px 16px;border-right:1px solid var(--line);background:var(--card);position:sticky;top:0;height:100vh}.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;margin:4px 8px 24px}.logo{width:34px;height:34px;border-radius:11px;background:var(--brand);color:white;display:grid;place-items:center}.nav{display:grid;gap:8px}.nav button{border:0;background:transparent;color:var(--muted);padding:12px 14px;border-radius:12px;text-align:left;font-weight:650}.nav button.active{background:var(--accent);color:var(--brand);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.side-note{position:absolute;left:18px;right:18px;bottom:24px;color:var(--muted);font-size:12px;line-height:1.5}
   main{padding:26px 30px 110px;min-width:0;overflow-x:hidden}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:22px}.topbar h1{font-size:25px;margin:0}.month-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.btn,.iconbtn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:10px 14px;font-weight:650}.btn.primary{background:var(--brand);color:#fff;border-color:var(--brand)}.btn.danger{color:var(--danger)}.iconbtn{width:42px;padding:10px}
   .grid{display:grid;gap:16px;min-width:0}.cards4{grid-template-columns:repeat(4,minmax(0,1fr))}.card{min-width:0;max-width:100%;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}.kicker{font-size:12px;color:var(--muted);margin-bottom:7px}.value{font-size:26px;font-weight:800;letter-spacing:-.5px}.sub{font-size:12px;color:var(--muted);margin-top:5px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:24px 0 12px}.section-title h2{font-size:18px;margin:0}.two-col{display:grid;grid-template-columns:1.35fr .65fr;gap:16px}.stat-list{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{padding:13px;border:1px solid var(--line);border-radius:14px}.stat b{display:block;font-size:20px;margin-top:4px}
-  .calendar{overflow:hidden;min-width:0}.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%;min-width:0}.weekdays div{padding:9px;text-align:center;color:var(--muted);font-size:12px;font-weight:700;border-bottom:1px solid var(--line)}.day{min-width:0;overflow:hidden;min-height:110px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;position:relative;background:var(--card)}.day:nth-child(7n){border-right:0}.day.empty{background:color-mix(in srgb,var(--bg) 70%,var(--card))}.day button{position:absolute;inset:0;border:0;background:transparent;z-index:3}.date-num{font-weight:750;font-size:13px;position:relative;z-index:1;pointer-events:none}.chips{display:grid;gap:5px;margin-top:8px;position:relative;z-index:1;pointer-events:none}.chip{display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:100%;min-width:0;padding:4px 7px;border-radius:999px;font-size:11px;font-weight:700;background:var(--accent);color:var(--brand)}
+  .calendar{overflow:hidden;min-width:0}.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));width:100%;min-width:0}.weekdays div{padding:9px;text-align:center;color:var(--muted);font-size:12px;font-weight:700;border-bottom:1px solid var(--line)}.day{min-width:0;overflow:hidden;min-height:110px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:8px;position:relative;background:var(--card)}.day:nth-child(7n){border-right:0}.day.empty{background:color-mix(in srgb,var(--bg) 70%,var(--card))}.day button{position:absolute;inset:0;border:0;background:transparent;z-index:3}.date-num{font-weight:750;font-size:13px;position:relative;z-index:1;pointer-events:none}.chips{display:grid;gap:5px;margin-top:8px;position:relative;z-index:4;pointer-events:none}.chip{display:inline-flex;align-items:center;justify-content:center;width:max-content;max-width:100%;min-width:0;padding:4px 7px;border-radius:999px;font-size:11px;font-weight:700;background:var(--accent);color:var(--brand)}
+  .base-reveal{pointer-events:auto;max-width:100%;font-size:10px;color:var(--muted)}
+  .base-reveal summary{display:flex;align-items:center;gap:3px;width:max-content;max-width:100%;cursor:pointer;user-select:none;list-style:none;font-weight:800;color:var(--muted);padding:2px 1px}
+  .base-reveal summary::-webkit-details-marker{display:none}
+  .base-reveal summary::before{content:'▸';font-size:11px;line-height:1}
+  .base-reveal[open] summary::before{content:'▾'}
+  .base-reveal-body{display:grid;gap:3px;margin-top:3px}
   .chip.team-a{font-size:16px;font-weight:900;padding:7px 12px;background:#dbeafe;color:#0b4f9c;border:1px solid #93c5fd}
   .chip.team-b{font-size:16px;font-weight:900;padding:7px 12px;background:#ffedd5;color:#9a3412;border:1px solid #fdba74}
   .chip.off{font-size:14px;font-weight:800;padding:6px 10px;background:#eef2f7;color:#64748b;border:1px solid #d8dee8}
@@ -86,6 +92,9 @@
     .chip{width:100%;font-size:9px;padding:3px 2px;border-radius:8px}
     .chip.work-main,.chip.work-reverse,.chip.team-a,.chip.team-b{font-size:11px;padding:5px 2px}
     .chip.off{font-size:9px;padding:3px 2px}
+    .base-reveal{font-size:8px}
+    .base-reveal summary{font-size:8px;padding:1px 0}
+    .base-reveal-body{gap:2px}
     .form-grid{grid-template-columns:1fr}
     .field input,.field select,.field textarea{font-size:16px}
     .list-item{grid-template-columns:1fr}
@@ -587,14 +596,16 @@ function renderCalendar(){
     var extraHtml=hasExtra?'<span class="chip '+extra.cls+'">'+extra.label+'</span>':'';
 
     // 額外狀態會依實際出勤邏輯覆蓋原班別：
-    // 1. 上班日請假 → 隱藏原班別，只顯示假別。
-    // 2. 休假日加班 → 隱藏另一班與「休假」，只顯示加班。
+    // 1. 上班日請假 → 原班別先隱藏，只顯示假別；可用三角形展開查看。
+    // 2. 休假日加班 → 原班別與休假先隱藏，只顯示加班；可用三角形展開查看。
     // 3. 上班日加班 → 保留原班別，再顯示加班。
     var chipsHtml='';
+    var originalHtml=baseHtml+restHtml;
+    var revealHtml='<details class="base-reveal"><summary>原班表</summary><div class="base-reveal-body">'+originalHtml+'</div></details>';
     if(s==='work'&&hasExtra&&!isOvertime){
-      chipsHtml=extraHtml;
+      chipsHtml=extraHtml+revealHtml;
     }else if(s==='off'&&isOvertime){
-      chipsHtml=extraHtml;
+      chipsHtml=extraHtml+revealHtml;
     }else{
       chipsHtml=baseHtml+restHtml+extraHtml;
     }
