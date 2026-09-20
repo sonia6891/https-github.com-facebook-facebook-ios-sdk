@@ -113,17 +113,19 @@
               <option value="reverse">反班（上班／休假完全相反）</option>
             </select>
           </div>
+          <div class="field"><label>正班名稱</label><input id="mainShiftName" type="text" value="A班" maxlength="12" placeholder="例如：A班"></div>
+          <div class="field"><label>反班名稱</label><input id="reverseShiftName" type="text" value="B班" maxlength="12" placeholder="例如：B班"></div>
           <div class="field" id="customWorkWrap"><label>連續上班天數</label><input id="customWorkDays" type="number" min="1" step="1" value="2"></div>
           <div class="field" id="customOffWrap"><label>連續休假天數</label><input id="customOffDays" type="number" min="1" step="1" value="2"></div>
           <div class="field"><label>第一個上班日</label><input id="scheduleStartDate" type="date"></div>
         </div>
         <div class="notice" id="teamRuleNote" style="margin-top:14px"></div>
         <div class="row" style="margin-top:12px">
-          <span class="chip work-main">正班上班</span>
-          <span class="chip work-reverse">反班上班</span>
+          <span class="chip work-main" id="mainShiftLegend">A班</span>
+          <span class="chip work-reverse" id="reverseShiftLegend">B班</span>
           <span class="chip off">休假</span>
         </div>
-        <div class="sub" style="margin-top:10px">例如做2休2：選一個你確定是「第一個上班日」的日期，系統會自動往前、往後排。點日期仍可另外標記加班、病假、生理假、特休或自訂項目。</div>
+        <div class="sub" style="margin-top:10px">例如做2休2：可以把正班命名為「A班」、反班命名為「B班」，再選一個確定的第一個上班日，系統會自動往前、往後排。點日期仍可另外標記加班、病假、生理假、特休或自訂項目。</div>
       </div>
       <div class="card calendar"><div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div><div class="days" id="calendarDays"></div></div>
     </section>
@@ -252,6 +254,8 @@ function defaultState(){
     schedule:{
       preset:'2-2',
       side:'main',
+      mainName:'A班',
+      reverseName:'B班',
       workDays:2,
       offDays:2,
       startDate:iso(new Date())
@@ -409,8 +413,9 @@ function renderCalendar(){
   for(var i=0;i<first;i++)html+='<div class="day empty"></div>';
   for(var d=1;d<=days;d++){
     var dateObj=new Date(y,m,d),date=iso(dateObj),s=scheduleForDate(dateObj);
-    var label=s==='off'?'休假':'上班';
     var reverse=state.schedule.side==='reverse';
+    var workName=reverse?(state.schedule.reverseName||'B班'):(state.schedule.mainName||'A班');
+    var label=s==='off'?'休假':workName;
     var cls='day'+(date===today?' today':'')+(s==='work'?(reverse?' work-reverse-cell':' work-main-cell'):'');
     var chipClass=s==='work'?(reverse?'work-reverse':'work-main'):'off';
     var extra=statusMeta(state.dayStatus[date]);
@@ -427,7 +432,8 @@ function renderCalendar(){
   var mc=monthData();
   if($('teamRuleNote')){
     var cfg=state.schedule;
-    var text='做'+cfg.workDays+'休'+cfg.offDays+'｜'+(cfg.side==='reverse'?'反班':'正班')+
+    var currentName=cfg.side==='reverse'?(cfg.reverseName||'B班'):(cfg.mainName||'A班');
+    var text='做'+cfg.workDays+'休'+cfg.offDays+'｜'+(cfg.side==='reverse'?'反班':'正班')+'（'+currentName+'）'+
       '｜第一個上班日：'+cfg.startDate+
       '｜本月上班 '+mc.workDays+' 天、休假 '+mc.offDays+' 天。';
     if(cfg.side==='reverse')text+=' 反班會把正班的上班／休假完全互換。';
@@ -477,6 +483,10 @@ function renderScheduleControls(){
   if(!$('patternPreset'))return;
   $('patternPreset').value=state.schedule.preset;
   $('scheduleSide').value=state.schedule.side;
+  if($('mainShiftName'))$('mainShiftName').value=state.schedule.mainName||'A班';
+  if($('reverseShiftName'))$('reverseShiftName').value=state.schedule.reverseName||'B班';
+  if($('mainShiftLegend'))$('mainShiftLegend').textContent=state.schedule.mainName||'A班';
+  if($('reverseShiftLegend'))$('reverseShiftLegend').textContent=state.schedule.reverseName||'B班';
   $('customWorkDays').value=state.schedule.workDays;
   $('customOffDays').value=state.schedule.offDays;
   $('scheduleStartDate').value=state.schedule.startDate;
@@ -535,6 +545,8 @@ function applyPreset(){
 }
 if($('patternPreset'))$('patternPreset').addEventListener('change',applyPreset);
 if($('scheduleSide'))$('scheduleSide').addEventListener('change',function(){state.schedule.side=this.value;render();});
+if($('mainShiftName'))$('mainShiftName').addEventListener('input',function(){state.schedule.mainName=this.value.trim()||'A班';render();});
+if($('reverseShiftName'))$('reverseShiftName').addEventListener('input',function(){state.schedule.reverseName=this.value.trim()||'B班';render();});
 if($('customWorkDays'))$('customWorkDays').addEventListener('input',function(){state.schedule.workDays=Math.max(1,parseInt(this.value||1,10));render();});
 if($('customOffDays'))$('customOffDays').addEventListener('input',function(){state.schedule.offDays=Math.max(1,parseInt(this.value||1,10));render();});
 if($('scheduleStartDate'))$('scheduleStartDate').addEventListener('change',function(){state.schedule.startDate=this.value||iso(new Date());render();});
