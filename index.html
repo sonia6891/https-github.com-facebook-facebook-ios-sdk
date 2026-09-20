@@ -4,7 +4,14 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0f172a" />
-<title>四班二輪計薪助手</title>
+<meta name="application-name" content="輪班薪資助手">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="輪班薪資助手">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icon.svg">
+<title>輪班薪資助手</title>
 <style>
   :root{--bg:#f6f7fb;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#173a67;--brand2:#255a96;--accent:#eaf1f8;--danger:#b42318;--ok:#166534;--shadow:0 8px 30px rgba(15,23,42,.06);--radius:18px;--nav:74px}
   html.dark{--bg:#0b1220;--card:#111827;--text:#e5e7eb;--muted:#9ca3af;--line:#243244;--brand:#8eb8e8;--brand2:#b8d4f3;--accent:#16283e;--danger:#fda29b;--ok:#86efac;--shadow:none}
@@ -57,14 +64,14 @@
 <body>
 <div class="app"><div class="shell">
   <aside>
-    <div class="brand"><div class="logo">薪</div><div>四班二輪計薪助手</div></div>
+    <div class="brand"><div class="logo">薪</div><div>輪班薪資助手</div></div>
     <div class="nav" id="sideNav">
       <button data-tab="dashboard" class="active">▦　總覽</button>
       <button data-tab="schedule">▣　排班月曆</button>
       <button data-tab="calculator">＄　薪資試算</button>
       <button data-tab="settings">⚙　設定</button>
     </div>
-    <div class="side-note">本頁不保存個人資料。<br>重新整理或重新開啟後，輸入內容會全部歸零。</div>
+    <div class="side-note">可安裝成手機 App。<br>本頁不保存個人資料；重新整理或重新開啟後會全部歸零。</div>
   </aside>
   <main>
     <div class="topbar">
@@ -78,6 +85,16 @@
     </div>
 
     <section id="tab-dashboard" class="tab-section">
+      <div class="card no-print" id="installCard" style="margin-bottom:16px">
+        <div class="split">
+          <div>
+            <div class="kicker">多人測試版</div>
+            <b style="font-size:18px">安裝到手機主畫面</b>
+            <div class="sub" id="installHint">Android／電腦可使用 Chrome 或 Edge 安裝；iPhone 請用 Safari 加入主畫面。</div>
+          </div>
+          <button class="btn primary" id="installAppBtn" type="button">安裝 App</button>
+        </div>
+      </div>
       <div class="grid cards4">
         <div class="card"><div class="kicker">預估總薪資</div><div class="value" id="dashGross">NT$0</div><div class="sub">底薪＋輪班津貼＋表現津貼＋加班費</div></div>
         <div class="card"><div class="kicker">加班時薪</div><div class="value" id="dashNet">NT$0</div><div class="sub">（底薪＋輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2</div></div>
@@ -124,7 +141,7 @@
     </section>
 
     <section id="tab-calculator" class="tab-section hidden">
-      <div class="print-only hidden"><h2>四班二輪計薪助手｜月薪明細</h2><p id="printMonth"></p></div>
+      <div class="print-only hidden"><h2>輪班薪資助手｜月薪明細</h2><p id="printMonth"></p></div>
       <div class="grid cards4">
         <div class="card"><div class="kicker">加班計算基數</div><div class="value" id="calcBase">NT$0</div><div class="sub">底薪＋輪班津貼＋伙食津貼＋表現津貼</div></div>
         <div class="card"><div class="kicker">加班時薪</div><div class="value" id="calcAllowance">NT$0</div></div>
@@ -579,7 +596,66 @@ if($('saveDay'))$('saveDay').addEventListener('click',function(e){e.preventDefau
 if($('clearDayStatus'))$('clearDayStatus').addEventListener('click',clearDayStatus);
 if($('printBtn'))$('printBtn').addEventListener('click',function(){window.print();});
 
+// PWA install flow
+var deferredInstallPrompt=null;
+var isIos=/iphone|ipad|ipod/i.test(navigator.userAgent);
+var isStandalone=window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+
+function refreshInstallUi(){
+  var card=$('installCard'),btn=$('installAppBtn'),hint=$('installHint');
+  if(!card||!btn||!hint)return;
+  if(isStandalone){
+    card.classList.add('hidden');
+    return;
+  }
+  card.classList.remove('hidden');
+  if(isIos){
+    btn.textContent='iPhone 安裝方式';
+    hint.textContent='請用 Safari 開啟本頁，點「分享」→「加入主畫面」。';
+  }else if(deferredInstallPrompt){
+    btn.textContent='安裝 App';
+    hint.textContent='可直接安裝到主畫面，之後像一般 App 一樣開啟。';
+  }else{
+    btn.textContent='安裝方式';
+    hint.textContent='Android／電腦建議使用 Chrome 或 Edge；若瀏覽器支援安裝，按鈕會自動啟用。';
+  }
+}
+
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  refreshInstallUi();
+});
+
+window.addEventListener('appinstalled',function(){
+  deferredInstallPrompt=null;
+  isStandalone=true;
+  refreshInstallUi();
+});
+
+if($('installAppBtn'))$('installAppBtn').addEventListener('click',async function(){
+  if(isIos){
+    alert('iPhone 安裝方式：請使用 Safari 開啟這個網站，點下方「分享」按鈕，再選「加入主畫面」。');
+    return;
+  }
+  if(deferredInstallPrompt){
+    deferredInstallPrompt.prompt();
+    try{ await deferredInstallPrompt.userChoice; }catch(e){}
+    deferredInstallPrompt=null;
+    refreshInstallUi();
+    return;
+  }
+  alert('請使用 Chrome 或 Edge 開啟本頁，再從瀏覽器選單選「安裝應用程式／加入主畫面」。');
+});
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(){});
+  });
+}
+
 hideOldUi();
+refreshInstallUi();
 render();
 })();
 </script>
