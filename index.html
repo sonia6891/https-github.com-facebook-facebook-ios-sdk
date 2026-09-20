@@ -34,7 +34,7 @@
   html.dark .chip.menstrual{background:#3b1630;color:#f9a8d4;border-color:#831843}
   html.dark .chip.annual{background:#251747;color:#c4b5fd;border-color:#5b21b6}
   html.dark .chip.custom-status{background:#1e293b;color:#cbd5e1;border-color:#475569}
-  #patternPreset,#scheduleSide{font-size:17px;font-weight:850;padding:12px 14px}
+  #patternPreset,#myShiftName{font-size:17px;font-weight:850;padding:12px 14px}
   .chip.work-main{font-size:16px;font-weight:900;padding:7px 12px;background:#dbeafe;color:#0b4f9c;border:1px solid #93c5fd}
   .chip.work-reverse{font-size:16px;font-weight:900;padding:7px 12px;background:#ffedd5;color:#9a3412;border:1px solid #fdba74}
   .day.work-main-cell{background:#f4f8ff}
@@ -107,25 +107,18 @@
               <option value="custom">自訂做X休Y</option>
             </select>
           </div>
-          <div class="field"><label>班別方向</label>
-            <select id="scheduleSide">
-              <option value="main">正班</option>
-              <option value="reverse">反班（上班／休假完全相反）</option>
-            </select>
-          </div>
-          <div class="field"><label>正班名稱</label><input id="mainShiftName" type="text" value="A班" maxlength="12" placeholder="例如：A班"></div>
-          <div class="field"><label>反班名稱</label><input id="reverseShiftName" type="text" value="B班" maxlength="12" placeholder="例如：B班"></div>
+          <div class="field"><label>你的班別名稱</label><input id="myShiftName" type="text" value="A班" maxlength="12" placeholder="例如：A班 或 B班"></div>
           <div class="field" id="customWorkWrap"><label>連續上班天數</label><input id="customWorkDays" type="number" min="1" step="1" value="2"></div>
           <div class="field" id="customOffWrap"><label>連續休假天數</label><input id="customOffDays" type="number" min="1" step="1" value="2"></div>
           <div class="field"><label>第一個上班日</label><input id="scheduleStartDate" type="date"></div>
         </div>
         <div class="notice" id="teamRuleNote" style="margin-top:14px"></div>
         <div class="row" style="margin-top:12px">
-          <span class="chip work-main" id="mainShiftLegend">A班</span>
-          <span class="chip work-reverse" id="reverseShiftLegend">B班</span>
-          <span class="chip off">休假</span>
+          <span class="chip work-main" id="myShiftLegend">A班</span>
+          <span class="chip work-reverse" id="otherShiftLegend">B班</span>
+          <span class="chip off">你的休假</span>
         </div>
-        <div class="sub" style="margin-top:10px">例如做2休2：可以把正班命名為「A班」、反班命名為「B班」，再選一個確定的第一個上班日，系統會自動往前、往後排。點日期仍可另外標記加班、病假、生理假、特休或自訂項目。</div>
+        <div class="sub" style="margin-top:10px">例如做2休2：你只要輸入「A班」，再選一個確定的第一個上班日；系統會把你的上班日顯示為 A班，相反日期自動顯示另一班（A班會自動對應 B班）。不需要再設定班別方向。</div>
       </div>
       <div class="card calendar"><div class="weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div><div class="days" id="calendarDays"></div></div>
     </section>
@@ -253,9 +246,7 @@ function defaultState(){
     theme:'light',
     schedule:{
       preset:'2-2',
-      side:'main',
-      mainName:'A班',
-      reverseName:'B班',
+      shiftName:'A班',
       workDays:2,
       offDays:2,
       startDate:iso(new Date())
@@ -291,9 +282,17 @@ function scheduleForDate(dateObj){
   var startUtc=Date.UTC(start.getFullYear(),start.getMonth(),start.getDate());
   var diff=Math.floor((dateUtc-startUtc)/DAY_MS);
   var phase=((diff%cycle)+cycle)%cycle;
-  var mainWorks=phase<workDays;
-  var works=cfg.side==='reverse'?!mainWorks:mainWorks;
+  var works=phase<workDays;
   return works?'work':'off';
+}
+
+function otherShiftName(name){
+  var n=String(name||'').trim();
+  if(/^A班?$/i.test(n))return 'B班';
+  if(/^B班?$/i.test(n))return 'A班';
+  if(/^A$/i.test(n))return 'B班';
+  if(/^B$/i.test(n))return 'A班';
+  return '另一班';
 }
 
 function monthData(){
@@ -413,14 +412,15 @@ function renderCalendar(){
   for(var i=0;i<first;i++)html+='<div class="day empty"></div>';
   for(var d=1;d<=days;d++){
     var dateObj=new Date(y,m,d),date=iso(dateObj),s=scheduleForDate(dateObj);
-    var reverse=state.schedule.side==='reverse';
-    var workName=reverse?(state.schedule.reverseName||'B班'):(state.schedule.mainName||'A班');
-    var label=s==='off'?'休假':workName;
-    var cls='day'+(date===today?' today':'')+(s==='work'?(reverse?' work-reverse-cell':' work-main-cell'):'');
-    var chipClass=s==='work'?(reverse?'work-reverse':'work-main'):'off';
+    var myName=state.schedule.shiftName||'A班';
+    var otherName=otherShiftName(myName);
+    var label=s==='work'?myName:otherName;
+    var cls='day'+(date===today?' today':'')+(s==='work'?' work-main-cell':' work-reverse-cell');
+    var chipClass=s==='work'?'work-main':'work-reverse';
+    var restHtml=s==='off'?'<span class="chip off">休假</span>':'';
     var extra=statusMeta(state.dayStatus[date]);
     var extraHtml=extra?'<span class="chip '+extra.cls+'">'+extra.label+'</span>':'';
-    html+='<div class="'+cls+'"><div class="date-num">'+d+'</div><div class="chips"><span class="chip '+chipClass+'">'+label+'</span>'+extraHtml+'</div><button type="button" data-date="'+date+'" aria-label="編輯 '+date+'"></button></div>';
+    html+='<div class="'+cls+'"><div class="date-num">'+d+'</div><div class="chips"><span class="chip '+chipClass+'">'+label+'</span>'+restHtml+extraHtml+'</div><button type="button" data-date="'+date+'" aria-label="編輯 '+date+'"></button></div>';
   }
   var rem=(7-((first+days)%7))%7;
   for(var j=0;j<rem;j++)html+='<div class="day empty"></div>';
@@ -432,12 +432,13 @@ function renderCalendar(){
   var mc=monthData();
   if($('teamRuleNote')){
     var cfg=state.schedule;
-    var currentName=cfg.side==='reverse'?(cfg.reverseName||'B班'):(cfg.mainName||'A班');
-    var text='做'+cfg.workDays+'休'+cfg.offDays+'｜'+(cfg.side==='reverse'?'反班':'正班')+'（'+currentName+'）'+
+    var myName=cfg.shiftName||'A班';
+    var otherName=otherShiftName(myName);
+    $('teamRuleNote').textContent='做'+cfg.workDays+'休'+cfg.offDays+
+      '｜你的班別：'+myName+
+      '｜另一班：'+otherName+
       '｜第一個上班日：'+cfg.startDate+
-      '｜本月上班 '+mc.workDays+' 天、休假 '+mc.offDays+' 天。';
-    if(cfg.side==='reverse')text+=' 反班會把正班的上班／休假完全互換。';
-    $('teamRuleNote').textContent=text;
+      '｜本月你上班 '+mc.workDays+' 天、休假 '+mc.offDays+' 天。';
   }
 }
 
@@ -482,11 +483,9 @@ function clearDayStatus(){
 function renderScheduleControls(){
   if(!$('patternPreset'))return;
   $('patternPreset').value=state.schedule.preset;
-  $('scheduleSide').value=state.schedule.side;
-  if($('mainShiftName'))$('mainShiftName').value=state.schedule.mainName||'A班';
-  if($('reverseShiftName'))$('reverseShiftName').value=state.schedule.reverseName||'B班';
-  if($('mainShiftLegend'))$('mainShiftLegend').textContent=state.schedule.mainName||'A班';
-  if($('reverseShiftLegend'))$('reverseShiftLegend').textContent=state.schedule.reverseName||'B班';
+  if($('myShiftName'))$('myShiftName').value=state.schedule.shiftName||'A班';
+  if($('myShiftLegend'))$('myShiftLegend').textContent=state.schedule.shiftName||'A班';
+  if($('otherShiftLegend'))$('otherShiftLegend').textContent=otherShiftName(state.schedule.shiftName||'A班');
   $('customWorkDays').value=state.schedule.workDays;
   $('customOffDays').value=state.schedule.offDays;
   $('scheduleStartDate').value=state.schedule.startDate;
@@ -502,7 +501,7 @@ function setTab(tab){
   document.querySelectorAll('[data-tab]').forEach(function(b){b.classList.toggle('active',b.getAttribute('data-tab')===tab);});
   var meta={
     dashboard:['總覽','薪資、加班與做二休二班表'],
-    schedule:['排班月曆','做X休Y通用循環，可切換正班／反班'],
+    schedule:['排班月曆','只設定你的班別與第一個上班日，另一班自動產生'],
     calculator:['薪資試算','輸入薪資、津貼、加班與扣款，直接看預估實領'],
     settings:['設定','底薪、輪班津貼、伙食津貼、表現津貼']
   };
@@ -544,9 +543,7 @@ function applyPreset(){
   render();
 }
 if($('patternPreset'))$('patternPreset').addEventListener('change',applyPreset);
-if($('scheduleSide'))$('scheduleSide').addEventListener('change',function(){state.schedule.side=this.value;render();});
-if($('mainShiftName'))$('mainShiftName').addEventListener('input',function(){state.schedule.mainName=this.value.trim()||'A班';render();});
-if($('reverseShiftName'))$('reverseShiftName').addEventListener('input',function(){state.schedule.reverseName=this.value.trim()||'B班';render();});
+if($('myShiftName'))$('myShiftName').addEventListener('input',function(){state.schedule.shiftName=this.value.trim()||'A班';render();});
 if($('customWorkDays'))$('customWorkDays').addEventListener('input',function(){state.schedule.workDays=Math.max(1,parseInt(this.value||1,10));render();});
 if($('customOffDays'))$('customOffDays').addEventListener('input',function(){state.schedule.offDays=Math.max(1,parseInt(this.value||1,10));render();});
 if($('scheduleStartDate'))$('scheduleStartDate').addEventListener('change',function(){state.schedule.startDate=this.value||iso(new Date());render();});
