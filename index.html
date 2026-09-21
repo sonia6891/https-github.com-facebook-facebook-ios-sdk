@@ -436,7 +436,7 @@ $('removeAvatar').onclick=()=>{
   changedAndSync();
   renderSettings();
 };
-$('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(authUser)await saveAccountState(false);alert(authUser?'已儲存到這台裝置並同步 Google 帳號。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=()=>{if(!confirm('確定清除這台裝置已儲存的資料？如果目前已登入，雲端資料不會刪除。'))return;localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);state=defaultState();lastSavedAt=null;render();alert('已清除此裝置資料；登入中的雲端資料仍保留。')};localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);localStorage.removeItem(CLOUD_SYNC_KEY);localStorage.removeItem(CLOUD_SYNC_UPDATED_KEY);syncCode='';syncStatusText='尚未綁定雲端同步；第一次修改資料時會自動建立';state.profile.avatar='';lastSavedAt=null;renderSettings();alert('已清除此裝置資料並斷開雲端同步；雲端資料仍保留。')};
+$('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(authUser)await saveAccountState(false);alert(authUser?'已儲存到這台裝置並同步 Google 帳號。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=()=>{if(!confirm('確定清除這台裝置已儲存的資料？如果目前已登入，雲端資料不會刪除。'))return;localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);state=defaultState();lastSavedAt=null;render();alert('已清除此裝置資料；登入中的雲端資料仍保留。')};
 $('googleLogin').onclick=signInGoogle;
 $('accountLogout').onclick=signOutAccount;
 initAuth();
