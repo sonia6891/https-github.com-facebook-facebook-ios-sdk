@@ -15,13 +15,13 @@
   ],
   "icons": [
     {
-      "src": "./app-icon-180.png?v=7",
+      "src": "./apple-touch-icon-v3.png?v=8",
       "sizes": "180x180",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./app-icon-512.jpg?v=7",
+      "src": "./app-icon-512.jpg?v=8",
       "sizes": "512x512",
       "type": "image/jpeg",
       "purpose": "any maskable"
