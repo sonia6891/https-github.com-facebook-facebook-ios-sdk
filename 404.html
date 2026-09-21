@@ -42,7 +42,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 @media(max-width:390px){.metrics{grid-template-columns:1fr 1fr}.metric strong{font-size:20px}.two-col{grid-template-columns:1fr}.quick-grid{grid-template-columns:repeat(4,1fr)}.day{min-height:72px}.salary-grid{grid-template-columns:1fr 1fr}.status-shortcuts{grid-template-columns:repeat(3,1fr)}}
 @media print{.sidebar,.bottom-nav,.hero-hit,.quick-grid,.section-link,.expand-btn,.footer-art,.footer-banner,.install-only{display:none!important}.shell{display:block}.main{padding:0}.page{display:none!important}#page-salary{display:block!important}.hero-wrap{display:none}.card{box-shadow:none}}
 </style>
-<link rel="manifest" href="./manifest.webmanifest?v=14">
+<link rel="manifest" href="./manifest.webmanifest?v=15">
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
@@ -179,10 +179,10 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
         <div class="settings-actions" style="margin-top:10px">
           <button class="btn primary" id="syncConnect">連線／同步</button>
           <button class="btn" id="syncGenerate">建立同步碼</button>
-          <button class="btn" id="syncCopy">複製</button>
+          <button class="btn" id="syncCopy">複製同步連結</button>
           <button class="btn danger" id="syncDisconnect">斷開</button>
         </div>
-        <div class="hint" id="syncStatus" style="margin-top:10px">尚未啟用雲端同步</div>
+        <div class="hint" id="syncStatus" style="margin-top:10px">尚未綁定雲端同步；第一次修改資料時會自動建立</div>
       </div>
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>主題切換</div><div class="theme-options"><button class="theme-choice" id="themeLight">☀　淺色模式 <span>○</span></button><button class="theme-choice" id="themeDark">☾　深色模式 <span>○</span></button></div></div>
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>排班設定</div><div class="settings-list"><button class="settings-item" data-goto="calendar"><div class="field-icon" style="background:#fff0dc;color:#9c5b3b"><svg class="icon"><use href="#i-calendar"/></svg></div><div><b>排班相關設定</b><small id="settingsScheduleSummary">做2休2・A班</small></div><span>›</span></button></div></div>
@@ -240,7 +240,7 @@ function normalizeState(v){
   return s;
 }
 let syncCode='';
-let syncStatusText='尚未啟用雲端同步';
+let syncStatusText='尚未綁定雲端同步；第一次修改資料時會自動建立';
 let cloudBusy=false,cloudPending=false,cloudTimer=null;
 try{
   syncCode=localStorage.getItem(CLOUD_SYNC_KEY)||'';
@@ -308,16 +308,23 @@ async function cloudSave(showAlert=false){
     if(cloudPending){cloudPending=false;queueCloudSave(150)}
   }
 }
+function ensureSyncIdentity(){
+  if(syncCode&&syncCode.length>=20)return syncCode;
+  syncCode=generateSyncCode();
+  try{localStorage.setItem(CLOUD_SYNC_KEY,syncCode)}catch(e){}
+  setSyncStatus('已建立雲端同步身分・準備同步');
+  if($('syncCodeInput'))$('syncCodeInput').value=syncCode;
+  return syncCode;
+}
 function queueCloudSave(delay=450){
   if(!syncCode||syncCode.length<20)return;
   clearTimeout(cloudTimer);
-  cloudTimer=setTimeout(()=>cloudSave(false),delay);
+  cloudTimer=setTimeout(()=>{cloudTimer=null;cloudSave(false)},delay);
 }
 function changedAndSync(){
-  if(syncCode){
-    persistLocalSnapshot();
-    queueCloudSave();
-  }
+  ensureSyncIdentity();
+  persistLocalSnapshot();
+  queueCloudSave();
 }
 async function cloudLoad(createIfMissing=true,showAlert=false){
   if(!syncCode||syncCode.length<20)return;
@@ -425,13 +432,33 @@ $('removeAvatar').onclick=()=>{
   changedAndSync();
   renderSettings();
 };
-$('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(syncCode)await cloudSave(false);alert(syncCode?'已儲存到這台裝置並同步雲端。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=()=>{if(!confirm('確定清除這台裝置已儲存的資料？雲端資料不會刪除。'))return;localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);localStorage.removeItem(CLOUD_SYNC_KEY);localStorage.removeItem(CLOUD_SYNC_UPDATED_KEY);syncCode='';syncStatusText='尚未啟用雲端同步';state.profile.avatar='';lastSavedAt=null;renderSettings();alert('已清除此裝置資料並斷開雲端同步；雲端資料仍保留。')};
+$('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(syncCode)await cloudSave(false);alert(syncCode?'已儲存到這台裝置並同步雲端。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=()=>{if(!confirm('確定清除這台裝置已儲存的資料？雲端資料不會刪除。'))return;localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);localStorage.removeItem(CLOUD_SYNC_KEY);localStorage.removeItem(CLOUD_SYNC_UPDATED_KEY);syncCode='';syncStatusText='尚未綁定雲端同步；第一次修改資料時會自動建立';state.profile.avatar='';lastSavedAt=null;renderSettings();alert('已清除此裝置資料並斷開雲端同步；雲端資料仍保留。')};
 $('syncConnect').onclick=()=>connectSyncCode($('syncCodeInput').value,true);
 $('syncGenerate').onclick=()=>{const code=generateSyncCode();$('syncCodeInput').value=code;connectSyncCode(code,true)};
-$('syncCopy').onclick=async()=>{const code=($('syncCodeInput').value||syncCode||'').trim();if(!code){alert('目前還沒有同步碼。');return}try{await navigator.clipboard.writeText(code);alert('同步碼已複製。')}catch(e){$('syncCodeInput').type='text';$('syncCodeInput').select();alert('請複製選取的同步碼。')}};
-$('syncDisconnect').onclick=()=>{if(!syncCode){alert('目前沒有連線中的同步碼。');return}if(!confirm('只斷開這台裝置的雲端同步？雲端資料會保留。'))return;localStorage.removeItem(CLOUD_SYNC_KEY);localStorage.removeItem(CLOUD_SYNC_UPDATED_KEY);syncCode='';syncStatusText='尚未啟用雲端同步';$('syncCodeInput').value='';renderSettings()};
+$('syncCopy').onclick=async()=>{
+  const code=($('syncCodeInput').value||syncCode||ensureSyncIdentity()).trim();
+  const base=location.origin+location.pathname;
+  const link=base+'#sync='+encodeURIComponent(code);
+  try{await navigator.clipboard.writeText(link);alert('同步連結已複製。請在另一個瀏覽器或裝置開啟一次，之後會自動同步。')}
+  catch(e){prompt('請複製這個同步連結：',link)}
+};
+$('syncDisconnect').onclick=()=>{if(!syncCode){alert('目前沒有連線中的同步碼。');return}if(!confirm('只斷開這台裝置的雲端同步？雲端資料會保留。'))return;localStorage.removeItem(CLOUD_SYNC_KEY);localStorage.removeItem(CLOUD_SYNC_UPDATED_KEY);syncCode='';syncStatusText='尚未綁定雲端同步；第一次修改資料時會自動建立';$('syncCodeInput').value='';renderSettings()};
+const pairMatch=location.hash.match(/^#sync=(.+)$/);
+if(pairMatch){
+  const pairCode=decodeURIComponent(pairMatch[1]||'').trim();
+  history.replaceState(null,'',location.pathname+location.search);
+  if(pairCode.length>=20){
+    if(!syncCode||syncCode===pairCode||confirm('這個同步連結會切換到另一組雲端資料，是否繼續？')){
+      syncCode=pairCode;
+      try{localStorage.setItem(CLOUD_SYNC_KEY,syncCode)}catch(e){}
+      syncStatusText='已收到同步連結・正在讀取雲端資料';
+    }
+  }
+}
 if(syncCode){setTimeout(()=>cloudLoad(true,false),350)}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncCode)cloudLoad(true,false)});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&syncCode&&!cloudBusy)cloudLoad(false,false)});
+window.addEventListener('focus',()=>{if(syncCode&&!cloudBusy)cloudLoad(false,false)});
+setInterval(()=>{if(syncCode&&!document.hidden&&!cloudBusy&&!cloudPending&&!cloudTimer)cloudLoad(false,false)},5000);
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 applyTheme();render();
