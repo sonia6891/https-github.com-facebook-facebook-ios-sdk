@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=20">
+<link rel="manifest" href="./manifest.webmanifest?v=21">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -104,7 +104,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
       <div class="work-grid">
         <div class="card work-card tone-orange">
           <div class="summary-icon" style="background:#ffe7b2;color:#c96e0a"><svg class="icon"><use href="#i-money"/></svg></div>
-          <div><b>距離發薪日</b><strong id="paydayCountdown">尚未設定</strong><small id="paydayNext">到設定填入每月發薪日</small></div>
+          <div><b>距離發薪日</b><strong id="paydayCountdown">尚未設定</strong><small id="paydayNext">社畜的人生，就靠發薪日續命。</small></div>
         </div>
         <div class="card work-card tone-blue">
           <div class="summary-icon" style="background:#dceeff;color:#1768b1"><svg class="icon"><use href="#i-calendar"/></svg></div>
@@ -555,9 +555,9 @@ function renderDashboard(){const mc=calcMonth();$('dashAttendance').textContent=
 const pay=nextPaydayInfo();
 if(pay){
   $('paydayCountdown').textContent=pay.days===0?'今天發薪 🎉':'還有 '+pay.days+' 天';
-  $('paydayNext').textContent='下一次 '+pay.date.getFullYear()+'/'+pad(pay.date.getMonth()+1)+'/'+pad(pay.date.getDate());
+  $('paydayNext').textContent='社畜的人生，就靠發薪日續命。';
 }else{
-  $('paydayCountdown').textContent='尚未設定';$('paydayNext').textContent='到設定填入每月發薪日';
+  $('paydayCountdown').textContent='尚未設定';$('paydayNext').textContent='社畜的人生，就靠發薪日續命。';
 }
 const ten=tenureInfo();
 if(!ten){$('tenureValue').textContent='尚未設定';$('tenureSince').textContent='到設定填入公司到職日'}
