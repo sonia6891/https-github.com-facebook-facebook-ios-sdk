@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=31">
+<link rel="manifest" href="./manifest.webmanifest?v=32">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -35,7 +35,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 .schedule-card{padding:14px 16px}.schedule-summary{display:flex;align-items:center;justify-content:space-between;gap:12px}.schedule-summary-main{display:flex;align-items:center;gap:12px;min-width:0}.schedule-summary-icon{width:50px;height:50px;border-radius:15px;background:#fff0dc;color:#9c5b3b;display:grid;place-items:center;flex:0 0 auto}.schedule-summary-icon .icon{font-size:25px}.schedule-summary-text{min-width:0}.schedule-summary-text b{display:block;font-size:15px;color:#876352}.schedule-summary-text strong{display:block;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}.expand-btn{border:0;background:#fff0dc;color:#9d531d;border-radius:18px;padding:12px 14px;font-weight:900;display:flex;align-items:center;gap:7px;flex:0 0 auto}.schedule-settings{margin-top:14px;padding-top:14px;border-top:1px dashed #e8d4c0}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{min-width:0}.field label{display:block;font-size:12px;font-weight:800;color:#6e5448;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #e3d8cf;background:#fffdf9;color:var(--ink);border-radius:12px;padding:11px 12px;min-height:44px}.field textarea{min-height:84px;resize:vertical}.hint{font-size:11px;color:var(--muted);margin-top:5px}.month-toolbar{display:grid;grid-template-columns:44px 1fr 44px auto;gap:8px;align-items:center;margin:16px 0 10px}.month-title{text-align:center;font-size:26px;font-weight:950}.icon-btn,.today-btn{border:1px solid #eadbcc;background:#fff;border-radius:14px;height:44px;color:#4b251a;font-weight:900}.today-btn{padding:0 16px}.calendar-card{overflow:hidden}.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.weekdays div{text-align:center;padding:11px 2px;background:#fffaf5;border-bottom:1px solid var(--line);font-size:12px;font-weight:800;color:#725b50}.day{position:relative;min-height:102px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 6px;background:#fff}.day:nth-child(7n){border-right:0}.day.empty{background:#fffaf7;color:#b4aaa4}.date-num{font-weight:900}.day.today .date-num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#8f5a42;color:#fff}.day-status{display:grid;gap:4px;margin-top:6px}.status-pill{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;border-radius:10px;padding:5px 3px;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status-pill .icon{font-size:13px;flex:0 0 auto}.st-a{background:#fff0c8;color:#704116}.st-b{background:#ddecff;color:#0a57a0}.st-off{background:#eee;color:#555}.st-ot{background:#f8e3ee;color:#a72e67}.st-sick{background:#ffdce1;color:#b5162e}.st-menstrual{background:#f0ddff;color:#7b36a1}.st-personal{background:#e7eff6;color:#4e6f88}.st-annual{background:#e4f6e5;color:#28753a}.st-custom{background:#d9f3f5;color:#126871}.holiday-tag{display:block;margin-top:4px;padding:3px 5px;border-radius:7px;font-size:9px;font-weight:950;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}.holiday-tag.national{background:#ffe2e5;color:#b31f35;border:1px solid #f5c0c7}.holiday-tag.govcomp{background:#fff7f7;color:#b94c5b;border:1px dashed #e8a9b2}.base-note{font-size:9px;color:#94817a;text-align:center}.day-hit{position:absolute;inset:0;border:0;background:transparent;z-index:5}.legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px}.legend-item{display:flex;align-items:center;gap:5px;font-size:12px}.dot{width:14px;height:14px;border-radius:50%}.dot.a{background:#ffd06f}.dot.b{background:#73b4f5}.dot.off{background:#cfcfcf}.dot.ot{background:#cf4f88}.dot.sick{background:#dc3545}.dot.menstrual{background:#b05bd3}.dot.personal{background:#7892a6}.dot.annual{background:#79ca87}.dot.custom{background:#45aeb5}.dot.national{background:#d73d52}.dot.govcomp{background:#fff;border:2px solid #d98592}
 .attendance-head{padding:16px}.status-shortcuts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}.status-shortcut{border:0;border-radius:14px;padding:10px 6px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px}.status-shortcut .icon{font-size:17px}.attendance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.summary-card{padding:14px;display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center}.summary-card strong{font-size:24px;display:block}.summary-card small{color:var(--muted)}.records{padding:0 14px 14px}.record-head,.record-row{display:grid;grid-template-columns:1.2fr .9fr .55fr 1.2fr 32px;gap:8px;align-items:center}.record-head{padding:10px 6px;color:#6f5c53;font-size:11px;font-weight:800;border-bottom:1px solid var(--line)}.record-row{padding:11px 6px;border-bottom:1px solid var(--line);font-size:13px}.record-row:last-child{border-bottom:0}.record-type{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:10px;font-weight:850;width:max-content;max-width:100%}.record-note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f625c}.record-more{border:0;background:transparent;color:#8f776b;font-size:18px}.empty-state{text-align:center;padding:26px;color:var(--muted)}.edit-today{width:100%;margin-top:12px;border:0;border-radius:16px;background:linear-gradient(90deg,#ffc963,#f6b443);color:#7a3f08;padding:14px;font-weight:950;font-size:16px}
 .salary-card{padding:16px}.salary-section{border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px;background:#fff}.salary-section-title{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:950;margin-bottom:10px}.salary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-field{padding:10px;border-radius:14px;background:#fff7f1;border:1px solid #f5e3d7}.salary-field .field-icon{width:36px;height:36px;border-radius:12px;font-size:18px;margin-bottom:6px}.salary-field .field-icon .icon{font-size:19px}.salary-field label{font-size:12px;font-weight:850;display:block;margin-bottom:5px}.salary-field input{width:100%;height:40px;border:1px solid #d8d0cb;border-radius:9px;background:#fff;padding:7px 9px;font-size:16px;font-weight:800}.salary-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.result-card{padding:14px;display:flex;gap:10px;align-items:center}.result-card .summary-icon{flex:0 0 auto}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
-.work-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.work-card{padding:15px;display:grid;grid-template-columns:50px 1fr;gap:12px;align-items:center}.work-card b{font-size:13px}.work-card strong{display:block;font-size:26px;margin-top:3px;line-height:1.15}.work-card small{display:block;color:var(--muted);margin-top:4px}.payday-quote{font-size:14px;font-weight:900;color:#9a5316;margin-top:5px;line-height:1.35}.leave-balance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.balance-card{padding:15px}.balance-title{display:flex;align-items:center;gap:9px}.balance-card>strong{display:block;font-size:23px;margin:10px 0 4px}.balance-card>small{color:var(--muted);display:block;min-height:32px}.balance-progress{height:7px;background:#f0e8e0;border-radius:999px;overflow:hidden;margin-top:10px}.balance-progress i{display:block;height:100%;width:0;border-radius:999px;transition:width .25s ease}.annual-balance .balance-progress i{background:#62bd72}.sick-balance .balance-progress i{background:#d94a5a}.personal-balance .balance-progress i{background:#7892a6}
+.work-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.work-card{padding:15px;display:grid;grid-template-columns:50px 1fr;gap:12px;align-items:center}.work-card b{font-size:13px}.work-card strong{display:block;font-size:26px;margin-top:3px;line-height:1.15}.work-card small{display:block;color:var(--muted);margin-top:4px}.payday-quote{font-size:14px;font-weight:900;color:#9a5316;margin-top:5px;line-height:1.35}.leave-balance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.balance-card{padding:15px}.balance-title{display:flex;align-items:center;gap:9px}.balance-card>strong{display:block;font-size:23px;margin:10px 0 4px}.balance-card>small{color:var(--muted);display:block;min-height:32px}.balance-progress{height:7px;background:#f0e8e0;border-radius:999px;overflow:hidden;margin-top:10px}.balance-progress i{display:block;height:100%;width:0;border-radius:999px;transition:width .25s ease}.annual-balance .balance-progress i{background:#62bd72}.annual-reminder{margin-top:9px;padding:8px 10px;border-radius:10px;background:#f2fbf3;color:#367944;font-size:11px;font-weight:850;line-height:1.45}.annual-reminder.warn{background:#fff3df;color:#a66110}.annual-reminder.urgent{background:#ffe9ec;color:#b52d43}.sick-balance .balance-progress i{background:#d94a5a}.personal-balance .balance-progress i{background:#7892a6}
 .settings-stack{display:grid;gap:12px}.settings-card{padding:16px}.profile-row{display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center}.profile-preview{width:110px;height:110px;border-radius:50%;object-fit:cover;border:5px solid #f7e2cd;box-shadow:var(--shadow)}.profile-copy b{font-size:20px}.profile-copy p{margin:5px 0;color:var(--muted)}.profile-say{display:inline-block;padding:8px 10px;border-radius:14px;background:#fff0dc;color:#985b37;font-weight:800}.settings-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #e7d8cb;background:#fff;border-radius:13px;padding:10px 13px;font-weight:850;color:#5c3425}.btn.primary{background:#fff0d4;color:#ae5b0c;border-color:#f3d2a3}.btn.danger{background:#fff0f1;color:#c94251;border-color:#f3c9ce}.settings-list{display:grid;gap:1px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.settings-item{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:center;padding:13px;background:#fff;border-bottom:1px solid var(--line)}.settings-item:last-child{border-bottom:0}.settings-item .field-icon{width:40px;height:40px;border-radius:12px}.settings-item b{display:block}.settings-item small{color:var(--muted)}.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.theme-choice{border:1px solid #e5d9ce;background:#fff;border-radius:16px;padding:13px;display:flex;align-items:center;justify-content:space-between;font-weight:900}.theme-choice.active{border-color:#f0a838;background:#fff7e8;color:#bd660e}.install-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .footer-banner{margin-top:18px}.footer-banner img{width:100%;display:block;border-radius:22px;box-shadow:var(--shadow);border:1px solid #f0e0d1}.bottom-nav{display:none}.dialog{border:0;border-radius:22px;padding:0;width:min(520px,calc(100vw - 22px));background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.25)}.dialog::backdrop{background:rgba(34,22,17,.45)}.dialog-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}.dialog-head b{font-size:18px}.dialog-close{border:0;background:transparent;font-size:24px;color:var(--muted)}.dialog-body{padding:16px 18px;display:grid;gap:12px;max-height:70vh;overflow:auto}.dialog-foot{padding:14px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}.hidden{display:none!important}
 @media(max-width:1000px){.shell{grid-template-columns:190px minmax(0,1fr)}.main{padding-left:16px;padding-right:16px}.salary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.salary-results{grid-template-columns:repeat(2,minmax(0,1fr))}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.profile-panel{display:none}}
@@ -123,6 +123,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
           <strong id="annualBalanceMain">額度未設定</strong>
           <small id="annualBalanceDetail">法定最低 0 天・已用 0 小時</small>
           <div class="balance-progress"><i id="annualBalanceBar"></i></div>
+          <div id="annualSettlementReminder" class="annual-reminder">設定特休年度後，這裡會提醒結算日期。</div>
         </div>
         <div class="card balance-card sick-balance">
           <div class="balance-title"><span class="leave-chip c-sick"><svg class="icon"><use href="#i-cross"/></svg></span><b>病假</b></div>
@@ -211,10 +212,12 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
           <div class="field"><label>每日工時</label><input id="settingDailyHours" type="number" min="0.5" max="24" step="0.5" placeholder="8"><div class="hint">用來把假別天數換算成小時。</div></div>
           <div class="field"><label>加班一日預設時數</label><input id="settingDefaultOtHours" type="number" min="0.5" max="24" step="0.5" placeholder="10"><div class="hint">四班二輪預設 10 小時；實際只加班 4 小時時，可在當天另外修改。</div></div>
           <div class="field"><label>公司年度核給特休總天數</label><input id="settingAnnualDays" type="number" min="0" step="0.5" placeholder="例如 14"><div class="hint">若留 0，總覽會先以勞基法法定最低天數試算。</div></div>
+          <div class="field"><label>特休年度制度</label><select id="settingAnnualCycle"><option value="anniversary">到職週年制</option><option value="calendar">曆年制（1/1～12/31）</option><option value="custom">公司自訂結算日</option></select><div class="hint">不同公司可能採不同特休年度，請依公司實際制度選擇。</div></div>
+          <div class="field hidden" id="annualCustomDateWrap"><label>公司特休結算日</label><input id="settingAnnualCustomDate" type="date"><div class="hint">只取月／日作為每年的結算日。</div></div>
           <div class="field"><label>今年已使用病假時數（補登）</label><input id="settingSickUsedHours" type="number" min="0" step="0.5" placeholder="例如 24"><div class="hint">填入 App 尚未記錄的既有病假時數；App 內今年的病假紀錄會另外自動加總。</div></div>
           <div class="field"><label>今年已使用事假時數（補登）</label><input id="settingPersonalUsedHours" type="number" min="0" step="0.5" placeholder="例如 8"><div class="hint">填入 App 尚未記錄的既有事假時數；App 內今年的事假紀錄會另外自動加總。</div></div>
         </div>
-        <div class="hint" style="margin-top:10px">病假依未住院普通傷病假一年 30 日、事假一年 14 日試算，並依每日工時換算成時數。生理假前 3 日不併入病假，第 4 日起的部分自動併入病假額度。公司若有優於法令的制度，仍以公司實際規定為準。</div>
+        <div class="hint" style="margin-top:10px">病假依未住院普通傷病假一年 30 日、事假一年 14 日試算，並依每日工時換算成時數。生理假前 3 日不併入病假，第 4 日起的部分自動併入病假額度。公司若有優於法令的制度，仍以公司實際規定為準。特休年度終結仍未休完，原則上應結算工資；如勞雇雙方協商，也可遞延至次一年度。</div>
       </div>
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>資料管理</div><div class="settings-list"><button class="settings-item" id="saveDevice"><div class="field-icon" style="background:#e2f0ff;color:#2072bf"><svg class="icon"><use href="#i-cloud"/></svg></div><div><b>儲存到此裝置</b><small id="saveState">將目前設定與資料儲存到本機裝置</small></div><span>›</span></button><button class="settings-item" id="clearDevice"><div class="field-icon" style="background:#ffe6e8;color:#dd4a59"><svg class="icon"><use href="#i-trash"/></svg></div><div><b>清除已儲存資料</b><small>刪除此裝置上的保存內容</small></div><span>›</span></button></div></div>
       <div class="card settings-card">
@@ -281,7 +284,7 @@ const DEVICE_ID_KEY='meow-work-device-id-v1';
 const statusMap={
  none:{label:'正常班表',cls:'',icon:''},overtime:{label:'加班',cls:'st-ot',icon:'i-clock'},sick:{label:'病假',cls:'st-sick',icon:'i-cross'},menstrual:{label:'生理假',cls:'st-menstrual',icon:'i-drop'},personal:{label:'事假',cls:'st-personal',icon:'i-doc'},annual:{label:'特休',cls:'st-annual',icon:'i-star'},custom:{label:'自訂假別',cls:'st-custom',icon:'i-star'}
 };
-function defaultState(){const d=new Date();return{theme:'light',profile:{avatar:'',name:'喵星人'},schedule:{preset:'2-2',shiftName:'A班',workDays:2,offDays:2,startDate:iso(d)},settings:{baseSalary:0,shiftAllowancePerDay:0,mealAllowance:0,performanceAllowance:0,transportAllowance:0,otherIncome:0,payday:0,hireDate:'',dailyWorkHours:8,defaultOvertimeHours:10,annualLeaveDays:0,sickLeaveDays:0,personalLeaveDays:0,sickUsedHours:0,personalUsedHours:0},months:{},dayStatus:{}}}
+function defaultState(){const d=new Date();return{theme:'light',profile:{avatar:'',name:'喵星人'},schedule:{preset:'2-2',shiftName:'A班',workDays:2,offDays:2,startDate:iso(d)},settings:{baseSalary:0,shiftAllowancePerDay:0,mealAllowance:0,performanceAllowance:0,transportAllowance:0,otherIncome:0,payday:0,hireDate:'',dailyWorkHours:8,defaultOvertimeHours:10,annualLeaveDays:0,annualLeaveCycle:'anniversary',annualCustomDate:'',sickLeaveDays:0,personalLeaveDays:0,sickUsedHours:0,personalUsedHours:0},months:{},dayStatus:{}}}
 function loadSaved(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return{state:defaultState(),savedAt:null};const p=JSON.parse(raw);const s=defaultState(),v=p.state||p;s.theme=v.theme||s.theme;s.profile=Object.assign({},s.profile,v.profile||{});s.schedule=Object.assign({},s.schedule,v.schedule||{});s.settings=Object.assign({},s.settings,v.settings||{});s.months=v.months||{};s.dayStatus=v.dayStatus||{};return{state:s,savedAt:p.savedAt||null}}catch(e){return{state:defaultState(),savedAt:null}}}
 let loaded=loadSaved(),state=loaded.state,lastSavedAt=loaded.savedAt,current=new Date();
 try{
@@ -529,6 +532,34 @@ function statutoryAnnualLeaveDays(){
   if(ten.years<10)return 15;
   return Math.min(30,15+(ten.years-9));
 }
+function annualSettlementInfo(){
+  const mode=state.settings.annualLeaveCycle||'anniversary';
+  const today=new Date();today.setHours(0,0,0,0);
+  let target=null,label='';
+  if(mode==='calendar'){
+    target=new Date(today.getFullYear(),11,31);
+    if(target<today)target=new Date(today.getFullYear()+1,11,31);
+    label='曆年制';
+  }else if(mode==='custom'){
+    const raw=String(state.settings.annualCustomDate||'');
+    if(!raw)return{missing:true,mode,label:'公司自訂'};
+    const d=new Date(raw+'T00:00:00');
+    if(isNaN(d))return{missing:true,mode,label:'公司自訂'};
+    target=new Date(today.getFullYear(),d.getMonth(),d.getDate());
+    if(target<today)target=new Date(today.getFullYear()+1,d.getMonth(),d.getDate());
+    label='公司自訂';
+  }else{
+    const raw=String(state.settings.hireDate||'');
+    if(!raw)return{missing:true,mode,label:'到職週年制'};
+    const start=new Date(raw+'T00:00:00');
+    if(isNaN(start))return{missing:true,mode,label:'到職週年制'};
+    target=new Date(today.getFullYear(),start.getMonth(),start.getDate());
+    if(target<today)target=new Date(today.getFullYear()+1,start.getMonth(),start.getDate());
+    label='到職週年制';
+  }
+  const days=Math.round((target-today)/DAY);
+  return{missing:false,mode,label,date:target,days};
+}
 function yearlyLeaveUsage(type){
   const year=new Date().getFullYear(),prefix=year+'-';
   return Object.entries(state.dayStatus).reduce((sum,[date,st])=>sum+(date.startsWith(prefix)&&st&&st.type===type?num(st.hours):0),0);
@@ -584,6 +615,19 @@ const annualQuota=companyAnnual>0?companyAnnual:legalAnnual;
 const annualInfo=leaveBalanceInfo('annual',annualQuota);
 paintBalance('annual',annualInfo);
 $('annualBalanceDetail').textContent=(companyAnnual>0?'公司核給 '+fmtHours(companyAnnual)+' 天':'未填公司額度，以法定最低試算')+'・法定最低 '+fmtHours(legalAnnual)+' 天・已用 '+fmtHours(annualInfo.usedDays)+' 天 / '+fmtHours(annualInfo.usedHours)+' 小時';
+const settlement=annualSettlementInfo();
+const settlementEl=$('annualSettlementReminder');
+if(settlement&&settlementEl){
+  settlementEl.classList.remove('warn','urgent');
+  if(settlement.missing){
+    settlementEl.textContent=settlement.mode==='custom'?'請到設定填入公司特休結算日。':'請到設定填入公司到職日。';
+  }else{
+    const ds=settlement.date.getFullYear()+'/'+pad(settlement.date.getMonth()+1)+'/'+pad(settlement.date.getDate());
+    if(settlement.days<=7)settlementEl.classList.add('urgent');
+    else if(settlement.days<=30)settlementEl.classList.add('warn');
+    settlementEl.textContent=(settlement.days===0?'今天是本期特休結算日':'距離本期特休結算還有 '+settlement.days+' 天')+'・'+ds+'・目前剩 '+fmtHours(annualInfo.remainHours)+' 小時';
+  }
+}
 const sickInfo=legalLeaveBalanceInfo('sick',30,state.settings.sickUsedHours,true);
 $('sickBalanceMain').textContent='剩 '+fmtHours(sickInfo.remainHours)+' 小時';
 $('sickBalanceDetail').textContent='法定 '+fmtHours(sickInfo.totalDays)+' 日 / '+fmtHours(sickInfo.totalHours)+' 小時・已用 '+fmtHours(sickInfo.usedHours)+' 小時'+(sickInfo.menstrualCountedHours>0?'（含生理假併入 '+fmtHours(sickInfo.menstrualCountedHours)+' 小時）':'')+(sickInfo.overHours>0?'・超過 '+fmtHours(sickInfo.overHours)+' 小時':'');
@@ -655,6 +699,9 @@ setWork('settingHireDate',state.settings.hireDate||'');
 setWork('settingDailyHours',state.settings.dailyWorkHours||8);
 setWork('settingDefaultOtHours',state.settings.defaultOvertimeHours||10);
 setWork('settingAnnualDays',state.settings.annualLeaveDays||0);
+if($('settingAnnualCycle'))$('settingAnnualCycle').value=state.settings.annualLeaveCycle||'anniversary';
+if($('settingAnnualCustomDate')&&document.activeElement!==$('settingAnnualCustomDate'))$('settingAnnualCustomDate').value=state.settings.annualCustomDate||'';
+if($('annualCustomDateWrap'))$('annualCustomDateWrap').classList.toggle('hidden',(state.settings.annualLeaveCycle||'anniversary')!=='custom');
 setWork('settingSickUsedHours',state.settings.sickUsedHours||0);
 setWork('settingPersonalUsedHours',state.settings.personalUsedHours||0);
 }
@@ -755,6 +802,8 @@ $('clearDay').onclick=()=>{
 function bindSetting(id,key){$(id).oninput=e=>{state.settings[key]=num(e.target.value);changedAndSync();render()}}bindSetting('salaryBase','baseSalary');bindSetting('salaryShift','shiftAllowancePerDay');bindSetting('salaryMeal','mealAllowance');bindSetting('salaryPerformance','performanceAllowance');bindSetting('salaryTransport','transportAllowance');bindSetting('salaryOtherIncome','otherIncome');$('salaryOtHours').oninput=e=>{mb().overtimeHours=num(e.target.value);changedAndSync();render()};[['dedLabor','dedLabor'],['dedHealth','dedHealth'],['dedWelfare','dedWelfare'],['dedPension','dedPension'],['dedAttendance','dedAttendance'],['dedTax','dedTax'],['dedHealthExtra','dedHealthExtra'],['dedOther','dedOther']].forEach(([id,key])=>{$(id).oninput=e=>{mb()[key]=num(e.target.value);changedAndSync();render()}});
 [['settingPayday','payday'],['settingDailyHours','dailyWorkHours'],['settingDefaultOtHours','defaultOvertimeHours'],['settingAnnualDays','annualLeaveDays'],['settingSickUsedHours','sickUsedHours'],['settingPersonalUsedHours','personalUsedHours']].forEach(([id,key])=>{$(id).oninput=e=>{state.settings[key]=num(e.target.value);changedAndSync();render()}});
 $('settingHireDate').onchange=e=>{state.settings.hireDate=e.target.value||'';changedAndSync();render()};
+$('settingAnnualCycle').onchange=e=>{state.settings.annualLeaveCycle=e.target.value||'anniversary';changedAndSync();render()};
+$('settingAnnualCustomDate').onchange=e=>{state.settings.annualCustomDate=e.target.value||'';changedAndSync();render()};
 function applyTheme(){document.documentElement.classList.toggle('dark',state.theme==='dark');document.querySelector('meta[name=theme-color]').setAttribute('content',state.theme==='dark'?'#2b211c':'#f7b342');renderSettings()}function setTheme(t){state.theme=t;changedAndSync();applyTheme()}$('heroTheme').onclick=()=>setTheme(state.theme==='dark'?'light':'dark');$('themeLight').onclick=()=>setTheme('light');$('themeDark').onclick=()=>setTheme('dark');
 $('avatarInput').onchange=e=>{
   const f=e.target.files&&e.target.files[0];
