@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=39">
+<link rel="manifest" href="./manifest.webmanifest?v=40">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -51,7 +51,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 @media(max-width:760px){.history-row{grid-template-columns:.7fr 1fr 1fr;grid-template-areas:"month expected actual" "meta meta action";gap:6px}.history-row .month{grid-area:month}.history-row .expected-num{grid-area:expected}.history-row .actual-num{grid-area:actual}.history-row .diff{grid-area:meta;text-align:left}.history-row .open-month{grid-area:action;justify-self:end}.history-row .history-meta{display:none}.history-summary{grid-template-columns:1fr 1fr 1fr;gap:5px;padding:8px}.history-summary .card{padding:8px}.history-summary strong{font-size:15px}.history-summary b{font-size:9px}}
 @media(max-width:760px){.salary-tabs{margin-top:8px}.salary-tab{font-size:13px;padding:10px 8px}.scan-upload{grid-template-columns:1fr 1fr}.scan-result-grid{grid-template-columns:1fr 1fr}.scan-head{padding:11px}.scan-preview{max-height:280px}}
 </style>
-<link rel="manifest" href="./manifest.webmanifest?v=39">
+<link rel="manifest" href="./manifest.webmanifest?v=40">
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
@@ -234,7 +234,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
           <div class="scan-head">
             <div>
               <b>📷 Pro 本地薪資單辨識</b>
-              <div class="hint">拍照或從相簿選薪資明細，辨識後先確認，再導入逐項薪資對帳。</div>
+              <div class="hint">打開後直接選「拍薪資單」或「從相簿／檔案選擇」。辨識結果會留在這張卡正下方，確認後才導入逐項薪資對帳。</div>
               <div class="scan-privacy">🔒 圖片只在你的瀏覽器本地處理，不上傳薪資單影像。</div>
             </div>
             <button type="button" class="btn" id="closePayslipScan">收起</button>
@@ -909,21 +909,21 @@ const ITEMIZED_FIELDS=[
 ];
 let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),payslipOcrResult={},payslipRawText='',payslipPreviewUrl='';
 const PAYSLIP_OCR_FIELDS=[
-  {key:'actualNet',label:'實發金額',kind:'net',terms:['實發金額','實領金額','實領薪資','實領工資','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳'],mode:'last'},
+  {key:'actualNet',label:'實發金額',kind:'net',terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
   {key:'dedHealthExtra',label:'健保補扣／補充保費',kind:'deduction',terms:['健保補扣','補充保費','補充健保費','二代健保','二代健保補充保費'],mode:'sum'},
-  {key:'dedPension',label:'勞退自提',kind:'deduction',terms:['勞退自提','勞工退休金自提','退休金自提','勞退提繳','自願提繳退休金','自提勞退'],mode:'sum'},
+  {key:'dedPension',label:'勞退自提',kind:'deduction',terms:['勞退自提','勞退自提額','自提退休金','退休金自提','勞工退休金自提','勞退提繳','自願提繳退休金','員工自提','自提勞退'],mode:'sum'},
   {key:'dedAttendance',label:'考勤扣款',kind:'deduction',terms:['考勤扣款','缺勤扣款','曠職扣款','遲到扣款','早退扣款','請假扣款','事病假扣款'],mode:'sum'},
-  {key:'dedWelfare',label:'福利金',kind:'deduction',terms:['職工福利金','福利金','福委會費','職福金'],mode:'sum'},
-  {key:'dedLabor',label:'勞保費',kind:'deduction',terms:['勞保費','勞保自付','勞工保險費','勞工保險','勞保'],mode:'sum'},
-  {key:'dedHealth',label:'健保費',kind:'deduction',terms:['健保費','健保自付','全民健保費','健康保險費','健保'],mode:'sum'},
-  {key:'dedTax',label:'所得稅',kind:'deduction',terms:['薪資所得稅','所得稅','扣繳稅','薪資扣繳','預扣所得稅'],mode:'sum'},
+  {key:'dedWelfare',label:'福利金',kind:'deduction',terms:['職工福利金','福利金','福委會費','福委金','福利委員會費','職福金'],mode:'sum'},
+  {key:'dedLabor',label:'勞保費',kind:'deduction',terms:['勞保費','勞保自付','勞保自付額','勞工保險費','勞工保險','勞保個人負擔','勞保'],mode:'sum'},
+  {key:'dedHealth',label:'健保費',kind:'deduction',terms:['健保費','健保自付','健保自付額','全民健保費','健康保險費','健保個人負擔','健保'],mode:'sum'},
+  {key:'dedTax',label:'所得稅',kind:'deduction',terms:['薪資所得稅','所得稅額','所得稅','扣繳所得稅','扣繳稅','薪資扣繳','預扣所得稅','預扣稅','稅額'],mode:'sum'},
   {key:'dedOther',label:'其他扣款',kind:'deduction',terms:['其他扣款','其他代扣','代扣款','其他減項'],mode:'sum'},
-  {key:'base',label:'底薪／本薪',kind:'income',terms:['基本工資','基本薪資','基本薪','固定薪資','固定薪','月薪','本薪','底薪','本俸','基本給','固定工資'],mode:'max'},
-  {key:'shiftAllowance',label:'輪班／夜班津貼',kind:'income',terms:['輪班津貼','輪班加給','班別津貼','班別加給','夜班津貼','夜班加給','夜勤津貼','夜勤加給','大夜津貼','大夜加給','小夜津貼','小夜加給','輪班費','夜班費'],mode:'sum'},
-  {key:'meal',label:'伙食津貼',kind:'income',terms:['伙食津貼','伙食費','伙食補助','膳食津貼','膳食費','餐費津貼','餐費補助','誤餐費'],mode:'sum'},
-  {key:'performance',label:'表現／績效津貼',kind:'income',terms:['表現津貼','績效津貼','績效獎金','績效獎勵','工作獎金','工作津貼','職務津貼','專業津貼','考績獎金'],mode:'sum'},
-  {key:'transport',label:'交通津貼',kind:'income',terms:['交通津貼','交通費','交通補助','通勤津貼','車馬費'],mode:'sum'},
-  {key:'otPay',label:'加班費',kind:'income',terms:['加班費','延長工時工資','延長工時','平日加班','假日加班','休息日加班','例假加班','加班薪資','加班工資'],mode:'sum'},
+  {key:'base',label:'底薪／本薪',kind:'income',terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','經常性薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
+  {key:'shiftAllowance',label:'輪班／夜班津貼',kind:'income',terms:['輪班津貼','輪班加給','輪班獎金','輪值津貼','輪值加給','班別津貼','班別加給','班津','夜班津貼','夜班加給','夜勤津貼','夜勤加給','夜勤費','晚班津貼','中班津貼','中夜班津貼','大夜班津貼','大夜津貼','大夜加給','小夜班津貼','小夜津貼','小夜加給','特殊班津貼','三班津貼','二班津貼','輪班費','夜班費','SHIFT ALLOWANCE','NIGHT SHIFT'],mode:'sum'},
+  {key:'meal',label:'伙食津貼',kind:'income',terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','餐費津貼','餐費補助','餐費','餐貼','誤餐費','MEAL ALLOWANCE'],mode:'sum'},
+  {key:'performance',label:'表現／績效津貼',kind:'income',terms:['表現津貼','表現獎金','績效津貼','績效獎金','績效獎勵','績效','工作獎金','工作津貼','職務津貼','職務加給','專業津貼','專業加給','責任津貼','責任加給','考績獎金','全勤獎金','PERFORMANCE BONUS','PERFORMANCE ALLOWANCE'],mode:'sum'},
+  {key:'transport',label:'交通津貼',kind:'income',terms:['交通津貼','交通費','交通補助','交通補貼','通勤津貼','通勤補助','車馬費','車資','油資','TRAVEL ALLOWANCE','TRANSPORT ALLOWANCE'],mode:'sum'},
+  {key:'otPay',label:'加班費',kind:'income',terms:['加班費','延長工時工資','延長工時','平日延長工時','平日加班','假日加班','休息日加班','休息日工資','例假加班','例假日加班','國定假日加班','國假加班','超時工資','加班薪資','加班工資','OVERTIME PAY','OVERTIME'],mode:'sum'},
   {key:'otherIncome',label:'其他收入',kind:'income',terms:['其他收入','其他津貼','其他加給','其他應發','其他獎金','獎金'],mode:'sum'}
 ]
 function setSalarySubTab(tab){
@@ -943,11 +943,14 @@ function normalizeOcrDigits(s){
 }
 function normalizeOcrText(s){
   return normalizeOcrDigits(s)
-    .replace(/[\s_·•・．。,:：;；()（）\[\]【】]/g,'')
-    .replace(/薪咨/g,'薪資')
-    .replace(/津貼/g,'津貼')
-    .replace(/勞保/g,'勞保')
-    .replace(/健保/g,'健保');
+    .toUpperCase()
+    .replace(/薪资/g,'薪資').replace(/工资/g,'工資').replace(/实发/g,'實發').replace(/实领/g,'實領')
+    .replace(/净额/g,'淨額').replace(/金额/g,'金額').replace(/应发/g,'應發').replace(/应领/g,'應領')
+    .replace(/劳保/g,'勞保').replace(/劳退/g,'勞退').replace(/保险/g,'保險').replace(/津贴/g,'津貼')
+    .replace(/补助/g,'補助').replace(/补贴/g,'補貼').replace(/费用/g,'費用').replace(/加班费/g,'加班費')
+    .replace(/绩效/g,'績效').replace(/奖金/g,'獎金').replace(/所得税/g,'所得稅').replace(/扣缴/g,'扣繳')
+    .replace(/[\s_·•・．。,:：;；()（）\[\]【】\-\/]/g,'')
+    .replace(/薪咨/g,'薪資');
 }
 function amountCandidates(line){
   const text=normalizeOcrDigits(line);
@@ -967,43 +970,69 @@ function chooseOcrAmount(line,mode){
 function findNearbyOcrAmount(lines,index,mode){
   const direct=chooseOcrAmount(lines[index],mode);
   if(direct!==null)return direct;
-  const checks=[index+1,index-1,index+2];
+  const checks=[index+1,index-1,index+2,index+3];
   for(const i of checks){
     if(i<0||i>=lines.length)continue;
+    const otherField=bestOcrFieldForLine(lines[i]);
+    const nums=amountCandidates(lines[i]);
+    if(otherField&&nums.length===0)continue;
+    if(otherField&&nums.length>0&&i!==index+1)continue;
     const candidate=chooseOcrAmount(lines[i],mode);
     if(candidate!==null)return candidate;
   }
   return null;
 }
-function bestOcrFieldForLine(line){
-  const compact=normalizeOcrText(line);
-  let best=null;
+function ocrFieldsForLine(line){
+  const compact=normalizeOcrText(line),hits=[];
   PAYSLIP_OCR_FIELDS.forEach(def=>{
+    let best=null;
     def.terms.forEach(term=>{
       const alias=normalizeOcrText(term);
       if(!alias)return;
-      if(compact.includes(alias)){
-        const score=alias.length;
-        if(!best||score>best.score)best={def,term,score};
-      }
+      const pos=compact.indexOf(alias);
+      if(pos>=0&&(!best||alias.length>best.alias.length))best={def,term,alias,pos};
     });
+    if(best)hits.push(best);
   });
-  return best;
+  return hits.sort((a,b)=>a.pos-b.pos||b.alias.length-a.alias.length);
+}
+function bestOcrFieldForLine(line){
+  const hits=ocrFieldsForLine(line);
+  return hits.length?Object.assign({},hits[0],{score:hits[0].alias.length}):null;
 }
 function parsePayslipText(text){
   const result={},matches=[];
   const lines=String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  lines.forEach((line,index)=>{
-    const best=bestOcrFieldForLine(line);
-    if(!best)return;
-    const amount=findNearbyOcrAmount(lines,index,best.def.mode);
-    if(amount===null)return;
-    const key=best.def.key;
-    if(best.def.mode==='sum')result[key]=num(result[key])+amount;
-    else if(best.def.mode==='max')result[key]=Math.max(num(result[key]),amount);
+  const apply=(hit,amount,line)=>{
+    if(amount===null||amount===undefined)return;
+    const key=hit.def.key;
+    if(hit.def.mode==='sum')result[key]=num(result[key])+amount;
+    else if(hit.def.mode==='max')result[key]=Math.max(num(result[key]),amount);
     else result[key]=amount;
-    matches.push({key,label:best.def.label,term:best.term,amount,line});
+    matches.push({key,label:hit.def.label,term:hit.term,amount,line});
+  };
+
+  lines.forEach((line,index)=>{
+    const hits=ocrFieldsForLine(line);
+    if(!hits.length)return;
+
+    // Common table format: several item names in one row, amounts in the same or next row.
+    if(hits.length>1){
+      const sameNums=amountCandidates(line);
+      const nextNums=index+1<lines.length?amountCandidates(lines[index+1]):[];
+      const nums=sameNums.length>=hits.length?sameNums:(nextNums.length>=hits.length?nextNums:[]);
+      if(nums.length>=hits.length){
+        const chosen=nums.slice(nums.length-hits.length);
+        hits.forEach((hit,i)=>apply(hit,chosen[i],line));
+        return;
+      }
+    }
+
+    const hit=hits[0];
+    const amount=findNearbyOcrAmount(lines,index,hit.def.mode);
+    if(amount!==null)apply(hit,amount,line);
   });
+
   result.__matches=matches;
   return result;
 }
@@ -1314,6 +1343,9 @@ function placeProPanel(feature,panelId){
   if(panel.parentElement!==grid||panel.previousElementSibling!==card)grid.insertBefore(panel,card.nextSibling);
 }
 function renderProEntitlements(){
+  placeProPanel('payslip_scan','payslipScanPanel');
+  placeProPanel('itemized_salary_compare','itemizedComparePanel');
+  placeProPanel('salary_history_unlimited','salaryHistoryPanel');
   const plan=currentPlan();
   qsa('[data-pro-feature]').forEach(card=>{
     const feature=card.dataset.proFeature;
@@ -1322,7 +1354,12 @@ function renderProEntitlements(){
     const btn=card.querySelector('[data-pro-action]');
     card.classList.toggle('unlocked',unlocked);
     if(badge)badge.textContent=unlocked?'✓ Pro 測試已解鎖':'🔒 Pro';
-    if(btn){if(feature==='payslip_scan')btn.textContent=unlocked?(payslipScanOpen?'收起本地辨識':'開啟本地辨識'):'Pro 解鎖';else if(feature==='itemized_salary_compare')btn.textContent=unlocked?(itemizedOpen?'收起逐項對帳':'開啟逐項對帳'):'Pro 解鎖';else if(feature==='salary_history_unlimited')btn.textContent=unlocked?(salaryHistoryOpen?'收起歷史對帳':'開啟歷史對帳'):'Pro 解鎖';else btn.textContent=unlocked?'功能開發中':'即將推出'};
+    if(btn){
+      if(feature==='payslip_scan')btn.textContent=unlocked?(payslipScanOpen?'收起':'拍照／選照片'):'Pro 解鎖';
+      else if(feature==='itemized_salary_compare')btn.textContent=unlocked?(itemizedOpen?'收起逐項對帳':'開啟逐項對帳'):'Pro 解鎖';
+      else if(feature==='salary_history_unlimited')btn.textContent=unlocked?(salaryHistoryOpen?'收起歷史對帳':'開啟歷史對帳'):'Pro 解鎖';
+      else btn.textContent=unlocked?'功能開發中':'即將推出';
+    }
   });
   if($('devPlanCard'))$('devPlanCard').classList.remove('hidden');
   if($('devPlanFree'))$('devPlanFree').classList.toggle('active',devPlan==='free');
