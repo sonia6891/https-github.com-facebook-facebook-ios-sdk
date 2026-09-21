@@ -1,7 +1,7 @@
 {
-  "name": "喵的，又要上班",
-  "short_name": "喵的，又要上班",
-  "description": "通用做X休Y排班、加班與薪資試算工具",
+  "name": "喵了要上班",
+  "short_name": "喵了要上班",
+  "description": "社畜排班、出勤、請假與薪資試算工具",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
