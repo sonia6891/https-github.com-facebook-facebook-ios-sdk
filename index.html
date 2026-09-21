@@ -42,11 +42,20 @@
   .chip.extra-ot{background:#ecfdf3;color:#166534;border:1px solid #86efac}
   .chip.sick{background:#fef2f2;color:#b42318;border:1px solid #fecaca}
   .chip.menstrual{background:#fdf2f8;color:#be185d;border:1px solid #f9a8d4}
+  .chip.personal{background:#fff7ed;color:#c2410c;border:1px solid #fdba74}
   .chip.annual{background:#f5f3ff;color:#6d28d9;border:1px solid #c4b5fd}
   .chip.custom-status{background:#f8fafc;color:#475569;border:1px solid #cbd5e1}
+  .leave-label{display:inline-flex;align-items:center;gap:7px;min-width:0}
+  .leave-icon{width:22px;height:22px;border-radius:7px;display:inline-grid;place-items:center;font-size:12px;font-weight:900;flex:0 0 auto;color:#fff}
+  .leave-icon.sick{background:#dc2626}
+  .leave-icon.menstrual{background:#db2777}
+  .leave-icon.personal{background:#ea580c}
+  .leave-icon.annual{background:#7c3aed}
+  .leave-icon.custom-status{background:#64748b}
   html.dark .chip.extra-ot{background:#123524;color:#86efac;border-color:#166534}
   html.dark .chip.sick{background:#3b1717;color:#fca5a5;border-color:#7f1d1d}
   html.dark .chip.menstrual{background:#3b1630;color:#f9a8d4;border-color:#831843}
+  html.dark .chip.personal{background:#431f0a;color:#fdba74;border-color:#9a3412}
   html.dark .chip.annual{background:#251747;color:#c4b5fd;border-color:#5b21b6}
   html.dark .chip.custom-status{background:#1e293b;color:#cbd5e1;border-color:#475569}
   #patternPreset,#myShiftName{font-size:17px;font-weight:850;padding:12px 14px}
@@ -167,7 +176,7 @@
       </div>
       <div class="grid cards4">
         <div class="card"><div class="kicker">預估總薪資</div><div class="value" id="dashGross">NT$0</div><div class="sub">底薪＋輪班津貼＋表現津貼＋加班費</div></div>
-        <div class="card"><div class="kicker">加班時薪</div><div class="value" id="dashNet">NT$0</div><div class="sub">（底薪＋輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2</div></div>
+        <div class="card"><div class="kicker">加班時薪</div><div class="value" id="dashNet">NT$0</div><div class="sub">（底薪＋本月輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2</div></div>
         <div class="card"><div class="kicker">本月加班總時數</div><div class="value" id="dashOT">0 小時</div><div class="sub" id="dashOTMoney">只輸入總時數</div></div>
         <div class="card"><div class="kicker">本月加班費</div><div class="value" id="dashNight">NT$0</div><div class="sub" id="dashNightMoney">加班時薪 × 總時數</div></div>
       </div>
@@ -228,7 +237,7 @@
     <section id="tab-calculator" class="tab-section hidden">
       <div class="print-only hidden"><h2>輪班薪資助手｜月薪明細</h2><p id="printMonth"></p></div>
       <div class="grid cards4">
-        <div class="card"><div class="kicker">加班計算基數</div><div class="value" id="calcBase">NT$0</div><div class="sub">底薪＋輪班津貼＋伙食津貼＋表現津貼</div></div>
+        <div class="card"><div class="kicker">加班計算基數</div><div class="value" id="calcBase">NT$0</div><div class="sub">底薪＋本月輪班津貼＋伙食津貼＋表現津貼</div></div>
         <div class="card"><div class="kicker">加班時薪</div><div class="value" id="calcAllowance">NT$0</div></div>
         <div class="card"><div class="kicker">本月加班總時數</div><div class="value" id="calcOT">0 小時</div></div>
         <div class="card"><div class="kicker">本月加班費</div><div class="value" id="calcDeduction">NT$0</div></div>
@@ -237,7 +246,7 @@
       <div class="card">
         <div class="form-grid">
           <div class="field"><label>底薪</label><input id="calcBaseInput" type="number" min="0" step="1" inputmode="decimal"></div>
-          <div class="field"><label>輪班津貼 / 月</label><input id="calcNightInput" type="number" min="0" step="1" inputmode="decimal"></div>
+          <div class="field"><label>輪班津貼 / 天</label><input id="calcNightInput" type="number" min="0" step="1" inputmode="decimal"><div class="sub">本月會自動乘以實際出勤天數</div></div>
           <div class="field"><label>表現津貼 / 月</label><input id="calcPerformanceInput" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>伙食津貼 / 月</label><input id="calcMealAllowance" type="number" min="0" step="1" inputmode="decimal"></div>
           <div class="field"><label>交通津貼 / 月</label><input id="calcTransportAllowance" type="number" min="0" step="1" inputmode="decimal"></div>
@@ -302,7 +311,7 @@
           </div>
         </div>
       </div>
-      <div class="notice warn">加班時薪固定照：「底薪＋輪班津貼＋伙食津貼＋表現津貼」÷ 240 × 2 計算。</div>
+      <div class="notice warn">本月輪班津貼 = 每日輪班津貼 × 實際出勤天數；加班時薪照「底薪＋本月輪班津貼＋伙食津貼＋表現津貼」÷ 240 × 2 計算。</div>
       <div class="section-title"><h2>基本薪資設定</h2></div>
       <div class="card"><div class="form-grid">
         <div class="field"><label>月薪 / 本薪（NT$）</label><input id="baseSalary" type="number" min="0" step="1"></div>
@@ -312,9 +321,9 @@
         <div class="field"><label>每班正常工時</label><input id="normalHours" type="number" min="0" step="0.5"></div>
         <div class="field"><label>全勤獎金（NT$）</label><input id="attendanceBonus" type="number" min="0" step="1"></div>
         <div class="field"><label>日班津貼 / 班</label><input id="dayAllowance" type="number" min="0" step="1"></div>
-        <div class="field"><label>輪班津貼 / 月</label><input id="nightAllowance" type="number" min="0" step="1"></div>
+        <div class="field"><label>輪班津貼 / 天</label><input id="nightAllowance" type="number" min="0" step="1"><div class="sub">本月輪班津貼 = 每日金額 × 實際出勤天數</div></div>
         <div class="field"><label>表現津貼 / 月</label><input id="extraAllowance" type="number" min="0" step="1"></div>
-      </div><div class="notice" style="margin-top:14px">加班時薪 =（底薪＋輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2；本月加班費 = 加班時薪 × 加班總時數。</div></div>
+      </div><div class="notice" style="margin-top:14px">加班時薪 =（底薪＋本月輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2；本月加班費 = 加班時薪 × 加班總時數。</div></div>
 
       <div class="section-title"><h2>固定津貼</h2><button class="btn" id="addAllowance">＋ 新增</button></div><div class="card"><div class="list" id="allowanceList"></div></div>
       <div class="section-title"><h2>固定扣款</h2><button class="btn" id="addDeduction">＋ 新增</button></div><div class="card"><div class="list" id="deductionList"></div></div>
@@ -346,6 +355,7 @@
         <option value="overtime">加班</option>
         <option value="sick">病假</option>
         <option value="menstrual">生理假</option>
+        <option value="personal">事假</option>
         <option value="annual">特休</option>
         <option value="custom">自訂</option>
       </select>
@@ -389,7 +399,7 @@ function defaultState(){
       startDate:iso(new Date())
     },
     profile:{avatar:''},
-    settings:{baseSalary:0,nightAllowance:0,extraAllowance:0},
+    settings:{baseSalary:0,shiftAllowancePerDay:0,extraAllowance:0},
     months:{},
     dayStatus:{}
   };
@@ -507,6 +517,19 @@ function otherShiftName(name){
   return '另一班';
 }
 
+function actualAttendanceDays(y,m){
+  var total=0;
+  var days=new Date(y,m+1,0).getDate();
+  for(var d=1;d<=days;d++){
+    var dateObj=new Date(y,m,d);
+    if(scheduleForDate(dateObj)!=='work')continue;
+    var st=state.dayStatus[iso(dateObj)];
+    var isLeave=st&&st.type&&st.type!=='none'&&st.type!=='overtime';
+    if(!isLeave)total++;
+  }
+  return total;
+}
+
 function monthlyLeaveSummary(y,m){
   var result={total:0,items:{}};
   var prefix=y+'-'+pad(m+1)+'-';
@@ -516,9 +539,11 @@ function monthlyLeaveSummary(y,m){
     if(!st||st.type==='none'||st.type==='overtime')return;
     var meta=statusMeta(st);
     var label=meta?meta.label:(st.label||'其他');
+    var key=st.type==='custom'?'custom:'+label:st.type;
     var hours=num(st.hours);
     result.total+=hours;
-    result.items[label]=(result.items[label]||0)+hours;
+    if(!result.items[key])result.items[key]={label:label,hours:0,cls:meta?meta.cls:'custom-status',icon:meta?meta.icon:'•'};
+    result.items[key].hours+=hours;
   });
   return result;
 }
@@ -526,13 +551,15 @@ function monthlyLeaveSummary(y,m){
 function monthData(){
   var y=current.getFullYear(),m=current.getMonth(),mk=monthKey(y,m),mm=state.months[mk]||{};
   var base=num(state.settings.baseSalary);
-  var night=num(state.settings.nightAllowance);
+  var shiftAllowancePerDay=num(state.settings.shiftAllowancePerDay);
+  var attendanceDays=actualAttendanceDays(y,m);
+  var shiftAllowance=shiftAllowancePerDay*attendanceDays;
   var performance=num(state.settings.extraAllowance);
   var meal=num(mm.mealAllowance);
   var transport=num(mm.transportAllowance);
   var attendanceBonus=num(mm.attendanceBonusIncome);
   var otherIncome=num(mm.otherIncome);
-  var overtimeBase=base+night+meal+performance;
+  var overtimeBase=base+shiftAllowance+meal+performance;
   var overtimeHourly=overtimeBase/240*2;
   var overtimeHours=num(mm.overtimeHours);
   var overtimePay=overtimeHours*overtimeHourly;
@@ -557,7 +584,7 @@ function monthData(){
     if(s==='off')offDays++;else workDays++;
   }
   return {
-    mk:mk,base:base,night:night,performance:performance,meal:meal,transport:transport,
+    mk:mk,base:base,shiftAllowancePerDay:shiftAllowancePerDay,shiftAllowance:shiftAllowance,attendanceDays:attendanceDays,performance:performance,meal:meal,transport:transport,
     attendanceBonus:attendanceBonus,otherIncome:otherIncome,overtimeBase:overtimeBase,
     overtimeHourly:overtimeHourly,overtimeHours:overtimeHours,overtimePay:overtimePay,gross:gross,deductions:deductions,
     deductionTotal:deductionTotal,netPay:netPay,leaveSummary:leaveSummary,workDays:workDays,offDays:offDays
@@ -567,7 +594,7 @@ function monthData(){
 function breakdownHtml(mc){
   return '<div class="list">'+
     '<div class="split"><span>底薪</span><b>'+money(mc.base)+'</b></div>'+
-    '<div class="split"><span>輪班津貼</span><b>'+money(mc.night)+'</b></div>'+
+    '<div class="split"><span>輪班津貼 <span class="small muted">('+money(mc.shiftAllowancePerDay)+'/天 × '+mc.attendanceDays+' 天)</span></span><b>'+money(mc.shiftAllowance)+'</b></div>'+
     '<div class="split"><span>伙食津貼</span><b>'+money(mc.meal)+'</b></div>'+
     '<div class="split"><span>表現津貼</span><b>'+money(mc.performance)+'</b></div>'+
     '<div class="split"><span>交通津貼</span><b>'+money(mc.transport)+'</b></div>'+
@@ -596,7 +623,10 @@ function renderSummary(){
   if($('leaveSummary')){
     var leaveEntries=Object.keys(mc.leaveSummary.items);
     $('leaveSummary').innerHTML=leaveEntries.length
-      ? leaveEntries.map(function(label){return '<div class="split"><span>'+label+'</span><b>'+mc.leaveSummary.items[label]+' 小時</b></div>';}).join('')
+      ? leaveEntries.map(function(key){
+          var item=mc.leaveSummary.items[key];
+          return '<div class="split"><span class="leave-label"><span class="leave-icon '+item.cls+'">'+item.icon+'</span><span>'+item.label+'</span></span><b>'+item.hours+' 小時</b></div>';
+        }).join('')
       : '<div class="muted small">本月尚無請假紀錄</div>';
   }
   if($('breakdown'))$('breakdown').innerHTML=breakdownHtml(mc);
@@ -606,10 +636,10 @@ function renderSummary(){
   if($('calcOT'))$('calcOT').textContent=mc.overtimeHours+' 小時';
   if($('calcDeduction'))$('calcDeduction').textContent=money(mc.overtimePay);
   if($('calcSummary'))$('calcSummary').innerHTML=breakdownHtml(mc);
-  if($('calcFormulaNote'))$('calcFormulaNote').textContent='加班時薪 =（底薪＋輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2 = '+money(mc.overtimeHourly)+'；本月加班費 = '+money(mc.overtimeHourly)+' × '+mc.overtimeHours+' 小時 = '+money(mc.overtimePay)+'。交通、全勤與其他薪資不納入加班時薪基數。';
+  if($('calcFormulaNote'))$('calcFormulaNote').textContent='本月輪班津貼 = '+money(mc.shiftAllowancePerDay)+' × '+mc.attendanceDays+' 個實際出勤日 = '+money(mc.shiftAllowance)+'；加班時薪 =（底薪＋本月輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2 = '+money(mc.overtimeHourly)+'；本月加班費 = '+money(mc.overtimeHourly)+' × '+mc.overtimeHours+' 小時 = '+money(mc.overtimePay)+'。';
 
   if($('calcBaseInput'))$('calcBaseInput').value=mc.base;
-  if($('calcNightInput'))$('calcNightInput').value=mc.night;
+  if($('calcNightInput'))$('calcNightInput').value=mc.shiftAllowancePerDay;
   if($('calcPerformanceInput'))$('calcPerformanceInput').value=mc.performance;
   if($('calcMealAllowance'))$('calcMealAllowance').value=mc.meal;
   if($('calcTransportAllowance'))$('calcTransportAllowance').value=mc.transport;
@@ -629,17 +659,18 @@ function renderSummary(){
   if($('calcNetPay'))$('calcNetPay').textContent=money(mc.netPay);
 
   if($('baseSalary'))$('baseSalary').value=mc.base;
-  if($('nightAllowance'))$('nightAllowance').value=mc.night;
+  if($('nightAllowance'))$('nightAllowance').value=mc.shiftAllowancePerDay;
   if($('extraAllowance'))$('extraAllowance').value=mc.performance;
 }
 
 function statusMeta(st){
   if(!st||st.type==='none')return null;
-  if(st.type==='overtime')return{label:'加班',cls:'extra-ot'};
-  if(st.type==='sick')return{label:'病假',cls:'sick'};
-  if(st.type==='menstrual')return{label:'生理假',cls:'menstrual'};
-  if(st.type==='annual')return{label:'特休',cls:'annual'};
-  return{label:st.label||'自訂',cls:'custom-status'};
+  if(st.type==='overtime')return{label:'加班',cls:'extra-ot',icon:'＋'};
+  if(st.type==='sick')return{label:'病假',cls:'sick',icon:'✚'};
+  if(st.type==='menstrual')return{label:'生理假',cls:'menstrual',icon:'●'};
+  if(st.type==='personal')return{label:'事假',cls:'personal',icon:'▣'};
+  if(st.type==='annual')return{label:'特休',cls:'annual',icon:'★'};
+  return{label:st.label||'自訂',cls:'custom-status',icon:'•'};
 }
 
 function renderCalendar(){
@@ -659,7 +690,7 @@ function renderCalendar(){
 
     var baseHtml='<span class="chip '+chipClass+'">'+label+'</span>';
     var restHtml=s==='off'?'<span class="chip off">休假</span>':'';
-    var extraHtml=hasExtra?'<span class="chip '+extra.cls+'">'+extra.label+'</span>':'';
+    var extraHtml=hasExtra?'<span class="chip '+extra.cls+'">'+(extra.icon?extra.icon+' ':'')+extra.label+'</span>':'';
 
     // 額外狀態會依實際出勤邏輯覆蓋原班別：
     // 1. 上班日請假 → 原班別先隱藏，只顯示假別；可用三角形展開查看。
@@ -819,7 +850,7 @@ function setTab(tab){
     dashboard:['總覽','薪資、加班與做二休二班表'],
     schedule:['排班月曆','只設定你的班別與第一個上班日，另一班自動產生'],
     calculator:['薪資試算','輸入薪資、津貼、加班與扣款，直接看預估實領'],
-    settings:['設定','底薪、輪班津貼、伙食津貼、表現津貼']
+    settings:['設定','底薪、每日輪班津貼、伙食津貼、表現津貼']
   };
   if($('pageTitle'))$('pageTitle').textContent=meta[tab][0];
   if($('pageSub'))$('pageSub').textContent=meta[tab][1];
@@ -869,10 +900,10 @@ if($('customOffDays'))$('customOffDays').addEventListener('input',function(){sta
 if($('scheduleStartDate'))$('scheduleStartDate').addEventListener('change',function(){state.schedule.startDate=this.value||iso(new Date());render();});
 
 if($('baseSalary'))$('baseSalary').addEventListener('input',function(){setSalary('baseSalary',this.value);});
-if($('nightAllowance'))$('nightAllowance').addEventListener('input',function(){setSalary('nightAllowance',this.value);});
+if($('nightAllowance'))$('nightAllowance').addEventListener('input',function(){setSalary('shiftAllowancePerDay',this.value);});
 if($('extraAllowance'))$('extraAllowance').addEventListener('input',function(){setSalary('extraAllowance',this.value);});
 if($('calcBaseInput'))$('calcBaseInput').addEventListener('input',function(){setSalary('baseSalary',this.value);});
-if($('calcNightInput'))$('calcNightInput').addEventListener('input',function(){setSalary('nightAllowance',this.value);});
+if($('calcNightInput'))$('calcNightInput').addEventListener('input',function(){setSalary('shiftAllowancePerDay',this.value);});
 if($('calcPerformanceInput'))$('calcPerformanceInput').addEventListener('input',function(){setSalary('extraAllowance',this.value);});
 
 [
