@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=30">
+<link rel="manifest" href="./manifest.webmanifest?v=31">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -209,6 +209,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
           <div class="field"><label>每月發薪日</label><input id="settingPayday" type="number" min="1" max="31" step="1" placeholder="例如 5"><div class="hint">若當月沒有該日期，會以當月最後一天計算。</div></div>
           <div class="field"><label>公司到職日</label><input id="settingHireDate" type="date"><div class="hint">用來計算目前年資與勞基法法定特休。</div></div>
           <div class="field"><label>每日工時</label><input id="settingDailyHours" type="number" min="0.5" max="24" step="0.5" placeholder="8"><div class="hint">用來把假別天數換算成小時。</div></div>
+          <div class="field"><label>加班一日預設時數</label><input id="settingDefaultOtHours" type="number" min="0.5" max="24" step="0.5" placeholder="10"><div class="hint">四班二輪預設 10 小時；實際只加班 4 小時時，可在當天另外修改。</div></div>
           <div class="field"><label>公司年度核給特休總天數</label><input id="settingAnnualDays" type="number" min="0" step="0.5" placeholder="例如 14"><div class="hint">若留 0，總覽會先以勞基法法定最低天數試算。</div></div>
           <div class="field"><label>今年已使用病假時數（補登）</label><input id="settingSickUsedHours" type="number" min="0" step="0.5" placeholder="例如 24"><div class="hint">填入 App 尚未記錄的既有病假時數；App 內今年的病假紀錄會另外自動加總。</div></div>
           <div class="field"><label>今年已使用事假時數（補登）</label><input id="settingPersonalUsedHours" type="number" min="0" step="0.5" placeholder="例如 8"><div class="hint">填入 App 尚未記錄的既有事假時數；App 內今年的事假紀錄會另外自動加總。</div></div>
@@ -280,7 +281,7 @@ const DEVICE_ID_KEY='meow-work-device-id-v1';
 const statusMap={
  none:{label:'正常班表',cls:'',icon:''},overtime:{label:'加班',cls:'st-ot',icon:'i-clock'},sick:{label:'病假',cls:'st-sick',icon:'i-cross'},menstrual:{label:'生理假',cls:'st-menstrual',icon:'i-drop'},personal:{label:'事假',cls:'st-personal',icon:'i-doc'},annual:{label:'特休',cls:'st-annual',icon:'i-star'},custom:{label:'自訂假別',cls:'st-custom',icon:'i-star'}
 };
-function defaultState(){const d=new Date();return{theme:'light',profile:{avatar:'',name:'喵星人'},schedule:{preset:'2-2',shiftName:'A班',workDays:2,offDays:2,startDate:iso(d)},settings:{baseSalary:0,shiftAllowancePerDay:0,mealAllowance:0,performanceAllowance:0,transportAllowance:0,otherIncome:0,payday:0,hireDate:'',dailyWorkHours:8,annualLeaveDays:0,sickLeaveDays:0,personalLeaveDays:0,sickUsedHours:0,personalUsedHours:0},months:{},dayStatus:{}}}
+function defaultState(){const d=new Date();return{theme:'light',profile:{avatar:'',name:'喵星人'},schedule:{preset:'2-2',shiftName:'A班',workDays:2,offDays:2,startDate:iso(d)},settings:{baseSalary:0,shiftAllowancePerDay:0,mealAllowance:0,performanceAllowance:0,transportAllowance:0,otherIncome:0,payday:0,hireDate:'',dailyWorkHours:8,defaultOvertimeHours:10,annualLeaveDays:0,sickLeaveDays:0,personalLeaveDays:0,sickUsedHours:0,personalUsedHours:0},months:{},dayStatus:{}}}
 function loadSaved(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return{state:defaultState(),savedAt:null};const p=JSON.parse(raw);const s=defaultState(),v=p.state||p;s.theme=v.theme||s.theme;s.profile=Object.assign({},s.profile,v.profile||{});s.schedule=Object.assign({},s.schedule,v.schedule||{});s.settings=Object.assign({},s.settings,v.settings||{});s.months=v.months||{};s.dayStatus=v.dayStatus||{};return{state:s,savedAt:p.savedAt||null}}catch(e){return{state:defaultState(),savedAt:null}}}
 let loaded=loadSaved(),state=loaded.state,lastSavedAt=loaded.savedAt,current=new Date();
 try{
@@ -652,6 +653,7 @@ const setWork=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=(v??
 setWork('settingPayday',state.settings.payday||'');
 setWork('settingHireDate',state.settings.hireDate||'');
 setWork('settingDailyHours',state.settings.dailyWorkHours||8);
+setWork('settingDefaultOtHours',state.settings.defaultOvertimeHours||10);
 setWork('settingAnnualDays',state.settings.annualLeaveDays||0);
 setWork('settingSickUsedHours',state.settings.sickUsedHours||0);
 setWork('settingPersonalUsedHours',state.settings.personalUsedHours||0);
@@ -687,8 +689,29 @@ qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-got
 function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}$('calPrev').onclick=()=>changeMonth(-1);$('calNext').onclick=()=>changeMonth(1);$('calToday').onclick=()=>{current=new Date();current.setDate(1);render()};$('attPrev').onclick=()=>changeMonth(-1);$('attNext').onclick=()=>changeMonth(1);$('attToday').onclick=()=>{current=new Date();current.setDate(1);render()};
 $('toggleSchedule').onclick=()=>{scheduleOpen=!scheduleOpen;$('scheduleSettings').classList.toggle('hidden',!scheduleOpen);$('toggleSchedule').textContent=scheduleOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'};
 $('patternPreset').onchange=e=>{state.schedule.preset=e.target.value;if(e.target.value==='2-2'){state.schedule.workDays=2;state.schedule.offDays=2}else if(e.target.value==='4-3'){state.schedule.workDays=4;state.schedule.offDays=3}saveSchedulePrefs();render()};$('shiftName').oninput=e=>{state.schedule.shiftName=e.target.value||'A班';saveSchedulePrefs();render()};$('workDays').oninput=e=>{state.schedule.workDays=Math.max(1,parseInt(e.target.value)||1);saveSchedulePrefs();render()};$('offDays').oninput=e=>{state.schedule.offDays=Math.max(1,parseInt(e.target.value)||1);saveSchedulePrefs();render()};$('scheduleStart').onchange=e=>{state.schedule.startDate=e.target.value||iso(new Date());saveSchedulePrefs();render()};
-function openDay(date,preset){editingDate=date;const st=state.dayStatus[date]||{type:'none',hours:0,note:'',label:''},dt=new Date(date+'T00:00:00'),base=scheduleForDate(dt),own=state.schedule.shiftName||'A班',other=otherShiftName(own);$('dialogDate').textContent=date+' 出勤狀態';$('dialogBase').textContent='原班表：'+(base==='work'?own:other+'（你的休假）');$('dialogStatus').value=preset||st.type||'none';$('dialogHours').value=st.hours||'';$('dialogNote').value=st.note||'';$('dialogCustomLabel').value=st.label||'';toggleDialogFields();$('dayDialog').showModal()}
-function toggleDialogFields(){const t=$('dialogStatus').value;$('customLabelWrap').classList.toggle('hidden',t!=='custom');$('hoursWrap').classList.toggle('hidden',t==='none');if(t==='overtime')$('dialogHours').placeholder='請輸入加班時數，例如 4';else $('dialogHours').placeholder='例如 8'}$('dialogStatus').onchange=toggleDialogFields;
+function openDay(date,preset){
+  editingDate=date;
+  const st=state.dayStatus[date]||{type:'none',hours:0,note:'',label:''},dt=new Date(date+'T00:00:00'),base=scheduleForDate(dt),own=state.schedule.shiftName||'A班',other=otherShiftName(own),selectedType=preset||st.type||'none',defaultOt=Math.max(.5,num(state.settings.defaultOvertimeHours)||10);
+  $('dialogDate').textContent=date+' 出勤狀態';
+  $('dialogBase').textContent='原班表：'+(base==='work'?own:other+'（你的休假）');
+  $('dialogStatus').value=selectedType;
+  $('dialogHours').value=(st.type==='overtime'&&num(st.hours)>0)?st.hours:(selectedType==='overtime'?defaultOt:(st.hours||''));
+  $('dialogNote').value=st.note||'';
+  $('dialogCustomLabel').value=st.label||'';
+  toggleDialogFields();
+  $('dayDialog').showModal()
+}
+function toggleDialogFields(){
+  const t=$('dialogStatus').value;
+  $('customLabelWrap').classList.toggle('hidden',t!=='custom');
+  $('hoursWrap').classList.toggle('hidden',t==='none');
+  if(t==='overtime'){
+    const defaultOt=Math.max(.5,num(state.settings.defaultOvertimeHours)||10);
+    if(num($('dialogHours').value)<=0)$('dialogHours').value=defaultOt;
+    $('dialogHours').placeholder='預設 '+defaultOt+' 小時，可自行修改';
+  }else $('dialogHours').placeholder='例如 8';
+}
+$('dialogStatus').onchange=toggleDialogFields;
 function syncMonthOvertimeFromCalendar(date){
   const dt=new Date(date+'T00:00:00'),mk=monthKey(dt.getFullYear(),dt.getMonth());
   const rows=Object.entries(state.dayStatus).filter(([d,s])=>d.startsWith(mk+'-')&&s&&s.type==='overtime');
@@ -730,7 +753,7 @@ $('clearDay').onclick=()=>{
   render();
 };$('quickAdd').onclick=()=>openDay(iso(new Date()));$('editToday').onclick=()=>openDay(iso(new Date()));
 function bindSetting(id,key){$(id).oninput=e=>{state.settings[key]=num(e.target.value);changedAndSync();render()}}bindSetting('salaryBase','baseSalary');bindSetting('salaryShift','shiftAllowancePerDay');bindSetting('salaryMeal','mealAllowance');bindSetting('salaryPerformance','performanceAllowance');bindSetting('salaryTransport','transportAllowance');bindSetting('salaryOtherIncome','otherIncome');$('salaryOtHours').oninput=e=>{mb().overtimeHours=num(e.target.value);changedAndSync();render()};[['dedLabor','dedLabor'],['dedHealth','dedHealth'],['dedWelfare','dedWelfare'],['dedPension','dedPension'],['dedAttendance','dedAttendance'],['dedTax','dedTax'],['dedHealthExtra','dedHealthExtra'],['dedOther','dedOther']].forEach(([id,key])=>{$(id).oninput=e=>{mb()[key]=num(e.target.value);changedAndSync();render()}});
-[['settingPayday','payday'],['settingDailyHours','dailyWorkHours'],['settingAnnualDays','annualLeaveDays'],['settingSickUsedHours','sickUsedHours'],['settingPersonalUsedHours','personalUsedHours']].forEach(([id,key])=>{$(id).oninput=e=>{state.settings[key]=num(e.target.value);changedAndSync();render()}});
+[['settingPayday','payday'],['settingDailyHours','dailyWorkHours'],['settingDefaultOtHours','defaultOvertimeHours'],['settingAnnualDays','annualLeaveDays'],['settingSickUsedHours','sickUsedHours'],['settingPersonalUsedHours','personalUsedHours']].forEach(([id,key])=>{$(id).oninput=e=>{state.settings[key]=num(e.target.value);changedAndSync();render()}});
 $('settingHireDate').onchange=e=>{state.settings.hireDate=e.target.value||'';changedAndSync();render()};
 function applyTheme(){document.documentElement.classList.toggle('dark',state.theme==='dark');document.querySelector('meta[name=theme-color]').setAttribute('content',state.theme==='dark'?'#2b211c':'#f7b342');renderSettings()}function setTheme(t){state.theme=t;changedAndSync();applyTheme()}$('heroTheme').onclick=()=>setTheme(state.theme==='dark'?'light':'dark');$('themeLight').onclick=()=>setTheme('light');$('themeDark').onclick=()=>setTheme('dark');
 $('avatarInput').onchange=e=>{
