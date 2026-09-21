@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=28">
+<link rel="manifest" href="./manifest.webmanifest?v=29">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -593,6 +593,57 @@ $('personalBalanceMain').textContent='剩 '+fmtHours(personalInfo.remainHours)+'
 $('personalBalanceDetail').textContent='法定 '+fmtHours(personalInfo.totalDays)+' 日 / '+fmtHours(personalInfo.totalHours)+' 小時・已用 '+fmtHours(personalInfo.usedHours)+' 小時'+(personalInfo.overHours>0?'・超過 '+fmtHours(personalInfo.overHours)+' 小時':'');
 $('personalBalanceBar').style.width=personalInfo.pct+'%';
 }
+const TW_OFFICIAL_HOLIDAYS={
+  '2026-01-01':{name:'元旦',full:'中華民國開國紀念日（元旦）',kind:'national'},
+  '2026-02-15':{name:'春節前一日',full:'除夕前一日（春節法定假日）',kind:'national'},
+  '2026-02-16':{name:'除夕',full:'農曆除夕',kind:'national'},
+  '2026-02-17':{name:'春節初一',full:'農曆春節初一',kind:'national'},
+  '2026-02-18':{name:'春節初二',full:'農曆春節初二',kind:'national'},
+  '2026-02-19':{name:'春節初三',full:'農曆春節初三',kind:'national'},
+  '2026-02-20':{name:'春節補假',full:'政府行政機關春節補假',kind:'govcomp'},
+  '2026-02-27':{name:'228補假',full:'政府行政機關和平紀念日補假',kind:'govcomp'},
+  '2026-02-28':{name:'和平紀念日',full:'和平紀念日',kind:'national'},
+  '2026-04-03':{name:'兒童節補假',full:'政府行政機關兒童節補假',kind:'govcomp'},
+  '2026-04-04':{name:'兒童節',full:'兒童節',kind:'national'},
+  '2026-04-05':{name:'清明節',full:'清明節',kind:'national'},
+  '2026-04-06':{name:'清明節補假',full:'政府行政機關清明節補假',kind:'govcomp'},
+  '2026-05-01':{name:'勞動節',full:'勞動節',kind:'national'},
+  '2026-06-19':{name:'端午節',full:'端午節（農曆五月初五）',kind:'national'},
+  '2026-09-25':{name:'中秋節',full:'中秋節（農曆八月十五）',kind:'national'},
+  '2026-09-28':{name:'教師節',full:'孔子誕辰紀念日／教師節',kind:'national'},
+  '2026-10-09':{name:'國慶補假',full:'政府行政機關國慶日補假',kind:'govcomp'},
+  '2026-10-10':{name:'雙十國慶',full:'國慶日（雙十節）',kind:'national'},
+  '2026-10-25':{name:'光復紀念日',full:'臺灣光復暨金門古寧頭大捷紀念日',kind:'national'},
+  '2026-10-26':{name:'光復節補假',full:'政府行政機關臺灣光復暨金門古寧頭大捷紀念日補假',kind:'govcomp'},
+  '2026-12-25':{name:'行憲紀念日',full:'行憲紀念日',kind:'national'},
+
+  '2027-01-01':{name:'元旦',full:'中華民國開國紀念日（元旦）',kind:'national'},
+  '2027-02-04':{name:'春節前一日',full:'除夕前一日（春節法定假日）',kind:'national'},
+  '2027-02-05':{name:'除夕',full:'農曆除夕',kind:'national'},
+  '2027-02-06':{name:'春節初一',full:'農曆春節初一',kind:'national'},
+  '2027-02-07':{name:'春節初二',full:'農曆春節初二',kind:'national'},
+  '2027-02-08':{name:'春節初三',full:'農曆春節初三',kind:'national'},
+  '2027-02-09':{name:'春節補假',full:'政府行政機關春節補假',kind:'govcomp'},
+  '2027-02-10':{name:'春節補假',full:'政府行政機關春節補假',kind:'govcomp'},
+  '2027-02-28':{name:'和平紀念日',full:'和平紀念日',kind:'national'},
+  '2027-03-01':{name:'228補假',full:'政府行政機關和平紀念日補假',kind:'govcomp'},
+  '2027-04-04':{name:'兒童節',full:'兒童節',kind:'national'},
+  '2027-04-05':{name:'清明節',full:'清明節',kind:'national'},
+  '2027-04-06':{name:'兒童節補假',full:'政府行政機關兒童節補假',kind:'govcomp'},
+  '2027-04-30':{name:'勞動節補假',full:'政府行政機關勞動節補假',kind:'govcomp'},
+  '2027-05-01':{name:'勞動節',full:'勞動節',kind:'national'},
+  '2027-06-09':{name:'端午節',full:'端午節（農曆五月初五）',kind:'national'},
+  '2027-09-15':{name:'中秋節',full:'中秋節（農曆八月十五）',kind:'national'},
+  '2027-09-28':{name:'教師節',full:'孔子誕辰紀念日／教師節',kind:'national'},
+  '2027-10-10':{name:'雙十國慶',full:'國慶日（雙十節）',kind:'national'},
+  '2027-10-11':{name:'國慶補假',full:'政府行政機關國慶日補假',kind:'govcomp'},
+  '2027-10-25':{name:'光復紀念日',full:'臺灣光復暨金門古寧頭大捷紀念日',kind:'national'},
+  '2027-12-24':{name:'行憲補假',full:'政府行政機關行憲紀念日補假',kind:'govcomp'},
+  '2027-12-25':{name:'行憲紀念日',full:'行憲紀念日',kind:'national'},
+  '2027-12-31':{name:'元旦補假',full:'政府行政機關2028年元旦補假',kind:'govcomp'}
+};
+function twOfficialHoliday(date){return TW_OFFICIAL_HOLIDAYS[date]||null}
+
 function renderCalendar(){const y=current.getFullYear(),m=current.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=iso(new Date()),own=state.schedule.shiftName||'A班',other=otherShiftName(own);$('calendarMonth').textContent=`${y} 年 ${m+1} 月`;$('scheduleSummary').textContent=`做${state.schedule.workDays}休${state.schedule.offDays}｜${own}｜第一個上班日 ${state.schedule.startDate}`;$('settingsScheduleSummary').textContent=`做${state.schedule.workDays}休${state.schedule.offDays}・${own}・${state.schedule.startDate}`;$('patternPreset').value=state.schedule.preset;$('shiftName').value=own;$('workDays').value=state.schedule.workDays;$('offDays').value=state.schedule.offDays;$('scheduleStart').value=state.schedule.startDate;$('workDaysWrap').classList.toggle('hidden',state.schedule.preset!=='custom');$('offDaysWrap').classList.toggle('hidden',state.schedule.preset!=='custom');let html='';for(let i=0;i<first;i++){const prev=new Date(y,m,1-first+i);html+=`<div class="day empty"><span class="date-num">${prev.getDate()}</span></div>`}for(let d=1;d<=days;d++){const dt=new Date(y,m,d),date=iso(dt),base=scheduleForDate(dt),st=state.dayStatus[date],meta=typeMeta(st),holiday=twOfficialHoliday(date);let pills='';if(meta){if(st.type==='overtime'&&base==='work')pills=`<div class="status-pill st-a">${own}</div><div class="status-pill st-ot">${icon('i-clock')}加班</div>`;else pills=`<div class="status-pill ${meta.cls}">${meta.icon?icon(meta.icon):''}${meta.label}</div>`}else{pills=base==='work'?`<div class="status-pill st-a">${own}</div>`:`<div class="status-pill st-b">${other}</div><div class="base-note">休假</div>`}const holidayHtml=holiday?`<div class="holiday-tag ${holiday.kind}" title="${escapeHtml(holiday.full)}">${escapeHtml(holiday.name)}</div>`:'';html+=`<div class="day ${date===today?'today':''} ${holiday?'has-holiday':''}"><span class="date-num">${d}</span>${holidayHtml}<div class="day-status">${pills}</div><button class="day-hit" data-date="${date}" aria-label="編輯 ${date}${holiday?'，'+holiday.full:''}"></button></div>`}const rem=(7-((first+days)%7))%7;for(let i=1;i<=rem;i++)html+=`<div class="day empty"><span class="date-num">${i}</span></div>`;$('calendarDays').innerHTML=html;qsa('.day-hit').forEach(b=>b.onclick=()=>openDay(b.dataset.date));$('calendarLegend').innerHTML=`<span class="legend-item"><span class="dot a"></span>${own}</span><span class="legend-item"><span class="dot b"></span>${other}</span><span class="legend-item"><span class="dot off"></span>休假</span><span class="legend-item"><span class="dot ot"></span>加班</span><span class="legend-item"><span class="dot sick"></span>病假</span><span class="legend-item"><span class="dot menstrual"></span>生理假</span><span class="legend-item"><span class="dot personal"></span>事假</span><span class="legend-item"><span class="dot annual"></span>特休</span><span class="legend-item"><span class="dot custom"></span>自訂假別</span><span class="legend-item"><span class="dot national"></span>國定假日</span><span class="legend-item"><span class="dot govcomp"></span>政府補假</span>`}
 function renderAttendance(){const mc=calcMonth();$('attendanceMonth').textContent=`${mc.y} 年 ${mc.m+1} 月`;$('attDays').textContent=mc.attendance+' 天';$('attExpected').textContent='應出勤 '+mc.expected+' 天';$('attOt').textContent=mc.overtimeHours+' 小時';$('attOtDays').textContent='加班 '+mc.overtimeDays+' 天';$('attLeaveDays').textContent=mc.leaveDays+' 天';$('attLeaveHours').textContent='合計 '+mc.leaveHours+' 小時';const shortcuts=[['sick','病假'],['menstrual','生理假'],['personal','事假'],['annual','特休'],['custom','自訂假別'],['overtime','加班']];$('statusShortcuts').innerHTML=shortcuts.map(([t,l])=>{const m=statusMap[t],cc=t==='sick'?'c-sick':t==='menstrual'?'c-menstrual':t==='personal'?'c-personal':t==='annual'?'c-annual':t==='overtime'?'c-ot':'c-custom';return`<button class="status-shortcut ${cc}" data-status="${t}">${icon(m.icon)}${l}</button>`}).join('');qsa('.status-shortcut').forEach(b=>b.onclick=()=>openDay(iso(new Date()),b.dataset.status));const prefix=monthKey(mc.y,mc.m)+'-',rows=Object.entries(state.dayStatus).filter(([d,s])=>d.startsWith(prefix)&&s.type&&s.type!=='none').sort((a,b)=>b[0].localeCompare(a[0]));$('recordRows').innerHTML=rows.length?rows.slice(0,12).map(([date,st])=>{const m=typeMeta(st),cc=st.type==='sick'?'c-sick':st.type==='menstrual'?'c-menstrual':st.type==='personal'?'c-personal':st.type==='annual'?'c-annual':st.type==='overtime'?'c-ot':'c-custom';return`<div class="record-row"><div class="r-date">${date}</div><div class="r-type"><span class="record-type ${cc}">${m.icon?icon(m.icon):''}${m.label}</span></div><div class="r-hours">${num(st.hours)} 小時</div><div class="r-note record-note">${escapeHtml(st.note||'')}</div><button class="record-more" data-date="${date}">•••</button></div>`}).join(''):'<div class="empty-state">這個月還沒有出勤異動紀錄</div>';qsa('.record-more').forEach(b=>b.onclick=()=>openDay(b.dataset.date))}
 function renderSalary(){const mc=calcMonth(),mm=mb();const set=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=v||0};set('salaryBase',state.settings.baseSalary);set('salaryShift',state.settings.shiftAllowancePerDay);set('salaryMeal',state.settings.mealAllowance);set('salaryPerformance',state.settings.performanceAllowance);set('salaryTransport',state.settings.transportAllowance);set('salaryOtherIncome',state.settings.otherIncome);set('salaryOtHours',mc.overtimeHours);set('dedLabor',mm.dedLabor);set('dedHealth',mm.dedHealth);set('dedWelfare',mm.dedWelfare);set('dedPension',mm.dedPension);set('dedAttendance',mm.dedAttendance);set('dedTax',mm.dedTax);set('dedHealthExtra',mm.dedHealthExtra);set('dedOther',mm.dedOther);$('resultHourly').textContent=money(mc.hourly);$('resultOtPay').textContent=money(mc.otPay);$('resultGross').textContent=money(mc.gross);$('resultNet').textContent=money(mc.net);$('formulaText').innerHTML=`<b>ⓘ 計算說明</b><br>● 本月輪班津貼 ＝ ${money(mc.shiftPerDay)} × ${mc.attendance} 個實際出勤日 ＝ ${money(mc.shiftAllowance)}<br>● 加班費時薪 ＝（底薪＋本月輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2 ＝ ${money(mc.hourly)}<br>● 本月加班費 ＝ ${money(mc.hourly)} × ${mc.overtimeHours} 小時 ＝ ${money(mc.otPay)}`}
