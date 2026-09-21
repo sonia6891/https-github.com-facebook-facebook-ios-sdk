@@ -1,5 +1,5 @@
-const CACHE_NAME='meow-work-pwa-v6';
-const STATIC_ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg'];
+const CACHE_NAME='meow-work-pwa-v8';
+const STATIC_ASSETS=['./','./index.html','./manifest.webmanifest','./app-icon-180.png','./app-icon-512.jpg'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(STATIC_ASSETS)).then(()=>self.skipWaiting()));
