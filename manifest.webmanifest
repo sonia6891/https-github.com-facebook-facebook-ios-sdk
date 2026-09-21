@@ -15,16 +15,10 @@
   ],
   "icons": [
     {
-      "src": "./apple-touch-icon-v3.png?v=8",
-      "sizes": "180x180",
+      "src": "./workcat-home-v12.png",
+      "sizes": "120x120",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "./app-icon-512.jpg?v=8",
-      "sizes": "512x512",
-      "type": "image/jpeg",
-      "purpose": "any maskable"
     }
   ]
 }
