@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=27">
+<link rel="manifest" href="./manifest.webmanifest?v=28">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -605,8 +605,33 @@ setWork('settingAnnualDays',state.settings.annualLeaveDays||0);
 setWork('settingSickUsedHours',state.settings.sickUsedHours||0);
 setWork('settingPersonalUsedHours',state.settings.personalUsedHours||0);
 }
-function render(){renderDashboard();renderCalendar();renderAttendance();renderSalary();renderSettings()}
-function setTab(tab){activeTab=tab;qsa('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+tab));qsa('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));window.scrollTo({top:0,behavior:'smooth'});render()}
+function safeRender(name,fn){
+  try{fn()}
+  catch(e){
+    console.error('[meow-render] '+name,e);
+    if(name==='calendar'){
+      const box=$('calendarDays');
+      if(box&&!box.children.length){
+        box.innerHTML='<div style="grid-column:1/-1;padding:28px;text-align:center;color:#9a6045;font-weight:800">月曆載入中發生錯誤，請重新整理一次。</div>';
+      }
+    }
+  }
+}
+function render(){
+  safeRender('dashboard',renderDashboard);
+  safeRender('calendar',renderCalendar);
+  safeRender('attendance',renderAttendance);
+  safeRender('salary',renderSalary);
+  safeRender('settings',renderSettings);
+}
+function setTab(tab){
+  activeTab=tab;
+  qsa('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+tab));
+  qsa('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(tab==='calendar')safeRender('calendar',renderCalendar);
+  render();
+}
 qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
 function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}$('calPrev').onclick=()=>changeMonth(-1);$('calNext').onclick=()=>changeMonth(1);$('calToday').onclick=()=>{current=new Date();current.setDate(1);render()};$('attPrev').onclick=()=>changeMonth(-1);$('attNext').onclick=()=>changeMonth(1);$('attToday').onclick=()=>{current=new Date();current.setDate(1);render()};
 $('toggleSchedule').onclick=()=>{scheduleOpen=!scheduleOpen;$('scheduleSettings').classList.toggle('hidden',!scheduleOpen);$('toggleSchedule').textContent=scheduleOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'};
