@@ -247,9 +247,10 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
           </div>
           <div class="scan-preview-wrap"><img id="payslipPreview" class="scan-preview" alt="薪資單預覽"></div>
           <div class="scan-status" id="payslipScanStatus">
-            選擇薪資單後開始本地辨識。第一次使用會先下載中文字庫，可能需要一些時間。
+            請先拍照或選擇一張薪資單圖片。第一次使用會先下載中文字庫，可能需要一些時間。
             <div class="scan-progress"><i id="payslipScanProgress"></i></div>
           </div>
+          <div class="hint hidden" id="payslipMissingFields" style="margin:-4px 12px 12px;padding:8px 10px;border-radius:10px;background:#fff6e9;color:#8b5b31"></div>
           <div class="scan-result hidden" id="payslipScanResult">
             <div class="salary-section-title" style="font-size:15px"><span class="paw">🐾</span>辨識結果確認 <span class="mini-note" id="payslipImportMonth" style="transform:none"></span></div>
             <div class="scan-result-grid" id="payslipDetectedFields"></div>
@@ -916,15 +917,15 @@ const PAYSLIP_OCR_FIELDS=[
   {key:'dedWelfare',label:'福利金',kind:'deduction',terms:['職工福利金','福利金','福委會費','福委金','福利委員會費','職福金'],mode:'sum'},
   {key:'dedLabor',label:'勞保費',kind:'deduction',terms:['勞保費','勞保自付','勞保自付額','勞工保險費','勞工保險','勞保個人負擔','勞保'],mode:'sum'},
   {key:'dedHealth',label:'健保費',kind:'deduction',terms:['健保費','健保自付','健保自付額','全民健保費','健康保險費','健保個人負擔','健保'],mode:'sum'},
-  {key:'dedTax',label:'所得稅',kind:'deduction',terms:['薪資所得稅','所得稅額','所得稅','扣繳所得稅','扣繳稅','薪資扣繳','預扣所得稅','預扣稅','稅額'],mode:'sum'},
-  {key:'dedOther',label:'其他扣款',kind:'deduction',terms:['其他扣款','其他代扣','代扣款','其他減項'],mode:'sum'},
-  {key:'base',label:'底薪／本薪',kind:'income',terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','經常性薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
-  {key:'shiftAllowance',label:'輪班／夜班津貼',kind:'income',terms:['輪班津貼','輪班加給','輪班獎金','輪值津貼','輪值加給','班別津貼','班別加給','班津','夜班津貼','夜班加給','夜勤津貼','夜勤加給','夜勤費','晚班津貼','中班津貼','中夜班津貼','大夜班津貼','大夜津貼','大夜加給','小夜班津貼','小夜津貼','小夜加給','特殊班津貼','三班津貼','二班津貼','輪班費','夜班費','SHIFT ALLOWANCE','NIGHT SHIFT'],mode:'sum'},
-  {key:'meal',label:'伙食津貼',kind:'income',terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','餐費津貼','餐費補助','餐費','餐貼','誤餐費','MEAL ALLOWANCE'],mode:'sum'},
-  {key:'performance',label:'表現／績效津貼',kind:'income',terms:['表現津貼','表現獎金','績效津貼','績效獎金','績效獎勵','績效','工作獎金','工作津貼','職務津貼','職務加給','專業津貼','專業加給','責任津貼','責任加給','考績獎金','全勤獎金','PERFORMANCE BONUS','PERFORMANCE ALLOWANCE'],mode:'sum'},
-  {key:'transport',label:'交通津貼',kind:'income',terms:['交通津貼','交通費','交通補助','交通補貼','通勤津貼','通勤補助','車馬費','車資','油資','TRAVEL ALLOWANCE','TRANSPORT ALLOWANCE'],mode:'sum'},
+  {key:'dedTax',label:'所得稅',kind:'deduction',terms:['薪資所得稅','所得稅額','所得稅','扣繳所得稅','扣繳稅','代扣所得稅','所得稅款','薪資扣繳','預扣所得稅','預扣稅','稅額'],mode:'sum'},
+  {key:'dedOther',label:'其他扣款',kind:'deduction',terms:['其他扣款','其他代扣','代扣款','其他減項','應扣其他','代扣其他'],mode:'sum'},
+  {key:'base',label:'底薪／本薪',kind:'income',terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','經常性薪資','經常性工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','經常性薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
+  {key:'shiftAllowance',label:'輪班／夜班津貼',kind:'income',terms:['輪班津貼','輪班加給','輪班獎金','輪值津貼','輪值加給','班別津貼','班別加給','班津','夜班津貼','夜班加給','夜勤津貼','夜勤加給','夜勤費','晚班津貼','中班津貼','中夜班津貼','大夜班津貼','大夜津貼','大夜加給','小夜班津貼','小夜津貼','小夜加給','特殊班津貼','三班津貼','二班津貼','輪班費','夜班費','值班津貼','值班加給','輪值津貼','SHIFT ALLOWANCE','NIGHT SHIFT'],mode:'sum'},
+  {key:'meal',label:'伙食津貼',kind:'income',terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','餐費津貼','餐費補助','餐費','餐貼','誤餐費','餐費','餐補','MEAL ALLOWANCE'],mode:'sum'},
+  {key:'performance',label:'表現／績效津貼',kind:'income',terms:['表現津貼','表現獎金','績效津貼','績效獎金','績效獎勵','績效','工作獎金','工作津貼','職務津貼','職務加給','專業津貼','專業加給','責任津貼','責任加給','考績獎金','職務加給','專業加給','技術津貼','技能津貼','全勤獎金','PERFORMANCE BONUS','PERFORMANCE ALLOWANCE'],mode:'sum'},
+  {key:'transport',label:'交通津貼',kind:'income',terms:['交通津貼','交通費','交通補助','交通補貼','通勤津貼','通勤補助','車馬費','通勤補助','交通補貼','車資','油資','TRAVEL ALLOWANCE','TRANSPORT ALLOWANCE'],mode:'sum'},
   {key:'otPay',label:'加班費',kind:'income',terms:['加班費','延長工時工資','延長工時','平日延長工時','平日加班','假日加班','休息日加班','休息日工資','例假加班','例假日加班','國定假日加班','國假加班','超時工資','加班薪資','加班工資','OVERTIME PAY','OVERTIME'],mode:'sum'},
-  {key:'otherIncome',label:'其他收入',kind:'income',terms:['其他收入','其他津貼','其他加給','其他應發','其他獎金','獎金'],mode:'sum'}
+  {key:'otherIncome',label:'其他收入',kind:'income',terms:['其他收入','其他津貼','其他加給','其他應發','其他獎金','應發其他','應發雜項','獎金'],mode:'sum'}
 ]
 function setSalarySubTab(tab){
   salarySubTab=tab==='reconcile'?'reconcile':'calc';
@@ -950,7 +951,14 @@ function normalizeOcrText(s){
     .replace(/补助/g,'補助').replace(/补贴/g,'補貼').replace(/费用/g,'費用').replace(/加班费/g,'加班費')
     .replace(/绩效/g,'績效').replace(/奖金/g,'獎金').replace(/所得税/g,'所得稅').replace(/扣缴/g,'扣繳')
     .replace(/[\s_·•・．。,:：;；()（）\[\]【】\-\/]/g,'')
-    .replace(/薪咨/g,'薪資');
+    .replace(/薪咨/g,'薪資')
+    .replace(/薪貲/g,'薪資')
+    .replace(/津帖/g,'津貼')
+    .replace(/津占/g,'津貼')
+    .replace(/夥食/g,'伙食')
+    .replace(/基本工賣/g,'基本工資')
+    .replace(/加班貲/g,'加班費')
+    .replace(/健倸/g,'健保');
 }
 function amountCandidates(line){
   const text=normalizeOcrDigits(line);
@@ -970,13 +978,13 @@ function chooseOcrAmount(line,mode){
 function findNearbyOcrAmount(lines,index,mode){
   const direct=chooseOcrAmount(lines[index],mode);
   if(direct!==null)return direct;
-  const checks=[index+1,index-1,index+2,index+3];
+  const checks=[index+1,index+2,index+3,index-1];
   for(const i of checks){
     if(i<0||i>=lines.length)continue;
-    const otherField=bestOcrFieldForLine(lines[i]);
     const nums=amountCandidates(lines[i]);
-    if(otherField&&nums.length===0)continue;
-    if(otherField&&nums.length>0&&i!==index+1)continue;
+    if(!nums.length)continue;
+    const otherFields=ocrFieldsForLine(lines[i]);
+    if(otherFields.length&&i!==index+1)continue;
     const candidate=chooseOcrAmount(lines[i],mode);
     if(candidate!==null)return candidate;
   }
@@ -1019,8 +1027,13 @@ function parsePayslipText(text){
     // Common table format: several item names in one row, amounts in the same or next row.
     if(hits.length>1){
       const sameNums=amountCandidates(line);
-      const nextNums=index+1<lines.length?amountCandidates(lines[index+1]):[];
-      const nums=sameNums.length>=hits.length?sameNums:(nextNums.length>=hits.length?nextNums:[]);
+      let nums=sameNums.length>=hits.length?sameNums:[];
+      if(nums.length<hits.length){
+        for(let step=1;step<=3&&index+step<lines.length;step++){
+          const candidate=amountCandidates(lines[index+step]);
+          if(candidate.length>=hits.length){nums=candidate;break}
+        }
+      }
       if(nums.length>=hits.length){
         const chosen=nums.slice(nums.length-hits.length);
         hits.forEach((hit,i)=>apply(hit,chosen[i],line));
@@ -1084,6 +1097,7 @@ function resetPayslipScan(clearPreview=true){
   payslipOcrResult={};payslipRawText='';
   if($('payslipScanResult'))$('payslipScanResult').classList.add('hidden');
   if($('payslipRawText'))$('payslipRawText').textContent='';
+  if($('payslipMissingFields')){$('payslipMissingFields').textContent='';$('payslipMissingFields').classList.add('hidden')}
   if($('payslipScanProgress'))$('payslipScanProgress').style.width='0%';
   if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始本地辨識。第一次使用會先下載中文字庫，可能需要一些時間。 ';
   if($('payslipCameraInput'))$('payslipCameraInput').value='';
@@ -1116,8 +1130,14 @@ async function runPayslipOcr(file){
     renderPayslipDetected();
     $('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';
     $('payslipScanResult').classList.remove('hidden');
-    const found=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)).length;
-    status.childNodes[0].nodeValue='辨識完成：自動找到 '+found+' 個薪資欄位。請先確認或修改，再導入。 ';
+    const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key));
+    const missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key));
+    const found=foundDefs.length;
+    status.childNodes[0].nodeValue='辨識完成：找到 '+found+' / '+PAYSLIP_OCR_FIELDS.length+' 個薪資欄位。請先確認或修改，再導入。 ';
+    if($('payslipMissingFields')){
+      $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0);
+      $('payslipMissingFields').textContent=missingDefs.length?'尚未辨識：'+missingDefs.map(def=>def.label).join('、'):'';
+    }
     bar.style.width='100%';
   }catch(e){
     status.childNodes[0].nodeValue='辨識失敗：'+((e&&e.message)||'請換一張較清楚的照片再試。')+' ';
