@@ -1,5 +1,5 @@
-const CACHE_NAME='meow-work-pwa-v33';
-const STATIC_ASSETS=['./manifest.webmanifest?v=33'];
+const CACHE_NAME='meow-work-pwa-v34';
+const STATIC_ASSETS=['./manifest.webmanifest?v=34'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(
