@@ -212,7 +212,7 @@ const AVATAR_KEY='meow-work-avatar-v1';
 const SCHEDULE_KEY='meow-work-schedule-v1';
 const CLOUD_SYNC_KEY='meow-work-cloud-sync-code-v1';
 const CLOUD_SYNC_UPDATED_KEY='meow-work-cloud-sync-updated-v1';
-const SYNC_API='https://meow-work-sync.lovable.app/api/public/sync';
+const SYNC_API='https://meow-work-sync-sonia.lovable.app/api/public/sync';
 const statusMap={
  none:{label:'正常班表',cls:'',icon:''},overtime:{label:'加班',cls:'st-ot',icon:'i-clock'},sick:{label:'病假',cls:'st-sick',icon:'i-cross'},menstrual:{label:'生理假',cls:'st-menstrual',icon:'i-drop'},personal:{label:'事假',cls:'st-personal',icon:'i-doc'},annual:{label:'特休',cls:'st-annual',icon:'i-star'},custom:{label:'自訂假別',cls:'st-custom',icon:'i-star'}
 };
@@ -275,14 +275,27 @@ async function cloudSave(showAlert=false){
   try{
     persistLocalSnapshot();
     setSyncStatus('雲端同步中…');
-    const r=await fetch(SYNC_API+'/save',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({code:syncCode,payload:syncPayload()})
+    const p=syncPayload(),st=p.state||state;
+    const cloudSettings=Object.assign({},st.settings||{},{
+      __theme:st.theme||'light',
+      __savedAt:p.savedAt||lastSavedAt||new Date().toISOString()
     });
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const j=await r.json();
-    const t=j.updated_at||new Date().toISOString();
+    const r=await fetch(SYNC_API,{
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        code:syncCode,
+        avatar:st.profile||{},
+        schedule:st.schedule||{},
+        dayStatus:st.dayStatus||{},
+        settings:cloudSettings,
+        months:st.months||{}
+      }),
+      cache:'no-store'
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.ok)throw new Error(j.error||('HTTP '+r.status));
+    const t=(j.data&&j.data.updatedAt)||new Date().toISOString();
     localStorage.setItem(CLOUD_SYNC_UPDATED_KEY,t);
     setSyncStatus('已同步・'+new Date(t).toLocaleString('zh-TW'));
     if(showAlert)alert('雲端同步完成。');
@@ -310,28 +323,35 @@ async function cloudLoad(createIfMissing=true,showAlert=false){
   if(!syncCode||syncCode.length<20)return;
   setSyncStatus('正在讀取雲端資料…');
   try{
-    const r=await fetch(SYNC_API+'/load',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({code:syncCode})
-    });
+    const r=await fetch(SYNC_API+'?code='+encodeURIComponent(syncCode),{cache:'no-store'});
     if(r.status===404){
       setSyncStatus('尚無雲端資料，正在建立…');
       if(createIfMissing)await cloudSave(showAlert);
       return;
     }
-    if(!r.ok)throw new Error('HTTP '+r.status);
-    const j=await r.json();
-    const p=j.payload||{};
-    state=normalizeState(p.state||p);
-    lastSavedAt=p.savedAt||j.updated_at||new Date().toISOString();
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||!j.ok)throw new Error(j.error||('HTTP '+r.status));
+    const d=j.data||{},rawSettings=Object.assign({},d.settings||{});
+    const theme=rawSettings.__theme||state.theme||'light';
+    const savedAt=rawSettings.__savedAt||d.updatedAt||new Date().toISOString();
+    delete rawSettings.__theme;
+    delete rawSettings.__savedAt;
+    state=normalizeState({
+      theme,
+      profile:d.avatar||{},
+      schedule:d.schedule||{},
+      settings:rawSettings,
+      months:d.months||{},
+      dayStatus:d.dayStatus||{}
+    });
+    lastSavedAt=savedAt;
     try{
       localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
       localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
       localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
-      localStorage.setItem(CLOUD_SYNC_UPDATED_KEY,j.updated_at||lastSavedAt);
+      localStorage.setItem(CLOUD_SYNC_UPDATED_KEY,d.updatedAt||lastSavedAt);
     }catch(e){}
-    setSyncStatus('已同步・'+new Date(j.updated_at||lastSavedAt).toLocaleString('zh-TW'));
+    setSyncStatus('已同步・'+new Date(d.updatedAt||lastSavedAt).toLocaleString('zh-TW'));
     applyTheme();
     render();
     if(showAlert)alert('已載入雲端資料。');
