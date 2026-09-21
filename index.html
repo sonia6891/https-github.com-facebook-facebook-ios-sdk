@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=29">
+<link rel="manifest" href="./manifest.webmanifest?v=30">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -45,7 +45,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 @media(max-width:760px){.leave-balance-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.work-grid{grid-template-columns:1fr 1fr}}
 @media(max-width:420px){.leave-balance-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style>
-<link rel="manifest" href="./manifest.webmanifest?v=17">
+<link rel="manifest" href="./manifest.webmanifest?v=30">
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
@@ -663,7 +663,7 @@ function safeRender(name,fn){
     if(name==='calendar'){
       const box=$('calendarDays');
       if(box&&!box.children.length){
-        box.innerHTML='<div style="grid-column:1/-1;padding:28px;text-align:center;color:#9a6045;font-weight:800">月曆載入中發生錯誤，請重新整理一次。</div>';
+        box.innerHTML='<div style="grid-column:1/-1;padding:28px;text-align:center;color:#9a6045;font-weight:800">月曆載入失敗：'+escapeHtml((e&&e.message)||'未知錯誤')+'</div>';
       }
     }
   }
