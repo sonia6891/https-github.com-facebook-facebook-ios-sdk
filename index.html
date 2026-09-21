@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=37">
+<link rel="manifest" href="./manifest.webmanifest?v=38">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -36,7 +36,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 .attendance-head{padding:16px}.status-shortcuts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}.status-shortcut{border:0;border-radius:14px;padding:10px 6px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px}.status-shortcut .icon{font-size:17px}.attendance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.summary-card{padding:14px;display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center}.summary-card strong{font-size:24px;display:block}.summary-card small{color:var(--muted)}.records{padding:0 14px 14px}.record-head,.record-row{display:grid;grid-template-columns:1.2fr .9fr .55fr 1.2fr 32px;gap:8px;align-items:center}.record-head{padding:10px 6px;color:#6f5c53;font-size:11px;font-weight:800;border-bottom:1px solid var(--line)}.record-row{padding:11px 6px;border-bottom:1px solid var(--line);font-size:13px}.record-row:last-child{border-bottom:0}.record-type{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:10px;font-weight:850;width:max-content;max-width:100%}.record-note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f625c}.record-more{border:0;background:transparent;color:#8f776b;font-size:18px}.empty-state{text-align:center;padding:26px;color:var(--muted)}.edit-today{width:100%;margin-top:12px;border:0;border-radius:16px;background:linear-gradient(90deg,#ffc963,#f6b443);color:#7a3f08;padding:14px;font-weight:950;font-size:16px}
 .salary-card{padding:16px}.salary-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px;padding:5px;border-radius:16px;background:#f4ede7;border:1px solid #ebddd2}.salary-tab{border:0;border-radius:12px;background:transparent;color:#8a6654;padding:11px 14px;font-weight:950;font-size:15px}.salary-tab.active{background:#fff;box-shadow:0 4px 14px rgba(100,65,45,.09);color:#7a4329}.salary-pane{min-width:0}.salary-section{border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px;background:#fff}.salary-section-title{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:950;margin-bottom:10px}.salary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-field{padding:10px;border-radius:14px;background:#fff7f1;border:1px solid #f5e3d7}.salary-field .field-icon{width:36px;height:36px;border-radius:12px;font-size:18px;margin-bottom:6px}.salary-field .field-icon .icon{font-size:19px}.salary-field label{font-size:12px;font-weight:850;display:block;margin-bottom:5px}.salary-field input{width:100%;height:40px;border:1px solid #d8d0cb;border-radius:9px;background:#fff;padding:7px 9px;font-size:16px;font-weight:800}.salary-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-compare-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.compare-card{padding:14px}.compare-card b{display:block;font-size:12px;color:var(--muted)}.compare-card strong{display:block;font-size:25px;margin-top:5px}.compare-card small{display:block;margin-top:5px;color:var(--muted)}.compare-diff.negative strong{color:#c83f52}.compare-diff.positive strong{color:#248a49}.compare-diff.equal strong{color:#5f6a63}.pro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pro-card{position:relative;padding:15px;border:1px solid #eadfd6;border-radius:16px;background:#fffaf6;min-height:124px}.pro-card .pro-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.pro-card b{font-size:15px}.pro-card p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.pro-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;background:#2c2420;color:#fff;font-size:10px;font-weight:900;white-space:nowrap}.pro-card.unlocked{background:#f7fff8;border-color:#cde6d2}.pro-card.unlocked .pro-badge{background:#39864b}.pro-card button{margin-top:10px;width:100%;border:1px solid #e5d8ce;background:#fff;border-radius:11px;padding:8px 10px;font-weight:850;color:#73442c}
 .itemized-panel{margin-top:12px;border:1px solid #d7e8da;border-radius:16px;background:#fbfffc;overflow:hidden}.itemized-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e1ece3}.itemized-head b{font-size:16px}.itemized-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.itemized-summary .card{padding:11px}.itemized-summary b{font-size:11px;color:var(--muted);display:block}.itemized-summary strong{font-size:20px;display:block;margin-top:3px}.itemized-progress{font-size:11px;color:var(--muted);padding:0 14px 10px}.itemized-table{display:grid}.itemized-table-head,.itemized-row{display:grid;grid-template-columns:1.1fr .8fr .9fr .9fr;gap:8px;align-items:center;padding:9px 12px}.itemized-table-head{background:#f0f7f1;font-size:11px;font-weight:900;color:#607065}.itemized-row{border-top:1px solid #edf1ed;font-size:12px}.itemized-row .item-label{font-weight:850}.itemized-row .expected{text-align:right;font-weight:800}.itemized-row input{width:100%;height:36px;border:1px solid #d9dfda;border-radius:9px;padding:6px 8px;text-align:right;font-weight:800;background:#fff}.itemized-status{text-align:right;font-weight:900;font-size:11px}.itemized-status.ok{color:#36854a}.itemized-status.bad{color:#c23f52}.itemized-status.warn{color:#b46a17}.itemized-group{padding:8px 12px;background:#fff8ed;color:#8b5b31;font-size:11px;font-weight:950;border-top:1px solid #eee5d8}
-.payslip-scan-panel{margin-top:12px;border:1px solid #efd7b5;border-radius:16px;background:#fffdf8;overflow:hidden}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px;border-bottom:1px solid #f1e3d0}.scan-head b{font-size:16px}.scan-privacy{margin-top:4px;font-size:10px;color:#52815d;font-weight:800}.scan-upload{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}.scan-upload-btn{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #e7cfad;background:#fff8e9;color:#7c4c22;border-radius:13px;padding:11px;font-weight:900}.scan-preview-wrap{padding:0 12px 12px}.scan-preview{display:none;width:100%;max-height:340px;object-fit:contain;border:1px solid #e7ddd3;border-radius:13px;background:#f7f4f1}.scan-preview.show{display:block}.scan-status{margin:0 12px 12px;padding:10px 11px;border-radius:12px;background:#f2f6fb;color:#496478;font-size:11px;font-weight:800}.scan-progress{height:6px;border-radius:999px;background:#e6edf3;overflow:hidden;margin-top:7px}.scan-progress i{display:block;width:0;height:100%;background:#7098b7;transition:width .2s ease}.scan-result{padding:0 12px 12px}.scan-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.scan-result-field{padding:9px;border-radius:12px;background:#fff;border:1px solid #ede3da}.scan-result-field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px;color:#70584c}.scan-result-field input{width:100%;height:36px;border:1px solid #ddd3cb;border-radius:9px;padding:6px 8px;font-weight:850}.scan-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.scan-raw{margin-top:9px}.scan-raw summary{cursor:pointer;font-size:11px;font-weight:850;color:#776159}.scan-raw pre{white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;background:#f7f4f1;border-radius:10px;padding:9px;font-size:9px;line-height:1.5}.salary-history-panel{margin-top:12px;border:1px solid #dfdfec;border-radius:16px;background:#fcfcff;overflow:hidden}.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e8e8f0}.history-head b{font-size:16px}.history-yearbar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:#f7f7fc}.history-yearbar button{width:34px;height:34px;border:1px solid #dcdce8;background:#fff;border-radius:10px;font-weight:950}.history-yearbar strong{min-width:72px;text-align:center}.history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.history-summary .card{padding:11px}.history-summary b{font-size:10px;color:var(--muted);display:block}.history-summary strong{font-size:19px;display:block;margin-top:3px}.history-list{padding:0 12px 12px}.history-row{display:grid;grid-template-columns:.65fr 1fr 1fr .9fr auto;gap:8px;align-items:center;padding:11px 6px;border-top:1px solid #eeeeF5;font-size:12px}.history-row:first-child{border-top:0}.history-row .month{font-weight:950}.history-row .num{text-align:right;font-weight:800}.history-row .diff{text-align:right;font-weight:950}.history-row .diff.neg{color:#c23f52}.history-row .diff.pos{color:#2c8a4b}.history-row .open-month{border:1px solid #dddde8;background:#fff;border-radius:9px;padding:7px 9px;font-weight:850;color:#65506e}.history-meta{font-size:10px;color:var(--muted);grid-column:2/5}.history-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px}.dev-plan-card{border:1px dashed #d8a660;background:#fff8e9}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.dev-plan-btn{border:1px solid #e2c38f;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;color:#7a4a1e}.dev-plan-btn.active{background:#2d2723;color:#fff;border-color:#2d2723}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden}.result-card .summary-icon{flex:0 0 auto}.result-card>div:last-child{min-width:0}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
+.payslip-scan-panel{margin-top:12px;border:1px solid #efd7b5;border-radius:16px;background:#fffdf8;overflow:hidden}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px;border-bottom:1px solid #f1e3d0}.scan-head b{font-size:16px}.scan-privacy{margin-top:4px;font-size:10px;color:#52815d;font-weight:800}.scan-upload{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}.scan-upload-btn{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #e7cfad;background:#fff8e9;color:#7c4c22;border-radius:13px;padding:11px;font-weight:900}.scan-preview-wrap{padding:0 12px 12px}.scan-preview{display:none;width:100%;max-height:340px;object-fit:contain;border:1px solid #e7ddd3;border-radius:13px;background:#f7f4f1}.scan-preview.show{display:block}.scan-status{margin:0 12px 12px;padding:10px 11px;border-radius:12px;background:#f2f6fb;color:#496478;font-size:11px;font-weight:800}.scan-progress{height:6px;border-radius:999px;background:#e6edf3;overflow:hidden;margin-top:7px}.scan-progress i{display:block;width:0;height:100%;background:#7098b7;transition:width .2s ease}.scan-result{padding:0 12px 12px}.scan-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.scan-result-field{padding:9px;border-radius:12px;background:#fff;border:1px solid #ede3da}.scan-result-field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px;color:#70584c}.scan-result-field input{width:100%;height:36px;border:1px solid #ddd3cb;border-radius:9px;padding:6px 8px;font-weight:850}.scan-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.scan-raw{margin-top:9px}.scan-raw summary{cursor:pointer;font-size:11px;font-weight:850;color:#776159}.scan-raw pre{white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;background:#f7f4f1;border-radius:10px;padding:9px;font-size:9px;line-height:1.5}.salary-history-panel{margin-top:12px;border:1px solid #dfdfec;border-radius:16px;background:#fcfcff;overflow:hidden}.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e8e8f0}.history-head b{font-size:16px}.history-yearbar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:#f7f7fc}.history-yearbar button{width:34px;height:34px;border:1px solid #dcdce8;background:#fff;border-radius:10px;font-weight:950}.history-yearbar strong{min-width:72px;text-align:center}.history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.history-summary .card{padding:11px}.history-summary b{font-size:10px;color:var(--muted);display:block}.history-summary strong{font-size:19px;display:block;margin-top:3px}.history-list{padding:0 12px 12px}.history-row{display:grid;grid-template-columns:.65fr 1fr 1fr .9fr auto;gap:8px;align-items:center;padding:11px 6px;border-top:1px solid #eeeeF5;font-size:12px}.history-row:first-child{border-top:0}.history-row .month{font-weight:950}.history-row .num{text-align:right;font-weight:800}.history-row .diff{text-align:right;font-weight:950}.history-row .diff.neg{color:#c23f52}.history-row .diff.pos{color:#2c8a4b}.history-row .open-month{border:1px solid #dddde8;background:#fff;border-radius:9px;padding:7px 9px;font-weight:850;color:#65506e}.history-meta{font-size:10px;color:var(--muted);grid-column:2/5}.history-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px}.dev-plan-card{border:1px dashed #d8a660;background:#fff8e9}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.dev-plan-btn{border:1px solid #e2c38f;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;color:#7a4a1e}.dev-plan-btn.active{background:#2d2723;color:#fff;border-color:#2d2723}.cloud-protection{margin-top:10px;padding:10px 12px;border-radius:13px;background:#fff4e7;color:#945e2b;font-size:11px;font-weight:850;line-height:1.5}.cloud-protection.safe{background:#eaf8ed;color:#347848}.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.backup-note{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.5}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden}.result-card .summary-icon{flex:0 0 auto}.result-card>div:last-child{min-width:0}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
 .work-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.work-card{padding:15px;display:grid;grid-template-columns:50px 1fr;gap:12px;align-items:center}.work-card b{font-size:13px}.work-card strong{display:block;font-size:26px;margin-top:3px;line-height:1.15}.work-card small{display:block;color:var(--muted);margin-top:4px}.payday-quote{font-size:14px;font-weight:900;color:#9a5316;margin-top:5px;line-height:1.35}.leave-balance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.balance-card{padding:15px}.balance-title{display:flex;align-items:center;gap:9px}.balance-card>strong{display:block;font-size:23px;margin:10px 0 4px}.balance-card>small{color:var(--muted);display:block;min-height:32px}.balance-progress{height:7px;background:#f0e8e0;border-radius:999px;overflow:hidden;margin-top:10px}.balance-progress i{display:block;height:100%;width:0;border-radius:999px;transition:width .25s ease}.annual-balance .balance-progress i{background:#62bd72}.annual-reminder{margin-top:9px;padding:8px 10px;border-radius:10px;background:#f2fbf3;color:#367944;font-size:11px;font-weight:850;line-height:1.45}.annual-reminder.warn{background:#fff3df;color:#a66110}.annual-reminder.urgent{background:#ffe9ec;color:#b52d43}.sick-balance .balance-progress i{background:#d94a5a}.personal-balance .balance-progress i{background:#7892a6}
 .settings-stack{display:grid;gap:12px}.settings-card{padding:16px}.profile-row{display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center}.profile-preview{width:110px;height:110px;border-radius:50%;object-fit:cover;border:5px solid #f7e2cd;box-shadow:var(--shadow)}.profile-copy b{font-size:20px}.profile-copy p{margin:5px 0;color:var(--muted)}.profile-say{display:inline-block;padding:8px 10px;border-radius:14px;background:#fff0dc;color:#985b37;font-weight:800}.settings-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #e7d8cb;background:#fff;border-radius:13px;padding:10px 13px;font-weight:850;color:#5c3425}.btn.primary{background:#fff0d4;color:#ae5b0c;border-color:#f3d2a3}.btn.danger{background:#fff0f1;color:#c94251;border-color:#f3c9ce}.settings-list{display:grid;gap:1px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.settings-item{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:center;padding:13px;background:#fff;border-bottom:1px solid var(--line)}.settings-item:last-child{border-bottom:0}.settings-item .field-icon{width:40px;height:40px;border-radius:12px}.settings-item b{display:block}.settings-item small{color:var(--muted)}.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.theme-choice{border:1px solid #e5d9ce;background:#fff;border-radius:16px;padding:13px;display:flex;align-items:center;justify-content:space-between;font-weight:900}.theme-choice.active{border-color:#f0a838;background:#fff7e8;color:#bd660e}.install-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .footer-banner{margin-top:18px}.footer-banner img{width:100%;display:block;border-radius:22px;box-shadow:var(--shadow);border:1px solid #f0e0d1}.bottom-nav{display:none}.dialog{border:0;border-radius:22px;padding:0;width:min(520px,calc(100vw - 22px));background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.25)}.dialog::backdrop{background:rgba(34,22,17,.45)}.dialog-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}.dialog-head b{font-size:18px}.dialog-close{border:0;background:transparent;font-size:24px;color:var(--muted)}.dialog-body{padding:16px 18px;display:grid;gap:12px;max-height:70vh;overflow:auto}.dialog-foot{padding:14px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}.hidden{display:none!important}
@@ -51,7 +51,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 @media(max-width:760px){.history-row{grid-template-columns:.7fr 1fr 1fr;grid-template-areas:"month expected actual" "meta meta action";gap:6px}.history-row .month{grid-area:month}.history-row .expected-num{grid-area:expected}.history-row .actual-num{grid-area:actual}.history-row .diff{grid-area:meta;text-align:left}.history-row .open-month{grid-area:action;justify-self:end}.history-row .history-meta{display:none}.history-summary{grid-template-columns:1fr 1fr 1fr;gap:5px;padding:8px}.history-summary .card{padding:8px}.history-summary strong{font-size:15px}.history-summary b{font-size:9px}}
 @media(max-width:760px){.salary-tabs{margin-top:8px}.salary-tab{font-size:13px;padding:10px 8px}.scan-upload{grid-template-columns:1fr 1fr}.scan-result-grid{grid-template-columns:1fr 1fr}.scan-head{padding:11px}.scan-preview{max-height:280px}}
 </style>
-<link rel="manifest" href="./manifest.webmanifest?v=37">
+<link rel="manifest" href="./manifest.webmanifest?v=38">
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
@@ -333,17 +333,23 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
         </div>
         <div class="hint" style="margin-top:10px">病假依未住院普通傷病假一年 30 日、事假一年 14 日試算，並依每日工時換算成時數。生理假前 3 日不併入病假，第 4 日起的部分自動併入病假額度。公司若有優於法令的制度，仍以公司實際規定為準。特休年度終結仍未休完，原則上應結算工資；如勞雇雙方協商，也可遞延至次一年度。</div>
       </div>
-      <div class="card settings-card dev-plan-card hidden" id="devPlanCard">
-        <div class="section-title"><span class="paw">🐾</span>開發測試：Free / Pro</div>
-        <div class="hint">只有網址帶 <b>?dev=1</b> 時顯示；這只是本機測試，不代表真的已付款。</div>
+      <div class="card settings-card dev-plan-card" id="devPlanCard">
+        <div class="section-title"><span class="paw">🐾</span>版本／方案測試</div>
+        <div class="hint">目前為開發階段，手機 App 內可直接切換測試。正式上架時會移除此區。</div>
         <div class="dev-plan-row">
-          <button type="button" class="dev-plan-btn" id="devPlanFree">測試 Free</button>
-          <button type="button" class="dev-plan-btn" id="devPlanPro">測試 Pro</button>
-          <button type="button" class="dev-plan-btn" id="devPlanExit">關閉開發模式</button>
+          <button type="button" class="dev-plan-btn" id="devPlanFree">Free</button>
+          <button type="button" class="dev-plan-btn" id="devPlanPro">Pro</button>
+          <button type="button" class="dev-plan-btn" id="devPlanDev">開發者測試</button>
         </div>
         <div class="hint" id="devPlanStatus" style="margin-top:8px"></div>
       </div>
-      <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>資料管理</div><div class="settings-list"><button class="settings-item" id="saveDevice"><div class="field-icon" style="background:#e2f0ff;color:#2072bf"><svg class="icon"><use href="#i-cloud"/></svg></div><div><b>儲存到此裝置</b><small id="saveState">將目前設定與資料儲存到本機裝置</small></div><span>›</span></button><button class="settings-item" id="clearDevice"><div class="field-icon" style="background:#ffe6e8;color:#dd4a59"><svg class="icon"><use href="#i-trash"/></svg></div><div><b>清除已儲存資料</b><small>刪除此裝置上的保存內容</small></div><span>›</span></button></div></div>
+      <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>資料管理</div><div class="settings-list">
+        <button class="settings-item" id="saveDevice"><div class="field-icon" style="background:#e2f0ff;color:#2072bf"><svg class="icon"><use href="#i-cloud"/></svg></div><div><b>儲存到此裝置</b><small id="saveState">將目前設定與資料儲存到本機裝置</small></div><span>›</span></button>
+        <button class="settings-item" id="exportBackup"><div class="field-icon" style="background:#e9f7ec;color:#31824a">⇩</div><div><b>匯出備份檔</b><small>存到 iPhone「檔案」或其他安全位置，重裝後可還原</small></div><span>›</span></button>
+        <label class="settings-item" for="importBackupInput" style="cursor:pointer"><div class="field-icon" style="background:#fff1dc;color:#a96720">⇧</div><div><b>匯入備份檔</b><small>從先前匯出的 JSON 備份還原資料</small></div><span>›</span></label>
+        <input class="hidden" id="importBackupInput" type="file" accept=".json,application/json">
+        <button class="settings-item" id="clearDevice"><div class="field-icon" style="background:#ffe6e8;color:#dd4a59"><svg class="icon"><use href="#i-trash"/></svg></div><div><b>清除已儲存資料</b><small>只刪除這台裝置；已登入的雲端資料不會刪除</small></div><span>›</span></button>
+      </div></div>
       <div class="card settings-card">
         <div class="section-title"><span class="paw">🐾</span>帳號與即時同步</div>
         <div id="emailLoginPanel">
@@ -373,8 +379,14 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
             </div>
             <button class="btn danger" id="accountLogout">登出</button>
           </div>
+          <div class="backup-actions">
+            <button class="btn primary" id="cloudBackupNow">立即備份到雲端</button>
+            <button class="btn" id="cloudRestoreNow">從雲端還原</button>
+          </div>
         </div>
+        <div class="cloud-protection" id="cloudProtection">⚠ 尚未啟用雲端保護。刪除 App 或網站資料後，本機資料可能無法找回。</div>
         <div class="hint" id="accountStatus" style="margin-top:10px">使用同一個 Email 登入後，App、Safari 與電腦網頁會共用同一份資料並即時同步。</div>
+        <div class="backup-note">建議：重要資料除了登入雲端同步，也定期「匯出備份檔」存到 iPhone 檔案或雲端硬碟。</div>
       </div>
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>主題切換</div><div class="theme-options"><button class="theme-choice" id="themeLight">☀　淺色模式 <span>○</span></button><button class="theme-choice" id="themeDark">☾　深色模式 <span>○</span></button></div></div>
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>排班設定</div><div class="settings-list"><button class="settings-item" data-goto="calendar"><div class="field-icon" style="background:#fff0dc;color:#9c5b3b"><svg class="icon"><use href="#i-calendar"/></svg></div><div><b>排班相關設定</b><small id="settingsScheduleSummary">做2休2・A班</small></div><span>›</span></button></div></div>
@@ -415,14 +427,14 @@ const FEATURE_CATALOG={
   salary_history_unlimited:{label:'歷史薪資對帳',tier:'pro'},
   salary_export:{label:'PDF／Excel 對帳報告',tier:'pro'}
 };
-let devMode=false,devPlan='free';
+const DEV_TESTING_ENABLED=true;
+let devMode=DEV_TESTING_ENABLED,devPlan='free';
 try{
-  const params=new URLSearchParams(location.search);
-  if(params.get('dev')==='1')localStorage.setItem(DEV_MODE_KEY,'1');
-  devMode=localStorage.getItem(DEV_MODE_KEY)==='1';
-  devPlan=localStorage.getItem(DEV_PLAN_KEY)==='pro'?'pro':'free';
+  const stored=localStorage.getItem(DEV_PLAN_KEY);
+  devPlan=['free','pro','dev'].includes(stored)?stored:'free';
 }catch(e){}
-function currentPlan(){return devMode?devPlan:'free'}
+function currentPlan(){return devPlan==='free'?'free':'pro'}
+function isDeveloperTest(){return devPlan==='dev'}
 function canUse(feature){const meta=FEATURE_CATALOG[feature];return !!meta&&(meta.tier==='free'||currentPlan()==='pro')}
 const statusMap={
  none:{label:'正常班表',cls:'',icon:''},overtime:{label:'加班',cls:'st-ot',icon:'i-clock'},sick:{label:'病假',cls:'st-sick',icon:'i-cross'},menstrual:{label:'生理假',cls:'st-menstrual',icon:'i-drop'},personal:{label:'事假',cls:'st-personal',icon:'i-doc'},annual:{label:'特休',cls:'st-annual',icon:'i-star'},custom:{label:'自訂假別',cls:'st-custom',icon:'i-star'}
@@ -462,12 +474,60 @@ try{
   }
 }catch(e){deviceId='dev-'+Math.random().toString(36).slice(2)}
 
+const BACKUP_DB_NAME='meow-work-backup-v1',BACKUP_STORE='snapshots';
+function openBackupDb(){
+  return new Promise((resolve,reject)=>{
+    if(!('indexedDB' in window)){resolve(null);return}
+    const req=indexedDB.open(BACKUP_DB_NAME,1);
+    req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(BACKUP_STORE))db.createObjectStore(BACKUP_STORE)};
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function writeIndexedBackup(snapshot){
+  try{
+    const db=await openBackupDb();if(!db)return;
+    await new Promise((resolve,reject)=>{
+      const tx=db.transaction(BACKUP_STORE,'readwrite');
+      tx.objectStore(BACKUP_STORE).put(snapshot,'latest');
+      tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);
+    });
+    db.close();
+  }catch(e){}
+}
+async function readIndexedBackup(){
+  try{
+    const db=await openBackupDb();if(!db)return null;
+    const value=await new Promise((resolve,reject)=>{
+      const tx=db.transaction(BACKUP_STORE,'readonly');
+      const req=tx.objectStore(BACKUP_STORE).get('latest');
+      req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);
+    });
+    db.close();return value;
+  }catch(e){return null}
+}
+async function restoreIndexedMirrorIfNewer(){
+  const backup=await readIndexedBackup();
+  if(!backup||!backup.state)return;
+  const localTime=lastSavedAt?Date.parse(lastSavedAt):0,backupTime=backup.savedAt?Date.parse(backup.savedAt):0;
+  if(backupTime>localTime){
+    state=normalizeState(backup.state);
+    lastSavedAt=backup.savedAt;
+    try{
+      localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
+      localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
+      localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
+    }catch(e){}
+    applyTheme();render();
+  }
+}
 function persistLocalSnapshot(){
   try{
     lastSavedAt=new Date().toISOString();
     localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
     localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
     localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
+    writeIndexedBackup({savedAt:lastSavedAt,state});
   }catch(e){}
 }
 function syncPayload(){return{version:2,savedAt:lastSavedAt||new Date().toISOString(),deviceId,state};}
@@ -551,11 +611,7 @@ async function loadAccountState(){
   if(cloud.state){
     state=normalizeState(cloud.state);
     lastSavedAt=cloud.savedAt||data.updated_at||new Date().toISOString();
-    try{
-      localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
-      localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
-      localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
-    }catch(e){}
+    persistLocalSnapshot();
     applyTheme();render();
   }
   setAccountStatus('已同步・'+new Date(data.updated_at||Date.now()).toLocaleString('zh-TW'));
@@ -1194,10 +1250,11 @@ function renderProEntitlements(){
     if(badge)badge.textContent=unlocked?'✓ Pro 測試已解鎖':'🔒 Pro';
     if(btn){if(feature==='payslip_scan')btn.textContent=unlocked?(payslipScanOpen?'收起本地辨識':'開啟本地辨識'):'Pro 解鎖';else if(feature==='itemized_salary_compare')btn.textContent=unlocked?(itemizedOpen?'收起逐項對帳':'開啟逐項對帳'):'Pro 解鎖';else if(feature==='salary_history_unlimited')btn.textContent=unlocked?(salaryHistoryOpen?'收起歷史對帳':'開啟歷史對帳'):'Pro 解鎖';else btn.textContent=unlocked?'功能開發中':'即將推出'};
   });
-  if($('devPlanCard'))$('devPlanCard').classList.toggle('hidden',!devMode);
-  if($('devPlanFree'))$('devPlanFree').classList.toggle('active',devMode&&plan==='free');
-  if($('devPlanPro'))$('devPlanPro').classList.toggle('active',devMode&&plan==='pro');
-  if($('devPlanStatus'))$('devPlanStatus').textContent=devMode?'目前測試方案：'+plan.toUpperCase():'';
+  if($('devPlanCard'))$('devPlanCard').classList.remove('hidden');
+  if($('devPlanFree'))$('devPlanFree').classList.toggle('active',devPlan==='free');
+  if($('devPlanPro'))$('devPlanPro').classList.toggle('active',devPlan==='pro');
+  if($('devPlanDev'))$('devPlanDev').classList.toggle('active',devPlan==='dev');
+  if($('devPlanStatus'))$('devPlanStatus').textContent='目前測試模式：'+(devPlan==='free'?'Free':devPlan==='pro'?'Pro':'開發者測試（Pro 全功能）');
 }
 function renderSalary(){
   const mc=calcMonth(),mm=mb();
@@ -1230,7 +1287,7 @@ function renderSalary(){
   renderItemizedComparison(mc,mm);
   renderSalaryHistory();
 }
-function renderSettings(){renderHeroProfile();$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'已登入':'尚未登入';if($('accountEmail'))$('accountEmail').textContent=authUser?(authUser.email||''):'';if($('emailLoginPanel'))$('emailLoginPanel').classList.toggle('hidden',!!authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);
+function renderSettings(){renderHeroProfile();$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'已登入':'尚未登入';if($('accountEmail'))$('accountEmail').textContent=authUser?(authUser.email||''):'';if($('emailLoginPanel'))$('emailLoginPanel').classList.toggle('hidden',!!authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);if($('cloudProtection')){$('cloudProtection').classList.toggle('safe',!!authUser);$('cloudProtection').textContent=authUser?'✓ 已啟用雲端保護。刪除 App 後，只要用同一個 Email 登入即可還原。':'⚠ 尚未啟用雲端保護。刪除 App 或網站資料後，本機資料可能無法找回。';}
 const setWork=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=(v??'')};
 setWork('settingPayday',state.settings.payday||'');
 setWork('settingHireDate',state.settings.hireDate||'');
@@ -1349,11 +1406,66 @@ function saveActualItem(key,raw){
   changedAndSync();
   renderItemizedComparison(calcMonth(),mm);
 }
+async function exportBackupFile(){
+  persistLocalSnapshot();
+  const payload={app:'喵的，又要上班了',version:1,exportedAt:new Date().toISOString(),state};
+  const json=JSON.stringify(payload,null,2);
+  const fileName='meow-work-backup-'+iso(new Date())+'.json';
+  try{
+    const file=new File([json],fileName,{type:'application/json'});
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({title:'喵的，又要上班了 備份',files:[file]});
+      return;
+    }
+  }catch(e){}
+  const blob=new Blob([json],{type:'application/json'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=fileName;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+async function importBackupFile(file){
+  if(!file)return;
+  try{
+    const text=await file.text(),data=JSON.parse(text),incoming=data.state||data;
+    if(!incoming||typeof incoming!=='object')throw new Error('格式不正確');
+    if(!confirm('要用這份備份覆蓋目前 App 資料嗎？'))return;
+    state=normalizeState(incoming);
+    persistLocalSnapshot();
+    applyTheme();render();
+    queueAccountSave(0);
+    alert('備份已還原。');
+  }catch(e){alert('備份檔無法讀取，請確認是本 App 匯出的 JSON 檔。')}
+}
+async function restoreFromCloud(showAlert=true){
+  if(!authUser){if(showAlert)alert('請先用 Email 登入，再從雲端還原。');return false}
+  try{
+    const client=await getAuthClient();
+    setAccountStatus('正在從雲端還原…');
+    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',authUser.id).maybeSingle();
+    if(error)throw error;
+    if(!data||!data.payload||!data.payload.state){
+      setAccountStatus('雲端尚無備份');
+      if(showAlert)alert('這個帳號目前還沒有雲端備份。');
+      return false;
+    }
+    state=normalizeState(data.payload.state);
+    lastSavedAt=data.payload.savedAt||data.updated_at||new Date().toISOString();
+    persistLocalSnapshot();
+    applyTheme();render();
+    setAccountStatus('已從雲端還原・'+new Date(data.updated_at||Date.now()).toLocaleString('zh-TW'));
+    if(showAlert)alert('雲端資料已還原到這台裝置。');
+    return true;
+  }catch(e){
+    setAccountStatus('雲端還原失敗');
+    if(showAlert)alert('雲端還原失敗，請稍後再試。');
+    return false;
+  }
+}
 function setDevPlan(plan){
-  if(!devMode)return;
-  devPlan=plan==='pro'?'pro':'free';
+  if(!DEV_TESTING_ENABLED)return;
+  devPlan=['free','pro','dev'].includes(plan)?plan:'free';
   try{localStorage.setItem(DEV_PLAN_KEY,devPlan)}catch(e){}
-  renderProEntitlements();
+  render();
 }
 $('settingHireDate').onchange=e=>{state.settings.hireDate=e.target.value||'';changedAndSync();render()};
 $('settingAnnualCycle').onchange=e=>{state.settings.annualLeaveCycle=e.target.value||'anniversary';changedAndSync();render()};
@@ -1388,16 +1500,7 @@ $('removeAvatar').onclick=()=>{
 $('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(authUser)await saveAccountState(false);alert(authUser?'已儲存到這台裝置並同步 Email 帳號。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=()=>{if(!confirm('確定清除這台裝置已儲存的資料？如果目前已登入，雲端資料不會刪除。'))return;localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);state=defaultState();lastSavedAt=null;render();alert('已清除此裝置資料；登入中的雲端資料仍保留。')};
 if($('devPlanFree'))$('devPlanFree').onclick=()=>setDevPlan('free');
 if($('devPlanPro'))$('devPlanPro').onclick=()=>setDevPlan('pro');
-if($('devPlanExit'))$('devPlanExit').onclick=()=>{
-  try{localStorage.removeItem(DEV_MODE_KEY);localStorage.removeItem(DEV_PLAN_KEY)}catch(e){}
-  devMode=false;devPlan='free';
-  try{
-    const u=new URL(location.href);u.searchParams.delete('dev');
-    history.replaceState(null,'',u.pathname+u.search+u.hash);
-  }catch(e){}
-  renderProEntitlements();
-  alert('已關閉開發測試模式。');
-};
+if($('devPlanDev'))$('devPlanDev').onclick=()=>setDevPlan('dev');
 qsa('[data-pro-action]').forEach(btn=>btn.onclick=()=>{
   const feature=btn.dataset.proAction;
   if(!canUse(feature)){
@@ -1445,11 +1548,17 @@ $('resendEmailOtp').onclick=sendEmailOtp;
 $('emailOtpInput').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)};
 $('emailOtpInput').onkeydown=e=>{if(e.key==='Enter')verifyEmailOtp()};
 $('emailLoginInput').onkeydown=e=>{if(e.key==='Enter')sendEmailOtp()};
+if($('exportBackup'))$('exportBackup').onclick=exportBackupFile;
+if($('importBackupInput'))$('importBackupInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)importBackupFile(file);e.target.value=''};
+if($('cloudBackupNow'))$('cloudBackupNow').onclick=()=>saveAccountState(true);
+if($('cloudRestoreNow'))$('cloudRestoreNow').onclick=()=>restoreFromCloud(true);
 $('accountLogout').onclick=signOutAccount;
 initAuth();
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 applyTheme();render();
+restoreIndexedMirrorIfNewer();
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 })();
 </script>
 </body>
