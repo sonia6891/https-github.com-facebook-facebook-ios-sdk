@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=18">
+<link rel="manifest" href="./manifest.webmanifest?v=19">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -171,16 +171,35 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>資料管理</div><div class="settings-list"><button class="settings-item" id="saveDevice"><div class="field-icon" style="background:#e2f0ff;color:#2072bf"><svg class="icon"><use href="#i-cloud"/></svg></div><div><b>儲存到此裝置</b><small id="saveState">將目前設定與資料儲存到本機裝置</small></div><span>›</span></button><button class="settings-item" id="clearDevice"><div class="field-icon" style="background:#ffe6e8;color:#dd4a59"><svg class="icon"><use href="#i-trash"/></svg></div><div><b>清除已儲存資料</b><small>刪除此裝置上的保存內容</small></div><span>›</span></button></div></div>
       <div class="card settings-card">
         <div class="section-title"><span class="paw">🐾</span>帳號與即時同步</div>
-        <div class="install-row" style="margin-top:12px">
-          <div>
-            <b id="accountTitle">尚未登入</b>
-            <div class="hint" id="accountStatus">登入同一個 Google 帳號後，App、Safari 與電腦網頁會共用同一份資料。</div>
+        <div id="emailLoginPanel">
+          <div class="field" style="margin-top:12px">
+            <label>Email</label>
+            <input id="emailLoginInput" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
           </div>
-          <div class="settings-actions">
-            <button class="btn primary" id="googleLogin">Google 登入</button>
-            <button class="btn danger hidden" id="accountLogout">登出</button>
+          <div class="settings-actions" style="margin-top:10px">
+            <button class="btn primary" id="sendEmailOtp">寄送 6 位驗證碼</button>
+          </div>
+          <div id="otpPanel" class="hidden">
+            <div class="field" style="margin-top:12px">
+              <label>6 位驗證碼</label>
+              <input id="emailOtpInput" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="123456">
+            </div>
+            <div class="settings-actions" style="margin-top:10px">
+              <button class="btn primary" id="verifyEmailOtp">驗證並登入</button>
+              <button class="btn" id="resendEmailOtp">重新寄送</button>
+            </div>
           </div>
         </div>
+        <div id="accountLoggedIn" class="hidden" style="margin-top:12px">
+          <div class="install-row">
+            <div>
+              <b id="accountTitle">已登入</b>
+              <div class="hint" id="accountEmail"></div>
+            </div>
+            <button class="btn danger" id="accountLogout">登出</button>
+          </div>
+        </div>
+        <div class="hint" id="accountStatus" style="margin-top:10px">使用同一個 Email 登入後，App、Safari 與電腦網頁會共用同一份資料並即時同步。</div>
       </div>
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>主題切換</div><div class="theme-options"><button class="theme-choice" id="themeLight">☀　淺色模式 <span>○</span></button><button class="theme-choice" id="themeDark">☾　深色模式 <span>○</span></button></div></div>
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>排班設定</div><div class="settings-list"><button class="settings-item" data-goto="calendar"><div class="field-icon" style="background:#fff0dc;color:#9c5b3b"><svg class="icon"><use href="#i-calendar"/></svg></div><div><b>排班相關設定</b><small id="settingsScheduleSummary">做2休2・A班</small></div><span>›</span></button></div></div>
@@ -371,13 +390,46 @@ async function initAuth(){
     });
   }catch(e){setAccountStatus('登入服務初始化失敗')}
 }
-async function signInGoogle(){
+let pendingEmail='';
+function normalizeEmail(v){return String(v||'').trim().toLowerCase()}
+async function sendEmailOtp(){
+  const email=normalizeEmail($('emailLoginInput')&&$('emailLoginInput').value);
+  if(!email||!email.includes('@')){alert('請先輸入正確的 Email。');return}
   try{
     const client=await getAuthClient();
-    const redirectTo=location.origin+location.pathname;
-    const {error}=await client.auth.signInWithOAuth({provider:'google',options:{redirectTo}});
+    setAccountStatus('正在寄送驗證碼…');
+    const {error}=await client.auth.signInWithOtp({
+      email,
+      options:{shouldCreateUser:true}
+    });
     if(error)throw error;
-  }catch(e){alert('Google 登入尚未完成設定，請稍後再試。')}
+    pendingEmail=email;
+    $('otpPanel').classList.remove('hidden');
+    $('emailOtpInput').value='';
+    $('emailOtpInput').focus();
+    setAccountStatus('驗證碼已寄出，請到信箱查看 6 位數字。');
+  }catch(e){
+    setAccountStatus('驗證碼寄送失敗');
+    alert('驗證碼寄送失敗：'+(e&&e.message?e.message:'請稍後再試。'));
+  }
+}
+async function verifyEmailOtp(){
+  const email=pendingEmail||normalizeEmail($('emailLoginInput')&&$('emailLoginInput').value);
+  const token=String($('emailOtpInput')&&$('emailOtpInput').value||'').replace(/\D/g,'').slice(0,6);
+  if(!email){alert('請先輸入 Email 並寄送驗證碼。');return}
+  if(token.length!==6){alert('請輸入 6 位驗證碼。');return}
+  try{
+    const client=await getAuthClient();
+    setAccountStatus('正在驗證…');
+    const {data,error}=await client.auth.verifyOtp({email,token,type:'email'});
+    if(error)throw error;
+    if(!data||!data.session)throw new Error('沒有取得登入工作階段');
+    pendingEmail='';
+    setAccountStatus('登入成功，正在同步…');
+  }catch(e){
+    setAccountStatus('驗證失敗');
+    alert('驗證碼不正確或已過期，請重新確認。');
+  }
 }
 async function signOutAccount(){const client=await getAuthClient();await client.auth.signOut()}
 function saveSchedulePrefs(){
@@ -397,7 +449,7 @@ function renderDashboard(){const mc=calcMonth();$('dashAttendance').textContent=
 function renderCalendar(){const y=current.getFullYear(),m=current.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=iso(new Date()),own=state.schedule.shiftName||'A班',other=otherShiftName(own);$('calendarMonth').textContent=`${y} 年 ${m+1} 月`;$('scheduleSummary').textContent=`做${state.schedule.workDays}休${state.schedule.offDays}｜${own}｜第一個上班日 ${state.schedule.startDate}`;$('settingsScheduleSummary').textContent=`做${state.schedule.workDays}休${state.schedule.offDays}・${own}・${state.schedule.startDate}`;$('patternPreset').value=state.schedule.preset;$('shiftName').value=own;$('workDays').value=state.schedule.workDays;$('offDays').value=state.schedule.offDays;$('scheduleStart').value=state.schedule.startDate;$('workDaysWrap').classList.toggle('hidden',state.schedule.preset!=='custom');$('offDaysWrap').classList.toggle('hidden',state.schedule.preset!=='custom');let html='';for(let i=0;i<first;i++){const prev=new Date(y,m,1-first+i);html+=`<div class="day empty"><span class="date-num">${prev.getDate()}</span></div>`}for(let d=1;d<=days;d++){const dt=new Date(y,m,d),date=iso(dt),base=scheduleForDate(dt),st=state.dayStatus[date],meta=typeMeta(st);let pills='';if(meta){if(st.type==='overtime'&&base==='work')pills=`<div class="status-pill st-a">${own}</div><div class="status-pill st-ot">${icon('i-clock')}加班</div>`;else pills=`<div class="status-pill ${meta.cls}">${meta.icon?icon(meta.icon):''}${meta.label}</div>`}else{pills=base==='work'?`<div class="status-pill st-a">${own}</div>`:`<div class="status-pill st-b">${other}</div><div class="base-note">休假</div>`}html+=`<div class="day ${date===today?'today':''}"><span class="date-num">${d}</span><div class="day-status">${pills}</div><button class="day-hit" data-date="${date}" aria-label="編輯 ${date}"></button></div>`}const rem=(7-((first+days)%7))%7;for(let i=1;i<=rem;i++)html+=`<div class="day empty"><span class="date-num">${i}</span></div>`;$('calendarDays').innerHTML=html;qsa('.day-hit').forEach(b=>b.onclick=()=>openDay(b.dataset.date));$('calendarLegend').innerHTML=`<span class="legend-item"><span class="dot a"></span>${own}</span><span class="legend-item"><span class="dot b"></span>${other}</span><span class="legend-item"><span class="dot off"></span>休假</span><span class="legend-item"><span class="dot ot"></span>加班</span><span class="legend-item"><span class="dot sick"></span>病假</span><span class="legend-item"><span class="dot menstrual"></span>生理假</span><span class="legend-item"><span class="dot personal"></span>事假</span><span class="legend-item"><span class="dot annual"></span>特休</span><span class="legend-item"><span class="dot custom"></span>自訂假別</span>`}
 function renderAttendance(){const mc=calcMonth();$('attendanceMonth').textContent=`${mc.y} 年 ${mc.m+1} 月`;$('attDays').textContent=mc.attendance+' 天';$('attExpected').textContent='應出勤 '+mc.expected+' 天';$('attOt').textContent=mc.overtimeHours+' 小時';$('attOtDays').textContent='加班 '+mc.overtimeDays+' 天';$('attLeaveDays').textContent=mc.leaveDays+' 天';$('attLeaveHours').textContent='合計 '+mc.leaveHours+' 小時';const shortcuts=[['sick','病假'],['menstrual','生理假'],['personal','事假'],['annual','特休'],['custom','自訂假別'],['overtime','加班']];$('statusShortcuts').innerHTML=shortcuts.map(([t,l])=>{const m=statusMap[t],cc=t==='sick'?'c-sick':t==='menstrual'?'c-menstrual':t==='personal'?'c-personal':t==='annual'?'c-annual':t==='overtime'?'c-ot':'c-custom';return`<button class="status-shortcut ${cc}" data-status="${t}">${icon(m.icon)}${l}</button>`}).join('');qsa('.status-shortcut').forEach(b=>b.onclick=()=>openDay(iso(new Date()),b.dataset.status));const prefix=monthKey(mc.y,mc.m)+'-',rows=Object.entries(state.dayStatus).filter(([d,s])=>d.startsWith(prefix)&&s.type&&s.type!=='none').sort((a,b)=>b[0].localeCompare(a[0]));$('recordRows').innerHTML=rows.length?rows.slice(0,12).map(([date,st])=>{const m=typeMeta(st),cc=st.type==='sick'?'c-sick':st.type==='menstrual'?'c-menstrual':st.type==='personal'?'c-personal':st.type==='annual'?'c-annual':st.type==='overtime'?'c-ot':'c-custom';return`<div class="record-row"><div class="r-date">${date}</div><div class="r-type"><span class="record-type ${cc}">${m.icon?icon(m.icon):''}${m.label}</span></div><div class="r-hours">${num(st.hours)} 小時</div><div class="r-note record-note">${escapeHtml(st.note||'')}</div><button class="record-more" data-date="${date}">•••</button></div>`}).join(''):'<div class="empty-state">這個月還沒有出勤異動紀錄</div>';qsa('.record-more').forEach(b=>b.onclick=()=>openDay(b.dataset.date))}
 function renderSalary(){const mc=calcMonth(),mm=mb();const set=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=v||0};set('salaryBase',state.settings.baseSalary);set('salaryShift',state.settings.shiftAllowancePerDay);set('salaryMeal',state.settings.mealAllowance);set('salaryPerformance',state.settings.performanceAllowance);set('salaryTransport',state.settings.transportAllowance);set('salaryOtherIncome',state.settings.otherIncome);set('salaryOtHours',mc.overtimeHours);set('dedLabor',mm.dedLabor);set('dedHealth',mm.dedHealth);set('dedWelfare',mm.dedWelfare);set('dedPension',mm.dedPension);set('dedAttendance',mm.dedAttendance);set('dedTax',mm.dedTax);set('dedHealthExtra',mm.dedHealthExtra);set('dedOther',mm.dedOther);$('resultHourly').textContent=money(mc.hourly);$('resultOtPay').textContent=money(mc.otPay);$('resultGross').textContent=money(mc.gross);$('resultNet').textContent=money(mc.net);$('formulaText').innerHTML=`<b>ⓘ 計算說明</b><br>● 本月輪班津貼 ＝ ${money(mc.shiftPerDay)} × ${mc.attendance} 個實際出勤日 ＝ ${money(mc.shiftAllowance)}<br>● 加班費時薪 ＝（底薪＋本月輪班津貼＋伙食津貼＋表現津貼）÷ 240 × 2 ＝ ${money(mc.hourly)}<br>● 本月加班費 ＝ ${money(mc.hourly)} × ${mc.overtimeHours} 小時 ＝ ${money(mc.otPay)}`}
-function renderSettings(){renderHeroProfile();$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?(authUser.email||'Google 帳號已登入'):'尚未登入';if($('googleLogin'))$('googleLogin').classList.toggle('hidden',!!authUser);if($('accountLogout'))$('accountLogout').classList.toggle('hidden',!authUser)}
+function renderSettings(){renderHeroProfile();$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'已登入':'尚未登入';if($('accountEmail'))$('accountEmail').textContent=authUser?(authUser.email||''):'';if($('emailLoginPanel'))$('emailLoginPanel').classList.toggle('hidden',!!authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser)}
 function render(){renderDashboard();renderCalendar();renderAttendance();renderSalary();renderSettings()}
 function setTab(tab){activeTab=tab;qsa('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+tab));qsa('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));window.scrollTo({top:0,behavior:'smooth'});render()}
 qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
@@ -436,8 +488,13 @@ $('removeAvatar').onclick=()=>{
   changedAndSync();
   renderSettings();
 };
-$('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(authUser)await saveAccountState(false);alert(authUser?'已儲存到這台裝置並同步 Google 帳號。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=()=>{if(!confirm('確定清除這台裝置已儲存的資料？如果目前已登入，雲端資料不會刪除。'))return;localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);state=defaultState();lastSavedAt=null;render();alert('已清除此裝置資料；登入中的雲端資料仍保留。')};
-$('googleLogin').onclick=signInGoogle;
+$('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(authUser)await saveAccountState(false);alert(authUser?'已儲存到這台裝置並同步 Email 帳號。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=()=>{if(!confirm('確定清除這台裝置已儲存的資料？如果目前已登入，雲端資料不會刪除。'))return;localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);state=defaultState();lastSavedAt=null;render();alert('已清除此裝置資料；登入中的雲端資料仍保留。')};
+$('sendEmailOtp').onclick=sendEmailOtp;
+$('verifyEmailOtp').onclick=verifyEmailOtp;
+$('resendEmailOtp').onclick=sendEmailOtp;
+$('emailOtpInput').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)};
+$('emailOtpInput').onkeydown=e=>{if(e.key==='Enter')verifyEmailOtp()};
+$('emailLoginInput').onkeydown=e=>{if(e.key==='Enter')sendEmailOtp()};
 $('accountLogout').onclick=signOutAccount;
 initAuth();
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
