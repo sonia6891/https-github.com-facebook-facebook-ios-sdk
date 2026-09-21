@@ -1,4 +1,4 @@
-const CACHE_NAME='shift-pay-pwa-v1';
+const CACHE_NAME='shift-pay-pwa-v2';
 const STATIC_ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
