@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=35">
+<link rel="manifest" href="./manifest.webmanifest?v=36">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -35,7 +35,8 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 .schedule-card{padding:14px 16px}.schedule-summary{display:flex;align-items:center;justify-content:space-between;gap:12px}.schedule-summary-main{display:flex;align-items:center;gap:12px;min-width:0}.schedule-summary-icon{width:50px;height:50px;border-radius:15px;background:#fff0dc;color:#9c5b3b;display:grid;place-items:center;flex:0 0 auto}.schedule-summary-icon .icon{font-size:25px}.schedule-summary-text{min-width:0}.schedule-summary-text b{display:block;font-size:15px;color:#876352}.schedule-summary-text strong{display:block;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px}.expand-btn{border:0;background:#fff0dc;color:#9d531d;border-radius:18px;padding:12px 14px;font-weight:900;display:flex;align-items:center;gap:7px;flex:0 0 auto}.schedule-settings{margin-top:14px;padding-top:14px;border-top:1px dashed #e8d4c0}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.field{min-width:0}.field label{display:block;font-size:12px;font-weight:800;color:#6e5448;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;border:1px solid #e3d8cf;background:#fffdf9;color:var(--ink);border-radius:12px;padding:11px 12px;min-height:44px}.field textarea{min-height:84px;resize:vertical}.hint{font-size:11px;color:var(--muted);margin-top:5px}.month-toolbar{display:grid;grid-template-columns:44px 1fr 44px auto;gap:8px;align-items:center;margin:16px 0 10px}.month-title{text-align:center;font-size:26px;font-weight:950}.icon-btn,.today-btn{border:1px solid #eadbcc;background:#fff;border-radius:14px;height:44px;color:#4b251a;font-weight:900}.today-btn{padding:0 16px}.calendar-card{overflow:hidden}.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.weekdays div{text-align:center;padding:11px 2px;background:#fffaf5;border-bottom:1px solid var(--line);font-size:12px;font-weight:800;color:#725b50}.day{position:relative;min-height:102px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 6px;background:#fff}.day:nth-child(7n){border-right:0}.day.empty{background:#fffaf7;color:#b4aaa4}.date-num{font-weight:900}.day.today .date-num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:#8f5a42;color:#fff}.day-status{display:grid;gap:4px;margin-top:6px}.status-pill{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;border-radius:10px;padding:5px 3px;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.status-pill .icon{font-size:13px;flex:0 0 auto}.st-a{background:#fff0c8;color:#704116}.st-b{background:#ddecff;color:#0a57a0}.st-off{background:#eee;color:#555}.st-ot{background:#f8e3ee;color:#a72e67}.st-sick{background:#ffdce1;color:#b5162e}.st-menstrual{background:#f0ddff;color:#7b36a1}.st-personal{background:#e7eff6;color:#4e6f88}.st-annual{background:#e4f6e5;color:#28753a}.st-custom{background:#d9f3f5;color:#126871}.holiday-tag{display:block;margin-top:4px;padding:3px 5px;border-radius:7px;font-size:9px;font-weight:950;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}.holiday-tag.national{background:#ffe2e5;color:#b31f35;border:1px solid #f5c0c7}.holiday-tag.govcomp{background:#fff7f7;color:#b94c5b;border:1px dashed #e8a9b2}.base-note{font-size:9px;color:#94817a;text-align:center}.day-hit{position:absolute;inset:0;border:0;background:transparent;z-index:5}.legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px}.legend-item{display:flex;align-items:center;gap:5px;font-size:12px}.dot{width:14px;height:14px;border-radius:50%}.dot.a{background:#ffd06f}.dot.b{background:#73b4f5}.dot.off{background:#cfcfcf}.dot.ot{background:#cf4f88}.dot.sick{background:#dc3545}.dot.menstrual{background:#b05bd3}.dot.personal{background:#7892a6}.dot.annual{background:#79ca87}.dot.custom{background:#45aeb5}.dot.national{background:#d73d52}.dot.govcomp{background:#fff;border:2px solid #d98592}
 .attendance-head{padding:16px}.status-shortcuts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}.status-shortcut{border:0;border-radius:14px;padding:10px 6px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px}.status-shortcut .icon{font-size:17px}.attendance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.summary-card{padding:14px;display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center}.summary-card strong{font-size:24px;display:block}.summary-card small{color:var(--muted)}.records{padding:0 14px 14px}.record-head,.record-row{display:grid;grid-template-columns:1.2fr .9fr .55fr 1.2fr 32px;gap:8px;align-items:center}.record-head{padding:10px 6px;color:#6f5c53;font-size:11px;font-weight:800;border-bottom:1px solid var(--line)}.record-row{padding:11px 6px;border-bottom:1px solid var(--line);font-size:13px}.record-row:last-child{border-bottom:0}.record-type{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:10px;font-weight:850;width:max-content;max-width:100%}.record-note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f625c}.record-more{border:0;background:transparent;color:#8f776b;font-size:18px}.empty-state{text-align:center;padding:26px;color:var(--muted)}.edit-today{width:100%;margin-top:12px;border:0;border-radius:16px;background:linear-gradient(90deg,#ffc963,#f6b443);color:#7a3f08;padding:14px;font-weight:950;font-size:16px}
 .salary-card{padding:16px}.salary-section{border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px;background:#fff}.salary-section-title{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:950;margin-bottom:10px}.salary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-field{padding:10px;border-radius:14px;background:#fff7f1;border:1px solid #f5e3d7}.salary-field .field-icon{width:36px;height:36px;border-radius:12px;font-size:18px;margin-bottom:6px}.salary-field .field-icon .icon{font-size:19px}.salary-field label{font-size:12px;font-weight:850;display:block;margin-bottom:5px}.salary-field input{width:100%;height:40px;border:1px solid #d8d0cb;border-radius:9px;background:#fff;padding:7px 9px;font-size:16px;font-weight:800}.salary-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-compare-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.compare-card{padding:14px}.compare-card b{display:block;font-size:12px;color:var(--muted)}.compare-card strong{display:block;font-size:25px;margin-top:5px}.compare-card small{display:block;margin-top:5px;color:var(--muted)}.compare-diff.negative strong{color:#c83f52}.compare-diff.positive strong{color:#248a49}.compare-diff.equal strong{color:#5f6a63}.pro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pro-card{position:relative;padding:15px;border:1px solid #eadfd6;border-radius:16px;background:#fffaf6;min-height:124px}.pro-card .pro-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.pro-card b{font-size:15px}.pro-card p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.pro-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;background:#2c2420;color:#fff;font-size:10px;font-weight:900;white-space:nowrap}.pro-card.unlocked{background:#f7fff8;border-color:#cde6d2}.pro-card.unlocked .pro-badge{background:#39864b}.pro-card button{margin-top:10px;width:100%;border:1px solid #e5d8ce;background:#fff;border-radius:11px;padding:8px 10px;font-weight:850;color:#73442c}
-.itemized-panel{margin-top:12px;border:1px solid #d7e8da;border-radius:16px;background:#fbfffc;overflow:hidden}.itemized-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e1ece3}.itemized-head b{font-size:16px}.itemized-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.itemized-summary .card{padding:11px}.itemized-summary b{font-size:11px;color:var(--muted);display:block}.itemized-summary strong{font-size:20px;display:block;margin-top:3px}.itemized-progress{font-size:11px;color:var(--muted);padding:0 14px 10px}.itemized-table{display:grid}.itemized-table-head,.itemized-row{display:grid;grid-template-columns:1.1fr .8fr .9fr .9fr;gap:8px;align-items:center;padding:9px 12px}.itemized-table-head{background:#f0f7f1;font-size:11px;font-weight:900;color:#607065}.itemized-row{border-top:1px solid #edf1ed;font-size:12px}.itemized-row .item-label{font-weight:850}.itemized-row .expected{text-align:right;font-weight:800}.itemized-row input{width:100%;height:36px;border:1px solid #d9dfda;border-radius:9px;padding:6px 8px;text-align:right;font-weight:800;background:#fff}.itemized-status{text-align:right;font-weight:900;font-size:11px}.itemized-status.ok{color:#36854a}.itemized-status.bad{color:#c23f52}.itemized-status.warn{color:#b46a17}.itemized-group{padding:8px 12px;background:#fff8ed;color:#8b5b31;font-size:11px;font-weight:950;border-top:1px solid #eee5d8}.dev-plan-card{border:1px dashed #d8a660;background:#fff8e9}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.dev-plan-btn{border:1px solid #e2c38f;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;color:#7a4a1e}.dev-plan-btn.active{background:#2d2723;color:#fff;border-color:#2d2723}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden}.result-card .summary-icon{flex:0 0 auto}.result-card>div:last-child{min-width:0}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
+.itemized-panel{margin-top:12px;border:1px solid #d7e8da;border-radius:16px;background:#fbfffc;overflow:hidden}.itemized-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e1ece3}.itemized-head b{font-size:16px}.itemized-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.itemized-summary .card{padding:11px}.itemized-summary b{font-size:11px;color:var(--muted);display:block}.itemized-summary strong{font-size:20px;display:block;margin-top:3px}.itemized-progress{font-size:11px;color:var(--muted);padding:0 14px 10px}.itemized-table{display:grid}.itemized-table-head,.itemized-row{display:grid;grid-template-columns:1.1fr .8fr .9fr .9fr;gap:8px;align-items:center;padding:9px 12px}.itemized-table-head{background:#f0f7f1;font-size:11px;font-weight:900;color:#607065}.itemized-row{border-top:1px solid #edf1ed;font-size:12px}.itemized-row .item-label{font-weight:850}.itemized-row .expected{text-align:right;font-weight:800}.itemized-row input{width:100%;height:36px;border:1px solid #d9dfda;border-radius:9px;padding:6px 8px;text-align:right;font-weight:800;background:#fff}.itemized-status{text-align:right;font-weight:900;font-size:11px}.itemized-status.ok{color:#36854a}.itemized-status.bad{color:#c23f52}.itemized-status.warn{color:#b46a17}.itemized-group{padding:8px 12px;background:#fff8ed;color:#8b5b31;font-size:11px;font-weight:950;border-top:1px solid #eee5d8}
+.salary-history-panel{margin-top:12px;border:1px solid #dfdfec;border-radius:16px;background:#fcfcff;overflow:hidden}.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e8e8f0}.history-head b{font-size:16px}.history-yearbar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:#f7f7fc}.history-yearbar button{width:34px;height:34px;border:1px solid #dcdce8;background:#fff;border-radius:10px;font-weight:950}.history-yearbar strong{min-width:72px;text-align:center}.history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.history-summary .card{padding:11px}.history-summary b{font-size:10px;color:var(--muted);display:block}.history-summary strong{font-size:19px;display:block;margin-top:3px}.history-list{padding:0 12px 12px}.history-row{display:grid;grid-template-columns:.65fr 1fr 1fr .9fr auto;gap:8px;align-items:center;padding:11px 6px;border-top:1px solid #eeeeF5;font-size:12px}.history-row:first-child{border-top:0}.history-row .month{font-weight:950}.history-row .num{text-align:right;font-weight:800}.history-row .diff{text-align:right;font-weight:950}.history-row .diff.neg{color:#c23f52}.history-row .diff.pos{color:#2c8a4b}.history-row .open-month{border:1px solid #dddde8;background:#fff;border-radius:9px;padding:7px 9px;font-weight:850;color:#65506e}.history-meta{font-size:10px;color:var(--muted);grid-column:2/5}.history-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px}.dev-plan-card{border:1px dashed #d8a660;background:#fff8e9}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.dev-plan-btn{border:1px solid #e2c38f;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;color:#7a4a1e}.dev-plan-btn.active{background:#2d2723;color:#fff;border-color:#2d2723}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden}.result-card .summary-icon{flex:0 0 auto}.result-card>div:last-child{min-width:0}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
 .work-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.work-card{padding:15px;display:grid;grid-template-columns:50px 1fr;gap:12px;align-items:center}.work-card b{font-size:13px}.work-card strong{display:block;font-size:26px;margin-top:3px;line-height:1.15}.work-card small{display:block;color:var(--muted);margin-top:4px}.payday-quote{font-size:14px;font-weight:900;color:#9a5316;margin-top:5px;line-height:1.35}.leave-balance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.balance-card{padding:15px}.balance-title{display:flex;align-items:center;gap:9px}.balance-card>strong{display:block;font-size:23px;margin:10px 0 4px}.balance-card>small{color:var(--muted);display:block;min-height:32px}.balance-progress{height:7px;background:#f0e8e0;border-radius:999px;overflow:hidden;margin-top:10px}.balance-progress i{display:block;height:100%;width:0;border-radius:999px;transition:width .25s ease}.annual-balance .balance-progress i{background:#62bd72}.annual-reminder{margin-top:9px;padding:8px 10px;border-radius:10px;background:#f2fbf3;color:#367944;font-size:11px;font-weight:850;line-height:1.45}.annual-reminder.warn{background:#fff3df;color:#a66110}.annual-reminder.urgent{background:#ffe9ec;color:#b52d43}.sick-balance .balance-progress i{background:#d94a5a}.personal-balance .balance-progress i{background:#7892a6}
 .settings-stack{display:grid;gap:12px}.settings-card{padding:16px}.profile-row{display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center}.profile-preview{width:110px;height:110px;border-radius:50%;object-fit:cover;border:5px solid #f7e2cd;box-shadow:var(--shadow)}.profile-copy b{font-size:20px}.profile-copy p{margin:5px 0;color:var(--muted)}.profile-say{display:inline-block;padding:8px 10px;border-radius:14px;background:#fff0dc;color:#985b37;font-weight:800}.settings-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #e7d8cb;background:#fff;border-radius:13px;padding:10px 13px;font-weight:850;color:#5c3425}.btn.primary{background:#fff0d4;color:#ae5b0c;border-color:#f3d2a3}.btn.danger{background:#fff0f1;color:#c94251;border-color:#f3c9ce}.settings-list{display:grid;gap:1px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.settings-item{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:center;padding:13px;background:#fff;border-bottom:1px solid var(--line)}.settings-item:last-child{border-bottom:0}.settings-item .field-icon{width:40px;height:40px;border-radius:12px}.settings-item b{display:block}.settings-item small{color:var(--muted)}.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.theme-choice{border:1px solid #e5d9ce;background:#fff;border-radius:16px;padding:13px;display:flex;align-items:center;justify-content:space-between;font-weight:900}.theme-choice.active{border-color:#f0a838;background:#fff7e8;color:#bd660e}.install-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .footer-banner{margin-top:18px}.footer-banner img{width:100%;display:block;border-radius:22px;box-shadow:var(--shadow);border:1px solid #f0e0d1}.bottom-nav{display:none}.dialog{border:0;border-radius:22px;padding:0;width:min(520px,calc(100vw - 22px));background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.25)}.dialog::backdrop{background:rgba(34,22,17,.45)}.dialog-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}.dialog-head b{font-size:18px}.dialog-close{border:0;background:transparent;font-size:24px;color:var(--muted)}.dialog-body{padding:16px 18px;display:grid;gap:12px;max-height:70vh;overflow:auto}.dialog-foot{padding:14px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}.hidden{display:none!important}
@@ -47,8 +48,9 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 @media(max-width:420px){.leave-balance-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.salary-compare-grid{grid-template-columns:1fr;gap:7px}.compare-card{padding:10px;min-width:0;overflow:hidden}.compare-card strong{font-size:18px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.compare-card b,.compare-card small{font-size:9px}.pro-grid{grid-template-columns:1fr}.pro-card{min-height:0}}
 @media(max-width:760px){.itemized-table-head,.itemized-row{grid-template-columns:1.15fr .72fr .9fr .9fr;gap:5px;padding:8px 7px}.itemized-row{font-size:10px}.itemized-row input{height:33px;font-size:12px;padding:4px 5px}.itemized-status{font-size:9px}.itemized-summary{grid-template-columns:1fr 1fr 1fr;gap:5px;padding:8px}.itemized-summary .card{padding:8px}.itemized-summary strong{font-size:16px}.itemized-summary b{font-size:9px}}
+@media(max-width:760px){.history-row{grid-template-columns:.7fr 1fr 1fr;grid-template-areas:"month expected actual" "meta meta action";gap:6px}.history-row .month{grid-area:month}.history-row .expected-num{grid-area:expected}.history-row .actual-num{grid-area:actual}.history-row .diff{grid-area:meta;text-align:left}.history-row .open-month{grid-area:action;justify-self:end}.history-row .history-meta{display:none}.history-summary{grid-template-columns:1fr 1fr 1fr;gap:5px;padding:8px}.history-summary .card{padding:8px}.history-summary strong{font-size:15px}.history-summary b{font-size:9px}}
 </style>
-<link rel="manifest" href="./manifest.webmanifest?v=35">
+<link rel="manifest" href="./manifest.webmanifest?v=36">
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
@@ -251,6 +253,23 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
             <div class="itemized-row"><span class="item-label">健保補扣</span><span class="expected" data-exp="dedHealthExtra">NT$0</span><input data-item-actual="dedHealthExtra" type="number" min="0" step="1"><span class="itemized-status" data-item-status="dedHealthExtra">未填</span></div>
             <div class="itemized-row"><span class="item-label">其他扣款</span><span class="expected" data-exp="dedOther">NT$0</span><input data-item-actual="dedOther" type="number" min="0" step="1"><span class="itemized-status" data-item-status="dedOther">未填</span></div>
           </div>
+        </div>
+        <div class="salary-history-panel hidden" id="salaryHistoryPanel">
+          <div class="history-head">
+            <div><b>📚 Pro 歷史薪資對帳</b><div class="hint">查看每月預估、實發與差額；已保存的月份使用當時薪資快照。</div></div>
+            <button type="button" class="btn" id="closeSalaryHistory">收起</button>
+          </div>
+          <div class="history-yearbar">
+            <button type="button" id="historyPrevYear">‹</button>
+            <strong id="historyYearLabel">2026</strong>
+            <button type="button" id="historyNextYear">›</button>
+          </div>
+          <div class="history-summary">
+            <div class="card"><b>有對帳月份</b><strong id="historyMonthCount">0</strong></div>
+            <div class="card"><b>全年公司實發</b><strong id="historyActualTotal">NT$0</strong></div>
+            <div class="card"><b>全年差額合計</b><strong id="historyDiffTotal">NT$0</strong></div>
+          </div>
+          <div class="history-list" id="salaryHistoryList"><div class="history-empty">目前還沒有歷史薪資對帳。</div></div>
         </div>
       </div>
     </div>
@@ -792,7 +811,7 @@ const ITEMIZED_FIELDS=[
   {key:'dedHealthExtra',label:'健保補扣',kind:'deduction'},
   {key:'dedOther',label:'其他扣款',kind:'deduction'}
 ];
-let itemizedOpen=false;
+let itemizedOpen=false,salaryHistoryOpen=false,historyYear=current.getFullYear();
 function itemizedExpectedMap(mc){
   return{
     base:mc.base,
@@ -860,6 +879,87 @@ function renderItemizedComparison(mc,mm){
     $('itemizedNetDiff').textContent=signedMoney(actualNet-mc.net);
   }
 }
+function hasSalaryReconciliation(mm){
+  const hasNet=mm&&Object.prototype.hasOwnProperty.call(mm,'actualNet');
+  const hasItems=mm&&mm.actualItems&&Object.keys(mm.actualItems).length>0;
+  return !!(hasNet||hasItems);
+}
+function captureSalarySnapshot(mc,mm){
+  if(!mc||!mm)return;
+  mm.salarySnapshot={
+    capturedAt:new Date().toISOString(),
+    expectedNet:num(mc.net),
+    gross:num(mc.gross),
+    overtimePay:num(mc.otPay),
+    overtimeHours:num(mc.overtimeHours),
+    shiftAllowance:num(mc.shiftAllowance),
+    base:num(mc.base),
+    meal:num(mc.meal),
+    performance:num(mc.performance),
+    transport:num(mc.transport),
+    otherIncome:num(mc.otherIncome),
+    deductions:Object.assign({},mc.deductions)
+  };
+}
+function refreshCurrentSalarySnapshot(){
+  const mm=mb();
+  if(!hasSalaryReconciliation(mm))return;
+  captureSalarySnapshot(calcMonth(),mm);
+}
+function salaryHistoryRows(year){
+  const prefix=String(year)+'-';
+  return Object.entries(state.months||{})
+    .filter(([key,mm])=>key.startsWith(prefix)&&hasSalaryReconciliation(mm))
+    .map(([key,mm])=>{
+      const snap=mm.salarySnapshot||null;
+      const expected=snap?num(snap.expectedNet):null;
+      const hasActual=Object.prototype.hasOwnProperty.call(mm,'actualNet');
+      const actual=hasActual?num(mm.actualNet):null;
+      const itemCount=mm.actualItems?Object.keys(mm.actualItems).length:0;
+      return{key,mm,snap,expected,actual,itemCount,diff:(expected!==null&&actual!==null)?actual-expected:null};
+    })
+    .sort((a,b)=>b.key.localeCompare(a.key));
+}
+function renderSalaryHistory(){
+  if(!$('salaryHistoryPanel'))return;
+  const unlocked=canUse('salary_history_unlimited');
+  if(!unlocked)salaryHistoryOpen=false;
+  $('salaryHistoryPanel').classList.toggle('hidden',!unlocked||!salaryHistoryOpen);
+  if(!unlocked||!salaryHistoryOpen)return;
+  $('historyYearLabel').textContent=String(historyYear);
+  const rows=salaryHistoryRows(historyYear);
+  const actualTotal=rows.reduce((s,r)=>s+(r.actual===null?0:r.actual),0);
+  const diffRows=rows.filter(r=>r.diff!==null);
+  const diffTotal=diffRows.reduce((s,r)=>s+r.diff,0);
+  $('historyMonthCount').textContent=String(rows.length);
+  $('historyActualTotal').textContent=money(actualTotal);
+  $('historyDiffTotal').textContent=signedMoney(diffTotal);
+  const box=$('salaryHistoryList');
+  if(!rows.length){
+    box.innerHTML='<div class="history-empty">'+historyYear+' 年還沒有薪資對帳紀錄。</div>';
+    return;
+  }
+  box.innerHTML=rows.map(r=>{
+    const month=Number(r.key.slice(5,7));
+    const expectedText=r.expected===null?'尚無快照':money(r.expected);
+    const actualText=r.actual===null?'尚未輸入':money(r.actual);
+    const diffText=r.diff===null?'—':signedMoney(r.diff);
+    const diffCls=r.diff===null?'':r.diff<0?'neg':r.diff>0?'pos':'';
+    const snapText=r.snap?'快照 '+new Date(r.snap.capturedAt).toLocaleDateString('zh-TW'):'舊資料尚未建立快照';
+    const itemText=r.itemCount?'・逐項已填 '+r.itemCount+'/'+ITEMIZED_FIELDS.length:'';
+    return '<div class="history-row"><span class="month">'+month+' 月</span><span class="num expected-num">'+expectedText+'</span><span class="num actual-num">'+actualText+'</span><span class="diff '+diffCls+'">'+diffText+'</span><button type="button" class="open-month" data-history-month="'+r.key+'">查看</button><span class="history-meta">'+snapText+itemText+'</span></div>';
+  }).join('');
+  qsa('[data-history-month]').forEach(btn=>btn.onclick=()=>openSalaryHistoryMonth(btn.dataset.historyMonth));
+}
+function openSalaryHistoryMonth(key){
+  const m=/^(\d{4})-(\d{2})$/.exec(String(key||''));
+  if(!m)return;
+  current=new Date(Number(m[1]),Number(m[2])-1,1);
+  salaryHistoryOpen=false;
+  itemizedOpen=false;
+  render();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
 function signedMoney(v){
   const n=Math.round(Number(v)||0),abs=Math.abs(n).toLocaleString('zh-TW');
   if(n>0)return '+NT$'+abs;
@@ -901,7 +1001,7 @@ function renderProEntitlements(){
     const btn=card.querySelector('[data-pro-action]');
     card.classList.toggle('unlocked',unlocked);
     if(badge)badge.textContent=unlocked?'✓ Pro 測試已解鎖':'🔒 Pro';
-    if(btn){if(feature==='itemized_salary_compare')btn.textContent=unlocked?(itemizedOpen?'收起逐項對帳':'開啟逐項對帳'):'Pro 解鎖';else btn.textContent=unlocked?'功能開發中':'即將推出'};
+    if(btn){if(feature==='itemized_salary_compare')btn.textContent=unlocked?(itemizedOpen?'收起逐項對帳':'開啟逐項對帳'):'Pro 解鎖';else if(feature==='salary_history_unlimited')btn.textContent=unlocked?(salaryHistoryOpen?'收起歷史對帳':'開啟歷史對帳'):'Pro 解鎖';else btn.textContent=unlocked?'功能開發中':'即將推出'};
   });
   if($('devPlanCard'))$('devPlanCard').classList.toggle('hidden',!devMode);
   if($('devPlanFree'))$('devPlanFree').classList.toggle('active',devMode&&plan==='free');
@@ -935,6 +1035,7 @@ function renderSalary(){
   renderSalaryCompare(mc,mm);
   renderProEntitlements();
   renderItemizedComparison(mc,mm);
+  renderSalaryHistory();
 }
 function renderSettings(){renderHeroProfile();$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'已登入':'尚未登入';if($('accountEmail'))$('accountEmail').textContent=authUser?(authUser.email||''):'';if($('emailLoginPanel'))$('emailLoginPanel').classList.toggle('hidden',!!authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);
 const setWork=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=(v??'')};
@@ -1043,7 +1144,7 @@ $('clearDay').onclick=()=>{
   $('dayDialog').close();
   render();
 };$('quickAdd').onclick=()=>openDay(iso(new Date()));$('editToday').onclick=()=>openDay(iso(new Date()));
-function bindSetting(id,key){$(id).oninput=e=>{state.settings[key]=num(e.target.value);changedAndSync();render()}}bindSetting('salaryBase','baseSalary');bindSetting('salaryShift','shiftAllowancePerDay');bindSetting('salaryMeal','mealAllowance');bindSetting('salaryPerformance','performanceAllowance');bindSetting('salaryTransport','transportAllowance');bindSetting('salaryOtherIncome','otherIncome');$('salaryOtHours').oninput=e=>{mb().overtimeHours=num(e.target.value);changedAndSync();render()};$('actualNetPay').oninput=e=>{const raw=e.target.value,mm=mb();if(raw==='')delete mm.actualNet;else mm.actualNet=num(raw);changedAndSync();renderSalary()};[['dedLabor','dedLabor'],['dedHealth','dedHealth'],['dedWelfare','dedWelfare'],['dedPension','dedPension'],['dedAttendance','dedAttendance'],['dedTax','dedTax'],['dedHealthExtra','dedHealthExtra'],['dedOther','dedOther']].forEach(([id,key])=>{$(id).oninput=e=>{mb()[key]=num(e.target.value);changedAndSync();render()}});
+function bindSetting(id,key){$(id).oninput=e=>{state.settings[key]=num(e.target.value);refreshCurrentSalarySnapshot();changedAndSync();render()}}bindSetting('salaryBase','baseSalary');bindSetting('salaryShift','shiftAllowancePerDay');bindSetting('salaryMeal','mealAllowance');bindSetting('salaryPerformance','performanceAllowance');bindSetting('salaryTransport','transportAllowance');bindSetting('salaryOtherIncome','otherIncome');$('salaryOtHours').oninput=e=>{mb().overtimeHours=num(e.target.value);refreshCurrentSalarySnapshot();changedAndSync();render()};$('actualNetPay').oninput=e=>{const raw=e.target.value,mm=mb();if(raw==='')delete mm.actualNet;else mm.actualNet=num(raw);if(hasSalaryReconciliation(mm))captureSalarySnapshot(calcMonth(),mm);changedAndSync();renderSalary()};[['dedLabor','dedLabor'],['dedHealth','dedHealth'],['dedWelfare','dedWelfare'],['dedPension','dedPension'],['dedAttendance','dedAttendance'],['dedTax','dedTax'],['dedHealthExtra','dedHealthExtra'],['dedOther','dedOther']].forEach(([id,key])=>{$(id).oninput=e=>{mb()[key]=num(e.target.value);refreshCurrentSalarySnapshot();changedAndSync();render()}});
 [['settingPayday','payday'],['settingDailyHours','dailyWorkHours'],['settingDefaultOtHours','defaultOvertimeHours'],['settingAnnualDays','annualLeaveDays'],['settingSickUsedHours','sickUsedHours'],['settingPersonalUsedHours','personalUsedHours']].forEach(([id,key])=>{$(id).oninput=e=>{state.settings[key]=num(e.target.value);changedAndSync();render()}});
 function saveActualItem(key,raw){
   if(!canUse('itemized_salary_compare'))return;
@@ -1051,6 +1152,7 @@ function saveActualItem(key,raw){
   mm.actualItems=mm.actualItems||{};
   if(raw==='')delete mm.actualItems[key];
   else mm.actualItems[key]=num(raw);
+  if(hasSalaryReconciliation(mm))captureSalarySnapshot(calcMonth(),mm);
   changedAndSync();
   renderItemizedComparison(calcMonth(),mm);
 }
@@ -1111,13 +1213,24 @@ qsa('[data-pro-action]').forEach(btn=>btn.onclick=()=>{
   }
   if(feature==='itemized_salary_compare'){
     itemizedOpen=!itemizedOpen;
+    if(itemizedOpen)salaryHistoryOpen=false;
     renderSalary();
     if(itemizedOpen&&$('itemizedComparePanel'))$('itemizedComparePanel').scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+  if(feature==='salary_history_unlimited'){
+    salaryHistoryOpen=!salaryHistoryOpen;
+    if(salaryHistoryOpen){itemizedOpen=false;historyYear=current.getFullYear()}
+    renderSalary();
+    if(salaryHistoryOpen&&$('salaryHistoryPanel'))$('salaryHistoryPanel').scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
   alert('Pro 測試權限已解鎖；這個功能會在後續階段接著開發。');
 });
 if($('closeItemizedCompare'))$('closeItemizedCompare').onclick=()=>{itemizedOpen=false;renderSalary()};
+if($('closeSalaryHistory'))$('closeSalaryHistory').onclick=()=>{salaryHistoryOpen=false;renderSalary()};
+if($('historyPrevYear'))$('historyPrevYear').onclick=()=>{historyYear--;renderSalaryHistory()};
+if($('historyNextYear'))$('historyNextYear').onclick=()=>{historyYear++;renderSalaryHistory()};
 qsa('[data-item-actual]').forEach(input=>input.oninput=e=>saveActualItem(e.target.dataset.itemActual,e.target.value));
 $('sendEmailOtp').onclick=sendEmailOtp;
 $('verifyEmailOtp').onclick=verifyEmailOtp;
