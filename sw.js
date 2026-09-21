@@ -1,5 +1,5 @@
-const CACHE_NAME='meow-work-pwa-v15';
-const STATIC_ASSETS=['./manifest.webmanifest?v=15'];
+const CACHE_NAME='meow-work-pwa-v16';
+const STATIC_ASSETS=['./manifest.webmanifest?v=16'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(
@@ -8,7 +8,6 @@ self.addEventListener('install',event=>{
       .then(()=>self.skipWaiting())
   );
 });
-
 self.addEventListener('activate',event=>{
   event.waitUntil(
     caches.keys()
@@ -16,7 +15,6 @@ self.addEventListener('activate',event=>{
       .then(()=>self.clients.claim())
   );
 });
-
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET') return;
   if(event.request.mode==='navigate'){
