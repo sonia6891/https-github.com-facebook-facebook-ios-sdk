@@ -1,5 +1,5 @@
-const CACHE_NAME='meow-work-pwa-v13';
-const STATIC_ASSETS=['./manifest.webmanifest?v=13'];
+const CACHE_NAME='meow-work-pwa-v14';
+const STATIC_ASSETS=['./manifest.webmanifest?v=14'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(
@@ -19,15 +19,12 @@ self.addEventListener('activate',event=>{
 
 self.addEventListener('fetch',event=>{
   if(event.request.method!=='GET') return;
-
-  // HTML / navigation: always go to network first and never cache a 404 page.
   if(event.request.mode==='navigate'){
     event.respondWith(
       fetch(event.request,{cache:'no-store'}).catch(()=>caches.match('./index.html'))
     );
     return;
   }
-
   event.respondWith(
     caches.match(event.request).then(cached=>{
       if(cached) return cached;
