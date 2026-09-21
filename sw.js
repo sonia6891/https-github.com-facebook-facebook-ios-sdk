@@ -1,4 +1,4 @@
-const CACHE_NAME='shift-pay-pwa-v3';
+const CACHE_NAME='meow-work-pwa-v4';
 const STATIC_ASSETS=['./','./index.html','./manifest.webmanifest','./icon.svg'];
 
 self.addEventListener('install',event=>{
