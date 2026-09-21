@@ -1,12 +1,12 @@
 {
-  "name": "喵的，又要上班",
-  "short_name": "喵的，又要上班",
+  "name": "喵的，又要上班了",
+  "short_name": "喵的，又要上班了",
   "description": "社畜排班、出勤、請假與薪資試算工具",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#f6f7fb",
-  "theme_color": "#173a67",
+  "background_color": "#fff8ef",
+  "theme_color": "#8b4e2d",
   "lang": "zh-Hant",
   "orientation": "any",
   "categories": [
