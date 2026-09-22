@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=72">
+<link rel="manifest" href="./manifest.webmanifest?v=73">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -203,18 +203,18 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
   
 
   .mobile-hero-actions{
-    position:absolute;right:10px;top:8px;z-index:8;
-    display:flex;align-items:center;gap:8px
+    position:absolute;right:10px;top:8px;z-index:20;
+    display:flex;align-items:center;gap:14px
   }
   .hero-theme{
-    position:static;display:flex;align-items:center;justify-content:center;gap:5px;
-    width:72px;height:34px;padding:4px 6px;
-    border:1px solid #e4d4c6;border-radius:999px;background:#fffaf4;
-    box-shadow:none;color:#9a725f;overflow:hidden
+    position:static;display:flex;align-items:center;justify-content:center;gap:6px;
+    width:auto;height:34px;padding:0;
+    border:0!important;border-radius:0;background:transparent!important;
+    box-shadow:none!important;outline:0!important;color:#9a725f;overflow:visible
   }
   .hero-theme::before,.hero-theme::after{content:none!important;display:none!important}
   .hero-theme .mobile-theme-icon{width:15px;height:15px;display:block;flex:0 0 auto}
-  .hero-theme .mobile-theme-sun{color:#efa72b}.hero-theme .mobile-theme-moon{color:#8a6b5b}
+  .hero-theme .mobile-theme-sun{color:#efa72b}.hero-theme .mobile-theme-moon{color:#8a6b5b;background:transparent!important;border:0!important;box-shadow:none!important;outline:0!important}
   .hero-theme .mobile-theme-track{
     position:relative;width:26px;height:16px;border-radius:999px;
     background:#f5bb4e;flex:0 0 auto;overflow:hidden
@@ -227,10 +227,11 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
   .dark .hero-theme .mobile-theme-track::after{transform:translateX(10px)}
   .mobile-avatar-button{
     width:42px;height:42px;padding:0;border:0;border-radius:50%;
-    background:transparent;display:grid;place-items:center;overflow:visible;flex:0 0 auto
+    background:transparent;display:grid;place-items:center;overflow:visible;flex:0 0 auto;
+    opacity:1;visibility:visible;position:relative;z-index:21
   }
   .mobile-avatar-button .hero-avatar{
-    display:block;position:static;width:40px;height:40px;opacity:1;visibility:visible;
+    display:block!important;position:static!important;width:40px!important;height:40px!important;opacity:1!important;visibility:visible!important;
     border-radius:50%;object-fit:cover;border:2px solid #f0ddcc;background:#f6e3d2;
     box-shadow:0 2px 8px rgba(73,44,28,.12);pointer-events:none
   }
@@ -294,7 +295,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
         <svg class="mobile-theme-icon mobile-theme-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M16.9 3.2a8.7 8.7 0 1 0 3.9 15.3A8.1 8.1 0 0 1 16.9 3.2Z" fill="currentColor"/></svg>
       </button>
       <button type="button" class="mobile-avatar-button" id="mobileAvatarButton" aria-label="更換頭像">
-        <img id="heroAvatar" class="hero-avatar" alt="目前頭像">
+        <img id="heroAvatar" class="hero-avatar" src="./workcat-home-v12.png" alt="目前頭像" onerror="this.onerror=null;this.src='./workcat-home-v12.png'">
       </button>
     </div>
     <div class="desktop-hero-clear" aria-hidden="true"></div>
@@ -2487,7 +2488,7 @@ $('accountLogout').onclick=signOutAccount;
 initAuth();
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v72';
+    const reloadKey='meow-sw-reloaded-v73';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -2496,7 +2497,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=72',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=73',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
