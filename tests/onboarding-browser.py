@@ -58,11 +58,11 @@ try:
   tab(page,'salary');page.locator('#salaryBase').fill('42000');page.locator('#salaryBase').blur();assert salary(page)==42000
   assert 'user_sync_state' not in page.evaluate('window.__mock.calls')
   passed('guest edits save to the actual browser storage without cloud calls')
-  tab(page,'settings');page.locator('#themeDark').click();page.reload(wait_until='domcontentloaded');page.wait_for_function('!!window.__mock')
+  tab(page,'settings');page.locator('#heroTheme').click();page.reload(wait_until='domcontentloaded');page.wait_for_function('!!window.__mock')
   expect(page.locator('#welcomeScreen')).to_be_hidden();assert salary(page)==42000
   assert page.locator('html').evaluate("e=>e.classList.contains('dark')")
   passed('full reload keeps guest data, completed welcome and selected theme')
-  tab(page,'settings');page.locator('#themeLight').click();page.locator('#showWelcome').click();expect(page.locator('#welcomeScreen')).to_be_visible()
+  tab(page,'settings');page.locator('#heroTheme').click();page.locator('#showWelcome').click();expect(page.locator('#welcomeScreen')).to_be_visible()
   page.locator('#welcomeClosePreview').click();assert salary(page)==42000
   visit(page,'?welcome=1');expect(page.locator('#welcomeScreen')).to_be_visible();assert salary(page)==42000
   passed('settings and query preview reopen welcome without clearing data')
@@ -104,5 +104,6 @@ try:
   passed('offline shell reload preserves local data and caches no external API responses')
   context.close();browser.close()
 finally:
- server.shutdown();(OUT/'browser-results.json').write_text(json.dumps({'passed':len(results),'cases':results,'mode':'real Chromium; mocked identity/entitlement, no real payment or user login'},ensure_ascii=False,indent=2))
+ server.shutdown();(OUT/'browser-results.json').write_text(json.dumps({'passed':len(results),'complete':len(results)==14,'cases':results,'mode':'real Chromium; mocked identity/entitlement, no real payment or user login'},ensure_ascii=False,indent=2))
+assert len(results)==14,results
 print(f'Browser scenarios: {len(results)} passed.')
