@@ -71,7 +71,15 @@ with sync_playwright() as p:
      page.evaluate("Object.defineProperty(navigator,'share',{configurable:true,value:undefined});Object.defineProperty(navigator,'canShare',{configurable:true,value:undefined})")
      with page.expect_download() as download:exp.click()
      path=out/f'{engine}-{theme}-synthetic-backup.json';download.value.save_as(path)
-     exported=json.loads(path.read_text());assert exported['state']==saved
+     exported=json.loads(path.read_text())
+     # Rendering creates the current month's empty record after restore. Compare
+     # export to the snapshot saved by export, and verify all restored user data.
+     exported_state=exported['state']
+     assert exported_state==json.loads(page.evaluate('(k)=>localStorage.getItem(k)',KEY))['state']
+     for key in ['theme','profile','schedule','settings','dayStatus','personalEvents']:
+      assert exported_state[key]==saved[key],key
+     for month,record in saved['months'].items():
+      assert exported_state['months'][month]==record,month
      snapshot=page.evaluate('(k)=>localStorage.getItem(k)',KEY)
      with page.expect_file_chooser() as chosen:imp.click()
      chosen.value.set_files({'name':'bad.json','mimeType':'application/json','buffer':b'{bad'})
