@@ -1,0 +1,69 @@
+name: Validate complete date selection v77
+on:
+  push:
+    branches: [repair/complete-date-v77]
+    paths: ['.repair/date-v77/**', '.github/workflows/date-v77.yml']
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install isolated browser test tools
+        run: |
+          python -m pip install --quiet Pillow==11.3.0 playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit > /tmp/browser-install.log 2>&1 || (tail -50 /tmp/browser-install.log; exit 1)
+      - name: Prepare candidate without changing production
+        run: |
+          git worktree add --detach /tmp/date-before 60218efea4c28fc9c50f9ebcef4d489c1cd62462
+          git worktree add --detach /tmp/date-after 60218efea4c28fc9c50f9ebcef4d489c1cd62462
+          python .repair/date-v77/apply.py /tmp/date-after
+      - name: Verify all three date workflows and view regression
+        run: python .repair/date-v77/test.py /tmp/date-before /tmp/date-after /tmp/date-qa
+      - name: Save validated source on repair branch only
+        run: |
+          cp /tmp/date-after/index.html index.html
+          cp /tmp/date-after/404.html 404.html
+          cp /tmp/date-after/sw.js sw.js
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html 404.html sw.js
+          git commit -m 'Validate complete date picker draft and confirmation (v77)'
+          git push origin HEAD:repair/complete-date-v77
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: complete-date-v77-staging
+          path: /tmp/date-qa
+          retention-days: 3
+      - name: Wait for tested release and verify published page
+        run: |
+          python - <<'PY'
+          import hashlib,time,urllib.request
+          from pathlib import Path
+          expected=hashlib.sha256(Path('/tmp/date-after/index.html').read_bytes()).hexdigest()
+          url='https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/?v=77'
+          for attempt in range(60):
+              try:
+                  req=urllib.request.Request(url,headers={'Cache-Control':'no-cache'})
+                  with urllib.request.urlopen(req,timeout=25) as response: body=response.read()
+                  if hashlib.sha256(body).hexdigest()==expected:
+                      print('Published HTML matches tested candidate',expected);break
+              except Exception as exc: print(type(exc).__name__)
+              time.sleep(10)
+          else: raise RuntimeError('Tested source not published within verification window')
+          PY
+          MEOW_LIVE_URL='https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/?v=77' python .repair/date-v77/test.py /tmp/date-before /tmp/date-after /tmp/date-live-qa
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: complete-date-v77-live
+          path: /tmp/date-live-qa
+          retention-days: 3

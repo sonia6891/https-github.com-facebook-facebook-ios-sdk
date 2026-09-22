@@ -1,0 +1,17 @@
+<dialog class="work-date-dialog" id="workDateDialog" aria-labelledby="workDateTitle" aria-describedby="workDateHelp">
+  <div class="work-date-content">
+    <h2 id="workDateTitle" tabindex="-1">選擇日期</h2>
+    <p id="workDateHelp">請選完整的年、月、日，再按「確認日期」。</p>
+    <div class="work-date-parts">
+      <div><label for="workDateYear">年</label><select id="workDateYear" aria-label="年份"></select></div>
+      <div><label for="workDateMonth">月</label><select id="workDateMonth" aria-label="月份"></select></div>
+      <div><label for="workDateDay">日</label><select id="workDateDay" aria-label="日期"></select></div>
+    </div>
+    <p class="work-date-selection" id="workDateSelection" role="status" aria-live="polite"></p>
+    <div class="work-date-actions">
+      <button type="button" id="workDateClear">清除日期</button>
+      <button type="button" id="workDateCancel">取消</button>
+      <button type="button" id="workDateConfirm" disabled>確認日期</button>
+    </div>
+  </div>
+</dialog>

@@ -1,0 +1,18 @@
+/* One shared date editor. No changes to existing page layout or artwork. */
+.work-date-dialog{width:min(420px,calc(100vw - 28px));max-height:calc(100dvh - 32px);margin:auto;padding:0;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);box-shadow:var(--shadow);overflow:auto;color-scheme:light}
+html.dark .work-date-dialog{color-scheme:dark}
+.work-date-dialog::backdrop{background:rgba(20,15,12,.58)}
+.work-date-content{padding:20px}
+.work-date-content h2{margin:0 0 8px;font-size:20px;line-height:1.4}
+.work-date-content p{font-size:14px;line-height:1.6;color:var(--muted);margin:0 0 16px}
+.work-date-parts{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:10px}
+.work-date-parts>div{min-width:0}
+.work-date-parts label{display:block;font-size:14px;font-weight:800;margin-bottom:6px}
+.work-date-parts select{display:block;width:100%;min-width:0;min-height:48px;padding:10px 8px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font-size:16px}
+.work-date-parts select:disabled{opacity:.6}
+.work-date-content .work-date-selection{min-height:24px;margin:14px 0 18px;color:var(--ink)}
+.work-date-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.work-date-actions button{min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font-size:14px;font-weight:800}
+.work-date-actions #workDateClear{margin-right:auto;color:var(--muted)}
+.work-date-actions #workDateConfirm{background:var(--orange2);border-color:var(--orange2);color:#382016}
+.work-date-actions button:disabled{opacity:.45;cursor:not-allowed}
