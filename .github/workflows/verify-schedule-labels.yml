@@ -1,0 +1,80 @@
+name: Verify Chinese schedule hierarchy v92
+on:
+  push:
+    branches: ["repair/schedule-labels-v92"]
+permissions:
+  contents: write
+concurrency:
+  group: schedule-labels-v92-qa
+  cancel-in-progress: true
+env:
+  BASE: c59a489d78c2df834be9d764ae410e8ec74b3479
+  LIVE_URL: ""
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test browsers
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Build reviewed display-only change
+        run: |
+          mkdir -p "$RUNNER_TEMP/labels-before" "$RUNNER_TEMP/labels-after" "$RUNNER_TEMP/labels-report"
+          git archive "$BASE" | tar -x -C "$RUNNER_TEMP/labels-before"
+          cp -a "$RUNNER_TEMP/labels-before/." "$RUNNER_TEMP/labels-after/"
+          python maintenance/apply_labels.py "$RUNNER_TEMP/labels-after"
+          python -c 'import pathlib,re,os; s=pathlib.Path(os.environ["RUNNER_TEMP"],"labels-after/index.html").read_text(); pathlib.Path(os.environ["RUNNER_TEMP"],"app.js").write_text(re.findall(r"<script[^>]*>([\s\S]*?)</script>",s)[-1])'
+          node --check "$RUNNER_TEMP/app.js"
+      - name: Wait for exact tested source to be published
+        if: env.LIVE_URL != ''
+        run: |
+          python - <<'PY'
+          import os,time,pathlib,hashlib,urllib.request
+          expected=hashlib.sha256(pathlib.Path(os.environ['RUNNER_TEMP'],'labels-after/index.html').read_bytes()).hexdigest()
+          for attempt in range(24):
+            try:
+              req=urllib.request.Request(os.environ['LIVE_URL'],headers={'Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=15) as r:
+                if r.status==200 and hashlib.sha256(r.read()).hexdigest()==expected:
+                  print('Exact tested source is live: '+expected)
+                  break
+            except Exception as e:
+              print(type(e).__name__)
+            time.sleep(5)
+          else:
+            raise SystemExit('Published source did not match tested candidate')
+          PY
+      - name: Verify labels, dependent cycles and unchanged saved schedules
+        run: python maintenance/test_labels.py "$RUNNER_TEMP/labels-before" "$RUNNER_TEMP/labels-after" "$RUNNER_TEMP/labels-report"
+      - name: Create tested candidate without updating production
+        if: env.LIVE_URL == ''
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$BASE"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/labels-index"
+          git read-tree "$BASE"
+          for path in index.html sw.js; do
+            blob=$(git hash-object -w "$RUNNER_TEMP/labels-after/$path")
+            git update-index --add --cacheinfo "100644,$blob,$path"
+          done
+          tree=$(git write-tree)
+          git config user.name 'sonia6891'
+          git config user.email '107385898+sonia6891@users.noreply.github.com'
+          candidate=$(printf '%s\n' 'Unify Chinese shift mode names and nest two-shift work cycles (v92)' | git commit-tree "$tree" -p "$BASE")
+          git push origin "$candidate:refs/heads/repair/schedule-labels-candidate-v92"
+          echo "$candidate" > "$RUNNER_TEMP/labels-report/candidate-sha.txt"
+          git diff --stat "$BASE" "$candidate" > "$RUNNER_TEMP/labels-report/diff-stat.txt"
+      - name: Keep verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schedule-labels-v92-verification
+          path: ${{ runner.temp }}/labels-report
+          retention-days: 7
