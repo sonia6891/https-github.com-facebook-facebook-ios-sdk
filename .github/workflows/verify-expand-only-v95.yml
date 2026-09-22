@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 env:
   BASE: 0227d1cfdde8c87814ea86b3c75c53d8fe00f304
-  LIVE_URL: ""
+  LIVE_URL: "https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/?v=95"
 jobs:
   verify:
     runs-on: ubuntu-latest
