@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=57">
+<link rel="manifest" href="./manifest.webmanifest?v=58">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -59,7 +59,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 @media(max-width:760px){.salary-tabs{margin-top:8px}.salary-tab{font-size:13px;padding:10px 8px}.scan-upload{grid-template-columns:1fr 1fr}.scan-result-grid{grid-template-columns:1fr 1fr}.scan-head{padding:11px}.scan-preview{max-height:280px}}
 @media(max-width:1100px) and (min-width:761px){#page-dashboard.active{grid-template-columns:1fr}.desktop-dashboard-profile{display:none}#page-dashboard>.section,.footer-art{grid-column:1}.footer-art{grid-row:auto;justify-content:center}.footer-art picture{width:min(100%,420px)}}
 </style>
-<link rel="manifest" href="./manifest.webmanifest?v=57">
+<link rel="manifest" href="./manifest.webmanifest?v=58">
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
@@ -286,20 +286,18 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
           <div class="scan-head">
             <div>
               <b>📷 Pro 本地薪資單辨識</b>
-              <div class="hint">打開後直接選「拍薪資單」或「從相簿／檔案選擇」。辨識結果會留在這張卡正下方，確認後才導入逐項薪資對帳。</div>
+              <div class="hint">點「拍照或上傳」後，可依裝置選擇拍照、相簿或檔案。辨識結果會留在這張卡正下方，確認後才導入逐項薪資對帳。</div>
               <div class="scan-privacy">🔒 圖片只在你的瀏覽器本地處理，不上傳薪資單影像。</div>
             </div>
             <button type="button" class="btn" id="closePayslipScan">收起</button>
           </div>
           <div class="scan-upload">
-            <label class="scan-upload-btn" for="payslipCameraInput">📸 拍薪資單</label>
-            <label class="scan-upload-btn" for="payslipFileInput">🖼 從相簿／檔案選擇</label>
-            <input class="hidden" id="payslipCameraInput" type="file" accept="image/*" capture="environment">
+            <label class="scan-upload-btn" for="payslipFileInput">📷 拍照或上傳</label>
             <input class="hidden" id="payslipFileInput" type="file" accept="image/*">
           </div>
           <div class="scan-preview-wrap"><img id="payslipPreview" class="scan-preview" alt="薪資單預覽"></div>
           <div class="scan-status" id="payslipScanStatus">
-            請先拍照或選擇一張薪資單圖片。第一次使用會先下載中文字庫，可能需要一些時間。
+            請點「拍照或上傳」選擇薪資單。第一次使用會先下載中文字庫，可能需要一些時間。
             <div class="scan-progress"><i id="payslipScanProgress"></i></div>
           </div>
           <div class="hint hidden" id="payslipMissingFields" style="margin:-4px 12px 12px;padding:8px 10px;border-radius:10px;background:#fff6e9;color:#8b5b31"></div>
@@ -963,22 +961,22 @@ const ITEMIZED_FIELDS=[
 let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0};
 const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v2';
 const PAYSLIP_OCR_FIELDS=[
-  {key:'actualNet',label:'實發金額',kind:'net',terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
-  {key:'dedHealthExtra',label:'健保補扣／補充保費',kind:'deduction',terms:['健保補扣','補充保費','補充健保費','二代健保','二代健保補充保費'],mode:'sum'},
-  {key:'dedPension',label:'勞退自提',kind:'deduction',terms:['勞退自提','勞退自提額','自提退休金','退休金自提','勞工退休金自提','勞退提繳','自願提繳退休金','員工自提','自提勞退'],mode:'sum'},
-  {key:'dedAttendance',label:'考勤扣款',kind:'deduction',terms:['考勤扣款','缺勤扣款','曠職扣款','遲到扣款','早退扣款','請假扣款','事病假扣款'],mode:'sum'},
-  {key:'dedWelfare',label:'福利金',kind:'deduction',terms:['職工福利金','福利金','福委會費','福委金','福利委員會費','職福金'],mode:'sum'},
-  {key:'dedLabor',label:'勞保費',kind:'deduction',terms:['勞保費','勞保自付','勞保自付額','勞工保險費','勞工保險','勞保個人負擔','勞保'],mode:'sum'},
-  {key:'dedHealth',label:'健保費',kind:'deduction',terms:['健保費','健保自付','健保自付額','全民健保費','健康保險費','健保個人負擔','健保'],mode:'sum'},
-  {key:'dedTax',label:'所得稅',kind:'deduction',terms:['薪資所得稅','所得稅額','所得稅','扣繳所得稅','扣繳稅','代扣所得稅','所得稅款','薪資扣繳','預扣所得稅','預扣稅','稅額'],mode:'sum'},
-  {key:'dedOther',label:'其他扣款',kind:'deduction',terms:['其他扣款','其他代扣','代扣款','其他減項','應扣其他','代扣其他'],mode:'sum'},
-  {key:'base',label:'底薪／本薪',kind:'income',terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','經常性薪資','經常性工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','經常性薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
-  {key:'shiftAllowance',label:'輪班／夜班津貼',kind:'income',terms:['輪班津貼','輪班加給','輪班獎金','輪值津貼','輪值加給','班別津貼','班別加給','班津','夜班津貼','夜班加給','夜勤津貼','夜勤加給','夜勤費','晚班津貼','中班津貼','中夜班津貼','大夜班津貼','大夜津貼','大夜加給','小夜班津貼','小夜津貼','小夜加給','特殊班津貼','三班津貼','二班津貼','輪班費','夜班費','值班津貼','值班加給','輪值津貼','SHIFT ALLOWANCE','NIGHT SHIFT'],mode:'sum'},
-  {key:'meal',label:'伙食津貼',kind:'income',terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','餐費津貼','餐費補助','餐費','餐貼','誤餐費','餐費','餐補','MEAL ALLOWANCE'],mode:'sum'},
-  {key:'performance',label:'表現／績效津貼',kind:'income',terms:['表現津貼','表現獎金','績效津貼','績效獎金','績效獎勵','績效','工作獎金','工作津貼','職務津貼','職務加給','專業津貼','專業加給','責任津貼','責任加給','考績獎金','職務加給','專業加給','技術津貼','技能津貼','全勤獎金','PERFORMANCE BONUS','PERFORMANCE ALLOWANCE'],mode:'sum'},
-  {key:'transport',label:'交通津貼',kind:'income',terms:['交通津貼','交通費','交通補助','交通補貼','通勤津貼','通勤補助','車馬費','通勤補助','交通補貼','車資','油資','TRAVEL ALLOWANCE','TRANSPORT ALLOWANCE'],mode:'sum'},
-  {key:'otPay',label:'加班費',kind:'income',terms:['加班費','延長工時工資','延長工時','平日延長工時','平日加班','假日加班','休息日加班','休息日工資','例假加班','例假日加班','國定假日加班','國假加班','超時工資','加班薪資','加班工資','OVERTIME PAY','OVERTIME'],mode:'sum'},
-  {key:'otherIncome',label:'其他收入',kind:'income',terms:['其他收入','其他津貼','其他加給','其他應發','其他獎金','應發其他','應發雜項','獎金'],mode:'sum'}
+  {key:'actualNet',label:'實發金額',kind:'net',priority:30,terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
+  {key:'dedHealthExtra',label:'健保補扣／補充保費',kind:'deduction',priority:40,terms:['健保補扣','健保補扣款','健保補繳','健保補收','補健保','健保補充保費','補充保費','補充健保費','補充保險費','補充保險','補保費','二代健保','二代健保補充保費','二代健保費'],mode:'sum'},
+  {key:'dedPension',label:'勞退自提',kind:'deduction',priority:28,terms:['勞退自提','勞退自提額','自提退休金','退休金自提','勞工退休金自提','勞退提繳','自願提繳退休金','員工自提','自提勞退','勞退','退休自提'],mode:'sum'},
+  {key:'dedAttendance',label:'考勤扣款',kind:'deduction',priority:24,terms:['考勤扣款','缺勤扣款','曠職扣款','遲到扣款','早退扣款','請假扣款','事病假扣款','病假扣款','事假扣款','缺勤','考勤'],mode:'sum'},
+  {key:'dedWelfare',label:'福利金',kind:'deduction',priority:26,terms:['職工福利金','福利金','福利費','福利扣款','福委會費','福委費','福委金','福利委員會費','職福金','職福會費','職工福利','福委'],mode:'sum'},
+  {key:'dedLabor',label:'勞保費',kind:'deduction',priority:26,terms:['勞保費','勞保自付','勞保自付額','勞工保險費','勞工保險','勞保個人負擔','勞保個人','勞保扣款','勞保代扣','勞工保費','勞保'],mode:'sum'},
+  {key:'dedHealth',label:'健保費',kind:'deduction',priority:25,terms:['健保費','健保自付','健保自付額','全民健保費','健康保險費','健保個人負擔','健保個人','健保扣款','健保代扣','健保'],mode:'sum'},
+  {key:'dedTax',label:'所得稅',kind:'deduction',priority:25,terms:['薪資所得稅','所得稅額','所得稅扣款','所得稅','扣繳所得稅','扣繳稅額','扣繳稅','代扣所得稅','代扣稅','所得稅款','薪資扣繳','預扣所得稅','預扣稅','薪資稅','稅額'],mode:'sum'},
+  {key:'dedOther',label:'其他扣款',kind:'deduction',priority:5,minScore:.94,terms:['其他扣款','其他代扣','其他減項','應扣其他','代扣其他','雜項扣款','其他應扣'],mode:'sum'},
+  {key:'base',label:'底薪／本薪',kind:'income',priority:28,terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','經常性薪資','經常性工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
+  {key:'shiftAllowance',label:'輪班／夜班津貼',kind:'income',priority:25,terms:['輪班津貼','輪班加給','輪班獎金','輪值津貼','輪值加給','班別津貼','班別加給','班津','夜班津貼','夜班加給','夜勤津貼','夜勤加給','夜勤費','夜班費','夜班','輪班費','輪班','晚班津貼','中班津貼','中夜班津貼','大夜班津貼','大夜津貼','大夜加給','大夜','小夜班津貼','小夜津貼','小夜加給','小夜','特殊班津貼','三班津貼','二班津貼','值班津貼','值班加給','SHIFT ALLOWANCE','NIGHT SHIFT'],mode:'sum'},
+  {key:'meal',label:'伙食津貼',kind:'income',priority:24,terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','膳食','餐費津貼','餐費補助','餐費','餐貼','誤餐費','誤餐','餐補','MEAL ALLOWANCE'],mode:'sum'},
+  {key:'performance',label:'表現／績效津貼',kind:'income',priority:23,terms:['表現津貼','表現獎金','表現加給','表現','績效津貼','績效獎金','績效獎勵','績效加給','績效','工作獎金','工作津貼','職務津貼','職務加給','專業津貼','專業加給','責任津貼','責任加給','考績獎金','技術津貼','技能津貼','全勤獎金','全勤','獎勵金','PERFORMANCE BONUS','PERFORMANCE ALLOWANCE'],mode:'sum'},
+  {key:'transport',label:'交通津貼',kind:'income',priority:20,terms:['交通津貼','交通費','交通補助','交通補貼','通勤津貼','通勤補助','車馬費','車資','油資','TRAVEL ALLOWANCE','TRANSPORT ALLOWANCE'],mode:'sum'},
+  {key:'otPay',label:'加班費',kind:'income',priority:30,terms:['加班費1.33','加班1.33','平日加班1.33','延長工時1.33','加班費1.34','加班1.34','平日加班1.34','延長工時1.34','加班費1.66','加班1.66','加班費1.67','加班1.67','平日加班1.67','加班費2.67','加班2.67','休息日加班1.33','休息日加班1.67','加班費133','加班133','加班費167','加班167','加班費267','加班267','加班費','延長工時工資','延長工時','平日延長工時','平日加班','假日加班','休息日加班','休息日工資','例假加班','例假日加班','國定假日加班','國假加班','超時工資','加班薪資','加班工資','OVERTIME PAY','OVERTIME'],mode:'sum'},
+  {key:'otherIncome',label:'其他收入',kind:'income',priority:5,minScore:.94,terms:['其他收入','其他津貼','其他加給','其他應發','其他獎金','應發其他','應發雜項','其他應發款','雜項收入'],mode:'sum'}
 ]
 function setSalarySubTab(tab){
   salarySubTab=tab==='reconcile'?'reconcile':'calc';
@@ -1011,7 +1009,17 @@ function normalizeOcrText(s){
     .replace(/夥食/g,'伙食')
     .replace(/基本工賣/g,'基本工資')
     .replace(/加班貲/g,'加班費')
-    .replace(/健倸/g,'健保');
+    .replace(/健倸/g,'健保')
+    .replace(/[劳勞][倸堡保]/g,'勞保')
+    .replace(/[健鍵][倸堡保]/g,'健保')
+    .replace(/[褔福][利刮][金全]/g,'福利金')
+    .replace(/所[得德][稅税]/g,'所得稅')
+    .replace(/[輪倫][班斑]/g,'輪班')
+    .replace(/夜[班斑]/g,'夜班')
+    .replace(/[伙夥火][食實]/g,'伙食')
+    .replace(/[表錶][現見]/g,'表現')
+    .replace(/[績積][效校]/g,'績效')
+    .replace(/加[班斑][費貲]/g,'加班費');
 }
 function amountCandidates(line){
   const text=normalizeOcrDigits(line);
@@ -1069,13 +1077,25 @@ function fuzzyFieldsForText(text){
     let best=null;
     def.terms.forEach(term=>{
       const match=fuzzyAliasInText(text,term),alias=normalizeOcrText(term);
-      if(match.score>=fuzzyAliasThreshold(alias)&&(!best||match.score>best.score||(match.score===best.score&&alias.length>best.alias.length))){
+      const threshold=Math.max(def.minScore||0,fuzzyAliasThreshold(alias));
+      if(match.score>=threshold&&(!best||match.score>best.score||(match.score===best.score&&alias.length>best.alias.length))){
         best={def,term,alias,score:match.score,start:match.start,end:match.end,exact:match.exact};
       }
     });
     if(best)hits.push(best);
   });
-  return hits.sort((a,b)=>a.start-b.start||b.score-a.score);
+  const ranked=[...hits].sort((a,b)=>(b.exact-a.exact)||(b.alias.length-a.alias.length)||(b.score-a.score)||((b.def.priority||0)-(a.def.priority||0)));
+  const kept=[];
+  ranked.forEach(hit=>{
+    const conflict=kept.some(k=>{
+      if(k.def.key===hit.def.key)return false;
+      const overlap=Math.max(0,Math.min(k.end,hit.end)-Math.max(k.start,hit.start));
+      if(!overlap)return false;
+      return k.alias.length>=hit.alias.length&&k.score>=hit.score-.04;
+    });
+    if(!conflict)kept.push(hit);
+  });
+  return kept.sort((a,b)=>a.start-b.start||b.alias.length-a.alias.length);
 }
 function normalizeOcrBox(box){
   if(!box)return null;
@@ -1160,36 +1180,53 @@ function spatialLineHits(line){
   return fuzzyFieldsForText(line.normText||line.text).map(hit=>Object.assign({},hit,{labelBox:lineLabelBox(line,hit),lineIndex:line.index}));
 }
 function findSpatialAmountForHit(hit,lines,width,height,used){
-  const label=hit.labelBox,line=lines[hit.lineIndex],same=(line&&line.amounts)||[];
-  const nextLabelX=(spatialLineHits(line||{normText:'',text:'',segments:[]}).filter(h=>h.labelBox.x0>label.x0).sort((a,b)=>a.labelBox.x0-b.labelBox.x0)[0]||{}).labelBox?.x0;
-  let candidates=same.filter(a=>!used.has(a.id)&&a.bbox.cx>=label.cx-(label.w*.2)&&(nextLabelX===undefined||a.bbox.cx<nextLabelX));
-  if(candidates.length){
-    candidates.sort((a,b)=>Math.abs(a.bbox.x0-label.x1)-Math.abs(b.bbox.x0-label.x1));
-    const a=candidates[0];return{amount:a,proximity:.98};
-  }
-  candidates=[];
+  const label=hit.labelBox,line=lines[hit.lineIndex];
+  const lineHits=spatialLineHits(line||{normText:'',text:'',segments:[]});
+  const nextLabel=lineHits.filter(h=>h.start>hit.start&&h.labelBox.x0>label.x0).sort((a,b)=>a.labelBox.x0-b.labelBox.x0)[0];
+  const prevLabel=[...lineHits].filter(h=>h.start<hit.start&&h.labelBox.x0<label.x0).sort((a,b)=>b.labelBox.x0-a.labelBox.x0)[0];
+  const candidates=[];
   lines.forEach(l=>{
     if(Math.abs(l.index-hit.lineIndex)>3)return;
     l.amounts.forEach(a=>{
       if(used.has(a.id))return;
-      const dx=Math.abs(a.bbox.cx-label.cx)/Math.max(1,width),dy=Math.abs(a.bbox.cy-label.cy)/Math.max(1,height);
-      if(dx<=.22&&dy<=.16)candidates.push({a,score:1-Math.min(1,dx*2.5+dy*4)});
+      const dx=(a.bbox.cx-label.cx)/Math.max(1,width),ady=Math.abs(a.bbox.cy-label.cy)/Math.max(1,height);
+      const sameRow=Math.abs(a.bbox.cy-label.cy)<=Math.max(label.h,a.bbox.h)*.85;
+      const sameColumn=Math.abs(dx)<=.075;
+      if(!sameRow&&!sameColumn&&ady>.12)return;
+      if(sameRow&&a.bbox.cx<label.x0-label.w*.15)return;
+      if(sameRow&&nextLabel&&a.bbox.cx>=nextLabel.labelBox.x0)return;
+      if(sameRow&&prevLabel&&a.bbox.cx<Math.max(label.x0,prevLabel.labelBox.x1))return;
+      let score=0;
+      if(sameRow){
+        const rightGap=Math.max(0,a.bbox.x0-label.x1)/Math.max(1,width);
+        score=.78-Math.min(.42,rightGap*2.8)-Math.min(.18,ady*4);
+      }
+      if(sameColumn){
+        const verticalGap=Math.abs(a.bbox.cy-label.cy)/Math.max(1,height);
+        score=Math.max(score,.88-Math.min(.48,verticalGap*3.4));
+      }
+      if(l.index===hit.lineIndex)score+=.05;
+      if(a.confidence>=80)score+=.04;
+      candidates.push({a,score});
     });
   });
   if(!candidates.length)return null;
   candidates.sort((a,b)=>b.score-a.score);
-  return{amount:candidates[0].a,proximity:Math.max(.35,candidates[0].score)};
+  const best=candidates[0];
+  if(best.score<.34)return null;
+  return{amount:best.a,proximity:Math.max(.35,Math.min(.99,best.score))};
 }
 function consolidateOccurrences(def,occurrences){
   if(!occurrences.length)return null;
   if(def.mode==='last')return occurrences[occurrences.length-1];
   if(def.mode==='max')return occurrences.reduce((best,x)=>x.value>best.value?x:best,occurrences[0]);
-  const byTerm=new Map();
-  occurrences.forEach(o=>{
-    const k=normalizeOcrText(o.term||def.key)||def.key,prev=byTerm.get(k);
-    if(!prev||o.value>prev.value)byTerm.set(k,o);
+  const unique=new Map();
+  occurrences.forEach((o,i)=>{
+    const pos=o.amountNorm?(Math.round(o.amountNorm.x*1000)+'-'+Math.round(o.amountNorm.y*1000)):(o.lineIndex!==undefined?'L'+o.lineIndex:'T'+i);
+    const key=pos+'|'+Math.round(num(o.value)*100)/100;
+    const prev=unique.get(key);if(!prev||o.confidence>prev.confidence)unique.set(key,o);
   });
-  const list=[...byTerm.values()],value=list.reduce((s,x)=>s+x.value,0);
+  const list=[...unique.values()],value=list.reduce((s,x)=>s+num(x.value),0);
   const best=list.reduce((a,b)=>a.confidence>b.confidence?a:b,list[0]);
   return Object.assign({},best,{value,confidence:list.reduce((s,x)=>s+x.confidence,0)/list.length});
 }
@@ -1432,7 +1469,6 @@ function resetPayslipScan(clearPreview=true){
   if($('payslipMissingFields')){$('payslipMissingFields').textContent='';$('payslipMissingFields').classList.add('hidden')}
   if($('payslipScanProgress'))$('payslipScanProgress').style.width='0%';
   if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始第二代本地辨識（3 次交叉比對）。 ';
-  if($('payslipCameraInput'))$('payslipCameraInput').value='';
   if($('payslipFileInput'))$('payslipFileInput').value='';
   if(clearPreview){
     if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}payslipPreviewUrl=''}
@@ -2008,7 +2044,6 @@ qsa('[data-pro-action]').forEach(btn=>btn.onclick=()=>{
 if($('salaryTabCalc'))$('salaryTabCalc').onclick=()=>{setSalarySubTab('calc')};
 if($('salaryTabReconcile'))$('salaryTabReconcile').onclick=()=>{setSalarySubTab('reconcile')};
 if($('closePayslipScan'))$('closePayslipScan').onclick=()=>{payslipScanOpen=false;renderSalary()};
-if($('payslipCameraInput'))$('payslipCameraInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)runPayslipOcr(file)};
 if($('payslipFileInput'))$('payslipFileInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)runPayslipOcr(file)};
 if($('importPayslipResult'))$('importPayslipResult').onclick=importPayslipDetected;
 if($('resetPayslipScan'))$('resetPayslipScan').onclick=()=>resetPayslipScan(true);
