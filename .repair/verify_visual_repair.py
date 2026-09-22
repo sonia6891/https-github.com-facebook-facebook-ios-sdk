@@ -70,7 +70,8 @@ with sync_playwright() as p:
             if width==390:page.screenshot(path=str(output/(engine+'-header.png')))
             with page.expect_file_chooser() as chooser:
                 page.locator('#mobileAvatarButton').click()
-            assert chooser.value.is_multiple is False
+            assert chooser.value.is_multiple() is False
+            assert chooser.value.element.get_attribute('id')=='avatarInput'
             assert not errors,errors
             ctx.close()
         browser.close()
@@ -80,7 +81,8 @@ with sync_playwright() as p:
         cb,pb,eb=prepare(browser,width,after_url)
         for tab in PAGES:
             for page in [pa,pb]:
-                page.locator('.side-nav [data-tab="'+tab+'"]').click();page.wait_for_timeout(150)
+                # Invoke the same existing navigation event handler even on tabs absent from the desktop sidebar.
+                page.locator('.bottom-nav [data-tab="'+tab+'"]').evaluate('(e)=>e.click()');page.wait_for_timeout(150)
                 page.evaluate('window.scrollTo(0,0)');page.wait_for_timeout(100)
             sa=output/('desktop-'+str(width)+'-'+tab+'-before.png');sb=output/('desktop-'+str(width)+'-'+tab+'-after.png')
             pa.screenshot(path=str(sa));pb.screenshot(path=str(sb))
