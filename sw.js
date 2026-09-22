@@ -1,6 +1,6 @@
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting();});
-const CACHE_NAME='meow-work-pwa-v96';
-const STATIC_ASSETS=['./manifest.webmanifest?v=96'];
+const CACHE_NAME='meow-work-pwa-v97';
+const STATIC_ASSETS=['./manifest.webmanifest?v=97'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(
