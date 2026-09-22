@@ -505,7 +505,7 @@ html.dark .work-date-dialog{color-scheme:dark}
           <div class="page-title"><svg class="icon" style="font-size:28px;color:var(--mobile-gold-ink, #9b5d3f)"><use href="#i-clock"/></svg>行程</div>
           <div class="itinerary-sub">班表、私人行程與備註，放在同一個月曆裡。</div>
         </div>
-        <button class="itinerary-add" id="addItinerary">${icon("i-edit")}<span>新增</span></button>
+        <button class="itinerary-add" id="addItinerary"><svg class="icon"><use href="#i-edit"/></svg><span>新增</span></button>
       </div>
     </div>
 
@@ -526,7 +526,7 @@ html.dark .work-date-dialog{color-scheme:dark}
       <div class="itinerary-weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
       <div class="itinerary-days" id="itineraryDays"></div>
       <div class="itinerary-legend">
-        <span><i class="it-dot work"></i>${escapeHtml(state.schedule.shiftName||"A班")}</span>
+        <span><i class="it-dot work"></i><b id="itineraryShiftLegend">A班</b></span>
         <span><i class="it-dot off"></i>休</span>
         <span><i class="it-dot leave"></i>請假／加班</span>
         <span><i class="it-dot event"></i>私人行程</span>
@@ -541,7 +541,7 @@ html.dark .work-date-dialog{color-scheme:dark}
       </div>
       <div class="itinerary-work-row" id="itineraryWorkRow"></div>
       <div class="itinerary-event-list" id="itineraryDayEvents"></div>
-      <button class="itinerary-note-add" type="button" id="addSelectedNote">${icon("i-edit")} 加一則備註</button>
+      <button class="itinerary-note-add" type="button" id="addSelectedNote"><svg class="icon"><use href="#i-edit"/></svg> 加一則備註</button>
     </div>
   </section>
 
@@ -1374,6 +1374,7 @@ function renderAttendance(){
   const y=current.getFullYear(),m=current.getMonth(),today=iso(new Date()),days=new Date(y,m+1,0).getDate(),first=new Date(y,m,1).getDay(),own=state.schedule.shiftName||'A班';
   $('attendanceMonth').textContent=`${y} 年 ${m+1} 月`;
   const conflicts=monthConflictEvents(y,m);
+  if($('itineraryShiftLegend'))$('itineraryShiftLegend').textContent=own;
   $('itineraryConflictBanner').classList.toggle('hidden',!conflicts.length);
   $('itineraryConflictCount').textContent=conflicts.length+' 件行程與班表撞期';
   $('itineraryConflictBanner').onclick=()=>{if(conflicts[0])openConflict(conflicts[0].id)};
