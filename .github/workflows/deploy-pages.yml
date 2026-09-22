@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   pages: write
   id-token: write
 
@@ -23,104 +23,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v6
-        with:
-          ref: main
-      - name: Apply guarded theme source migration
-        shell: bash
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-          path = Path('index.html')
-          html = path.read_text(encoding='utf-8')
-          def replace(old, new, count=1):
-              global html
-              found = html.count(old)
-              if found != count:
-                  raise SystemExit(f'Expected {count} copies of {old[:90]!r}, found {found}; refusing unsafe patch')
-              html = html.replace(old, new)
-          if 'id="meow-theme-boot"' not in html:
-              save_match = re.search(r"const SAVE_KEY='([^']+)'", html)
-              if not save_match:
-                  raise SystemExit('SAVE_KEY not found')
-              save_key = save_match.group(1)
-              boot = '''<script id="meow-theme-boot">
-          // Apply the device preference before CSS/first paint; never import a cloud theme.
-          (function(){
-            var theme='light',saved=null;
-            try{
-              saved=localStorage.getItem('meow-work-theme-v1');
-              if(saved!=='light'&&saved!=='dark'){
-                try{
-                  var snapshot=JSON.parse(localStorage.getItem('__SAVE_KEY__')||'null');
-                  var legacy=snapshot&&(snapshot.state||snapshot);
-                  saved=legacy&&legacy.theme;
-                }catch(e){}
-              }
-              if(saved==='light'||saved==='dark')theme=saved;
-              localStorage.setItem('meow-work-theme-v1',theme);
-            }catch(e){}
-            window.__meowThemePreference=theme;
-            document.documentElement.classList.toggle('dark',theme==='dark');
-            document.documentElement.style.colorScheme=theme;
-            var meta=document.querySelector('meta[name=theme-color]');
-            if(meta)meta.setAttribute('content',theme==='dark'?'#2b211c':'#f7b342');
-          })();
-          </script>
-          '''.replace('__SAVE_KEY__', save_key)
-              replace('<title>喵的，又要上班了</title>\n', '<title>喵的，又要上班了</title>\n'+boot)
-              helpers = '''// Device-local appearance is authoritative across login, restore and snapshots.
-          const THEME_KEY='meow-work-theme-v1';
-          let themePreference=window.__meowThemePreference==='dark'?'dark':'light';
-          function preferredTheme(){return themePreference}
-          // End device-local appearance.
-          '''
-              replace("const AVATAR_KEY='meow-work-avatar-v1';\n", helpers+"const AVATAR_KEY='meow-work-avatar-v1';\n")
-              replace('s.theme=v.theme||s.theme;', 's.theme=preferredTheme();')
-              replace('s.theme=x.theme||s.theme;', 's.theme=preferredTheme();', 2)
-              replace('let loaded=loadSaved(),state=loaded.state,lastSavedAt=loaded.savedAt,current=new Date();', 'let loaded=loadSaved(),state=loaded.state,lastSavedAt=loaded.savedAt,current=new Date();\nstate.theme=preferredTheme();')
-              replace("function applyTheme(){document.documentElement.classList.toggle('dark',state.theme==='dark');document.querySelector('meta[name=theme-color]').setAttribute('content',state.theme==='dark'?'#2b211c':'#f7b342');updateHeroThemeLabel();renderSettings()}function setTheme(t){state.theme=t;changedAndSync();applyTheme()}", '''function applyTheme(){
-            state.theme=preferredTheme();
-            document.documentElement.classList.toggle('dark',state.theme==='dark');
-            document.documentElement.style.colorScheme=state.theme;
-            document.querySelector('meta[name=theme-color]').setAttribute('content',state.theme==='dark'?'#2b211c':'#f7b342');
-            updateHeroThemeLabel();renderSettings();
-          }
-          function setTheme(t){
-            if(t!=='light'&&t!=='dark')return;
-            themePreference=t;
-            state.theme=t;
-            // Persist this tiny setting before saving larger data or scheduling network I/O.
-            try{localStorage.setItem(THEME_KEY,t)}catch(e){console.warn('[meow-theme] local storage unavailable',e)}
-            changedAndSync();applyTheme();
-          }
-          ''')
-              replace('./manifest.webmanifest?v=110', './manifest.webmanifest?v=111')
-              replace('meow-sw-reloaded-v105', 'meow-sw-reloaded-v111')
-              replace('./sw.js?v=105', './sw.js?v=111')
-              sw_path = Path('sw.js')
-              sw = sw_path.read_text(encoding='utf-8')
-              assert 'meow-work-pwa-v110' in sw and './manifest.webmanifest?v=110' in sw
-              sw = sw.replace('meow-work-pwa-v110','meow-work-pwa-v111').replace('./manifest.webmanifest?v=110','./manifest.webmanifest?v=111')
-              path.write_text(html,encoding='utf-8')
-              sw_path.write_text(sw,encoding='utf-8')
-              print('Applied device-local theme persistence and pre-paint initialization (v111).')
-          else:
-              print('Theme patch already present; running regression checks only.')
-          PY
       - name: Run theme regression tests
         run: node tests/theme-persistence.test.cjs
-      - name: Commit verified source changes
-        shell: bash
-        run: |
-          git add index.html sw.js
-          if ! git diff --cached --quiet; then
-            git config user.name 'github-actions[bot]'
-            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git commit -m 'Persist device theme across restart and cloud restore (v111)'
-            git push origin HEAD:main
-          fi
-          git log -1 --format='%H %s'
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
@@ -130,23 +34,22 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-      - name: Verify published theme fix
+      - name: Verify published build
         env:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         run: |
           python3 - <<'PY'
-          import os, time, urllib.request
-          url=os.environ['PAGE_URL']+'?theme-check='+os.environ['GITHUB_SHA']
+          from pathlib import Path
+          import hashlib, os, time, urllib.request
+          expected=hashlib.sha256(Path('index.html').read_bytes()).hexdigest()
+          url=os.environ['PAGE_URL']+'?build-check='+os.environ['GITHUB_SHA']
           for attempt in range(10):
               try:
                   request=urllib.request.Request(url,headers={'Cache-Control':'no-cache'})
                   with urllib.request.urlopen(request,timeout=20) as response:
-                      body=response.read().decode('utf-8')
-                  assert 'id="meow-theme-boot"' in body
-                  assert 'const THEME_KEY=' in body
-                  assert './sw.js?v=111' in body
-                  assert 's.theme=x.theme||s.theme;' not in body
-                  print('Published theme fix verified:',os.environ['PAGE_URL'])
+                      actual=hashlib.sha256(response.read()).hexdigest()
+                  assert actual==expected, 'Published index.html does not match this build yet'
+                  print('Published build verified:',os.environ['GITHUB_SHA'],expected)
                   break
               except Exception:
                   if attempt==9: raise
