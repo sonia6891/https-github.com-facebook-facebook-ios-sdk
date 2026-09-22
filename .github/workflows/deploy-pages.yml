@@ -34,7 +34,7 @@ jobs:
       - name: Stage public application files only
         run: |
           mkdir -p _site
-          cp index.html sw.js manifest.webmanifest 404.html app-icon-512.jpg workcat-home-v12.png _site/
+          cp index.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v115-180.png app-icon-v115-192.png app-icon-v115-512.png _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
       - name: Setup Pages
@@ -55,7 +55,7 @@ jobs:
           import hashlib,json,os,re,time,urllib.request
           result={'commit':os.environ['GITHUB_SHA'],'files':{}}
           base=os.environ['PAGE_URL']
-          for name in ['index.html','sw.js','assets/welcome-brand-v112.webp']:
+          for name in ['index.html','sw.js','manifest.webmanifest','app-icon-v115-180.png','app-icon-v115-192.png','app-icon-v115-512.png','assets/welcome-brand-v112.webp']:
               expected=hashlib.sha256(Path(name).read_bytes()).hexdigest()
               url=base+name+'?build-check='+os.environ['GITHUB_SHA']
               for attempt in range(10):
@@ -90,6 +90,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v114-release-verification
+          name: meow-v115-icon-release-verification
           path: test-results/
           retention-days: 3
