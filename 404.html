@@ -2676,6 +2676,20 @@ function renderSalary(){
   renderSalaryHistory();
   renderSalaryExport();
 }
+async function loadBillingConfig(){
+  try{
+    const res=await fetch(SUPABASE_URL+'/functions/v1/billing-config',{headers:{'apikey':SUPABASE_KEY}});
+    const data=await res.json();
+    billingConfigured=!!data.configured;
+    billingMonthly=data.monthly||null;
+    billingYearly=data.yearly||null;
+  }catch(e){
+    billingConfigured=false;
+    billingMonthly=null;
+    billingYearly=null;
+  }
+  renderProPlanSettings();
+}
 async function invokeUserFunction(name,body){
   if(!authUser)throw new Error('not_authenticated');
   const client=await getAuthClient();
@@ -2705,18 +2719,56 @@ async function startProTrialFlow(){
     else alert('試用啟用失敗，請稍後再試。');
   }finally{if(btn)btn.disabled=false;renderSettings()}
 }
+function submitGatewayForm(result){
+  if(!result||!result.gateway_url||!result.fields)throw new Error('checkout_not_ready');
+  const form=document.createElement('form');
+  form.method='POST';
+  form.action=result.gateway_url;
+  form.style.display='none';
+  Object.entries(result.fields).forEach(([key,value])=>{
+    const input=document.createElement('input');
+    input.type='hidden';
+    input.name=key;
+    input.value=String(value);
+    form.appendChild(input);
+  });
+  document.body.appendChild(form);
+  form.submit();
+}
+async function startLiveCheckout(plan){
+  if(!authUser){alert('請先用 Email 登入再升級 Pro。');return}
+  try{
+    const result=await invokeUserFunction('create-ecpay-checkout',{plan});
+    submitGatewayForm(result);
+  }catch(e){
+    if(e&&e.payload&&e.payload.error==='billing_not_configured')alert('正式訂閱尚未開放。');
+    else alert('付款頁建立失敗，請稍後再試。');
+  }
+}
+async function cancelProBillingFlow(){
+  if(!authUser||!providerSubscriptionId)return;
+  const until=entitlementUntil?new Date(entitlementUntil).toLocaleDateString('zh-TW'):'目前付款週期結束';
+  if(!confirm('確定取消下期自動續訂嗎？\n\n取消後仍可使用 Pro 到 '+until+'。'))return;
+  const btn=$('cancelProBilling');
+  if(btn)btn.disabled=true;
+  try{
+    await invokeUserFunction('cancel-pro-subscription',{});
+    await loadEntitlement();
+    render();
+    alert('已取消下期自動續訂，Pro 仍可使用到目前付款期間結束。');
+  }catch(e){
+    if(e&&e.payload&&e.payload.error==='billing_not_configured')alert('正式金流尚未完成設定，現在無法送出取消請求。');
+    else alert('取消續訂失敗，請稍後再試。');
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
 async function startStageCheckout(plan){
   if(!DEV_TESTING_ENABLED){alert('綠界 Stage 付款只在開發測試模式顯示。');return}
   if(!authUser){alert('請先用 Email 登入再測試付款。');return}
   try{
     const result=await invokeUserFunction('create-ecpay-stage-checkout',{plan});
-    if(!result||!result.gateway_url||!result.fields)throw new Error('checkout_not_ready');
-    const form=document.createElement('form');
-    form.method='POST';form.action=result.gateway_url;form.style.display='none';
-    Object.entries(result.fields).forEach(([key,value])=>{
-      const input=document.createElement('input');input.type='hidden';input.name=key;input.value=String(value);form.appendChild(input);
-    });
-    document.body.appendChild(form);form.submit();
+    submitGatewayForm(result);
   }catch(e){
     alert('綠界測試付款建立失敗，請稍後再試。');
   }
