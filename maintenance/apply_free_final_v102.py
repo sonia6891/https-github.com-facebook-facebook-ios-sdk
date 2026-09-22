@@ -21,3 +21,4 @@ s=s.replace('manifest.webmanifest?v=101','manifest.webmanifest?v=102').replace('
 p.write_text(s)
 sw=root/'sw.js';w=sw.read_text().replace('meow-work-pwa-v101','meow-work-pwa-v102').replace('manifest.webmanifest?v=101','manifest.webmanifest?v=102');sw.write_text(w)
 print('v102 applied')
+\n# verification trigger
