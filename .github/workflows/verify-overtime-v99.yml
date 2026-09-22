@@ -1,0 +1,43 @@
+name: Verify overtime explicit choice v99
+on:
+  push:
+    branches: ["fix/overtime-explicit-choice-v99"]
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Build and verify
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          git archive f91bc6091caac1c65edb0028a35d6a016135af13 | tar -x -C "$RUNNER_TEMP/site"
+          python maintenance/apply_overtime_v99.py "$RUNNER_TEMP/site"
+          python - <<'PY'
+          import re,pathlib,subprocess,os
+          s=pathlib.Path(os.environ['RUNNER_TEMP'],'site/index.html').read_text()
+          for x in ['請選擇公司的加班費率',"overtimeRateMode:'unselected'",'App 不會自行替你套用倍率','每班津貼 × 實際出勤','尚未計算；請先選擇公司加班費率']:
+              assert x in s,x
+          assert '× ${mc.attendance} 個實際出勤日' not in s
+          js=re.findall(r'<script[^>]*>([\\s\\S]*?)</script>',s)[-1]
+          f=pathlib.Path(os.environ['RUNNER_TEMP'],'app.js');f.write_text(js)
+          subprocess.run(['node','--check',str(f)],check=True)
+          PY
+      - name: Publish candidate
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "f91bc6091caac1c65edb0028a35d6a016135af13"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/index"
+          git read-tree f91bc6091caac1c65edb0028a35d6a016135af13
+          for path in index.html sw.js; do
+            blob=$(git hash-object -w "$RUNNER_TEMP/site/$path")
+            git update-index --add --cacheinfo "100644,$blob,$path"
+          done
+          tree=$(git write-tree)
+          git config user.name sonia6891
+          git config user.email 107385898+sonia6891@users.noreply.github.com
+          candidate=$(printf '%s\n' 'Require explicit overtime rate selection (v99)' | git commit-tree "$tree" -p f91bc6091caac1c65edb0028a35d6a016135af13)
+          git push origin "$candidate:refs/heads/fix/overtime-explicit-candidate-v99"
