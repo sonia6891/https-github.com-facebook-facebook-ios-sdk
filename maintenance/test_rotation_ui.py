@@ -12,7 +12,7 @@ expected=hashlib.sha256((after/'index.html').read_bytes()).hexdigest()
 if live:
  with urllib.request.urlopen(urllib.request.Request(live,headers={'Cache-Control':'no-cache'}),timeout=30) as r:assert r.status==200 and hashlib.sha256(r.read()).hexdigest()==expected
 KEY='meow-work-manual-save-v3'
-seed={'theme':'light','schedule':{'preset':'2-2','shiftName':'A班','workDays':2,'offDays':2,'startDate':'2026-09-01'},'settings':{'baseSalary':34567,'dailyWorkHours':10,'shiftAllowancePerDay':150,'defaultOvertimeHours':10},'dayStatus':{'2026-09-02':{'type':'sick','hours':4,'note':'測試病假'},'2026-09-03':{'type':'overtime','hours':2,'note':'測試加班'}},'months':{},'personalEvents':{'keep':{'id':'keep','kind':'event','date':'2026-09-25','start':'19:00','end':'20:00','title':'測試行程'}}}
+seed={'theme':'light','schedule':{'preset':'2-2','shiftName':'A班','workDays':2,'offDays':2,'startDate':'2026-09-01'},'settings':{'baseSalary':34567,'shiftAllowancePerDay':150,'mealAllowance':0,'performanceAllowance':0,'transportAllowance':0,'otherIncome':0,'payday':0,'hireDate':'','dailyWorkHours':10,'defaultOvertimeHours':10,'annualLeaveDays':0,'annualLeaveCycle':'anniversary','annualCustomDate':'','sickLeaveDays':0,'personalLeaveDays':0,'sickUsedHours':0,'personalUsedHours':0},'dayStatus':{'2026-09-02':{'type':'sick','hours':4,'note':'測試病假'},'2026-09-03':{'type':'overtime','hours':2,'note':'測試加班'}},'months':{},'personalEvents':{'keep':{'id':'keep','kind':'event','date':'2026-09-25','start':'19:00','end':'20:00','title':'測試行程'}}}
 report={'version':91,'live_url':live,'source_sha256':expected,'checks':[]}
 def saved(page):return json.loads(page.evaluate('(key)=>localStorage.getItem(key)',KEY))['state']
 def go(page,tab,width):page.locator(('.bottom-nav' if width<761 else '.side-nav')+' [data-tab="'+tab+'"]').click();page.wait_for_timeout(100)
@@ -41,7 +41,7 @@ with sync_playwright() as p:
     page.locator('#rotationApply').click();assert not page.locator('#rotationDialog').evaluate('e=>e.open')
     assert preset.input_value()=='four-three'
     current=saved(page);assert current['schedule']['rotation']['sequence']==['early','early','middle','middle','night','night','off','off']
-    for k in ['dayStatus','personalEvents','settings']:assert current[k]==old[k],k
+    for k in ['dayStatus','personalEvents','settings']:assert current[k]==old[k],(k,current[k],old[k])
     assert current['schedule']['startDate']=='2026-09-01'
     assert '四班三輪' in page.locator('#scheduleSummary').inner_text()
     for d,label in [('01','早班'),('02','病假'),('03','中班'),('04','中班'),('05','夜班'),('06','夜班'),('07','休假'),('08','休假'),('09','早班')]:assert label in day(page,'2026-09-'+d).inner_text(),(d,label)
