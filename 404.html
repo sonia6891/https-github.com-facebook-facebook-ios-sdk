@@ -736,7 +736,7 @@ html.dark .work-date-dialog{color-scheme:dark}
         <div class="install-row">
           <div>
             <div class="section-title" style="margin:0"><span class="paw">🐾</span>Pro 方案</div>
-            <div class="hint" id="proPlanSettingsHint" style="margin-top:4px">解鎖薪資單辨識、逐項對帳、歷史薪資與報告匯出。</div>
+            <div class="hint" id="proPlanSettingsHint" style="margin-top:4px">解鎖薪資單辨識、逐項對帳、歷史薪資與報告匯出。</div><div class="hint" style="margin-top:5px">7 天試用每個帳號限一次、不需綁卡。正式訂閱採自動續訂，可隨時取消下期續訂；取消後仍可使用至已付款期間結束。付款由綠界處理，App 不保存完整信用卡號。</div>
           </div>
           <span class="account-plan-badge" id="settingsPlanBadge">Free</span>
         </div>
@@ -2774,6 +2774,12 @@ function submitGatewayForm(result){
 }
 async function startLiveCheckout(plan){
   if(!authUser){alert('請先用 Email 登入再升級 Pro。');return}
+  const isYear=plan==='yearly';
+  const amount=Number(isYear?billingYearly:billingMonthly);
+  if(!billingConfigured||!amount){alert('正式訂閱尚未開放。');return}
+  const cycle=isYear?'每年':'每月';
+  const ok=confirm('確認訂閱 Pro？\n\n費用：NT$'+amount.toLocaleString('zh-TW')+'／'+(isYear?'年':'月')+'\n週期：'+cycle+'自動續訂\n\n你可以在 App「設定 → Pro 方案」取消下期自動續訂；取消後仍可使用至已付款期間結束。接下來會前往綠界安全付款頁。');
+  if(!ok)return;
   try{
     const result=await invokeUserFunction('create-ecpay-checkout',{plan});
     submitGatewayForm(result);
