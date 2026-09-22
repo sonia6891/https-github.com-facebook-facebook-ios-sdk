@@ -45,4 +45,4 @@ s=s.replace('manifest.webmanifest?v=100','manifest.webmanifest?v=101').replace('
 p.write_text(s)
 sw=root/'sw.js';w=sw.read_text().replace('meow-work-pwa-v100','meow-work-pwa-v101').replace('manifest.webmanifest?v=100','manifest.webmanifest?v=101');sw.write_text(w)
 print('v101 applied')
-\n
+
