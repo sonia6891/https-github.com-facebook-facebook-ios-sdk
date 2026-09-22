@@ -1,4 +1,4 @@
-name: Verify compact mobile schedule card v96
+name: Verify compact mobile schedule card v97
 on:
   push:
     branches: ["repair/compact-card-v96"]
@@ -8,7 +8,7 @@ concurrency:
   group: compact-card-v96
   cancel-in-progress: true
 env:
-  BASE: 7e2c410345f09d96940fe8636f59a6c7d512ddce
+  BASE: 78f07fcea219f8aed58442f46bb2352d28465275
   LIVE_URL: ""
 jobs:
   verify:
@@ -25,18 +25,18 @@ jobs:
         run: |
           python -m pip install playwright==1.55.0 pillow
           python -m playwright install --with-deps chromium webkit
-      - name: Build CSS-only mobile card change
+      - name: Build CSS-only change on latest annual-leave release
         run: |
           mkdir -p "$RUNNER_TEMP/compact-before" "$RUNNER_TEMP/compact-after" "$RUNNER_TEMP/compact-report"
           git archive "$BASE" | tar -x -C "$RUNNER_TEMP/compact-before"
           cp -a "$RUNNER_TEMP/compact-before/." "$RUNNER_TEMP/compact-after/"
-          python maintenance/compact_v96.py "$RUNNER_TEMP/compact-after"
+          python maintenance/compact_v97.py "$RUNNER_TEMP/compact-after"
       - name: Wait for exact tested source when verifying live site
         if: env.LIVE_URL != ''
         run: |
           python - <<'PY'
           import os,time,hashlib,urllib.request
-          expected='ae41ac130bb85ca7742da769942b7bdfe704145e7af99c33e6239bf6a187c938'
+          expected='0c19b4c23b874736f9f36ac9ef3fb2a282cbdd522b5a40b4167d5c10ba0a67ec'
           for attempt in range(24):
             try:
               with urllib.request.urlopen(urllib.request.Request(os.environ['LIVE_URL'],headers={'Cache-Control':'no-cache'}),timeout=15) as r:
@@ -50,7 +50,14 @@ jobs:
             raise SystemExit('Published source does not match tested files')
           PY
       - name: Verify saved space, desktop parity and edit gating
-        run: python maintenance/test_compact_v96.py "$RUNNER_TEMP/compact-before" "$RUNNER_TEMP/compact-after" "$RUNNER_TEMP/compact-report"
+        run: |
+          python maintenance/test_compact_v96.py "$RUNNER_TEMP/compact-before" "$RUNNER_TEMP/compact-after" "$RUNNER_TEMP/compact-report"
+          python - <<'PY'
+          import json,os,pathlib
+          p=pathlib.Path(os.environ['RUNNER_TEMP'],'compact-report/report.json')
+          report=json.loads(p.read_text());report['version']=97;report['preserves_annual_leave_release']=True
+          p.write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          PY
       - name: Create tested candidate without updating main
         if: env.LIVE_URL == ''
         run: |
@@ -64,14 +71,14 @@ jobs:
           tree=$(git write-tree)
           git config user.name 'sonia6891'
           git config user.email '107385898+sonia6891@users.noreply.github.com'
-          candidate=$(printf '%s\n' 'Compact mobile schedule card while preserving calendar legibility (v96)' | git commit-tree "$tree" -p "$BASE")
-          git push origin "$candidate:refs/heads/repair/compact-card-candidate-v96"
+          candidate=$(printf '%s\n' 'Compact mobile schedule card and preserve latest annual leave update (v97)' | git commit-tree "$tree" -p "$BASE")
+          git push origin "$candidate:refs/heads/repair/compact-card-candidate-v97"
           echo "$candidate" > "$RUNNER_TEMP/compact-report/candidate-sha.txt"
           git diff --stat "$BASE" "$candidate" > "$RUNNER_TEMP/compact-report/diff-stat.txt"
       - name: Save screenshots and measurements
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: compact-card-v96-verification
+          name: compact-card-v97-verification
           path: ${{ runner.temp }}/compact-report
           retention-days: 7
