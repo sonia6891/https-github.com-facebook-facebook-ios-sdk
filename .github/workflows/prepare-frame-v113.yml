@@ -1,0 +1,48 @@
+name: Prepare and verify framed welcome v113
+on:
+  push:
+    branches: [fix/framed-welcome-v113]
+permissions:
+  contents: read
+concurrency:
+  group: prepare-frame-v113
+  cancel-in-progress: false
+jobs:
+  verify:
+    if: github.ref == 'refs/heads/fix/framed-welcome-v113'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout isolated fix branch
+        uses: actions/checkout@v6
+        with:
+          ref: fix/framed-welcome-v113
+      - name: Apply guarded source migration
+        run: python3 tools/apply-welcome-frame-v113.py
+      - name: Theme regression checks
+        run: node tests/theme-persistence.test.cjs
+      - name: Install browser test dependencies
+        run: |
+          python3 -m pip install playwright==1.57.0
+          python3 -m playwright install --with-deps chromium
+      - name: Existing welcome and Pro data access regressions
+        run: python3 tests/browser-v112.py
+      - name: Framed welcome and existing-user display regressions
+        run: python3 tests/browser-frame-v113.py
+      - name: Commit only verified source on the isolated branch
+        run: |
+          git rm .github/workflows/prepare-frame-v113.yml
+          git add index.html sw.js
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Fix framed welcome display for new and existing users (v113)'
+          git push origin HEAD:fix/framed-welcome-v113
+          git rev-parse HEAD > test-results/verified-commit.txt
+      - name: Save test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: framed-welcome-v113-preflight
+          path: test-results/
+          retention-days: 3
