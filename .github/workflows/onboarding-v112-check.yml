@@ -1,0 +1,49 @@
+name: Verify onboarding and local Pro separation
+on:
+  push:
+    branches: [onboarding-local-pro-v112]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: onboarding-v112
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: onboarding-local-pro-v112
+      - name: Integrate guarded source and run unit regressions
+        run: |
+          mkdir -p test-results
+          python3 scripts/apply-onboarding-v112.py
+          node tests/theme-persistence.test.cjs | tee test-results/theme.txt
+          node tests/access-separation.test.cjs | tee test-results/access.txt
+          node tests/sw-privacy.test.cjs | tee test-results/sw.txt
+      - name: Install pinned browser test dependency
+        run: |
+          python3 -m pip install playwright==1.57.0
+          python3 -m playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-cjk
+      - name: Real browser interaction tests with mocked identity
+        run: python3 tests/onboarding-browser.py | tee test-results/browser.txt
+      - name: Commit verified generated source on feature branch only
+        run: |
+          git add index.html sw.js
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Integrate verified welcome UI and local Pro separation (v112)'
+            git push origin HEAD:onboarding-local-pro-v112
+          fi
+          git log -1 --format='%H %s' | tee test-results/commit.txt
+          sha256sum index.html assets/onboarding-brand-cat.webp | tee test-results/build-hashes.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: onboarding-v112-tests
+          path: test-results/
+          retention-days: 7
