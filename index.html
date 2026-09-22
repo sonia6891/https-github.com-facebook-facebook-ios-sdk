@@ -286,7 +286,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
         <div class="payslip-scan-panel hidden" id="payslipScanPanel">
           <div class="scan-head">
             <div>
-              <b>📷 Pro 本地薪資單辨識</b>
+              <b>📷 Pro 本地薪資單辨識 <span style="font-size:10px;color:#9a7a67;font-weight:800">OCR v60</span></b>
               <div class="hint">點「拍照或上傳」後，可依裝置選擇拍照、相簿或檔案。辨識結果會留在這張卡正下方，確認後才導入逐項薪資對帳。</div>
               <div class="scan-privacy">🔒 圖片只在你的瀏覽器本地處理，不上傳薪資單影像。</div>
             </div>
@@ -1026,7 +1026,11 @@ function normalizeOcrText(s){
     .replace(/[福褔]利[金全]/g,'福利金')
     .replace(/[補补][充冲][保倸][費貲]/g,'補充保費')
     .replace(/[免兔][稅税]加班[費貲]/g,'免稅加班費')
-    .replace(/[應应][稅税]加班[費貲]/g,'應稅加班費');
+    .replace(/[應应][稅税]加班[費貲]/g,'應稅加班費')
+    .replace(/[勞劳][退褪][自白][提堤]/g,'勞退自提')
+    .replace(/[職职]工[福褔]利[金全]/g,'職工福利金')
+    .replace(/[輪倫][班斑][津律][貼帖]/g,'輪班津貼')
+    .replace(/夜[班斑][津律][貼帖]/g,'夜班津貼');
 }
 function amountCandidates(line){
   const text=normalizeOcrDigits(line);
@@ -1118,45 +1122,53 @@ function collectOcrWords(data){
     if(!text||!bbox)return;
     const key=text+'|'+Math.round(bbox.x0)+'|'+Math.round(bbox.y0)+'|'+Math.round(bbox.x1)+'|'+Math.round(bbox.y1);
     if(seen.has(key))return;seen.add(key);
-    out.push({text,bbox,confidence:Math.max(0,Math.min(100,Number(w.confidence??w.conf??70)||70))});
+    out.push({text,bbox,confidence:Math.max(0,Math.min(100,Number(w.confidence??w.conf??70)||70)),lineKey:w.lineKey||''});
   };
-  // Tesseract.js v5 TSV is the most reliable source for word coordinates.
   if(data&&typeof data.tsv==='string'&&data.tsv.trim()){
     const rows=data.tsv.trim().split(/\r?\n/),head=rows.shift().split('\t'),idx=Object.fromEntries(head.map((h,i)=>[h,i]));
     rows.forEach(row=>{
-      const cols=row.split('\t'),level=Number(cols[idx.level]);
-      if(level!==5)return;
+      const cols=row.split('\t'),level=Number(cols[idx.level]);if(level!==5)return;
       const text=cols[idx.text]||'',left=Number(cols[idx.left]),top=Number(cols[idx.top]),width=Number(cols[idx.width]),height=Number(cols[idx.height]),conf=Number(cols[idx.conf]);
-      if(text.trim()&&[left,top,width,height].every(Number.isFinite))add({text,confidence:conf,bbox:{x0:left,y0:top,x1:left+width,y1:top+height}});
+      const lineKey=[cols[idx.page_num],cols[idx.block_num],cols[idx.par_num],cols[idx.line_num]].join('-');
+      if(text.trim()&&[left,top,width,height].every(Number.isFinite))add({text,confidence:conf,lineKey,bbox:{x0:left,y0:top,x1:left+width,y1:top+height}});
     });
   }
   if(data&&Array.isArray(data.words))data.words.forEach(add);
   const walk=node=>{
     if(!node)return;
     if(Array.isArray(node)){node.forEach(walk);return}
-    if(Array.isArray(node.words)){node.words.forEach(add)}
+    if(Array.isArray(node.words))node.words.forEach(add);
     ['blocks','paragraphs','lines','symbols'].forEach(k=>{if(Array.isArray(node[k]))node[k].forEach(walk)});
   };
   if(data&&Array.isArray(data.blocks))data.blocks.forEach(walk);
-  // Last fallback for older output shapes.
   if(!out.length&&data&&Array.isArray(data.lines))data.lines.forEach(walk);
   return out;
 }
 function groupOcrWordsIntoLines(words){
-  const sorted=[...words].sort((a,b)=>a.bbox.cy-b.bbox.cy||a.bbox.x0-b.bbox.x0),lines=[];
-  sorted.forEach(word=>{
+  const lines=[],keyed=new Map(),free=[];
+  words.forEach(w=>{
+    if(w.lineKey){
+      if(!keyed.has(w.lineKey))keyed.set(w.lineKey,[]);
+      keyed.get(w.lineKey).push(w);
+    }else free.push(w);
+  });
+  const makeLine=ws=>{
+    const sorted=[...ws].sort((a,b)=>a.bbox.x0-b.bbox.x0);
+    return{words:sorted,cy:sorted.reduce((s,w)=>s+w.bbox.cy,0)/sorted.length,avgH:sorted.reduce((s,w)=>s+w.bbox.h,0)/sorted.length,
+      y0:Math.min(...sorted.map(w=>w.bbox.y0)),y1:Math.max(...sorted.map(w=>w.bbox.y1))};
+  };
+  keyed.forEach(ws=>{if(ws.length)lines.push(makeLine(ws))});
+  const sortedFree=[...free].sort((a,b)=>a.bbox.cy-b.bbox.cy||a.bbox.x0-b.bbox.x0);
+  sortedFree.forEach(word=>{
     let best=null,bestDist=Infinity;
     lines.forEach(line=>{
       const avgH=Math.max(8,line.avgH),dist=Math.abs(word.bbox.cy-line.cy);
       const overlap=Math.max(0,Math.min(word.bbox.y1,line.y1)-Math.max(word.bbox.y0,line.y0));
-      if((dist<=avgH*.72||overlap>=Math.min(word.bbox.h,avgH)*.35)&&dist<bestDist){best=line;bestDist=dist}
+      if((dist<=avgH*.95||overlap>=Math.min(word.bbox.h,avgH)*.3)&&dist<bestDist){best=line;bestDist=dist}
     });
-    if(!best){
-      best={words:[],cy:word.bbox.cy,avgH:word.bbox.h,y0:word.bbox.y0,y1:word.bbox.y1};lines.push(best);
-    }
-    best.words.push(word);
-    best.cy=best.words.reduce((s,w)=>s+w.bbox.cy,0)/best.words.length;
-    best.avgH=best.words.reduce((s,w)=>s+w.bbox.h,0)/best.words.length;
+    if(!best){best={words:[],cy:word.bbox.cy,avgH:word.bbox.h,y0:word.bbox.y0,y1:word.bbox.y1};lines.push(best)}
+    best.words.push(word);best.words.sort((a,b)=>a.bbox.x0-b.bbox.x0);
+    best.cy=best.words.reduce((s,w)=>s+w.bbox.cy,0)/best.words.length;best.avgH=best.words.reduce((s,w)=>s+w.bbox.h,0)/best.words.length;
     best.y0=Math.min(best.y0,word.bbox.y0);best.y1=Math.max(best.y1,word.bbox.y1);
   });
   lines.sort((a,b)=>a.cy-b.cy);
@@ -1164,30 +1176,39 @@ function groupOcrWordsIntoLines(words){
     line.index=index;line.words.sort((a,b)=>a.bbox.x0-b.bbox.x0);
     let norm='',raw='',offset=0;line.segments=[];
     line.words.forEach((w,i)=>{
-      raw+=(i?' ':'')+w.text;
-      const part=normalizeOcrText(w.text);
+      raw+=(i?' ':'')+w.text;const part=normalizeOcrText(w.text);
       if(part){line.segments.push({start:offset,end:offset+part.length,word:w});norm+=part;offset+=part.length}
     });
-    line.text=raw;line.normText=norm;
-    line.x0=Math.min(...line.words.map(w=>w.bbox.x0));line.x1=Math.max(...line.words.map(w=>w.bbox.x1));
+    line.text=raw;line.normText=norm;line.x0=Math.min(...line.words.map(w=>w.bbox.x0));line.x1=Math.max(...line.words.map(w=>w.bbox.x1));
     line.amounts=extractSpatialAmounts(line);
   });
   return lines;
 }
-function numericTokenValue(text){
-  const raw=normalizeOcrDigits(text).replace(/[$NT＄元圓]/gi,'').trim();
-  if(!/[0-9]/.test(raw))return null;
-  const compact=raw.replace(/\s/g,'');
-  if(!/^[+\-]?[0-9][0-9,.]*$/.test(compact))return null;
-  const n=Number(compact.replace(/,/g,''));
-  return Number.isFinite(n)&&Math.abs(n)<=10000000?Math.abs(n):null;
+function numericTokenInfo(text){
+  const raw=normalizeOcrDigits(text).replace(/[$NT＄元圓]/gi,'').trim(),compact=raw.replace(/\s/g,'');
+  if(!/[0-9]/.test(compact)||!/^[+\-]?[0-9][0-9,.%]*$/.test(compact))return null;
+  const pct=/%$/.test(compact),numberText=compact.replace(/%/g,'').replace(/,/g,''),n=Number(numberText);
+  if(!Number.isFinite(n)||Math.abs(n)>10000000)return null;
+  const value=Math.abs(n),hasDecimal=/\./.test(numberText);
+  const rateLike=pct||(hasDecimal&&value>0&&value<10)||(!hasDecimal&&value>0&&value<=3&&compact.length<=2);
+  return{value,raw:text,rateLike,percent:pct,hasDecimal};
+}
+function numericTokenValue(text){const x=numericTokenInfo(text);return x?x.value:null}
+function plausibleAmountForField(def,amount){
+  if(!amount)return false;
+  const v=num(amount.value!==undefined?amount.value:amount),rateLike=!!amount.rateLike;
+  if(rateLike)return false;
+  if(def.key==='base'||def.key==='actualNet')return v>=1000;
+  if(def.key==='otPay')return v>=50;
+  if(['shiftAllowance','meal','performance','transport','otherIncome'].includes(def.key))return v>=20;
+  if(def.kind==='deduction')return v>=1;
+  return v>=1;
 }
 function extractSpatialAmounts(line){
   const amounts=[];
   line.words.forEach((w,i)=>{
-    const value=numericTokenValue(w.text);
-    if(value===null)return;
-    amounts.push({id:line.index+'-'+i,value,bbox:w.bbox,confidence:w.confidence,lineIndex:line.index,text:w.text});
+    const info=numericTokenInfo(w.text);if(!info)return;
+    amounts.push({id:line.index+'-'+i,value:info.value,rateLike:info.rateLike,percent:info.percent,hasDecimal:info.hasDecimal,bbox:w.bbox,confidence:w.confidence,lineIndex:line.index,text:w.text});
   });
   return amounts;
 }
@@ -1200,40 +1221,39 @@ function spatialLineHits(line){
   return fuzzyFieldsForText(line.normText||line.text).map(hit=>Object.assign({},hit,{labelBox:lineLabelBox(line,hit),lineIndex:line.index}));
 }
 function findSpatialAmountForHit(hit,lines,width,height,used){
-  const label=hit.labelBox,line=lines[hit.lineIndex];
+  const def=hit.def,label=hit.labelBox,line=lines[hit.lineIndex];
   const lineHits=spatialLineHits(line||{normText:'',text:'',segments:[]});
   const nextLabel=lineHits.filter(h=>h.start>hit.start&&h.labelBox.x0>label.x0).sort((a,b)=>a.labelBox.x0-b.labelBox.x0)[0];
-  const prevLabel=[...lineHits].filter(h=>h.start<hit.start&&h.labelBox.x0<label.x0).sort((a,b)=>b.labelBox.x0-a.labelBox.x0)[0];
   const candidates=[];
   lines.forEach(l=>{
-    if(Math.abs(l.index-hit.lineIndex)>3)return;
     l.amounts.forEach(a=>{
-      if(used.has(a.id))return;
+      if(used.has(a.id)||!plausibleAmountForField(def,a))return;
       const dx=(a.bbox.cx-label.cx)/Math.max(1,width),ady=Math.abs(a.bbox.cy-label.cy)/Math.max(1,height);
-      const sameRow=Math.abs(a.bbox.cy-label.cy)<=Math.max(label.h,a.bbox.h)*.85;
-      const sameColumn=Math.abs(dx)<=.075;
-      if(!sameRow&&!sameColumn&&ady>.12)return;
-      if(sameRow&&a.bbox.cx<label.x0-label.w*.15)return;
+      const sameRow=Math.abs(a.bbox.cy-label.cy)<=Math.max(label.h,a.bbox.h)*.9;
+      const sameColumn=Math.abs(dx)<=.09;
+      if(!sameRow&&!sameColumn&&ady>.19)return;
+      if(sameRow&&a.bbox.cx<label.x0-label.w*.1)return;
       if(sameRow&&nextLabel&&a.bbox.cx>=nextLabel.labelBox.x0)return;
-      if(sameRow&&prevLabel&&a.bbox.cx<Math.max(label.x0,prevLabel.labelBox.x1))return;
       let score=0;
       if(sameRow){
         const rightGap=Math.max(0,a.bbox.x0-label.x1)/Math.max(1,width);
-        score=.78-Math.min(.42,rightGap*2.8)-Math.min(.18,ady*4);
+        score=.66-Math.min(.34,rightGap*1.9)-Math.min(.12,ady*3);
+        // Payroll rows often have hours/rate before the final amount: favor the farther-right plausible money value.
+        if(a.bbox.cx>label.cx)score+=Math.min(.18,Math.max(0,dx)*.55);
       }
       if(sameColumn){
-        const verticalGap=Math.abs(a.bbox.cy-label.cy)/Math.max(1,height);
-        score=Math.max(score,.88-Math.min(.48,verticalGap*3.4));
+        score=Math.max(score,.9-Math.min(.5,ady*2.8));
       }
-      if(l.index===hit.lineIndex)score+=.05;
-      if(a.confidence>=80)score+=.04;
+      if(l.index===hit.lineIndex)score+=.04;
+      if(a.value>=100)score+=.08;
+      if(a.value>=1000)score+=.03;
+      if(a.confidence>=80)score+=.03;
       candidates.push({a,score});
     });
   });
   if(!candidates.length)return null;
-  candidates.sort((a,b)=>b.score-a.score);
-  const best=candidates[0];
-  if(best.score<.34)return null;
+  candidates.sort((a,b)=>b.score-a.score||b.a.bbox.cx-a.a.bbox.cx);
+  const best=candidates[0];if(best.score<.36)return null;
   return{amount:best.a,proximity:Math.max(.35,Math.min(.99,best.score))};
 }
 function consolidateOccurrences(def,occurrences){
@@ -1272,7 +1292,7 @@ function pairTableRowsByColumns(lines,width,height,used,byKey,labelAnchors,varia
     sortedHits.forEach(hit=>{
       const lb=hit.labelBox,labelNorm={x:lb.cx/width,y:lb.cy/height};
       if(!labelAnchors[hit.def.key]||hit.score>labelAnchors[hit.def.key].score)labelAnchors[hit.def.key]={x:labelNorm.x,y:labelNorm.y,score:hit.score,term:hit.term};
-      const choices=available.map((a,index)=>({a,index,d:Math.abs(a.bbox.cx-lb.cx)/Math.max(1,width)})).filter(x=>x.d<.15).sort((a,b)=>a.d-b.d);
+      const choices=available.map((a,index)=>({a,index,d:Math.abs(a.bbox.cx-lb.cx)/Math.max(1,width)})).filter(x=>x.d<.15&&plausibleAmountForField(hit.def,x.a)).sort((a,b)=>a.d-b.d);
       if(!choices.length)return;
       const chosen=choices[0];available.splice(chosen.index,1);used.add(chosen.a.id);
       const conf=Math.min(.99,hit.score*.56+(chosen.a.confidence/100)*.19+(1-Math.min(1,chosen.d/.15))*.25);
@@ -1306,17 +1326,27 @@ function parseSpatialOcr(data,variant){
   const allAmounts=lines.flatMap(l=>l.amounts.map(a=>Object.assign({},a,{norm:{x:a.bbox.cx/width,y:a.bbox.cy/height}})));
   return{fields,labelAnchors,allAmounts,lines,words,width,height,aspect:width/height,text:(data&&data.text)||'',variant:variant.name};
 }
-function findNearbyTextAmount(lines,index,mode){
-  const direct=chooseOcrAmount(lines[index],mode);if(direct!==null)return direct;
-  const checks=[index+1,index+2,index+3,index-1];
-  for(const i of checks){if(i<0||i>=lines.length)continue;const v=chooseOcrAmount(lines[i],mode);if(v!==null)return v}
+function detailedLineAmounts(line){
+  const text=normalizeOcrDigits(line),ms=text.match(/[-+]?\d[\d,.%]*/g)||[];
+  return ms.map(raw=>numericTokenInfo(raw)).filter(Boolean);
+}
+function chooseTextAmountForField(line,def){
+  const items=detailedLineAmounts(line).filter(x=>plausibleAmountForField(def,x));
+  if(!items.length)return null;
+  if(def.mode==='last')return items[items.length-1].value;
+  return Math.max(...items.map(x=>x.value));
+}
+function findNearbyTextAmount(lines,index,def){
+  const direct=chooseTextAmountForField(lines[index],def);if(direct!==null)return direct;
+  const checks=[index+1,index+2,index+3,index+4,index-1];
+  for(const i of checks){if(i<0||i>=lines.length)continue;const v=chooseTextAmountForField(lines[i],def);if(v!==null)return v}
   return null;
 }
 function parseTextOcr(text,variant){
   const fields={},byKey={},lines=String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
   lines.forEach((line,index)=>{
     fuzzyFieldsForText(line).forEach(hit=>{
-      const amount=findNearbyTextAmount(lines,index,hit.def.mode);if(amount===null)return;
+      const amount=findNearbyTextAmount(lines,index,hit.def);if(amount===null)return;
       const occ={key:hit.def.key,value:amount,term:hit.term,confidence:Math.min(.82,hit.score*.7),method:hit.exact?'文字精確':'文字模糊',variant:variant.name,line};
       (byKey[hit.def.key]||(byKey[hit.def.key]=[])).push(occ);
     });
