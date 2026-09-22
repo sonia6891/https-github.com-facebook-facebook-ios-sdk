@@ -1,0 +1,57 @@
+name: Validate mobile source repair before publishing
+on:
+  push:
+    branches: ["repair/mobile-assets-v75"]
+    paths:
+      - 'maintenance/**'
+      - '.github/workflows/mobile-asset-qa.yml'
+      - 'assets/mobile-rest-card-v75.webp'
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image and browser test tools
+        run: |
+          python -m pip install pillow numpy tinycss2 playwright==1.57.0
+          python -m playwright install --with-deps chromium
+      - name: Preserve reviewed baseline
+        run: |
+          python - <<'PY'
+          import shutil
+          shutil.copytree('.', '/tmp/meow-repair/before', ignore=shutil.ignore_patterns('.git'))
+          PY
+      - name: Repair original sources and validate image decoding
+        run: |
+          python maintenance/repair_mobile_assets.py
+          python - <<'PY'
+          import shutil,re,pathlib,subprocess
+          shutil.copytree('.', '/tmp/meow-repair/work', ignore=shutil.ignore_patterns('.git'))
+          s=pathlib.Path('index.html').read_text()
+          pathlib.Path('/tmp/meow-app.js').write_text(re.findall(r'<script[^>]*>([\s\S]*?)</script>',s)[-1])
+          subprocess.run(['node','--check','/tmp/meow-app.js'],check=True)
+          PY
+      - name: Test all mobile pages and unchanged desktop
+        run: python maintenance/test_mobile_assets.py
+      - name: Save screenshots and checks
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-source-repair-qa
+          path: |
+            /tmp/meow-repair/qa
+            repair-audit.json
+          retention-days: 3
+      - name: Store validated application sources on the repair branch only
+        run: |
+          git add index.html 404.html sw.js assets/mobile-hero-clean-v75.png repair-audit.json
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Repair source artwork and verify mobile image loading'
+          git push origin HEAD:repair/mobile-assets-v75
+          git rev-parse HEAD
+          git ls-tree -r HEAD -- index.html 404.html sw.js assets
