@@ -55,6 +55,7 @@ with sync_playwright() as p:
  check('首次安裝顯示框架頁',opened(page))
  r=frame(page);check('框架四邊皆有留白，非滿版',r['x']>=15 and r['y']>=15 and r['vw']-r['x']-r['w']>=15 and r['vh']-r['y']-r['h']>=15)
  check('圓角為 28px',r['radius']=='28px')
+ check('一般手機高度隨內容縮合，不強行撐滿',r['h']<r['vh']-60)
  check('厭世貓沿用原圖',page.locator('.welcome-art').evaluate("x=>x.complete&&x.naturalWidth===540&&x.getAttribute('src')==='./assets/welcome-brand-v112.webp'"))
  check('沒有假 Apple 登入入口',not page.locator('#welcomeApple').is_visible())
  check('背景頁不能捲動',page.locator('html').evaluate("x=>getComputedStyle(x).overflow==='hidden'"))
