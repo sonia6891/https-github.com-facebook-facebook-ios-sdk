@@ -923,7 +923,7 @@ const FEATURE_CATALOG={
   salary_export:{label:'PDF／Excel 對帳報告',tier:'pro'}
 };
 const DEV_TESTING_ENABLED=new URLSearchParams(location.search).get('dev')==='1';
-let devMode=DEV_TESTING_ENABLED,devPlan='free',serverPlan='free',entitlementStatus='free',entitlementUntil=null,trialStartedAt=null,billingProvider=null,providerSubscriptionId=null;
+let devMode=DEV_TESTING_ENABLED,devPlan='free',serverPlan='free',entitlementStatus='free',entitlementUntil=null,trialStartedAt=null,billingProvider=null,providerSubscriptionId=null,cancelAtPeriodEnd=false,canceledAt=null,billingConfigured=false,billingMonthly=null,billingYearly=null;
 if(DEV_TESTING_ENABLED){
   try{
     const stored=localStorage.getItem(DEV_PLAN_KEY);
@@ -1059,11 +1059,11 @@ function entitlementIsActive(row){
   return Number.isFinite(until)&&until>Date.now();
 }
 async function loadEntitlement(){
-  serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;
+  serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;
   if(!authUser){renderProEntitlements();renderSettings();return}
   try{
     const client=await getAuthClient();
-    const {data,error}=await client.from('user_entitlements').select('plan,status,pro_until,trial_started_at,billing_provider,provider_subscription_id,updated_at').eq('user_id',authUser.id).maybeSingle();
+    const {data,error}=await client.from('user_entitlements').select('plan,status,pro_until,trial_started_at,billing_provider,provider_subscription_id,cancel_at_period_end,canceled_at,updated_at').eq('user_id',authUser.id).maybeSingle();
     if(error)throw error;
     if(data){
       entitlementStatus=data.status||'free';
@@ -1071,6 +1071,8 @@ async function loadEntitlement(){
       trialStartedAt=data.trial_started_at||null;
       billingProvider=data.billing_provider||null;
       providerSubscriptionId=data.provider_subscription_id||null;
+      cancelAtPeriodEnd=!!data.cancel_at_period_end;
+      canceledAt=data.canceled_at||null;
       serverPlan=entitlementIsActive(data)?'pro':'free';
     }
   }catch(e){
@@ -1155,7 +1157,7 @@ async function handleSignedIn(user){
   renderSettings();
 }
 async function handleSignedOut(){
-  authUser=null;serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;
+  authUser=null;serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;
   await stopAccountRealtime();
   setAccountStatus('尚未登入');
   renderSalary();renderSettings();
