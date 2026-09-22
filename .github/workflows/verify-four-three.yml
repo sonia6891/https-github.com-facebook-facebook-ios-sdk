@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 env:
   BASE: d74863ebce1daaf168b61ec508e9ea334f05821a
-  LIVE_URL: ""
+  LIVE_URL: "https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/?v=91"
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -36,6 +36,25 @@ jobs:
       - name: Verify legacy cycles and calendar boundaries
         run: |
           node maintenance/test_rotation_math.js "$RUNNER_TEMP/rotation-before" "$RUNNER_TEMP/rotation-after" | tee "$RUNNER_TEMP/rotation-report/math.json"
+      - name: Wait for exact tested source to be published
+        if: env.LIVE_URL != ''
+        run: |
+          python - <<'PY'
+          import os,time,pathlib,hashlib,urllib.request
+          expected=hashlib.sha256(pathlib.Path(os.environ['RUNNER_TEMP'],'rotation-after/index.html').read_bytes()).hexdigest()
+          for attempt in range(24):
+            try:
+              req=urllib.request.Request(os.environ['LIVE_URL'],headers={'Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=15) as r:
+                if r.status==200 and hashlib.sha256(r.read()).hexdigest()==expected:
+                  print('Exact tested source is live: '+expected)
+                  break
+            except Exception as e:
+              print(type(e).__name__)
+            time.sleep(5)
+          else:
+            raise SystemExit('Published source did not match tested candidate')
+          PY
       - name: Verify actual controls, records and backup round trips
         run: python maintenance/test_rotation_ui.py "$RUNNER_TEMP/rotation-before" "$RUNNER_TEMP/rotation-after" "$RUNNER_TEMP/rotation-report"
       - name: Create tested candidate without touching production
