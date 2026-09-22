@@ -1,0 +1,26 @@
+{
+  "version": "75",
+  "base_sha256": "c63c2d38f687f2b9f29bd7e611985b5e6c00c1634560e79a5d008a4ec5afc24e",
+  "new_sha256": "7c9326678db2142695bb17e104c5afc13cc61adf7948996f83280db7d4d15ea6",
+  "removed_mobile_rules": [
+    ".hero-theme",
+    ".hero-avatar",
+    ".mobile-rest-card",
+    ".mobile-rest-card img",
+    ".mobile-hero-actions",
+    ".hero-theme",
+    ".hero-theme::before,.hero-theme::after",
+    ".hero-theme .mobile-theme-icon",
+    ".hero-theme .mobile-theme-sun",
+    ".hero-theme .mobile-theme-moon",
+    ".hero-theme .mobile-theme-track",
+    ".hero-theme .mobile-theme-track::after",
+    ".dark .hero-theme .mobile-theme-track",
+    ".dark .hero-theme .mobile-theme-track::after",
+    ".mobile-avatar-button",
+    ".mobile-avatar-button .hero-avatar"
+  ],
+  "hero": "assets/mobile-hero-clean-v75.png",
+  "rest": "assets/mobile-rest-card-v75.webp",
+  "brand_pixels_outside_toolbar_unchanged": true
+}
