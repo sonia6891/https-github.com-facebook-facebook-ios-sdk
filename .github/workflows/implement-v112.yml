@@ -1,5 +1,8 @@
 name: Verify and integrate welcome v112
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/implement-v112.yml', 'src/**', 'scripts/apply-v112.py', 'tests/browser-v112.py']
   workflow_dispatch:
 permissions:
   contents: write
