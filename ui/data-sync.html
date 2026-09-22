@@ -1,0 +1,17 @@
+      <div class="card settings-card" id="dataSyncCard"><div class="section-title"><span class="paw">🐾</span>資料與同步</div>
+       <div class="data-status-line"><b>本機工作區</b><span id="localOwnerLabel">資料儲存在此裝置</span></div>
+       <div class="settings-list">
+        <button class="settings-item" id="saveDevice"><div class="field-icon">▣</div><div><b>儲存到此裝置</b><small id="saveState">本機自動保存，不代表已上傳雲端</small></div><span>›</span></button>
+        <button class="settings-item" id="exportBackup"><div class="field-icon">⇩</div><div><b>手動匯出本機備份</b><small>免費使用；JSON 備份檔可自行保管</small></div><span>›</span></button>
+        <button class="settings-item" id="importBackup" aria-controls="importBackupInput"><div class="field-icon">⇧</div><div><b>匯入本機備份檔</b><small>還原工作資料，不會變更訂閱資格</small></div><span>›</span></button>
+        <input class="hidden" id="importBackupInput" type="file" accept=".json,application/json">
+       </div>
+       <div class="cloud-state-card"><div class="data-status-line"><b>雲端同步</b><span id="cloudModeState">Pro 專屬</span></div>
+        <div id="cloudProtection" class="cloud-protection">工作資料目前只保存在此裝置。</div>
+        <div class="backup-actions"><button type="button" class="btn primary" id="cloudBackupNow">🔒 Pro 雲端同步</button><button type="button" class="btn" id="cloudRestoreNow" disabled>從雲端還原</button><button type="button" class="btn" id="cloudStop" hidden>暫停同步</button></div>
+        <div id="syncConflict" class="sync-conflict" hidden><b>本機與雲端資料不同</b><p class="hint">先保存兩份安全副本，再選擇要使用的資料。未選擇前不會覆蓋。</p><div class="backup-actions"><button type="button" class="btn" id="syncKeepLocal">保留本機內容</button><button type="button" class="btn" id="syncUseCloud">使用雲端副本</button></div></div>
+        <button type="button" class="btn" id="exportExistingCloud" hidden>取回既有雲端備份檔</button><p class="hint">取回舊備份不需要 Pro；這是手動匯出，不會啟用同步。可用「匯入本機備份檔」還原。</p>
+       </div>
+       <button type="button" class="settings-item" id="clearDevice"><div class="field-icon">⌫</div><div><b>清除此工作區的本機資料</b><small>不刪除雲端，也不刪除其他帳號的本機副本</small></div><span>›</span></button>
+       <button type="button" class="btn welcome-reopen" id="showWelcome">查看首次使用歡迎頁</button><p class="hint">版本 v112・帳號登入與 Pro 雲端同步分開管理</p>
+      </div>
