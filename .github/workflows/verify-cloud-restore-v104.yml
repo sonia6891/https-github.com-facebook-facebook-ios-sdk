@@ -1,0 +1,32 @@
+name: Verify cloud restore safety v104
+on:
+  push:
+    branches: ["fix/cloud-restore-safety-v104"]
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Build and verify
+        run: |
+          mkdir -p "$RUNNER_TEMP/site";git archive 0fc6f41deb2003083613e1cb03b2bd7056240e03 | tar -x -C "$RUNNER_TEMP/site"
+          python maintenance/apply_cloud_restore_safety_v104.py "$RUNNER_TEMP/site"
+          python - <<'PY'
+          import re,pathlib,subprocess,os
+          s=pathlib.Path(os.environ['RUNNER_TEMP'],'site/index.html').read_text()
+          for x in ['hasMeaningfulUserData','clearIndexedBackup','await saveAccountState(false)','await client.auth.signOut()','這個帳號目前沒有可還原的雲端資料','v=104']:assert x in s,x
+          js=re.findall(r'<script[^>]*>([\\s\\S]*?)</script>',s)[-1];f=pathlib.Path(os.environ['RUNNER_TEMP'],'app.js');f.write_text(js);subprocess.run(['node','--check',str(f)],check=True)
+          PY
+      - name: Publish candidate
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "0fc6f41deb2003083613e1cb03b2bd7056240e03"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/index";git read-tree 0fc6f41deb2003083613e1cb03b2bd7056240e03
+          for path in index.html sw.js; do blob=$(git hash-object -w "$RUNNER_TEMP/site/$path");git update-index --add --cacheinfo "100644,$blob,$path";done
+          tree=$(git write-tree);git config user.name sonia6891;git config user.email 107385898+sonia6891@users.noreply.github.com
+          candidate=$(printf '%s\n' 'Protect cloud restore from local clear (v104)' | git commit-tree "$tree" -p 0fc6f41deb2003083613e1cb03b2bd7056240e03)
+          git push origin "$candidate:refs/heads/fix/cloud-restore-candidate-v104"
