@@ -29,6 +29,8 @@ jobs:
         run: python3 tests/browser-v112.py
       - name: Framed welcome and existing-user display tests
         run: python3 tests/browser-frame-v113.py
+      - name: Logout and re-login entry tests
+        run: python3 tests/browser-logout-v114.py
       - name: Stage public application files only
         run: |
           mkdir -p _site
@@ -68,8 +70,8 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v113-framed-welcome' in html
-          assert "const WELCOME_FRAME_KEY='meow-work-welcome-frame-v1'" in html
+          assert 'v114-logout-welcome' in html
+          assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           api=re.search(r"const SUPABASE_URL='([^']+)'",html).group(1)
           key=re.search(r"const SUPABASE_KEY='([^']+)'",html).group(1)
           try:
@@ -88,6 +90,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v113-release-verification
+          name: meow-v114-release-verification
           path: test-results/
           retention-days: 3
