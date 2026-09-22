@@ -1,0 +1,68 @@
+name: Verify and integrate welcome v112
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: implement-v112
+  cancel-in-progress: false
+jobs:
+  integrate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - name: Verify approved brand asset
+        run: |
+          python3 - <<'PY'
+          import base64,hashlib
+          from pathlib import Path
+          src=Path('.github/v112-brand-upload.bin').read_bytes()
+          expected='0dec479584f50d6ceb032cd12eb1e57385e6ec63'
+          def digest(b): return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+          candidates=[src]
+          encoded=base64.b64encode(src).decode()
+          if 'unmw/dV/+H' in encoded:
+              encoded=encoded.replace('unmw/dV/+H','unmw/d/+H',1)
+              for suffix in ['', 'A','AA','AAA']:
+                  try: candidates.append(base64.b64decode(encoded+suffix,validate=True))
+                  except Exception: pass
+          good=next((b for b in candidates if digest(b)==expected),None)
+          if good is None: raise SystemExit('Asset integrity mismatch; production files not changed')
+          Path('assets/welcome-brand-v112.webp').write_bytes(good)
+          print('Approved mascot image verified:',expected)
+          PY
+      - name: Apply guarded source integration
+        run: python3 scripts/apply-v112.py
+      - name: Existing theme regression suite
+        run: node tests/theme-persistence.test.cjs
+      - name: Install browser test tools
+        run: |
+          python3 -m pip install playwright==1.57.0
+          python3 -m playwright install --with-deps chromium
+      - name: Welcome and access browser integration tests
+        run: python3 tests/browser-v112.py
+      - name: Commit only verified application files
+        run: |
+          git add index.html sw.js assets/welcome-brand-v112.webp
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Integrate approved welcome screen and Pro-gated cloud sync (v112)'
+            git push origin HEAD:main
+          fi
+      - name: Preserve test evidence and transfer input
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: welcome-v112-verification
+          include-hidden-files: true
+          path: |
+            test-results/
+            src/
+            scripts/
+            tests/browser-v112.py
+            .github/v112-brand-upload.bin
+            assets/welcome-brand-v112.webp
+          retention-days: 3

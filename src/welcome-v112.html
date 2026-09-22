@@ -1,0 +1,29 @@
+<dialog id="welcomeDialog" class="meow-welcome" aria-labelledby="welcomeTitle">
+  <div class="welcome-sheet">
+    <h1 id="welcomeTitle" class="welcome-sr">喵的，又要上班了</h1>
+    <img class="welcome-art" src="./assets/welcome-brand-v112.webp" alt="灰色厭世貓戴著領帶，托腮坐在辦公桌前。喵的，又要上班了：把班表、薪資和休假，好好記下來。" width="540" height="360">
+    <div class="welcome-content">
+      <div class="welcome-actions">
+        <button type="button" id="welcomeApple" class="welcome-button welcome-apple" hidden><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M17.05 12.54c.03 3.22 2.83 4.29 2.86 4.31-.02.08-.45 1.53-1.48 3.03-.9 1.3-1.84 2.6-3.31 2.62-1.44.03-1.9-.85-3.55-.85-1.64 0-2.16.82-3.52.88-1.42.05-2.5-1.41-3.41-2.71-1.85-2.68-3.27-7.58-1.37-10.89.94-1.64 2.62-2.68 4.44-2.71 1.38-.03 2.68.93 3.52.93.84 0 2.42-1.15 4.08-.98.7.03 2.68.28 3.95 2.14-.1.06-2.36 1.37-2.33 4.23ZM14.33 4.42c.76-.93 1.28-2.22 1.14-3.5-1.1.04-2.44.74-3.23 1.67-.71.81-1.33 2.12-1.16 3.37 1.23.1 2.49-.62 3.25-1.54Z"/></svg><span>使用 Apple 繼續</span><span aria-hidden="true">›</span></button>
+        <button type="button" id="welcomeGoogle" class="welcome-button welcome-google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.61 4.61 0 0 1-2 3.03v2.52h3.24c1.9-1.75 2.98-4.33 2.98-7.38Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.61-2.4l-3.23-2.52c-.9.6-2.06.97-3.38.97-2.6 0-4.81-1.76-5.6-4.13H3.06v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.4 13.92A6 6 0 0 1 6.09 12c0-.66.11-1.3.31-1.92V7.49H3.06A10 10 0 0 0 2 12c0 1.61.38 3.14 1.06 4.51l3.34-2.59Z"/><path fill="#EA4335" d="M12 5.95c1.47 0 2.79.5 3.82 1.49l2.87-2.87A9.63 9.63 0 0 0 12 2a10 10 0 0 0-8.94 5.49l3.34 2.59A6 6 0 0 1 12 5.95Z"/></svg><span>使用 Google 繼續</span><span aria-hidden="true">›</span></button>
+        <div class="welcome-divider"><span>其他登入方式</span></div>
+        <button type="button" id="welcomeEmail" class="welcome-button welcome-email" aria-expanded="false" aria-controls="welcomeEmailFields"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 5 9 7 9-7"/></svg><span>使用 Email 登入</span><span aria-hidden="true">›</span></button>
+        <div id="welcomeEmailFields" class="welcome-email-fields" hidden>
+          <label for="welcomeEmailInput">電子郵件</label><input id="welcomeEmailInput" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
+          <button type="button" id="welcomeSendOtp" class="btn primary">寄送 6 位驗證碼</button>
+          <div id="welcomeOtpFields" hidden><label for="welcomeOtpInput">驗證碼</label><input id="welcomeOtpInput" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="6 位數字"><button type="button" id="welcomeVerifyOtp" class="btn primary">驗證並登入</button></div>
+        </div>
+        <button type="button" id="welcomeGuest" class="welcome-button welcome-guest"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg><span id="welcomeGuestText">先使用，不登入</span><span aria-hidden="true">›</span></button>
+      </div>
+      <p class="welcome-local">資料自動保存在此裝置，之後也能登入。</p>
+      <p id="welcomeMessage" class="welcome-message" role="status" aria-live="polite"></p>
+      <div class="welcome-benefits">
+        <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="17" rx="3"/><path d="M7 2v6m10-6v6M3 10h18m-14 5 3 3 7-6"/></svg></span><b>免費使用</b><p>班表・薪資・休假<br>行程都能記錄</p></div>
+        <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><path d="M6 20a5 5 0 0 1-1-10 7 7 0 0 1 13-2 6 6 0 0 1 0 12Z"/></svg><i>Pro</i></span><b>Pro 雲端同步</b><p>跨裝置・自動備份<br>需有效訂閱或試用</p></div>
+        <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6Z"/><path d="M12 16s-5-3-5-6c0-3 4-3 5-1 1-2 5-2 5 1 0 3-5 6-5 6Z"/></svg></span><b>你的資料，你決定</b><p>工作資料僅在你<br>啟用同步後上傳</p></div>
+      </div>
+      <p class="welcome-foot">登入不會自動開始試用或收費，方案內容可在 App 內隨時查看與管理。</p>
+      <p class="welcome-apple-note" id="welcomeAppleNote">Apple 登入尚未開放；目前可使用 Google、Email 或不登入。</p>
+    </div>
+  </div>
+</dialog>
