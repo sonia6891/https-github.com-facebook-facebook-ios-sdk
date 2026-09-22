@@ -1,0 +1,14 @@
+<dialog class="dialog rotation-dialog" id="rotationDialog" aria-labelledby="rotationTitle" aria-describedby="rotationExampleHint">
+  <form method="dialog" id="rotationForm">
+    <h2 id="rotationTitle" tabindex="-1">四班三輪設定</h2>
+    <p class="hint">排班表會顯示早班、中班、夜班與休假。請依你的公司班表設定個人循環。</p>
+    <div class="field rotation-field"><label for="rotationSequence">循環順序（一天一個）</label><textarea id="rotationSequence" rows="3" maxlength="400" spellcheck="false" placeholder="例如：早 早 中 中 夜 夜 休 休" aria-describedby="rotationExampleHint rotationError"></textarea></div>
+    <p class="hint" id="rotationExampleHint"></p>
+    <div class="rotation-add-days" aria-label="加入一天班次"><button type="button" data-rotation-add="早">＋早班</button><button type="button" data-rotation-add="中">＋中班</button><button type="button" data-rotation-add="夜">＋夜班</button><button type="button" data-rotation-add="休">＋休假</button><button type="button" id="rotationReset">重新填寫</button></div>
+    <div class="rotation-preview" id="rotationPreview" aria-live="polite"></div>
+    <div class="field rotation-field"><label for="rotationStart">循環第1天</label><input id="rotationStart" type="date"><div class="hint">填上面第1格班次對應的日期，不一定是到職日；跨月會連續推算。</div></div>
+    <p class="hint">不會變更每日工時、津貼或加班費設定。此功能只推算班表，不判定工時是否合法。</p>
+    <p class="rotation-error" id="rotationError" role="alert"></p>
+    <div class="rotation-actions"><button type="button" class="btn" id="rotationCancel">取消</button><button type="button" class="btn primary" id="rotationApply">套用班制</button></div>
+  </form>
+</dialog>

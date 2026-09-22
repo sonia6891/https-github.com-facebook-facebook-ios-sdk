@@ -1,0 +1,18 @@
+/* Rotation controls are scoped to the calendar and its setup dialog. */
+.schedule-mode-row{display:flex;align-items:center;gap:12px;padding:14px 0 0;flex-wrap:wrap}
+.schedule-mode-row label{font-size:14px;font-weight:800;color:var(--ink)}
+.schedule-mode-row select{min-width:0;max-width:100%;flex:1;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--paper);color:var(--ink);font:inherit}
+.rotation-active-info{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
+.rotation-active-info p{min-width:0;margin:0;font-size:13px;line-height:1.6;color:var(--ink);overflow-wrap:anywhere}.rotation-active-info button{flex-shrink:0;min-height:44px}
+.rotation-dialog{width:min(480px,calc(100vw - 28px));max-height:calc(100dvh - 28px);padding:20px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);overflow:auto}
+.rotation-dialog::backdrop{background:rgba(20,15,12,.55)}
+.rotation-dialog h2{font-size:21px;margin:0 0 12px;outline:none}.rotation-dialog .hint{line-height:1.7}
+.rotation-dialog .rotation-field{margin:14px 0 8px}.rotation-dialog textarea,.rotation-dialog input{width:100%;min-height:44px;box-sizing:border-box;background:var(--paper);color:var(--ink);font-size:16px}.rotation-dialog textarea{resize:vertical;line-height:1.6;border:1px solid var(--line);border-radius:12px;padding:10px}
+.rotation-add-days{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.rotation-add-days button{padding:8px;border:1px solid var(--line);border-radius:10px;min-height:44px;background:var(--paper);color:var(--ink);font:inherit;font-size:13px}
+.rotation-preview{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;line-height:1.6}.rotation-chip{border-radius:7px;padding:5px 8px;font-weight:750}.rotation-count{width:100%;color:var(--muted);margin-top:5px}
+.rotation-error{color:var(--red);font-size:14px;line-height:1.6;min-height:0}.rotation-error:empty{display:none}
+.rotation-actions{display:flex;gap:10px;margin-top:14px}.rotation-actions button{flex:1;min-height:46px}
+.st-r-early{background:#ffedbd;color:#78521a}.st-r-middle{background:#cfe6ff;color:#215483}.st-r-night{background:#e7dafa;color:#613d85}.st-r-off{background:#e9e5e1;color:#51483f}
+html.dark .st-r-early{background:#463627;color:#ffe1a5}html.dark .st-r-middle{background:#243d52;color:#bde2ff}html.dark .st-r-night{background:#3e2f51;color:#e6cfff}html.dark .st-r-off{background:#37332f;color:#e7d9ce}
+html.dark .rotation-dialog{color-scheme:dark}
+@media(max-width:380px){.rotation-active-info{align-items:flex-start;flex-direction:column}.rotation-active-info button{width:100%}}

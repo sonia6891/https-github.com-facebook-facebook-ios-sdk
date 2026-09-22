@@ -1,0 +1,64 @@
+name: Verify four-team three-shift mode v91
+on:
+  push:
+    branches: ["feature/four-three-v91"]
+permissions:
+  contents: write
+concurrency:
+  group: four-three-v91-qa
+  cancel-in-progress: true
+env:
+  BASE: d74863ebce1daaf168b61ec508e9ea334f05821a
+  LIVE_URL: ""
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test browsers
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Build isolated candidate
+        run: |
+          mkdir -p "$RUNNER_TEMP/rotation-before" "$RUNNER_TEMP/rotation-after" "$RUNNER_TEMP/rotation-report"
+          git archive "$BASE" | tar -x -C "$RUNNER_TEMP/rotation-before"
+          cp -a "$RUNNER_TEMP/rotation-before/." "$RUNNER_TEMP/rotation-after/"
+          python maintenance/apply_rotation.py "$RUNNER_TEMP/rotation-after"
+          python -c 'import pathlib,re,os; s=pathlib.Path(os.environ["RUNNER_TEMP"],"rotation-after/index.html").read_text(); pathlib.Path(os.environ["RUNNER_TEMP"],"app.js").write_text(re.findall(r"<script[^>]*>([\s\S]*?)</script>",s)[-1])'
+          node --check "$RUNNER_TEMP/app.js"
+      - name: Verify legacy cycles and calendar boundaries
+        run: |
+          node maintenance/test_rotation_math.js "$RUNNER_TEMP/rotation-before" "$RUNNER_TEMP/rotation-after" | tee "$RUNNER_TEMP/rotation-report/math.json"
+      - name: Verify actual controls, records and backup round trips
+        run: python maintenance/test_rotation_ui.py "$RUNNER_TEMP/rotation-before" "$RUNNER_TEMP/rotation-after" "$RUNNER_TEMP/rotation-report"
+      - name: Create tested candidate without touching production
+        if: env.LIVE_URL == ''
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$BASE"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/rotation-index"
+          git read-tree "$BASE"
+          for path in index.html sw.js; do
+            blob=$(git hash-object -w "$RUNNER_TEMP/rotation-after/$path")
+            git update-index --add --cacheinfo "100644,$blob,$path"
+          done
+          tree=$(git write-tree)
+          git config user.name 'sonia6891'
+          git config user.email '107385898+sonia6891@users.noreply.github.com'
+          candidate=$(printf '%s\n' 'Add configurable four-team three-shift scheduling mode (v91)' | git commit-tree "$tree" -p "$BASE")
+          git push origin "$candidate:refs/heads/feature/four-three-candidate-v91"
+          echo "$candidate" > "$RUNNER_TEMP/rotation-report/candidate-sha.txt"
+          git diff --stat "$BASE" "$candidate" > "$RUNNER_TEMP/rotation-report/diff-stat.txt"
+      - name: Keep verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: four-three-v91-verification
+          path: ${{ runner.temp }}/rotation-report
+          retention-days: 7
