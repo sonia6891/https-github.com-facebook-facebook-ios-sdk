@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=58">
+<link rel="manifest" href="./manifest.webmanifest?v=59">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -59,7 +59,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 @media(max-width:760px){.salary-tabs{margin-top:8px}.salary-tab{font-size:13px;padding:10px 8px}.scan-upload{grid-template-columns:1fr 1fr}.scan-result-grid{grid-template-columns:1fr 1fr}.scan-head{padding:11px}.scan-preview{max-height:280px}}
 @media(max-width:1100px) and (min-width:761px){#page-dashboard.active{grid-template-columns:1fr}.desktop-dashboard-profile{display:none}#page-dashboard>.section,.footer-art{grid-column:1}.footer-art{grid-row:auto;justify-content:center}.footer-art picture{width:min(100%,420px)}}
 </style>
-<link rel="manifest" href="./manifest.webmanifest?v=58">
+<link rel="manifest" href="./manifest.webmanifest?v=59">
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
@@ -962,12 +962,12 @@ let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salarySubTa
 const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v2';
 const PAYSLIP_OCR_FIELDS=[
   {key:'actualNet',label:'實發金額',kind:'net',priority:30,terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
-  {key:'dedHealthExtra',label:'健保補扣／補充保費',kind:'deduction',priority:40,terms:['健保補扣','健保補扣款','健保補繳','健保補收','補健保','健保補充保費','補充保費','補充健保費','補充保險費','補充保險','補保費','二代健保','二代健保補充保費','二代健保費'],mode:'sum'},
-  {key:'dedPension',label:'勞退自提',kind:'deduction',priority:28,terms:['勞退自提','勞退自提額','自提退休金','退休金自提','勞工退休金自提','勞退提繳','自願提繳退休金','員工自提','自提勞退','勞退','退休自提'],mode:'sum'},
+  {key:'dedHealthExtra',label:'健保補扣／補充保費',kind:'deduction',priority:40,terms:['健保補扣','健保補扣款','健保補繳','健保補收','健保補費','健保追補','補健保','健保補充保費','健保補充費','補充保費','補充健保費','補充保險費','補充保險','補充保','補保費','二代健保','二代健保補充保費','二代健保費','二代健保補費'],mode:'sum'},
+  {key:'dedPension',label:'勞退自提',kind:'deduction',priority:28,terms:['勞退自提','勞退自提額','勞退自提金','勞退自繳','勞退個人自提','勞退個人提繳','自提退休金','退休金自提','退休金自繳','勞工退休金自提','勞退提繳','勞退自願提繳','自願提繳退休金','員工自提','員工退休自提','自提勞退','勞退6%','自提6%','勞退','退休自提'],mode:'sum'},
   {key:'dedAttendance',label:'考勤扣款',kind:'deduction',priority:24,terms:['考勤扣款','缺勤扣款','曠職扣款','遲到扣款','早退扣款','請假扣款','事病假扣款','病假扣款','事假扣款','缺勤','考勤'],mode:'sum'},
-  {key:'dedWelfare',label:'福利金',kind:'deduction',priority:26,terms:['職工福利金','福利金','福利費','福利扣款','福委會費','福委費','福委金','福利委員會費','職福金','職福會費','職工福利','福委'],mode:'sum'},
-  {key:'dedLabor',label:'勞保費',kind:'deduction',priority:26,terms:['勞保費','勞保自付','勞保自付額','勞工保險費','勞工保險','勞保個人負擔','勞保個人','勞保扣款','勞保代扣','勞工保費','勞保'],mode:'sum'},
-  {key:'dedHealth',label:'健保費',kind:'deduction',priority:25,terms:['健保費','健保自付','健保自付額','全民健保費','健康保險費','健保個人負擔','健保個人','健保扣款','健保代扣','健保'],mode:'sum'},
+  {key:'dedWelfare',label:'福利金',kind:'deduction',priority:26,terms:['職工福利金','職工福利費','福利金','福利費','福利扣款','福利金扣款','福委會費','福委費','福委金','福利委員會費','職福金','職福會費','職工福利','福委'],mode:'sum'},
+  {key:'dedLabor',label:'勞保費',kind:'deduction',priority:26,terms:['勞保費','勞保費用','勞保自付','勞保自付額','勞保自負','勞工保險費','勞工保險','勞保個人負擔','勞保個人負擔額','勞保個人','勞保扣款','勞保代扣','勞工保費','勞保'],mode:'sum'},
+  {key:'dedHealth',label:'健保費',kind:'deduction',priority:25,terms:['健保費','健保費用','健保自付','健保自付額','健保自負','全民健保費','健康保險費','健保個人負擔','健保個人負擔額','健保個人','健保扣款','健保代扣','健保'],mode:'sum'},
   {key:'dedTax',label:'所得稅',kind:'deduction',priority:25,terms:['薪資所得稅','所得稅額','所得稅扣款','所得稅','扣繳所得稅','扣繳稅額','扣繳稅','代扣所得稅','代扣稅','所得稅款','薪資扣繳','預扣所得稅','預扣稅','薪資稅','稅額'],mode:'sum'},
   {key:'dedOther',label:'其他扣款',kind:'deduction',priority:5,minScore:.94,terms:['其他扣款','其他代扣','其他減項','應扣其他','代扣其他','雜項扣款','其他應扣'],mode:'sum'},
   {key:'base',label:'底薪／本薪',kind:'income',priority:28,terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','經常性薪資','經常性工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
@@ -975,7 +975,7 @@ const PAYSLIP_OCR_FIELDS=[
   {key:'meal',label:'伙食津貼',kind:'income',priority:24,terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','膳食','餐費津貼','餐費補助','餐費','餐貼','誤餐費','誤餐','餐補','MEAL ALLOWANCE'],mode:'sum'},
   {key:'performance',label:'表現／績效津貼',kind:'income',priority:23,terms:['表現津貼','表現獎金','表現加給','表現','績效津貼','績效獎金','績效獎勵','績效加給','績效','工作獎金','工作津貼','職務津貼','職務加給','專業津貼','專業加給','責任津貼','責任加給','考績獎金','技術津貼','技能津貼','全勤獎金','全勤','獎勵金','PERFORMANCE BONUS','PERFORMANCE ALLOWANCE'],mode:'sum'},
   {key:'transport',label:'交通津貼',kind:'income',priority:20,terms:['交通津貼','交通費','交通補助','交通補貼','通勤津貼','通勤補助','車馬費','車資','油資','TRAVEL ALLOWANCE','TRANSPORT ALLOWANCE'],mode:'sum'},
-  {key:'otPay',label:'加班費',kind:'income',priority:30,terms:['加班費1.33','加班1.33','平日加班1.33','延長工時1.33','加班費1.34','加班1.34','平日加班1.34','延長工時1.34','加班費1.66','加班1.66','加班費1.67','加班1.67','平日加班1.67','加班費2.67','加班2.67','休息日加班1.33','休息日加班1.67','加班費133','加班133','加班費167','加班167','加班費267','加班267','加班費','延長工時工資','延長工時','平日延長工時','平日加班','假日加班','休息日加班','休息日工資','例假加班','例假日加班','國定假日加班','國假加班','超時工資','加班薪資','加班工資','OVERTIME PAY','OVERTIME'],mode:'sum'},
+  {key:'otPay',label:'加班費',kind:'income',priority:30,terms:['免稅加班費','加班免稅','免稅延長工時','免稅延時工資','應稅加班費','加班應稅','應稅延長工時','應稅延時工資','平日加班費','平日加班工資','休息日加班費','休息日加班工資','假日加班費','假日加班工資','國定假日加班費','國假加班費','例假日加班費','延長工時工資','延長工時費','延時工資','超時工資','加班薪資','加班工資','加班費','OVERTIME PAY','OVERTIME'],mode:'sum'},
   {key:'otherIncome',label:'其他收入',kind:'income',priority:5,minScore:.94,terms:['其他收入','其他津貼','其他加給','其他應發','其他獎金','應發其他','應發雜項','其他應發款','雜項收入'],mode:'sum'}
 ]
 function setSalarySubTab(tab){
@@ -1019,7 +1019,13 @@ function normalizeOcrText(s){
     .replace(/[伙夥火][食實]/g,'伙食')
     .replace(/[表錶][現見]/g,'表現')
     .replace(/[績積][效校]/g,'績效')
-    .replace(/加[班斑][費貲]/g,'加班費');
+    .replace(/加[班斑][費貲]/g,'加班費')
+    .replace(/[勞劳]保[費貲]/g,'勞保費')
+    .replace(/[健鍵]保[費貲]/g,'健保費')
+    .replace(/[福褔]利[金全]/g,'福利金')
+    .replace(/[補补][充冲][保倸][費貲]/g,'補充保費')
+    .replace(/[免兔][稅税]加班[費貲]/g,'免稅加班費')
+    .replace(/[應应][稅税]加班[費貲]/g,'應稅加班費');
 }
 function amountCandidates(line){
   const text=normalizeOcrDigits(line);
@@ -1113,14 +1119,26 @@ function collectOcrWords(data){
     if(seen.has(key))return;seen.add(key);
     out.push({text,bbox,confidence:Math.max(0,Math.min(100,Number(w.confidence??w.conf??70)||70))});
   };
+  // Tesseract.js v5 TSV is the most reliable source for word coordinates.
+  if(data&&typeof data.tsv==='string'&&data.tsv.trim()){
+    const rows=data.tsv.trim().split(/\r?\n/),head=rows.shift().split('\t'),idx=Object.fromEntries(head.map((h,i)=>[h,i]));
+    rows.forEach(row=>{
+      const cols=row.split('\t'),level=Number(cols[idx.level]);
+      if(level!==5)return;
+      const text=cols[idx.text]||'',left=Number(cols[idx.left]),top=Number(cols[idx.top]),width=Number(cols[idx.width]),height=Number(cols[idx.height]),conf=Number(cols[idx.conf]);
+      if(text.trim()&&[left,top,width,height].every(Number.isFinite))add({text,confidence:conf,bbox:{x0:left,y0:top,x1:left+width,y1:top+height}});
+    });
+  }
   if(data&&Array.isArray(data.words))data.words.forEach(add);
   const walk=node=>{
     if(!node)return;
     if(Array.isArray(node)){node.forEach(walk);return}
-    if(Array.isArray(node.words)){node.words.forEach(add);return}
-    ['blocks','paragraphs','lines'].forEach(k=>{if(Array.isArray(node[k]))node[k].forEach(walk)});
+    if(Array.isArray(node.words)){node.words.forEach(add)}
+    ['blocks','paragraphs','lines','symbols'].forEach(k=>{if(Array.isArray(node[k]))node[k].forEach(walk)});
   };
   if(data&&Array.isArray(data.blocks))data.blocks.forEach(walk);
+  // Last fallback for older output shapes.
+  if(!out.length&&data&&Array.isArray(data.lines))data.lines.forEach(walk);
   return out;
 }
 function groupOcrWordsIntoLines(words){
@@ -1140,6 +1158,7 @@ function groupOcrWordsIntoLines(words){
     best.avgH=best.words.reduce((s,w)=>s+w.bbox.h,0)/best.words.length;
     best.y0=Math.min(best.y0,word.bbox.y0);best.y1=Math.max(best.y1,word.bbox.y1);
   });
+  lines.sort((a,b)=>a.cy-b.cy);
   lines.forEach((line,index)=>{
     line.index=index;line.words.sort((a,b)=>a.bbox.x0-b.bbox.x0);
     let norm='',raw='',offset=0;line.segments=[];
@@ -1152,7 +1171,7 @@ function groupOcrWordsIntoLines(words){
     line.x0=Math.min(...line.words.map(w=>w.bbox.x0));line.x1=Math.max(...line.words.map(w=>w.bbox.x1));
     line.amounts=extractSpatialAmounts(line);
   });
-  return lines.sort((a,b)=>a.cy-b.cy);
+  return lines;
 }
 function numericTokenValue(text){
   const raw=normalizeOcrDigits(text).replace(/[$NT＄元圓]/gi,'').trim();
@@ -1230,9 +1249,44 @@ function consolidateOccurrences(def,occurrences){
   const best=list.reduce((a,b)=>a.confidence>b.confidence?a:b,list[0]);
   return Object.assign({},best,{value,confidence:list.reduce((s,x)=>s+x.confidence,0)/list.length});
 }
+function pairTableRowsByColumns(lines,width,height,used,byKey,labelAnchors,variant){
+  lines.forEach((labelLine,i)=>{
+    const hits=spatialLineHits(labelLine).filter(h=>h.labelBox);
+    if(hits.length<2)return;
+    const sortedHits=[...hits].sort((a,b)=>a.labelBox.cx-b.labelBox.cx);
+    let bestRow=null,bestScore=-1;
+    for(let step=1;step<=4&&i+step<lines.length;step++){
+      const amountLine=lines[i+step],amounts=amountLine.amounts.filter(a=>!used.has(a.id)).sort((a,b)=>a.bbox.cx-b.bbox.cx);
+      if(amounts.length<Math.max(2,Math.floor(sortedHits.length*.6)))continue;
+      let matched=0,dist=0;
+      sortedHits.forEach(h=>{
+        const candidates=amounts.map(a=>({a,d:Math.abs(a.bbox.cx-h.labelBox.cx)/Math.max(1,width)})).filter(x=>x.d<.13).sort((a,b)=>a.d-b.d);
+        if(candidates.length){matched++;dist+=candidates[0].d}
+      });
+      const score=matched-(dist*5)-(step*.08);
+      if(matched>=2&&score>bestScore){bestScore=score;bestRow={amountLine,amounts}}
+    }
+    if(!bestRow)return;
+    const available=[...bestRow.amounts];
+    sortedHits.forEach(hit=>{
+      const lb=hit.labelBox,labelNorm={x:lb.cx/width,y:lb.cy/height};
+      if(!labelAnchors[hit.def.key]||hit.score>labelAnchors[hit.def.key].score)labelAnchors[hit.def.key]={x:labelNorm.x,y:labelNorm.y,score:hit.score,term:hit.term};
+      const choices=available.map((a,index)=>({a,index,d:Math.abs(a.bbox.cx-lb.cx)/Math.max(1,width)})).filter(x=>x.d<.15).sort((a,b)=>a.d-b.d);
+      if(!choices.length)return;
+      const chosen=choices[0];available.splice(chosen.index,1);used.add(chosen.a.id);
+      const conf=Math.min(.99,hit.score*.56+(chosen.a.confidence/100)*.19+(1-Math.min(1,chosen.d/.15))*.25);
+      const occ={key:hit.def.key,value:chosen.a.value,term:hit.term,confidence:conf,method:hit.exact?'表格欄位精確':'表格欄位模糊',variant:variant.name,
+        labelNorm,amountNorm:{x:chosen.a.bbox.cx/width,y:chosen.a.bbox.cy/height},line:labelLine.text,lineIndex:labelLine.index};
+      (byKey[hit.def.key]||(byKey[hit.def.key]=[])).push(occ);
+    });
+  });
+}
 function parseSpatialOcr(data,variant){
   const width=variant.width||1,height=variant.height||1,words=collectOcrWords(data),lines=groupOcrWordsIntoLines(words);
   const used=new Set(),byKey={},labelAnchors={};
+  // First pass: detect classic payroll tables where labels are one row and values the next row.
+  pairTableRowsByColumns(lines,width,height,used,byKey,labelAnchors,variant);
+  // Second pass: individual same-row / same-column matching.
   lines.forEach(line=>{
     spatialLineHits(line).forEach(hit=>{
       const lb=hit.labelBox,labelNorm={x:lb.cx/width,y:lb.cy/height};
@@ -1242,7 +1296,7 @@ function parseSpatialOcr(data,variant){
       used.add(pair.amount.id);
       const conf=Math.min(.99,hit.score*.58+(pair.amount.confidence/100)*.17+pair.proximity*.25);
       const occ={key:hit.def.key,value:pair.amount.value,term:hit.term,confidence:conf,method:hit.exact?'座標精確':'座標模糊',variant:variant.name,
-        labelNorm,amountNorm:{x:pair.amount.bbox.cx/width,y:pair.amount.bbox.cy/height},line:line.text};
+        labelNorm,amountNorm:{x:pair.amount.bbox.cx/width,y:pair.amount.bbox.cy/height},line:line.text,lineIndex:line.index};
       (byKey[hit.def.key]||(byKey[hit.def.key]=[])).push(occ);
     });
   });
@@ -1336,7 +1390,8 @@ function clusterOcrCandidates(candidates){
   return clusters.sort((a,b)=>b.score-a.score);
 }
 function mergePayslipRuns(runs){
-  const result={__matches:[],__confidence:{},__fieldWarnings:{},__runSummaries:[],__usedMemory:false,__aspect:runs[0]?.aspect||0,__labelAnchors:runs[0]?.labelAnchors||{}};
+  const result={__matches:[],__confidence:{},__fieldWarnings:{},__labelOnly:{},__runSummaries:[],__usedMemory:false,__aspect:runs[0]?.aspect||0,__labelAnchors:runs[0]?.labelAnchors||{}};
+  PAYSLIP_OCR_FIELDS.forEach(def=>{const anchors=runs.map(r=>r.labelAnchors&&r.labelAnchors[def.key]).filter(Boolean);if(anchors.length)result.__labelOnly[def.key]=anchors.sort((a,b)=>b.score-a.score)[0]});
   PAYSLIP_OCR_FIELDS.forEach(def=>{
     const candidates=runs.map(r=>r.fields[def.key]).filter(Boolean);if(!candidates.length)return;
     const clusters=clusterOcrCandidates(candidates),winner=clusters[0],value=Math.round(winner.mean*100)/100;
@@ -1448,10 +1503,11 @@ function renderPayslipDetected(){
   box.innerHTML=PAYSLIP_OCR_FIELDS.map(def=>{
     const has=Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key),value=has?payslipOcrResult[def.key]:'',hit=matches.find(m=>m.key===def.key);
     const conf=has?Math.round(100*num(payslipOcrResult.__confidence?.[def.key]||hit?.confidence||0)):0;
-    const confClass=conf>=85?'':conf>=65?' mid':' low',source=hit?(hit.source||hit.method||'OCR'):'未辨識';
+    const labelSeen=!has&&!!(payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[def.key]);
+    const confClass=conf>=85?'':conf>=65?' mid':' low',source=hit?(hit.source||hit.method||'OCR'):(labelSeen?'有讀到欄位名，但金額尚未配對':'未辨識');
     const warn=[disagreement[def.key],validation[def.key]].filter(Boolean).join(' ');
     return '<div class="scan-result-field'+(warn?' has-warning':'')+'"><label>'+escapeHtml(def.label)+'</label><input type="number" min="0" step="1" data-ocr-field="'+def.key+'" value="'+(value===''?'':escapeHtml(value))+'" placeholder="未辨識">'+
-      '<div class="ocr-meta">'+(has?'<span class="ocr-confidence'+confClass+'">信心 '+conf+'%</span>':'<span class="ocr-confidence low">未辨識</span>')+'<span class="ocr-source">'+escapeHtml(source)+(hit&&hit.term?'・'+escapeHtml(hit.term):'')+'</span></div>'+
+      '<div class="ocr-meta">'+(has?'<span class="ocr-confidence'+confClass+'">信心 '+conf+'%</span>':(labelSeen?'<span class="ocr-confidence mid">欄位已讀到</span>':'<span class="ocr-confidence low">未辨識</span>'))+'<span class="ocr-source">'+escapeHtml(source)+(hit&&hit.term?'・'+escapeHtml(hit.term):'')+'</span></div>'+
       (warn?'<span class="ocr-warning">⚠ '+escapeHtml(warn)+'</span>':'')+'</div>';
   }).join('');
   qsa('[data-ocr-field]').forEach(input=>input.onchange=e=>{
@@ -1499,12 +1555,16 @@ async function runPayslipOcr(file){
     const runs=[];
     for(currentPass=0;currentPass<variants.length;currentPass++){
       const variant=variants[currentPass];let data;
+      if(worker&&worker.setParameters){
+        const psm=currentPass===0?(window.Tesseract.PSM?.AUTO||3):currentPass===1?(window.Tesseract.PSM?.SPARSE_TEXT||11):(window.Tesseract.PSM?.SINGLE_BLOCK||6);
+        try{await worker.setParameters({tessedit_pageseg_mode:String(psm),preserve_interword_spaces:'1'})}catch(e){}
+      }
       if(worker){
         let res;
         try{res=await worker.recognize(variant.image,{}, {text:true,blocks:true,tsv:true})}catch(e){res=await worker.recognize(variant.image)}
         data=res.data;
       }else{
-        const res=await window.Tesseract.recognize(variant.image,'chi_tra+eng',{logger});data=res.data;
+        const res=await window.Tesseract.recognize(variant.image,'chi_tra+eng',{logger}, {text:true,blocks:true,tsv:true});data=res.data;
       }
       runs.push(parseSingleOcrRun(data,variant));
     }
@@ -1512,12 +1572,12 @@ async function runPayslipOcr(file){
     payslipOcrRuns=runs;payslipRawText=runs.map(r=>'【'+r.variant+'】\n'+(r.text||'')).join('\n\n');
     payslipOcrResult=mergePayslipRuns(runs);
     renderPayslipDetected();$('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';$('payslipScanResult').classList.remove('hidden');
-    const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key));
+    const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),labelOnlyDefs=missingDefs.filter(def=>payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[def.key]),reallyMissingDefs=missingDefs.filter(def=>!labelOnlyDefs.includes(def));
     status.childNodes[0].nodeValue='第二代辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
     if($('payslipMissingFields')){
       const warningCount=Object.keys(validatePayslipValues(payslipOcrResult)).length+Object.keys(payslipOcrResult.__fieldWarnings||{}).length;
       $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0&&warningCount===0);
-      $('payslipMissingFields').textContent=(missingDefs.length?'尚未辨識：'+missingDefs.map(def=>def.label).join('、')+'。 ':'')+(warningCount?'另有 '+warningCount+' 個欄位需要人工確認。':'');
+      $('payslipMissingFields').textContent=(labelOnlyDefs.length?'已讀到欄位名稱但尚未抓到金額：'+labelOnlyDefs.map(def=>def.label).join('、')+'。 ':'')+(reallyMissingDefs.length?'完全未辨識：'+reallyMissingDefs.map(def=>def.label).join('、')+'。 ':'')+(warningCount?'另有 '+warningCount+' 個欄位需要人工確認。':'');
     }
     bar.style.width='100%';
   }catch(e){
