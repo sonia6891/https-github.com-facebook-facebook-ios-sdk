@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=111">
+<link rel="manifest" href="./manifest.webmanifest?v=112">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <script id="meow-theme-boot">
@@ -449,6 +449,29 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
+<style id="meow-welcome-styles">
+/* The welcome screen shares the application's cream/apricot/brown palette. */
+.meow-welcome{padding:0;border:0;max-width:none;max-height:none;width:100%;height:100dvh;inset:0;margin:0;background:var(--bg);color:var(--ink);overflow:auto;overscroll-behavior:contain}
+.meow-welcome::backdrop{background:var(--bg)}
+.welcome-sheet{max-width:460px;margin:0 auto;min-height:100%;background:#fff9f1;padding-top:env(safe-area-inset-top);padding-bottom:max(14px,env(safe-area-inset-bottom));color:#3c1c15}
+.welcome-art{display:block;width:100%;height:auto;object-fit:contain}
+.welcome-content{padding:0 20px 6px}.welcome-actions{display:grid;gap:10px}
+.welcome-button{position:relative;min-height:50px;width:100%;display:grid;grid-template-columns:28px 1fr 14px;align-items:center;gap:12px;padding:12px 20px;border-radius:16px;font-size:17px;font-weight:750;line-height:1.4;border:1px solid #dedbd5;background:#fff;color:#202632;text-align:center;box-shadow:0 2px 5px rgba(111,70,43,.025)}
+.welcome-button[hidden],.welcome-email-fields[hidden],#welcomeOtpFields[hidden]{display:none!important}
+.welcome-button:disabled{opacity:.55;cursor:wait}.welcome-button>svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.welcome-google>svg{stroke:none}.welcome-apple{background:#171717;color:#fff;border-color:#171717}.welcome-email{background:#eeebe8;border-color:transparent}.welcome-guest{background:#fff0d4;color:#754327;border:1.5px solid #cf7b43}.welcome-guest svg{fill:#a66641;stroke:#a66641}
+.welcome-divider{display:flex;align-items:center;gap:12px;color:#7c7169;font-size:12px;margin:2px 0}.welcome-divider:before,.welcome-divider:after{content:"";height:1px;flex:1;background:#d9cdc1}
+.welcome-local{text-align:center;font-size:12px;line-height:1.6;margin:9px 0 0;color:#7b604e}.welcome-message{font-size:12px;color:#9a4427;line-height:1.5;text-align:center;margin:6px 0;min-height:0}.welcome-message:empty{display:none}
+.welcome-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:16px -7px 0;gap:0}.welcome-benefits>div{text-align:center;min-width:0;padding:0 4px;position:relative}.welcome-benefits>div+div:before{content:"";height:54px;width:1px;background:#e4d5c5;position:absolute;left:0;bottom:2px}.welcome-benefits b{display:block;font-size:12px;margin:6px -3px 0;line-height:1.5}.welcome-benefits p{font-size:10.5px;color:#7a6b60;line-height:1.7;margin:3px 0}.welcome-benefit-icon{position:relative;display:grid;place-items:center;width:44px;height:44px;margin:auto;background:#ffedd6;border-radius:50%;font-size:27px;font-weight:600}.welcome-benefit-icon i{position:absolute;top:-3px;right:-5px;padding:2px 4px;background:#f6b444;color:#633211;border-radius:6px;font-size:8px;font-style:normal}
+.welcome-foot{font-size:10px;color:#827369;line-height:1.65;text-align:center;margin:17px 0 0}.welcome-apple-note{font-size:10px;color:#8e776c;text-align:center;line-height:1.5;margin:8px 0 0}.welcome-sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.welcome-email-fields{padding:13px;background:#fff3e3;border:1px solid #ecd7bf;border-radius:16px;display:grid;gap:9px}.welcome-email-fields label{font-size:13px;display:block;margin:4px 0}.welcome-email-fields input{width:100%;min-height:44px;padding:10px;border-radius:10px;border:1px solid #d9c1a9;background:#fff;color:#3c1c15;font-size:16px}.welcome-email-fields .btn{width:100%;margin-top:6px}
+.sync-detail{font-size:12px;line-height:1.65;margin-top:8px;color:var(--muted)}.sync-status-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.sync-conflict{border:1px solid #e4a04f;padding:12px;border-radius:12px;margin-top:12px;background:var(--orangeSoft)}
+@media(max-width:350px){.welcome-content{padding-left:14px;padding-right:14px}.welcome-button{font-size:15px}.welcome-benefits b{font-size:11px}.welcome-benefits p{font-size:10px}}
+@media(min-width:761px){.meow-welcome{background:#f0e6da}.welcome-sheet{box-shadow:0 0 60px #6e49311a}}
+html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-local,html.dark .welcome-foot,html.dark .welcome-apple-note,html.dark .welcome-benefits p{color:#d5beaf}html.dark .welcome-divider{color:#d5beaf}html.dark .welcome-benefit-icon{background:#493322}html.dark .welcome-guest{background:#483322;color:#ffd49b}html.dark .welcome-email{background:#3b302a;color:#fff4eb}
+.welcome-benefit-icon svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
@@ -896,17 +919,17 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
         </div>
         <div class="hint" id="devPlanStatus" style="margin-top:8px"></div>
       </div>
-      <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>資料管理</div><div class="settings-list">
+      <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>資料與同步</div><div class="settings-list">
         <button class="settings-item" id="saveDevice"><div class="field-icon" style="background:var(--mobile-gold-icon, #e2f0ff);color:var(--mobile-gold-ink, #2072bf)"><svg class="icon"><use href="#i-cloud"/></svg></div><div><b>儲存到此裝置</b><small id="saveState">將目前設定與資料儲存到本機裝置</small></div><span>›</span></button>
         <button class="settings-item" id="exportBackup"><div class="field-icon" style="background:var(--mobile-gold-icon, #e9f7ec);color:var(--mobile-gold-ink, #31824a)">⇩</div><div><b>匯出備份檔</b><small>存到 iPhone「檔案」或其他安全位置，重裝後可還原</small></div><span>›</span></button>
         <button type="button" class="settings-item" id="importBackup" aria-controls="importBackupInput"><div class="field-icon" style="background:var(--mobile-gold-icon, #fff1dc);color:var(--mobile-gold-ink, #a96720)">⇧</div><div><b>匯入備份檔</b><small>從先前匯出的 JSON 備份還原資料</small></div><span>›</span></button>
         <input class="hidden" id="importBackupInput" type="file" accept=".json,application/json">
-        <button class="settings-item" id="clearDevice"><div class="field-icon" style="background:var(--mobile-gold-icon, #ffe6e8);color:var(--mobile-gold-ink, #dd4a59)"><svg class="icon"><use href="#i-trash"/></svg></div><div><b>清除已儲存資料</b><small>只刪除這台裝置；已登入的雲端資料不會刪除</small></div><span>›</span></button>
+        <button class="settings-item" id="clearDevice"><div class="field-icon" style="background:var(--mobile-gold-icon, #ffe6e8);color:var(--mobile-gold-ink, #dd4a59)"><svg class="icon"><use href="#i-trash"/></svg></div><div><b>清除目前本機工作區</b><small>只清除目前本機工作區；不刪除雲端資料</small></div><span>›</span></button>
       </div></div>
       <div class="card settings-card">
-        <div class="section-title"><span class="paw">🐾</span>帳號與即時同步</div>
+        <div class="section-title"><span class="paw">🐾</span>帳號與方案</div>
         <div id="emailLoginPanel">
-          <div class="hint" style="margin-top:10px">登入後會自動開啟雲端同步；換手機或重新安裝後，使用同一帳號即可恢復資料。</div>
+          <div class="hint" style="margin-top:10px">登入只辨識帳號及訂閱資格；免費版工作資料仍保存在這台裝置。</div>
           <div class="settings-actions" style="margin-top:12px">
             <button class="btn primary" id="googleLogin" type="button">G　使用 Google 繼續</button>
           </div>
@@ -939,16 +962,20 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
             <button class="btn danger" id="accountLogout">登出</button>
           </div>
           <div class="backup-actions">
+            <button class="btn primary" id="toggleCloudSync" type="button">查看 Pro 雲端同步</button>
             <button class="btn primary" id="cloudBackupNow">立即備份到雲端</button>
             <button class="btn" id="cloudRestoreNow">從雲端還原</button>
           </div>
         </div>
+        <div id="cloudConflictBox" class="sync-conflict hidden"><b>本機與雲端有不同版本</b><p class="sync-detail">不會自動覆蓋。請選擇要繼續使用的版本。</p><div class="settings-actions"><button class="btn" id="keepLocalVersion" type="button">保留本機，上傳雲端</button><button class="btn" id="keepCloudVersion" type="button">保留雲端，還原本機</button></div></div>
+        <div class="sync-detail" id="cloudDetail"></div>
+        <div class="sync-status-row"><button type="button" class="btn hidden" id="legacyCloudExport">取回舊版雲端備份（唯讀）</button><button type="button" class="btn" id="showWelcome">查看登入歡迎頁</button></div>
         <div class="cloud-protection" id="cloudProtection">⚠ 尚未啟用雲端保護。刪除 App 或網站資料後，本機資料可能無法找回。</div>
-        <div class="hint" id="accountStatus" style="margin-top:10px">使用同一個登入帳號後，App 會讀取同一份雲端資料並自動同步。</div>
-        <div class="backup-note">建議：重要資料除了登入雲端同步，也定期「匯出備份檔」存到 iPhone 檔案或雲端硬碟。</div>
+        <div class="hint" id="accountStatus" style="margin-top:10px">登入不會自動開始試用或收費。</div>
+        <div class="backup-note">重要資料請定期手動匯出備份；只有有效 Pro／試用並啟用同步後，才會上傳工作資料。</div>
       </div>
       <div class="card settings-card install-only"><div class="section-title"><span class="paw">🐾</span>App 安裝 / 加入主畫面</div><div class="install-row"><div><b>將 App 加入主畫面</b><div class="hint" id="installHint">快速開啟，使用更方便</div></div><button class="btn primary" id="installApp"><svg class="icon" style="display:inline-block;vertical-align:-3px"><use href="#i-phone"/></svg> 安裝</button></div></div>
-      <div class="card settings-card"><div class="install-row"><div><b>ⓘ 關於 喵的，又要上班了</b><div class="hint">版本 1.0.0（介面 v110）・輪班排班、行程、請假與薪資試算</div></div><span>🐾</span></div></div>
+      <div class="card settings-card"><div class="install-row"><div><b>ⓘ 關於 喵的，又要上班了</b><div class="hint">版本 1.0.0（介面 v112）・輪班排班、行程、請假與薪資試算</div></div><span>🐾</span></div></div>
     </div>
     <div class="footer-banner"><img src="data:image/webp;base64,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" alt="休息一下，是為了走更長遠的路"></div>
   </section>
@@ -1045,6 +1072,36 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
   </form>
 </dialog>
 
+<dialog id="welcomeDialog" class="meow-welcome" aria-labelledby="welcomeTitle">
+  <div class="welcome-sheet">
+    <h1 id="welcomeTitle" class="welcome-sr">喵的，又要上班了</h1>
+    <img class="welcome-art" src="./assets/welcome-brand-v112.webp" alt="灰色厭世貓戴著領帶，托腮坐在辦公桌前。喵的，又要上班了：把班表、薪資和休假，好好記下來。" width="540" height="360">
+    <div class="welcome-content">
+      <div class="welcome-actions">
+        <button type="button" id="welcomeApple" class="welcome-button welcome-apple" hidden><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M17.05 12.54c.03 3.22 2.83 4.29 2.86 4.31-.02.08-.45 1.53-1.48 3.03-.9 1.3-1.84 2.6-3.31 2.62-1.44.03-1.9-.85-3.55-.85-1.64 0-2.16.82-3.52.88-1.42.05-2.5-1.41-3.41-2.71-1.85-2.68-3.27-7.58-1.37-10.89.94-1.64 2.62-2.68 4.44-2.71 1.38-.03 2.68.93 3.52.93.84 0 2.42-1.15 4.08-.98.7.03 2.68.28 3.95 2.14-.1.06-2.36 1.37-2.33 4.23ZM14.33 4.42c.76-.93 1.28-2.22 1.14-3.5-1.1.04-2.44.74-3.23 1.67-.71.81-1.33 2.12-1.16 3.37 1.23.1 2.49-.62 3.25-1.54Z"/></svg><span>使用 Apple 繼續</span><span aria-hidden="true">›</span></button>
+        <button type="button" id="welcomeGoogle" class="welcome-button welcome-google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.61 4.61 0 0 1-2 3.03v2.52h3.24c1.9-1.75 2.98-4.33 2.98-7.38Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.61-2.4l-3.23-2.52c-.9.6-2.06.97-3.38.97-2.6 0-4.81-1.76-5.6-4.13H3.06v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.4 13.92A6 6 0 0 1 6.09 12c0-.66.11-1.3.31-1.92V7.49H3.06A10 10 0 0 0 2 12c0 1.61.38 3.14 1.06 4.51l3.34-2.59Z"/><path fill="#EA4335" d="M12 5.95c1.47 0 2.79.5 3.82 1.49l2.87-2.87A9.63 9.63 0 0 0 12 2a10 10 0 0 0-8.94 5.49l3.34 2.59A6 6 0 0 1 12 5.95Z"/></svg><span>使用 Google 繼續</span><span aria-hidden="true">›</span></button>
+        <div class="welcome-divider"><span>其他登入方式</span></div>
+        <button type="button" id="welcomeEmail" class="welcome-button welcome-email" aria-expanded="false" aria-controls="welcomeEmailFields"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 5 9 7 9-7"/></svg><span>使用 Email 登入</span><span aria-hidden="true">›</span></button>
+        <div id="welcomeEmailFields" class="welcome-email-fields" hidden>
+          <label for="welcomeEmailInput">電子郵件</label><input id="welcomeEmailInput" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
+          <button type="button" id="welcomeSendOtp" class="btn primary">寄送 6 位驗證碼</button>
+          <div id="welcomeOtpFields" hidden><label for="welcomeOtpInput">驗證碼</label><input id="welcomeOtpInput" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="6 位數字"><button type="button" id="welcomeVerifyOtp" class="btn primary">驗證並登入</button></div>
+        </div>
+        <button type="button" id="welcomeGuest" class="welcome-button welcome-guest"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg><span id="welcomeGuestText">先使用，不登入</span><span aria-hidden="true">›</span></button>
+      </div>
+      <p class="welcome-local">資料自動保存在此裝置，之後也能登入。</p>
+      <p id="welcomeMessage" class="welcome-message" role="status" aria-live="polite"></p>
+      <div class="welcome-benefits">
+        <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="17" rx="3"/><path d="M7 2v6m10-6v6M3 10h18m-14 5 3 3 7-6"/></svg></span><b>免費使用</b><p>班表・薪資・休假<br>行程都能記錄</p></div>
+        <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><path d="M6 20a5 5 0 0 1-1-10 7 7 0 0 1 13-2 6 6 0 0 1 0 12Z"/></svg><i>Pro</i></span><b>Pro 雲端同步</b><p>跨裝置・自動備份<br>需有效訂閱或試用</p></div>
+        <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6Z"/><path d="M12 16s-5-3-5-6c0-3 4-3 5-1 1-2 5-2 5 1 0 3-5 6-5 6Z"/></svg></span><b>你的資料，你決定</b><p>工作資料僅在你<br>啟用同步後上傳</p></div>
+      </div>
+      <p class="welcome-foot">登入不會自動開始試用或收費，方案內容可在 App 內隨時查看與管理。</p>
+      <p class="welcome-apple-note" id="welcomeAppleNote">Apple 登入尚未開放；目前可使用 Google、Email 或不登入。</p>
+    </div>
+  </div>
+</dialog>
+
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script>
 (function(){
@@ -1064,6 +1121,8 @@ const DEVICE_ID_KEY='meow-work-device-id-v1';
 const DEV_MODE_KEY='meow-work-dev-mode-v1';
 const DEV_PLAN_KEY='meow-work-dev-plan-v1';
 const FEATURE_CATALOG={
+  cloud_sync:{label:'工作資料雲端同步',tier:'pro'},
+  cloud_backup:{label:'雲端備份與還原',tier:'pro'},
   basic_salary_compare:{label:'基本薪資對帳',tier:'free'},
   payslip_scan:{label:'薪資單拍照／上傳辨識',tier:'pro'},
   itemized_salary_compare:{label:'逐項薪資對帳',tier:'pro'},
@@ -1080,7 +1139,7 @@ if(DEV_TESTING_ENABLED){
 }
 function currentPlan(){
   if(DEV_TESTING_ENABLED)return devPlan==='free'?'free':'pro';
-  return serverPlan==='pro'?'pro':'free';
+  return hasCloudEntitlement()?'pro':'free';
 }
 function isDeveloperTest(){return DEV_TESTING_ENABLED&&devPlan==='dev'}
 function canUse(feature){const meta=FEATURE_CATALOG[feature];return !!meta&&(meta.tier==='free'||currentPlan()==='pro')}
@@ -1093,11 +1152,11 @@ let loaded=loadSaved(),state=loaded.state,lastSavedAt=loaded.savedAt,current=new
 state.theme=preferredTheme();
 try{
   const savedAvatar=localStorage.getItem(AVATAR_KEY);
-  if(savedAvatar!==null)state.profile.avatar=savedAvatar;
+  if(savedAvatar!==null&&!readSnapshotOwner())state.profile.avatar=savedAvatar;
 }catch(e){}
 try{
   const savedSchedule=localStorage.getItem(SCHEDULE_KEY);
-  if(savedSchedule){
+  if(savedSchedule&&!readSnapshotOwner()){
     state.schedule=Object.assign({},state.schedule,JSON.parse(savedSchedule));
   }
 }catch(e){}
@@ -1157,8 +1216,10 @@ async function readIndexedBackup(){
   }catch(e){return null}
 }
 async function restoreIndexedMirrorIfNewer(){
+  const owner=localOwner,edit=localEditVersion;
   const backup=await readIndexedBackup();
-  if(!backup||!backup.state)return;
+  if(owner!==localOwner||edit!==localEditVersion||!backup||!backup.state)return;
+  if((backup.owner||'guest')!==localOwner)return;
   const localTime=lastSavedAt?Date.parse(lastSavedAt):0,backupTime=backup.savedAt?Date.parse(backup.savedAt):0;
   if(backupTime>localTime){
     state=normalizeState(backup.state);
@@ -1172,13 +1233,18 @@ async function restoreIndexedMirrorIfNewer(){
   }
 }
 function persistLocalSnapshot(){
+  const when=new Date().toISOString();
   try{
-    lastSavedAt=new Date().toISOString();
-    localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
+    const snapshot={savedAt:when,state,owner:localOwner};
+    localStorage.setItem(SAVE_KEY,JSON.stringify(snapshot));
+    lastSavedAt=when;
     localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
     localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
-    writeIndexedBackup({savedAt:lastSavedAt,state});
-  }catch(e){}
+    localStorage.setItem(OWNER_KEY,localOwner);
+    localStorage.setItem(workspaceKey(localOwner),JSON.stringify(snapshot));
+    writeIndexedBackup(JSON.parse(JSON.stringify(snapshot)));
+    localSaveError=false;return true;
+  }catch(e){localSaveError=true;renderSyncStatus();return false}
 }
 function syncPayload(history=[]){return{version:3,savedAt:lastSavedAt||new Date().toISOString(),deviceId,state,history}}
 function cloudHistoryEntries(payload){return Array.isArray(payload&&payload.history)?payload.history.filter(x=>x&&x.state):[]}
@@ -1190,8 +1256,10 @@ function newestMeaningfulCloudSnapshot(payload){
 }
 function hasMeaningfulUserData(v=state){
   const d=defaultState(),x=v||{};
-  if(Object.keys(x.dayStatus||{}).length||Object.keys(x.personalEvents||{}).length||Object.keys(x.months||{}).length)return true;
+  if(Object.keys(x.dayStatus||{}).length||Object.keys(x.personalEvents||{}).length)return true;
+  if(Object.values(x.months||{}).some(m=>m&&Object.keys(m).length))return true;
   if((x.profile&&x.profile.avatar)||(x.profile&&x.profile.name&&x.profile.name!==d.profile.name))return true;
+  if(x.schedule&&Object.keys(d.schedule).some(k=>x.schedule[k]!==undefined&&JSON.stringify(x.schedule[k])!==JSON.stringify(d.schedule[k])))return true;
   const st=x.settings||{},ds=d.settings;
   return Object.keys(ds).some(k=>JSON.stringify(st[k]??ds[k])!==JSON.stringify(ds[k]));
 }
@@ -1218,145 +1286,284 @@ async function getAuthClient(){
   });
   return authClient;
 }
-function setAccountStatus(msg){accountStatusText=msg;if($('accountStatus'))$('accountStatus').textContent=msg}
+// Account identity, local workspaces and Pro cloud access are independent.
+const WELCOME_KEY='meow-work-welcome-v1',OWNER_KEY='meow-work-local-owner-v1';
+let localOwner=readSnapshotOwner()||readLocalString(OWNER_KEY)||'guest';
+let accessEpoch=0,accessCheckedUser='',accessServerMs=0,accessLocalMs=0;
+let cloudRevision=null,cloudPayload=null,cloudReady=false,cloudStatus='未啟用・Pro 專屬';
+let cloudLastSuccess='',pendingCloud=null,localEditVersion=0,localSaveError=false;
+let localDirty=readWorkspaceMeta().dirty!==false;
+let cloudConsent=readLocalString('meow-work-cloud-consent:'+localOwner)==='yes';
+let expiryTimer=null,entitlementRequest=0,authEventTimer=null,authBusyEpoch=-1;
+let welcomeManual=false;
+function readLocalString(key){try{return localStorage.getItem(key)||''}catch(e){return ''}}
+function readSnapshotOwner(){try{return JSON.parse(readLocalString(SAVE_KEY)||'null')?.owner||''}catch(e){return ''}}
+function workspaceKey(owner){return 'meow-work-workspace-v1:'+owner}
+function readWorkspaceMeta(){try{return JSON.parse(localStorage.getItem('meow-work-sync-meta:'+localOwner)||'{}')}catch(e){return {}}}
+function writeWorkspaceMeta(){try{localStorage.setItem('meow-work-sync-meta:'+localOwner,JSON.stringify({dirty:localDirty,revision:cloudRevision,lastSuccess:cloudLastSuccess}))}catch(e){}}
+function snapshotOfLocal(){return {savedAt:lastSavedAt,state:JSON.parse(JSON.stringify(state)),owner:localOwner}}
+function archiveWorkspace(){try{localStorage.setItem(workspaceKey(localOwner),JSON.stringify(snapshotOfLocal()));return true}catch(e){localSaveError=true;return false}}
+function preserveBeforeReplace(){try{localStorage.setItem('meow-work-before-replace:'+localOwner,JSON.stringify(snapshotOfLocal()));return true}catch(e){localSaveError=true;return false}}
+function workFingerprint(s){return JSON.stringify([s.profile||{},s.schedule||{},s.settings||{},s.months||{},s.dayStatus||{},s.personalEvents||{}])}
+function switchWorkspace(owner){
+  if(owner===localOwner)return true;
+  if(!archiveWorkspace()){alert('本機儲存空間不足，請先匯出備份。現在不會切換或覆蓋工作資料。');return false}
+  let next=null;
+  try{next=JSON.parse(readLocalString(workspaceKey(owner))||'null')}catch(e){}
+  if(!next&&localOwner==='guest'&&owner!=='guest'&&hasMeaningfulUserData()){
+    if(confirm('要把目前「未登入」的本機資料帶入這個帳號嗎？\n\n資料仍只保存在這台裝置，不會因此啟動雲端同步。取消則使用獨立的空白工作區，原資料仍保留在未登入工作區。'))next=snapshotOfLocal();
+  }
+  const nextState=normalizeState(next&&next.state||defaultState());
+  try{
+    localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:next&&next.savedAt||null,state:nextState,owner}));
+  }catch(e){localSaveError=true;alert('儲存失敗，工作區未切換。請先匯出備份。');return false}
+  try{localStorage.setItem(OWNER_KEY,owner);localStorage.setItem(AVATAR_KEY,nextState.profile.avatar||'');localStorage.setItem(SCHEDULE_KEY,JSON.stringify(nextState.schedule))}catch(e){localSaveError=true}
+  localOwner=owner;state=nextState;lastSavedAt=next&&next.savedAt||null;localEditVersion++;
+  cloudRevision=null;cloudPayload=null;cloudReady=false;pendingCloud=null;
+  const meta=readWorkspaceMeta();localDirty=meta.dirty!==false;cloudLastSuccess=meta.lastSuccess||'';
+  cloudConsent=readLocalString('meow-work-cloud-consent:'+owner)==='yes';
+  applyTheme();render();return true;
+}
+function accountServerNow(){return accessServerMs?accessServerMs+(performance.now()-accessLocalMs):Date.now()}
 function entitlementIsActive(row){
-  if(!row||row.plan!=='pro'||!['active','trialing'].includes(row.status))return false;
-  if(!row.pro_until)return true;
-  const until=Date.parse(row.pro_until);
-  return Number.isFinite(until)&&until>Date.now();
+  if(!row||row.plan!=='pro'||!['active','trialing'].includes(row.status)||!row.pro_until)return false;
+  const until=Date.parse(row.pro_until);return Number.isFinite(until)&&until>accountServerNow();
+}
+function hasCloudEntitlement(){return !!(authUser&&accessCheckedUser===authUser.id&&entitlementIsActive({plan:serverPlan,status:entitlementStatus,pro_until:entitlementUntil}))}
+function canCloudSync(){return hasCloudEntitlement()&&localOwner===authUser.id&&cloudConsent}
+function sameAccess(uid,epoch){return !!(authUser&&authUser.id===uid&&localOwner===uid&&accessEpoch===epoch)}
+function setAccountStatus(msg){accountStatusText=msg;if($('accountStatus'))$('accountStatus').textContent=msg;if($('welcomeMessage')&&$('welcomeDialog').open)$('welcomeMessage').textContent=msg}
+function setCloudStatus(msg){cloudStatus=msg;renderSyncStatus()}
+function resetEntitlement(){serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;accessCheckedUser=''}
+async function stopAccountRealtime(){
+  clearTimeout(authTimer);authTimer=null;
+  const channel=authChannel;authChannel=null;
+  if(authClient&&channel){try{await authClient.removeChannel(channel)}catch(e){}}
+}
+function scheduleExpiry(){
+  clearTimeout(expiryTimer);
+  const until=Date.parse(entitlementUntil||'');
+  if(!hasCloudEntitlement()||!Number.isFinite(until))return;
+  expiryTimer=setTimeout(()=>{
+    if(!hasCloudEntitlement()){stopAccountRealtime();cloudReady=false;setCloudStatus('雲端同步已暫停・方案已到期');render()}
+    else scheduleExpiry();
+  },Math.min(2147483647,Math.max(1,until-accountServerNow()+50)));
 }
 async function loadEntitlement(){
-  serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;
-  if(!authUser){renderProEntitlements();renderSettings();return}
+  const uid=authUser&&authUser.id,epoch=accessEpoch,request=++entitlementRequest;
+  if(!uid){resetEntitlement();renderSettings();return}
   try{
     const client=await getAuthClient();
-    const {data,error}=await client.from('user_entitlements').select('plan,status,pro_until,trial_started_at,billing_provider,provider_subscription_id,cancel_at_period_end,canceled_at,updated_at').eq('user_id',authUser.id).maybeSingle();
+    const {data,error}=await client.rpc('meow_account_access');
+    if(!sameAccess(uid,epoch)||request!==entitlementRequest)return;
     if(error)throw error;
-    if(data){
-      entitlementStatus=data.status||'free';
-      entitlementUntil=data.pro_until||null;
-      trialStartedAt=data.trial_started_at||null;
-      billingProvider=data.billing_provider||null;
-      providerSubscriptionId=data.provider_subscription_id||null;
-      cancelAtPeriodEnd=!!data.cancel_at_period_end;
-      canceledAt=data.canceled_at||null;
-      serverPlan=entitlementIsActive(data)?'pro':'free';
-    }
+    const row=data&&data.entitlement;
+    const now=Date.parse(data&&data.server_now||'');
+    if(!Number.isFinite(now))throw Error('access_time_unavailable');
+    accessServerMs=now;accessLocalMs=performance.now();accessCheckedUser=uid;
+    entitlementStatus=row&&row.status||'free';entitlementUntil=row&&row.pro_until||null;
+    trialStartedAt=row&&row.trial_started_at||null;billingProvider=row&&row.billing_provider||null;
+    providerSubscriptionId=row&&row.provider_subscription_id||null;cancelAtPeriodEnd=!!(row&&row.cancel_at_period_end);canceledAt=row&&row.canceled_at||null;
+    serverPlan=entitlementIsActive(row)?'pro':'free';
+    scheduleExpiry();
+    if(!canCloudSync()){
+      await stopAccountRealtime();cloudReady=false;
+      setCloudStatus(hasCloudEntitlement()?'Pro 可用・請先啟用雲端同步':(trialStartedAt||entitlementUntil?'雲端同步已暫停・方案未生效或已到期':'未啟用・Pro 專屬'));
+    }else if(!cloudReady){await loadAccountState();if(sameAccess(uid,epoch)&&canCloudSync())await subscribeAccountRealtime()}
   }catch(e){
-    serverPlan='free';entitlementStatus='error';entitlementUntil=null;
-    console.warn('[meow-entitlement] plan lookup failed',e);
+    if(!sameAccess(uid,epoch)||request!==entitlementRequest)return;
+    resetEntitlement();entitlementStatus='error';await stopAccountRealtime();cloudReady=false;
+    setCloudStatus('方案確認失敗・雲端暫停，本機資料保留');
   }
-  renderProEntitlements();
-  renderSettings();
-}
-async function stopAccountRealtime(){
-  if(authClient&&authChannel){try{await authClient.removeChannel(authChannel)}catch(e){}}
-  authChannel=null;
+  if(sameAccess(uid,epoch)){renderProEntitlements();renderSettings()}
 }
 async function subscribeAccountRealtime(){
-  if(!authUser)return;
-  const client=await getAuthClient();
-  await stopAccountRealtime();
-  authChannel=client.channel('meow-user-'+authUser.id)
-    .on('postgres_changes',{event:'*',schema:'public',table:'user_sync_state',filter:'user_id=eq.'+authUser.id},async(payload)=>{
-      const row=payload.new||{},cloud=row.payload||{};
-      if(cloud.deviceId===deviceId)return;
-      if(cloud.state){
-        state=normalizeState(cloud.state);
-        lastSavedAt=cloud.savedAt||row.updated_at||new Date().toISOString();
-        try{
-          localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
-          localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
-          localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
-        }catch(e){}
-        applyTheme();render();
-        setAccountStatus('即時同步完成・'+new Date(row.updated_at||Date.now()).toLocaleString('zh-TW'));
-      }
-    })
-    .subscribe(status=>{if(status==='SUBSCRIBED')setAccountStatus('即時同步已連線')});
+  if(!canCloudSync()||!navigator.onLine)return;
+  const uid=authUser.id,epoch=accessEpoch,client=await getAuthClient();
+  const previous=authChannel;authChannel=null;
+  if(previous){try{await client.removeChannel(previous)}catch(e){}}
+  if(!sameAccess(uid,epoch)||!canCloudSync())return;
+  authChannel=client.channel('meow-user-'+uid)
+    .on('postgres_changes',{event:'*',schema:'public',table:'user_sync_state',filter:'user_id=eq.'+uid},payload=>{
+      if(!sameAccess(uid,epoch)||!canCloudSync())return;
+      const cloud=payload.new&&payload.new.payload;
+      if(cloud&&cloud.deviceId!==deviceId)void loadAccountState();
+    }).subscribe(status=>{if(sameAccess(uid,epoch)&&status==='CHANNEL_ERROR')setCloudStatus('即時連線中斷・本機資料保留')});
 }
-async function saveAccountState(showAlert=false){
-  if(!authUser||authBusy)return;
-  authBusy=true;
+function applyRemoteRow(row){
+  const cloud=row.payload||{},snapshot=newestMeaningfulCloudSnapshot(cloud)||(cloud.state?cloud:null);
+  if(!snapshot||!snapshot.state)return false;
+  if(!preserveBeforeReplace()){setCloudStatus('本機空間不足・未覆蓋現有資料');return false}
+  state=normalizeState(snapshot.state);localDirty=false;localEditVersion++;
+  cloudRevision=row.updated_at;cloudPayload=cloud;pendingCloud=null;cloudLastSuccess=row.updated_at;
+  persistLocalSnapshot();writeWorkspaceMeta();applyTheme();render();
+  setCloudStatus(localSaveError?'已讀取雲端，但本機儲存失敗':'已同步');return true;
+}
+async function loadAccountState(){
+  if(!canCloudSync())return;
+  if(!navigator.onLine){setCloudStatus('離線・變更尚未上傳');return}
+  const uid=authUser.id,epoch=accessEpoch;
   try{
-    persistLocalSnapshot();
-    setAccountStatus('正在同步…');
     const client=await getAuthClient();
-    const {data:previous}=await client.from('user_sync_state').select('payload').eq('user_id',authUser.id).maybeSingle();
-    const oldPayload=previous&&previous.payload?previous.payload:null;
-    let history=cloudHistoryEntries(oldPayload);
-    if(oldPayload&&oldPayload.state&&meaningfulSnapshot(oldPayload)){
-      history=[{savedAt:oldPayload.savedAt||new Date().toISOString(),state:oldPayload.state},...history];
-    }
-    const seen=new Set();history=history.filter(x=>{const key=String(x.savedAt||'')+'|'+JSON.stringify(x.state||{});if(seen.has(key))return false;seen.add(key);return true}).slice(0,5);
-    const {error}=await client.from('user_sync_state').upsert({
-      user_id:authUser.id,payload:syncPayload(history),updated_at:new Date().toISOString()
-    },{onConflict:'user_id'});
+    if(!sameAccess(uid,epoch)||!canCloudSync())return;
+    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+    if(!sameAccess(uid,epoch)||!canCloudSync())return;
     if(error)throw error;
-    setAccountStatus('已同步・'+new Date().toLocaleString('zh-TW'));
-    if(showAlert)alert('雲端同步完成。');
+    cloudReady=true;cloudRevision=data&&data.updated_at||null;cloudPayload=data&&data.payload||null;
+    if(!data){if(hasMeaningfulUserData()){localDirty=true;queueAccountSave(0)}else setCloudStatus('雲端已啟用・尚無工作資料');return}
+    const remote=normalizeState((data.payload||{}).state||{});
+    if(workFingerprint(remote)===workFingerprint(state)){localDirty=false;cloudLastSuccess=data.updated_at;pendingCloud=null;writeWorkspaceMeta();setCloudStatus('已同步');return}
+    if(localDirty&&hasMeaningfulUserData()){pendingCloud=data;setCloudStatus('本機與雲端不同・請選擇要保留的版本');return}
+    applyRemoteRow(data);
+  }catch(e){if(sameAccess(uid,epoch))setCloudStatus('雲端讀取失敗・本機資料仍可使用')}
+}
+async function saveAccountState(showAlert=false,resolveConflict=false){
+  if(!canCloudSync()){if(showAlert)alert('雲端同步需要有效 Pro／試用，並由你啟用。登入本身不會開啟同步。');return false}
+  if(!navigator.onLine){setCloudStatus('離線・變更尚未上傳');return false}
+  if(pendingCloud&&!resolveConflict){setCloudStatus('有版本衝突・請先選擇');return false}
+  if(!cloudReady){await loadAccountState();return false}
+  const uid=authUser.id,epoch=accessEpoch;
+  if(authBusy&&authBusyEpoch===epoch)return false;
+  authBusy=true;authBusyEpoch=epoch;
+  const edit=localEditVersion,snapshot=JSON.parse(JSON.stringify(state));delete snapshot.theme;
+  let history=cloudHistoryEntries(cloudPayload);
+  if(cloudPayload&&meaningfulSnapshot(cloudPayload))history=[{savedAt:cloudPayload.savedAt,state:cloudPayload.state},...history];
+  const payload={version:4,savedAt:lastSavedAt||new Date().toISOString(),deviceId,state:snapshot,history:history.slice(0,5)};
+  setCloudStatus('正在同步…');
+  try{
+    const client=await getAuthClient();if(!sameAccess(uid,epoch)||!canCloudSync())return false;
+    const {data,error}=await client.rpc('meow_save_snapshot',{p_payload:payload,p_expected_updated_at:cloudRevision});
+    if(!sameAccess(uid,epoch)||!canCloudSync())return false;
+    if(error)throw error;
+    if(!data||!data.updated_at)throw Error('missing_sync_confirmation');
+    cloudRevision=data.updated_at;cloudPayload=payload;cloudLastSuccess=data.updated_at;pendingCloud=null;
+    if(localEditVersion===edit)localDirty=false;
+    writeWorkspaceMeta();setCloudStatus(localDirty?'仍有新變更待同步':'已同步');
+    if(showAlert)alert('雲端已確認儲存這份資料。');
+    return true;
   }catch(e){
-    setAccountStatus('同步失敗，本機資料仍保留');
-    if(showAlert)alert('雲端同步失敗，請稍後再試。');
-  }finally{authBusy=false;renderSettings()}
+    if(!sameAccess(uid,epoch))return false;
+    if(e&&e.code==='40001'){await loadAccountState();setCloudStatus('另一台裝置有新版本・請選擇要保留的資料')}
+    else if(e&&e.code==='42501'){cloudReady=false;await loadEntitlement();setCloudStatus('雲端權限未通過・本機資料保留')}
+    else setCloudStatus('同步失敗・本機資料保留');
+    return false;
+  }finally{
+    if(authBusyEpoch===epoch){authBusy=false;authBusyEpoch=-1}
+    if(sameAccess(uid,epoch)){renderSyncStatus();if(localDirty&&!pendingCloud&&cloudStatus==='仍有新變更待同步')queueAccountSave()}
+  }
 }
 function queueAccountSave(delay=350){
-  if(!authUser)return;
-  clearTimeout(authTimer);
-  authTimer=setTimeout(()=>{authTimer=null;saveAccountState(false)},delay);
+  clearTimeout(authTimer);authTimer=null;
+  if(!canCloudSync())return;
+  if(!navigator.onLine){setCloudStatus('離線・變更尚未上傳');return}
+  const uid=authUser.id,epoch=accessEpoch;
+  authTimer=setTimeout(()=>{authTimer=null;if(sameAccess(uid,epoch)&&canCloudSync())void saveAccountState(false)},delay);
 }
-function changedAndSync(){persistLocalSnapshot();queueAccountSave()}
-async function loadAccountState(){
-  if(!authUser)return;
-  const client=await getAuthClient();
-  setAccountStatus('正在讀取雲端資料…');
-  const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',authUser.id).maybeSingle();
-  if(error){setAccountStatus('雲端讀取失敗，本機資料仍可使用');return}
-  if(!data){
-    if(hasMeaningfulUserData()){
-      setAccountStatus('第一次登入，正在建立雲端資料…');
-      await saveAccountState(false);
-    }else{
-      setAccountStatus('這個帳號目前沒有可還原的雲端資料');
-    }
-    return
-  }
-  const cloud=data.payload||{};
-  const snapshot=newestMeaningfulCloudSnapshot(cloud)||(cloud.state?cloud:null);
-  if(snapshot&&snapshot.state){
-    state=normalizeState(snapshot.state);
-    lastSavedAt=snapshot.savedAt||data.updated_at||new Date().toISOString();
-    persistLocalSnapshot();
-    applyTheme();render();
-    setAccountStatus(snapshot===cloud?'已同步・'+new Date(data.updated_at||Date.now()).toLocaleString('zh-TW'):'已從雲端安全快照恢復・'+new Date(lastSavedAt).toLocaleString('zh-TW'));
-  }else setAccountStatus('這個帳號目前沒有可還原的雲端資料');
-}
+function changedAndSync(){localEditVersion++;localDirty=true;persistLocalSnapshot();writeWorkspaceMeta();queueAccountSave()}
 async function handleSignedIn(user){
+  const changed=!authUser||authUser.id!==user.id;
+  if(changed){accessEpoch++;await stopAccountRealtime();resetEntitlement();cloudReady=false;pendingCloud=null}
   authUser=user;
-  setAccountStatus('已登入，正在同步…');
-  await subscribeAccountRealtime();
-  await loadAccountState();
+  if(!switchWorkspace(user.id)){setAccountStatus('已登入，但工作區尚未切換；雲端未啟用');return}
+  setAccountStatus('已登入・正在確認方案');
+  if(!welcomeManual)finishWelcome();
   await loadEntitlement();
-  await loadBillingHistory();
-  renderSettings();
+  if(authUser&&authUser.id===user.id){await loadBillingHistory();setAccountStatus('帳號已登入');renderSettings()}
 }
 async function handleSignedOut(){
-  authUser=null;serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;billingHistory=[];
-  await stopAccountRealtime();
-  setAccountStatus('尚未登入');
-  renderSalary();renderSettings();
+  accessEpoch++;entitlementRequest++;authUser=null;resetEntitlement();billingHistory=[];clearTimeout(expiryTimer);
+  await stopAccountRealtime();cloudReady=false;pendingCloud=null;switchWorkspace('guest');
+  setAccountStatus('尚未登入・使用本機工作區');setCloudStatus('未啟用・Pro 專屬');render();
 }
 async function initAuth(){
   try{
     const client=await getAuthClient();
     const {data}=await client.auth.getSession();
     if(data&&data.session&&data.session.user)await handleSignedIn(data.session.user);
-    client.auth.onAuthStateChange(async(event,session)=>{
-      if(session&&session.user)await handleSignedIn(session.user);
-      else if(event==='SIGNED_OUT')await handleSignedOut();
+    else if(localOwner!=='guest')await handleSignedOut();
+    // Never await another Supabase request while an auth callback holds its lock.
+    client.auth.onAuthStateChange((event,session)=>{
+      if(!['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','USER_UPDATED'].includes(event))return;
+      clearTimeout(authEventTimer);
+      if(event==='SIGNED_OUT'){accessEpoch++;accessCheckedUser='';clearTimeout(authTimer)}
+      authEventTimer=setTimeout(()=>{
+        if(session&&session.user)void handleSignedIn(session.user);
+        else if(event==='SIGNED_OUT')void handleSignedOut();
+      },0);
     });
-  }catch(e){setAccountStatus('登入服務初始化失敗')}
+  }catch(e){setAccountStatus('登入服務暫時無法連線；仍可使用本機資料。')}
 }
+async function toggleCloud(){
+  if(!hasCloudEntitlement()){alert('登入只確認帳號身分。雲端同步為 Pro 專屬，請先查看「Pro 方案」。');return}
+  if(cloudConsent){cloudConsent=false;try{localStorage.removeItem('meow-work-cloud-consent:'+localOwner)}catch(e){}await stopAccountRealtime();cloudReady=false;setCloudStatus('已關閉雲端同步・本機資料保留');return}
+  if(!confirm('啟用 Pro 雲端同步？\n\n將同步班表、薪資、假別、行程及個人資料。淺色／深色仍以這台裝置為準。若兩邊都有資料，會先請你選擇，不會直接覆蓋。'))return;
+  cloudConsent=true;try{localStorage.setItem('meow-work-cloud-consent:'+localOwner,'yes')}catch(e){}
+  await loadAccountState();if(canCloudSync())await subscribeAccountRealtime();renderSyncStatus();
+}
+async function exportLegacyCloud(){
+  if(!authUser){alert('請先登入原本的帳號。');return}
+  const uid=authUser.id,epoch=accessEpoch;
+  try{
+    const client=await getAuthClient();
+    const {data,error}=await client.from('user_legacy_exports').select('payload,original_updated_at').eq('user_id',uid).maybeSingle();
+    if(!sameAccess(uid,epoch))return;if(error)throw error;
+    if(!data){alert('此帳號沒有切換 Pro 規則前的舊版雲端備份。');return}
+    const payload=data.payload||{},snapshot=newestMeaningfulCloudSnapshot(payload)||(payload.state?payload:null);
+    if(!snapshot){alert('舊版備份沒有可取回的工作資料。');return}
+    downloadBlob(new Blob([JSON.stringify({app:'喵的，又要上班了',version:1,exportedAt:new Date().toISOString(),state:snapshot.state},null,2)],{type:'application/json'}),'meow-legacy-backup.json');
+  }catch(e){alert('舊版備份暫時無法取回；既有資料沒有被刪除。請稍後再試。')}
+}
+function renderSyncStatus(){
+  if(!$('cloudProtection'))return;
+  const entitled=hasCloudEntitlement(),enabled=canCloudSync();
+  $('cloudProtection').classList.toggle('safe',enabled&&cloudStatus==='已同步'&&!localDirty);
+  $('cloudProtection').textContent=enabled?cloudStatus:(entitled?'Pro 已確認・'+(cloudConsent?'雲端同步暫停':'尚未啟用工作資料同步'):(entitlementStatus==='error'?'方案確認失敗・本機資料保留':(entitlementUntil||trialStartedAt?'雲端同步已暫停・本機資料保留':'工作資料保存在此裝置；雲端同步為 Pro 專屬。')));
+  if($('cloudDetail'))$('cloudDetail').textContent=enabled&&cloudLastSuccess?'最後成功同步：'+new Date(cloudLastSuccess).toLocaleString('zh-TW'): '登入帳號不等於工作資料已備份。';
+  if($('toggleCloudSync')){$('toggleCloudSync').textContent=enabled?'關閉雲端同步':(entitled?'啟用雲端同步':'查看 Pro 雲端同步')}
+  if($('cloudBackupNow'))$('cloudBackupNow').disabled=!enabled;
+  if($('cloudRestoreNow'))$('cloudRestoreNow').disabled=!enabled;
+  if($('legacyCloudExport'))$('legacyCloudExport').classList.toggle('hidden',!authUser);
+  if($('cloudConflictBox'))$('cloudConflictBox').classList.toggle('hidden',!pendingCloud||!enabled);
+  if($('saveState'))$('saveState').textContent=localSaveError?'本機儲存失敗，請匯出備份後檢查空間':(lastSavedAt?'本機已儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'資料會自動保存在這台裝置');
+}
+function finishWelcome(){
+  try{localStorage.setItem(WELCOME_KEY,'done')}catch(e){}
+  if($('welcomeDialog').open)$('welcomeDialog').close();welcomeManual=false;
+}
+function openWelcome(manual=false){
+  welcomeManual=manual;$('welcomeGuestText').textContent=authUser?'返回 App':'先使用，不登入';$('welcomeMessage').textContent='';
+  if(!$('welcomeDialog').open)$('welcomeDialog').showModal();$('welcomeDialog').scrollTop=0;
+}
+async function initWelcome(){
+  const force=new URLSearchParams(location.search).get('welcome')==='1';
+  const first=!readLocalString(WELCOME_KEY)&&!readLocalString(SAVE_KEY);
+  if(force||first)openWelcome(force);
+  else if(!readLocalString(WELCOME_KEY)){try{localStorage.setItem(WELCOME_KEY,'done')}catch(e){}}
+  $('welcomeGuest').onclick=finishWelcome;
+  $('welcomeDialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome()});
+  $('welcomeGoogle').onclick=async()=>{welcomeManual=false;const b=$('welcomeGoogle');b.disabled=true;try{await signInWithGoogle()}finally{b.disabled=false}};
+  $('welcomeEmail').onclick=()=>{const open=$('welcomeEmailFields').hidden;$('welcomeEmailFields').hidden=!open;$('welcomeEmail').setAttribute('aria-expanded',String(open));if(open)$('welcomeEmailInput').focus()};
+  $('welcomeSendOtp').onclick=async()=>{const b=$('welcomeSendOtp');b.disabled=true;try{$('emailLoginInput').value=$('welcomeEmailInput').value;await sendEmailOtp();$('welcomeOtpFields').hidden=$('otpPanel').classList.contains('hidden')}finally{b.disabled=false}};
+  $('welcomeVerifyOtp').onclick=async()=>{const b=$('welcomeVerifyOtp');b.disabled=true;try{welcomeManual=false;$('emailOtpInput').value=$('welcomeOtpInput').value;await verifyEmailOtp()}finally{b.disabled=false}};
+  $('welcomeOtpInput').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)};
+  $('showWelcome').onclick=()=>openWelcome(true);
+  $('toggleCloudSync').onclick=toggleCloud;
+  $('legacyCloudExport').onclick=exportLegacyCloud;
+  $('keepCloudVersion').onclick=()=>{if(pendingCloud&&canCloudSync()&&confirm('先保留本機安全副本，再使用雲端版本？'))applyRemoteRow(pendingCloud)};
+  $('keepLocalVersion').onclick=()=>{if(pendingCloud&&canCloudSync()&&confirm('用本機版本更新雲端？原雲端版本會保留在備份歷史內。'))void saveAccountState(true,true)};
+  try{
+    const response=await fetch(SUPABASE_URL+'/auth/v1/settings',{headers:{apikey:SUPABASE_KEY}});
+    if(!response.ok)return;const config=await response.json();
+    if(config&&config.external&&config.external.apple===true){
+      $('welcomeApple').hidden=false;$('welcomeAppleNote').hidden=true;
+      $('welcomeApple').onclick=async()=>{const b=$('welcomeApple');b.disabled=true;try{welcomeManual=false;const client=await getAuthClient();const {error}=await client.auth.signInWithOAuth({provider:'apple',options:{redirectTo:location.origin+location.pathname}});if(error)throw error}catch(e){setAccountStatus('Apple 登入暫時無法完成，請改用其他方式。')}finally{b.disabled=false}};
+    }
+  }catch(e){}
+}
+window.addEventListener('offline',()=>{if(canCloudSync())setCloudStatus('離線・變更尚未上傳')});
+window.addEventListener('online',()=>{if(authUser){cloudReady=false;void loadEntitlement()}});
+setInterval(()=>{if(authUser)void loadEntitlement()},60000);
+
 let pendingEmail='';
 function normalizeEmail(v){return String(v||'').trim().toLowerCase()}
 async function signInWithGoogle(){
@@ -1407,7 +1614,7 @@ async function verifyEmailOtp(){
     if(error)throw error;
     if(!data||!data.session)throw new Error('沒有取得登入工作階段');
     pendingEmail='';
-    setAccountStatus('登入成功，正在同步…');
+    setAccountStatus('登入成功，正在確認方案…');
   }catch(e){
     setAccountStatus('驗證失敗');
     alert('驗證碼不正確或已過期，請重新確認。');
@@ -3153,7 +3360,7 @@ async function invokeUserFunction(name,body){
   return json;
 }
 async function startProTrialFlow(){
-  if(!authUser){alert('請先用 Email 登入，再開始 Pro 免費試用。');setTab('settings');return}
+  if(!authUser){alert('請先登入帳號，再開始 Pro 免費試用。');setTab('settings');return}
   const btn=$('startProTrial');if(btn)btn.disabled=true;
   try{
     const result=await invokeUserFunction('start-pro-trial',{});
@@ -3183,7 +3390,7 @@ function submitGatewayForm(result){
   form.submit();
 }
 async function startLiveCheckout(plan){
-  if(!authUser){alert('請先用 Email 登入再升級 Pro。');return}
+  if(!authUser){alert('請先登入帳號再升級 Pro。');return}
   const isYear=plan==='yearly';
   const amount=Number(isYear?billingYearly:billingMonthly);
   if(!billingConfigured||!amount){alert('正式訂閱尚未開放。');return}
@@ -3219,7 +3426,7 @@ async function cancelProBillingFlow(){
 }
 async function startStageCheckout(plan){
   if(!DEV_TESTING_ENABLED){alert('綠界 Stage 付款只在開發測試模式顯示。');return}
-  if(!authUser){alert('請先用 Email 登入再測試付款。');return}
+  if(!authUser){alert('請先登入帳號再測試付款。');return}
   try{
     const result=await invokeUserFunction('create-ecpay-stage-checkout',{plan});
     submitGatewayForm(result);
@@ -3294,7 +3501,7 @@ function renderAccountPlan(){
     hint.textContent='目前方案：Free';
   }
 }
-function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';}$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'已登入':'尚未登入';if($('accountEmail'))$('accountEmail').textContent=authUser?(authUser.email||''):'';if($('emailLoginPanel'))$('emailLoginPanel').classList.toggle('hidden',!!authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);if($('cloudProtection')){$('cloudProtection').classList.toggle('safe',!!authUser);$('cloudProtection').textContent=authUser?'✓ 已啟用雲端保護。刪除 App 後，只要使用同一個登入帳號即可還原。':'⚠ 尚未啟用雲端保護。刪除 App 或網站資料後，本機資料可能無法找回。';}
+function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';}$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'已登入':'尚未登入';if($('accountEmail'))$('accountEmail').textContent=authUser?(authUser.email||''):'';if($('emailLoginPanel'))$('emailLoginPanel').classList.toggle('hidden',!!authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);
 const setWork=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=(v??'')};
 setWork('settingPayday',state.settings.payday||'');
 setDateControlValue('settingHireDate',state.settings.hireDate);
@@ -3320,6 +3527,7 @@ if($('workSettingsBrief')){
 renderAccountPlan();
 renderProPlanSettings();
 renderBillingHistory();
+renderSyncStatus();
 }
 function safeRender(name,fn){
   try{fn()}
@@ -3484,38 +3692,21 @@ async function importBackupFile(file){
     const text=await file.text(),data=JSON.parse(text),incoming=data.state||data;
     if(!incoming||typeof incoming!=='object')throw new Error('格式不正確');
     if(!confirm('要用這份備份覆蓋目前 App 資料嗎？'))return;
+    if(!preserveBeforeReplace()){alert('本機空間不足，未覆蓋資料。');return}
     state=normalizeState(incoming);
-    persistLocalSnapshot();
+    changedAndSync();
     applyTheme();render();
-    queueAccountSave(0);
     alert('備份已還原。');
   }catch(e){alert('備份檔無法讀取，請確認是本 App 匯出的 JSON 檔。')}
 }
 async function restoreFromCloud(showAlert=true){
-  if(!authUser){if(showAlert)alert('請先用 Email 登入，再從雲端還原。');return false}
-  try{
-    const client=await getAuthClient();
-    setAccountStatus('正在從雲端還原…');
-    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',authUser.id).maybeSingle();
-    if(error)throw error;
-    if(!data||!data.payload||!data.payload.state){
-      setAccountStatus('雲端尚無備份');
-      if(showAlert)alert('這個帳號目前還沒有雲端備份。');
-      return false;
-    }
-    const snapshot=newestMeaningfulCloudSnapshot(data.payload)||data.payload;
-    state=normalizeState(snapshot.state);
-    lastSavedAt=snapshot.savedAt||data.updated_at||new Date().toISOString();
-    persistLocalSnapshot();
-    applyTheme();render();
-    setAccountStatus('已從雲端還原・'+new Date(data.updated_at||Date.now()).toLocaleString('zh-TW'));
-    if(showAlert)alert('雲端資料已還原到這台裝置。');
-    return true;
-  }catch(e){
-    setAccountStatus('雲端還原失敗');
-    if(showAlert)alert('雲端還原失敗，請稍後再試。');
-    return false;
+  if(!canCloudSync()){if(showAlert)alert('請先確認有效 Pro／試用資格並啟用雲端同步。');return false}
+  await loadAccountState();
+  if(pendingCloud&&canCloudSync()){
+    if(!confirm('本機與雲端有不同資料。先保留本機安全副本，再使用雲端版本？'))return false;
+    return applyRemoteRow(pendingCloud);
   }
+  return cloudStatus==='已同步';
 }
 function setDevPlan(plan){
   if(!DEV_TESTING_ENABLED)return;
@@ -3713,20 +3904,15 @@ $('removeAvatar').onclick=()=>{
   changedAndSync();
   renderSettings();
 };
-$('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(authUser)await saveAccountState(false);alert(authUser?'已儲存到這台裝置並同步登入帳號。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=async()=>{
-  if(!confirm('確定清除這台裝置已儲存的資料？雲端資料不會刪除。'))return;
-  const wasLoggedIn=!!authUser;
-  if(wasLoggedIn){
-    clearTimeout(authTimer);authTimer=null;
-    await saveAccountState(false);
-    const client=await getAuthClient();
-    await client.auth.signOut();
-  }
-  localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);
-  await clearIndexedBackup();
-  state=defaultState();lastSavedAt=null;applyTheme();render();
-  alert(wasLoggedIn?'已清除此裝置資料並登出；雲端備份仍保留。請重新登入同一帳號即可還原。':'已清除此裝置資料。');
+$('saveDevice').onclick=()=>{const ok=persistLocalSnapshot();renderSettings();alert(ok?'已儲存到這台裝置。這個按鈕不會啟動雲端同步。':'本機儲存失敗，請先匯出備份並檢查儲存空間。')};
+$('clearDevice').onclick=async()=>{
+  if(!confirm('清除此裝置目前工作區的資料？\n\n這會關閉此裝置的雲端同步，不刪除雲端資料，也不清除其他帳號的本機工作區。請先確認已匯出需要的備份。'))return;
+  cloudConsent=false;accessEpoch++;await stopAccountRealtime();cloudReady=false;pendingCloud=null;
+  try{localStorage.removeItem('meow-work-cloud-consent:'+localOwner);localStorage.removeItem(workspaceKey(localOwner));localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);localStorage.removeItem('meow-work-sync-meta:'+localOwner)}catch(e){}
+  await clearIndexedBackup();state=defaultState();lastSavedAt=null;localDirty=false;localEditVersion++;cloudLastSuccess='';
+  applyTheme();render();setCloudStatus('已關閉雲端同步・目前工作區已清除');
 };
+
 if($('startProTrial'))$('startProTrial').onclick=startProTrialFlow;
 if($('liveMonthlyCheckout'))$('liveMonthlyCheckout').onclick=()=>startLiveCheckout('monthly');
 if($('liveYearlyCheckout'))$('liveYearlyCheckout').onclick=()=>startLiveCheckout('yearly');
@@ -3742,7 +3928,7 @@ qsa('[data-pro-action]').forEach(btn=>btn.onclick=()=>{
     if(DEV_TESTING_ENABLED){
       alert('目前測試模式是 Free。請到「設定 → 版本／方案測試」切換 Pro。');
     }else if(!authUser){
-      alert('這是 Pro 功能。請先到「設定」用 Email 登入，App 會確認你的方案。');
+      alert('這是 Pro 功能。請先到「設定」登入帳號，App 會確認你的方案。');
     }else{
       alert('這個帳號目前是 Free 方案。請到「設定 → Pro 方案」查看 7 天免費試用或正式訂閱選項。');
     }
@@ -3805,6 +3991,7 @@ if($('importBackupInput'))$('importBackupInput').onchange=e=>{const file=e.targe
 if($('cloudBackupNow'))$('cloudBackupNow').onclick=()=>saveAccountState(true);
 if($('cloudRestoreNow'))$('cloudRestoreNow').onclick=()=>restoreFromCloud(true);
 $('accountLogout').onclick=signOutAccount;
+initWelcome();
 initAuth();
 loadBillingConfig();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
@@ -3814,7 +4001,7 @@ try{
 }catch(e){}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v111';
+    const reloadKey='meow-sw-reloaded-v112';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -3823,7 +4010,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=111',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=112',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
