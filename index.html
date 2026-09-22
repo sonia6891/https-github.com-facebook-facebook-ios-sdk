@@ -617,7 +617,7 @@ html.dark .work-date-dialog{color-scheme:dark}
         <div class="payslip-scan-panel hidden" id="payslipScanPanel">
           <div class="scan-head">
             <div>
-              <b>📷 Pro 本地薪資單辨識 <span style="font-size:10px;color:var(--mobile-gold-ink, #9a7a67);font-weight:800">OCR v3</span></b>
+              <b>📷 Pro 本地薪資單辨識 <span style="font-size:10px;color:var(--mobile-gold-ink, #9a7a67);font-weight:800">OCR v4</span></b>
               <div class="hint">點「拍照或上傳」後，可依裝置選擇拍照、相簿或檔案。辨識結果會留在這張卡正下方，確認後才導入逐項薪資對帳。</div>
               <div class="scan-privacy">🔒 圖片只在你的瀏覽器本地處理，不上傳薪資單影像。</div>
             </div>
@@ -1496,12 +1496,12 @@ const ITEMIZED_FIELDS=[
   {key:'transport',label:'交通津貼',kind:'income'},
   {key:'otherIncome',label:'其他收入',kind:'income'},
   {key:'otPay',label:'加班費',kind:'income'},
-  {key:'dedLabor',label:'勞保費',kind:'deduction'},
-  {key:'dedHealth',label:'健保費',kind:'deduction'},
-  {key:'dedWelfare',label:'福利金',kind:'deduction'},
-  {key:'dedPension',label:'勞退自提',kind:'deduction'},
+  {key:'dedLabor',label:'勞保費',kind:'deduction',mode:'max'},
+  {key:'dedHealth',label:'健保費',kind:'deduction',mode:'max'},
+  {key:'dedWelfare',label:'福利金',kind:'deduction',mode:'max'},
+  {key:'dedPension',label:'勞退自提',kind:'deduction',mode:'max'},
   {key:'dedAttendance',label:'考勤扣款',kind:'deduction'},
-  {key:'dedTax',label:'所得稅',kind:'deduction'},
+  {key:'dedTax',label:'所得稅',kind:'deduction',mode:'max'},
   {key:'dedHealthExtra',label:'健保補扣',kind:'deduction'},
   {key:'dedOther',label:'其他扣款',kind:'deduction'}
 ];
@@ -1628,6 +1628,15 @@ function fuzzyAliasInText(text,alias){
   }
   return best;
 }
+function ocrFieldContextAllowed(def,text){
+  const t=normalizeOcrText(text);
+  const employer=/(雇主|僱主|公司|單位)(負擔|提撥|提繳|提存|負擔額)|雇提|僱提|公司提撥|公司提繳|單位提撥/;
+  if(['dedPension','dedLabor','dedHealth'].includes(def.key)&&employer.test(t))return false;
+  if(def.key==='dedPension'&&/(新制雇主|勞退雇主|雇主退休金)/.test(t))return false;
+  if(def.key==='otPay'&&/(加班|OVERTIME).*(時數|工時|小時|時薪|費率|倍率|HOURS|HRS|RATE)/.test(t)&&!/(加班費|加班工資|延長工時工資|OVERTIMEPAY)/.test(t))return false;
+  if(def.key==='shiftAllowance'&&/(夜班|輪班|班別).*(時數|工時|天數|日數|班數)/.test(t)&&!/(津貼|加給|費|獎金|金額)/.test(t))return false;
+  return true;
+}
 function fuzzyFieldsForText(text){
   const hits=[];
   PAYSLIP_OCR_FIELDS.forEach(def=>{
@@ -1639,7 +1648,7 @@ function fuzzyFieldsForText(text){
         best={def,term,alias,score:match.score,start:match.start,end:match.end,exact:match.exact};
       }
     });
-    if(best)hits.push(best);
+    if(best&&ocrFieldContextAllowed(best.def,text))hits.push(best);
   });
   const ranked=[...hits].sort((a,b)=>(b.exact-a.exact)||(b.alias.length-a.alias.length)||(b.score-a.score)||((b.def.priority||0)-(a.def.priority||0)));
   const kept=[];
@@ -1754,8 +1763,8 @@ function extractSpatialAmounts(line){
   const amounts=[];
   line.words.forEach((w,i)=>{
     const info=numericTokenInfo(w.text);if(!info)return;
-    const nearby=line.words.slice(Math.max(0,i-2),Math.min(line.words.length,i+3)).filter(x=>x!==w).map(x=>normalizeOcrText(x.text)).join('');
-    const quantityLike=/(時數|工時|小時|時薪|天數|日數|倍率|倍數|費率|單價|HOUR|HOURS|HRS|DAY|DAYS)/.test(nearby);
+    const nearby=line.words.slice(Math.max(0,i-4),Math.min(line.words.length,i+5)).filter(x=>x!==w).map(x=>normalizeOcrText(x.text)).join('');
+    const quantityLike=/(時數|工時|小時|時薪|天數|日數|班數|倍率|倍數|費率|單價|提繳率|自提率|HOUR|HOURS|HRS|DAY|DAYS|RATE)/.test(nearby);
     const moneyHint=/(金額|應發|實發|應扣|扣款|合計|小計|薪資|工資|津貼|加給|獎金|保費|福利金|所得稅|加班費)/.test(nearby);
     amounts.push({id:line.index+'-'+i,value:info.value,rateLike:info.rateLike,percent:info.percent,hasDecimal:info.hasDecimal,quantityLike,moneyHint,bbox:w.bbox,confidence:w.confidence,lineIndex:line.index,text:w.text});
   });
@@ -1779,8 +1788,9 @@ function findSpatialAmountForHit(hit,lines,width,height,used){
       if(used.has(a.id)||!plausibleAmountForField(def,a))return;
       const dx=(a.bbox.cx-label.cx)/Math.max(1,width),ady=Math.abs(a.bbox.cy-label.cy)/Math.max(1,height);
       const sameRow=Math.abs(a.bbox.cy-label.cy)<=Math.max(label.h,a.bbox.h)*.9;
-      const sameColumn=Math.abs(dx)<=.09;
-      if(!sameRow&&!sameColumn&&ady>.19)return;
+      const sameColumn=Math.abs(dx)<=.09,lineDist=Math.abs(l.index-hit.lineIndex);
+      if(!sameRow&&sameColumn&&lineDist>3)return;
+      if(!sameRow&&!sameColumn&&ady>.12)return;
       if(sameRow&&a.bbox.cx<label.x0-label.w*.1)return;
       if(sameRow&&nextLabel&&a.bbox.cx>=nextLabel.labelBox.x0)return;
       let score=0;
@@ -1925,7 +1935,7 @@ function chooseTextAmountForField(line,def){
 }
 function findNearbyTextAmount(lines,index,def){
   const direct=chooseTextAmountForField(lines[index],def);if(direct!==null)return direct;
-  const checks=[index+1,index+2,index+3,index+4,index-1];
+  const checks=[index+1,index-1,index+2];
   for(const i of checks){if(i<0||i>=lines.length)continue;const v=chooseTextAmountForField(lines[i],def);if(v!==null)return v}
   return null;
 }
@@ -2194,7 +2204,7 @@ function resetPayslipScan(clearPreview=true){
   if($('payslipRawText'))$('payslipRawText').textContent='';
   if($('payslipMissingFields')){$('payslipMissingFields').textContent='';$('payslipMissingFields').classList.add('hidden')}
   if($('payslipScanProgress'))$('payslipScanProgress').style.width='0%';
-  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始第三代本地辨識（3 次交叉比對）。 ';
+  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始第四代本地辨識（3 次交叉比對）。 ';
   if($('payslipFileInput'))$('payslipFileInput').value='';
   if(clearPreview){
     if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}payslipPreviewUrl=''}
@@ -2203,7 +2213,7 @@ function resetPayslipScan(clearPreview=true){
 }
 async function runPayslipOcr(file){
   if(!canUse('payslip_scan'))return;
-  if(!file||!String(file.type||'').startsWith('image/')){alert('目前第三代本地辨識先支援圖片檔。');return}
+  if(!file||!String(file.type||'').startsWith('image/')){alert('目前第四代本地辨識先支援圖片檔。');return}
   if(file.size>20*1024*1024){alert('圖片太大，請使用 20MB 以下的薪資單照片。');return}
   resetPayslipScan(false);
   if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}}
@@ -2243,7 +2253,7 @@ async function runPayslipOcr(file){
     payslipOcrResult=mergePayslipRuns(runs);
     renderPayslipDetected();$('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';$('payslipScanResult').classList.remove('hidden');
     const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),labelOnlyDefs=missingDefs.filter(def=>payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[def.key]),reallyMissingDefs=missingDefs.filter(def=>!labelOnlyDefs.includes(def));
-    status.childNodes[0].nodeValue='第三代辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
+    status.childNodes[0].nodeValue='第四代辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
     if($('payslipMissingFields')){
       const warningCount=Object.keys(validatePayslipValues(payslipOcrResult)).length+Object.keys(payslipOcrResult.__fieldWarnings||{}).length;
       $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0&&warningCount===0);
@@ -2268,7 +2278,7 @@ function importPayslipDetected(){
   Object.entries(confirmed).forEach(([key,value])=>{if(key==='actualNet')mm.actualNet=value;else mm.actualItems[key]=value});
   rememberPayslipFormat(confirmed);
   captureSalarySnapshot(calcMonth(),mm);changedAndSync();
-  payslipScanOpen=false;itemizedOpen=true;salaryHistoryOpen=false;salarySubTab='reconcile';renderSalary();
+  payslipScanOpen=false;itemizedOpen=true;salaryHistoryOpen=false;salaryExportOpen=false;salarySubTab='reconcile';renderSalary();
   if($('itemizedComparePanel'))$('itemizedComparePanel').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function renderPayslipScan(){
@@ -3043,7 +3053,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=82',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=83',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
