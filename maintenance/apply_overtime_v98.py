@@ -33,3 +33,4 @@ for n in ['settingOvertimeMode','dialogOvertimeKind','monthlyOvertimePay']: asse
 p.write_text(s)
 sw=root/'sw.js'; w=sw.read_text().replace('meow-work-pwa-v97','meow-work-pwa-v98').replace('manifest.webmanifest?v=97','manifest.webmanifest?v=98');sw.write_text(w)
 print('v98 applied')
+\n
