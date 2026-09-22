@@ -1,0 +1,83 @@
+name: Verify automatic annual leave v96
+on:
+  push:
+    branches: ["repair/annual-leave-auto-v96"]
+permissions:
+  contents: write
+concurrency:
+  group: annual-leave-auto-v96
+  cancel-in-progress: true
+env:
+  BASE: 7e2c410345f09d96940fe8636f59a6c7d512ddce
+  LIVE_URL: ""
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Prepare reviewed changes and check all JavaScript
+        run: |
+          mkdir -p "$RUNNER_TEMP/annual-after" "$RUNNER_TEMP/annual-report"
+          git archive "$BASE" | tar -x -C "$RUNNER_TEMP/annual-after"
+          python maintenance/apply_annual_leave.py "$RUNNER_TEMP/annual-after"
+          python - <<'PY'
+          import re,os,pathlib,subprocess,hashlib
+          root=pathlib.Path(os.environ['RUNNER_TEMP']); html=(root/'annual-after/index.html').read_text()
+          for i,js in enumerate(re.findall(r'<script[^>]*>([\s\S]*?)</script>',html)):
+              path=root/('inline-'+str(i)+'.js'); path.write_text(js); subprocess.run(['node','--check',str(path)],check=True)
+          (root/'annual-report/index-sha256.txt').write_text(hashlib.sha256((root/'annual-after/index.html').read_bytes()).hexdigest())
+          PY
+          node maintenance/test_annual_leave.cjs "$RUNNER_TEMP/annual-after/index.html" | tee "$RUNNER_TEMP/annual-report/unit-tests.txt"
+      - name: Install isolated test browsers
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Wait for exact tested source when verifying production
+        if: env.LIVE_URL != ''
+        run: |
+          python - <<'PY'
+          import os,time,hashlib,urllib.request,pathlib
+          expected=pathlib.Path(os.environ['RUNNER_TEMP'],'annual-report/index-sha256.txt').read_text().strip()
+          for attempt in range(24):
+            try:
+              with urllib.request.urlopen(urllib.request.Request(os.environ['LIVE_URL']+'?verify=annual-v96',headers={'Cache-Control':'no-cache'}),timeout=15) as r:
+                if r.status==200 and hashlib.sha256(r.read()).hexdigest()==expected:
+                  print('Exact tested source is published');break
+            except Exception as e: print(type(e).__name__)
+            time.sleep(5)
+          else: raise SystemExit('Published source does not match tested files')
+          PY
+      - name: Verify mobile Safari, Chrome, desktop, and data preservation
+        run: python maintenance/test_annual_leave_ui.py "$RUNNER_TEMP/annual-after" "$RUNNER_TEMP/annual-report"
+      - name: Prepare tested candidate without changing main
+        if: env.LIVE_URL == ''
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$BASE"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/annual-index"
+          git read-tree "$BASE"
+          for path in index.html sw.js; do
+            blob=$(git hash-object -w "$RUNNER_TEMP/annual-after/$path")
+            git update-index --add --cacheinfo "100644,$blob,$path"
+          done
+          tree=$(git write-tree)
+          git config user.name 'sonia6891'
+          git config user.email '107385898+sonia6891@users.noreply.github.com'
+          candidate=$(printf '%s\n' 'Auto-calculate statutory annual leave and track used hours (v96)' | git commit-tree "$tree" -p "$BASE")
+          git push origin "$candidate:refs/heads/repair/annual-leave-candidate-v96"
+          echo "$candidate" > "$RUNNER_TEMP/annual-report/candidate-sha.txt"
+          git diff --stat "$BASE" "$candidate" > "$RUNNER_TEMP/annual-report/diff-stat.txt"
+          cp "$RUNNER_TEMP/annual-after/index.html" "$RUNNER_TEMP/annual-report/index.html"
+          cp "$RUNNER_TEMP/annual-after/sw.js" "$RUNNER_TEMP/annual-report/sw.js"
+      - name: Save verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: annual-leave-v96-verification
+          path: ${{ runner.temp }}/annual-report
+          retention-days: 7
