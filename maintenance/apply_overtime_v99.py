@@ -37,3 +37,4 @@ s=s.replace('manifest.webmanifest?v=98','manifest.webmanifest?v=99').replace('ไป
 p.write_text(s)
 sw=root/'sw.js'; w=sw.read_text().replace('meow-work-pwa-v98','meow-work-pwa-v99').replace('manifest.webmanifest?v=98','manifest.webmanifest?v=99'); sw.write_text(w)
 print('v99 applied')
+\n
