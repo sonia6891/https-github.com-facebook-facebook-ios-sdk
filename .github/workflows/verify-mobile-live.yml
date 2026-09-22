@@ -1,0 +1,84 @@
+name: Verify published mobile UI repair
+on:
+  push:
+    branches: ["repair/mobile-assets-v75"]
+    paths: ['.github/workflows/verify-mobile-live.yml']
+permissions:
+  contents: read
+jobs:
+  verify-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser test engines
+        run: |
+          python -m pip install playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Verify the deployed site, original image sources, and five pages
+        run: |
+          mkdir -p live-qa
+          python - <<'PY'
+          import hashlib,json,time,urllib.request
+          from pathlib import Path
+          from playwright.sync_api import sync_playwright
+          URL='https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/?dev=1&v=75'
+          EXPECTED='7c9326678db2142695bb17e104c5afc13cc61adf7948996f83280db7d4d15ea6'
+          out=Path('live-qa');report={'url':URL,'expected_html_sha256':EXPECTED,'browsers':[]}
+          for attempt in range(18):
+              req=urllib.request.Request(URL,headers={'Cache-Control':'no-cache'})
+              with urllib.request.urlopen(req,timeout=30) as response:body=response.read()
+              digest=hashlib.sha256(body).hexdigest()
+              if digest==EXPECTED:break
+              time.sleep(10)
+          assert digest==EXPECTED,('Live HTML does not match tested source',digest)
+          report['live_html_sha256']=digest
+          with sync_playwright() as p:
+              for engine in ['chromium','webkit']:
+                  browser=getattr(p,engine).launch(headless=True)
+                  for width in [375,390,430]:
+                      ctx=browser.new_context(viewport={'width':width,'height':844},is_mobile=True,has_touch=True,device_scale_factor=1)
+                      page=ctx.new_page();errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
+                      page.goto(URL,wait_until='domcontentloaded',timeout=60000)
+                      page.wait_for_function("document.querySelector('#mobileRestCard img')?.naturalWidth===676",timeout=30000)
+                      page.wait_for_timeout(1800)
+                      page.wait_for_function("document.querySelector('.hero-mobile')?.naturalWidth===901")
+                      page.locator('.hero-wrap').screenshot(path=str(out/f'{engine}-{width}-header.png'))
+                      if width==390:page.screenshot(path=str(out/f'{engine}-{width}-overview.png'),full_page=True)
+                      theme=page.locator('#heroTheme')
+                      style=theme.evaluate("b=>({border:getComputedStyle(b).borderWidth,background:getComputedStyle(b).backgroundColor,shadow:getComputedStyle(b).boxShadow})")
+                      assert style['border']=='0px' and style['shadow']=='none',style
+                      assert theme.count()==1
+                      theme.click();page.wait_for_timeout(200)
+                      assert theme.get_attribute('aria-checked')=='true'
+                      theme.click();page.wait_for_timeout(200)
+                      assert theme.get_attribute('aria-checked')=='false'
+                      for tab in ['dashboard','calendar','attendance','salary','settings']:
+                          page.locator(f'.bottom-nav [data-tab="{tab}"]').click();page.wait_for_timeout(800)
+                          page.evaluate("window.scrollTo({top:document.documentElement.scrollHeight,behavior:'instant'})")
+                          page.wait_for_timeout(300)
+                          image=page.locator('#mobileRestCard img')
+                          image.evaluate('(i)=>i.decode()')
+                          info=image.evaluate("i=>({width:i.naturalWidth,height:i.naturalHeight,parent:i.closest('.page').id,bottom:i.getBoundingClientRect().bottom,navTop:document.querySelector('.bottom-nav').getBoundingClientRect().top,src:i.currentSrc})")
+                          assert image.is_visible() and info['width']==676 and info['height']==134,info
+                          assert info['parent']=='page-'+tab,info
+                          assert info['bottom']<=info['navTop']+1,info
+                          assert page.locator('#mobileRestCard').count()==1
+                          if width==390:page.screenshot(path=str(out/f'{engine}-{width}-{tab}-footer.png'))
+                          report['browsers'].append({'engine':engine,'width':width,'tab':tab,'footer':info})
+                      assert page.get_by_text('版本 1.0.0（介面 v75）',exact=False).count()==1
+                      assert not errors,errors
+                      ctx.close()
+                  browser.close()
+          (out/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2))
+          print('PASS: published HTML matches tested source; 30 page/viewport checks across Chromium and WebKit')
+          PY
+      - name: Save live screenshots and verification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-v75-live-verification
+          path: live-qa
+          retention-days: 3
