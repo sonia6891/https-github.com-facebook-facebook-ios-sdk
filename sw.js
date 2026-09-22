@@ -1,5 +1,5 @@
-const CACHE_NAME='meow-work-pwa-v113';
-const STATIC_ASSETS=['./index.html','./manifest.webmanifest?v=113','./assets/welcome-brand-v112.webp','./assets/mobile-hero-clean-v75.png','./assets/mobile-rest-card-v75.webp','./workcat-home-v12.png'];
+const CACHE_NAME='meow-work-pwa-v114';
+const STATIC_ASSETS=['./index.html','./manifest.webmanifest?v=114','./assets/welcome-brand-v112.webp','./assets/mobile-hero-clean-v75.png','./assets/mobile-rest-card-v75.webp','./workcat-home-v12.png'];
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting()});
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(STATIC_ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('meow-work-pwa-')&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
