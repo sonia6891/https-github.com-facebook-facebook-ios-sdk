@@ -1,0 +1,33 @@
+name: Verify Google login v103
+on:
+  push:
+    branches: ["feature/google-login-v103"]
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Build and verify
+        run: |
+          mkdir -p "$RUNNER_TEMP/site";git archive 24e4d6ce7f7542df4b87bd81cad2b30f66d2ec75 | tar -x -C "$RUNNER_TEMP/site"
+          python maintenance/apply_google_login_v103.py "$RUNNER_TEMP/site"
+          python - <<'PY'
+          import re,pathlib,subprocess,os
+          s=pathlib.Path(os.environ['RUNNER_TEMP'],'site/index.html').read_text()
+          for x in ['id="googleLogin"','async function signInWithGoogle()',"provider:'google'","options:{redirectTo",'同一個登入帳號','v=103']:assert x in s,x
+          assert 'Client Secret' not in s
+          js=re.findall(r'<script[^>]*>([\\s\\S]*?)</script>',s)[-1];f=pathlib.Path(os.environ['RUNNER_TEMP'],'app.js');f.write_text(js);subprocess.run(['node','--check',str(f)],check=True)
+          PY
+      - name: Publish candidate
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "24e4d6ce7f7542df4b87bd81cad2b30f66d2ec75"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/index";git read-tree 24e4d6ce7f7542df4b87bd81cad2b30f66d2ec75
+          for path in index.html sw.js; do blob=$(git hash-object -w "$RUNNER_TEMP/site/$path");git update-index --add --cacheinfo "100644,$blob,$path";done
+          tree=$(git write-tree);git config user.name sonia6891;git config user.email 107385898+sonia6891@users.noreply.github.com
+          candidate=$(printf '%s\n' 'Add Google login to cloud sync (v103)' | git commit-tree "$tree" -p 24e4d6ce7f7542df4b87bd81cad2b30f66d2ec75)
+          git push origin "$candidate:refs/heads/feature/google-login-candidate-v103"
