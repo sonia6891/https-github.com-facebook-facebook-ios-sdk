@@ -1,0 +1,63 @@
+name: One-time dashboard right rail cleanup
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - ".github/workflows/remove-dashboard-right-rail.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Remove desktop dashboard right rail
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+
+          def trim(path):
+              p = Path(path)
+              s = p.read_text(encoding='utf-8')
+              s = s.replace(
+                  '.footer-art{grid-column:2;',
+                  '.footer-art{display:none;grid-column:2;',
+                  1,
+              )
+              s2 = re.sub(
+                  r'\n    <aside class="desktop-dashboard-profile" id="desktopDashboardProfile">.*?\n    </aside>',
+                  '',
+                  s,
+                  count=1,
+                  flags=re.S,
+              )
+              if s2 == s:
+                  raise SystemExit(f'{path}: desktop dashboard profile aside was not removed')
+              if 'id="desktopDashboardProfile"' in s2:
+                  raise SystemExit(f'{path}: desktop dashboard profile id still present')
+              if '.footer-art{display:none;grid-column:2;' not in s2:
+                  raise SystemExit(f'{path}: footer art desktop hide rule missing')
+              if '.footer-art{display:block;min-height:0}' not in s2:
+                  raise SystemExit(f'{path}: mobile footer art rule changed or missing')
+              p.write_text(s2, encoding='utf-8', newline='')
+
+          trim('index.html')
+          trim('404.html')
+          Path('.github/workflows/remove-dashboard-right-rail.yml').unlink()
+          PY
+      - name: Commit cleanup
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html 404.html .github/workflows/remove-dashboard-right-rail.yml
+          git commit -m "Remove dashboard right rail profile art"
+          git push
