@@ -46,7 +46,7 @@ with sync_playwright() as p:
     snapshot=page.evaluate('(k)=>localStorage.getItem(k)',KEY)
     with page.expect_file_chooser() as chosen:imp.click()
     assert chosen.value.element.get_attribute('id')=='importBackupInput'
-    assert not chosen.value.is_multiple
+    assert not chosen.value.is_multiple()
     chosen.value.set_files([]);page.wait_for_timeout(80)
     assert page.evaluate('(k)=>localStorage.getItem(k)',KEY)==snapshot
     report['checks'].append({'engine':engine,'width':width,'theme':theme,'same_styles':True,'same_alignment':True,'single_file_picker':True,'cancel_no_write':True})
