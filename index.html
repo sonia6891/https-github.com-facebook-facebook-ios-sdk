@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=80">
+<link rel="manifest" href="./manifest.webmanifest?v=81">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -292,9 +292,63 @@ html.dark .work-date-dialog{color-scheme:dark}
 .work-date-actions button:disabled{opacity:.45;cursor:not-allowed}
 
 
-/* Itinerary / personal calendar */
-.itinerary-head{padding:16px}.itinerary-sub{margin-top:5px;color:var(--muted);font-size:13px;font-weight:650}.itinerary-add{border:0;border-radius:14px;background:linear-gradient(135deg,#d97a4c,#b9633d);color:#fff;display:flex;align-items:center;gap:7px;padding:11px 14px;font-weight:900;box-shadow:0 7px 18px rgba(166,88,50,.18)}.itinerary-add .icon{font-size:17px}.itinerary-conflict-banner{width:100%;margin:0 0 10px;padding:11px 13px;border:1px solid #f3a8ad;border-radius:16px;background:var(--mobile-pink-surface,#fff3f3);color:var(--mobile-pink-ink,#b52335);display:grid;grid-template-columns:28px 1fr 18px;align-items:center;gap:9px;text-align:left}.itinerary-conflict-banner.hidden{display:none}.itinerary-conflict-icon{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:#e84c59;color:#fff;font-weight:950}.itinerary-conflict-banner b,.itinerary-conflict-banner small{display:block}.itinerary-conflict-banner small{margin-top:2px;font-size:10px;color:var(--mobile-muted,#8b625d)}.itinerary-chevron{font-size:24px}.itinerary-calendar-card{overflow:hidden}.itinerary-weekdays,.itinerary-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr))}.itinerary-weekdays div{text-align:center;padding:9px 1px;border-bottom:1px solid var(--line);background:var(--mobile-surface,#fffaf5);font-size:10px;font-weight:900;color:var(--mobile-muted,#806b61)}.itinerary-day{position:relative;appearance:none;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--mobile-surface,#fff);color:var(--mobile-text,var(--ink));min-height:92px;padding:5px 4px;text-align:left;overflow:hidden}.itinerary-day:nth-child(7n){border-right:0}.itinerary-day.muted{background:var(--mobile-soft,#fffaf7);color:#b6aaa2}.itinerary-date{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;font-size:11px;font-weight:900}.itinerary-day.today .itinerary-date{background:#8f583e;color:#fff}.itinerary-day.selected{box-shadow:inset 0 0 0 2px #df8c58;z-index:2}.itinerary-day.has-conflict{background:linear-gradient(180deg,var(--mobile-pink-surface,#fff7f7),var(--mobile-surface,#fff))}.itinerary-warning{position:absolute;right:4px;top:5px;width:18px;height:18px;border-radius:50%;display:grid;place-items:center;background:#e64c59;color:#fff;font-size:10px;font-weight:950}.itinerary-shift,.itinerary-event-pill,.itinerary-substatus,.itinerary-more{display:block;margin-top:3px;padding:3px 4px;border-radius:7px;font-size:9px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}.itinerary-shift.work{background:var(--mobile-gold-surface,#fff0d7);color:var(--mobile-gold-ink,#8b4c1c)}.itinerary-shift.off{background:var(--mobile-gray-surface,#eff1f2);color:var(--mobile-gray-ink,#6f7477)}.itinerary-shift.leave{background:var(--mobile-pink-surface,#ffe5e8);color:var(--mobile-pink-ink,#b72d44)}.itinerary-substatus{padding:1px 2px;background:transparent;color:var(--mobile-muted,#8c7569);font-size:8px}.itinerary-event-pill.event{background:var(--mobile-purple-surface,#efe5ff);color:var(--mobile-purple-ink,#7954a2)}.itinerary-event-pill.note{background:var(--mobile-blue-surface,#e9f2fb);color:var(--mobile-blue-ink,#55758f)}.itinerary-more{padding:1px 2px;background:transparent;color:var(--muted);font-size:8px}.itinerary-legend{display:flex;flex-wrap:wrap;gap:8px 11px;padding:10px 12px;font-size:9px;color:var(--muted)}.itinerary-legend span{display:flex;align-items:center;gap:4px}.it-dot{width:9px;height:9px;border-radius:50%}.it-dot.work{background:#e0a06a}.it-dot.off{background:#aebbc3}.it-dot.leave{background:#e56879}.it-dot.event{background:#9e7ccc}.it-dot.note{background:#75a5c5}.itinerary-day-card{margin-top:12px;padding:14px}.itinerary-day-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}.itinerary-day-head b{display:block;font-size:17px}.itinerary-day-head small{display:block;margin-top:3px;color:var(--muted);font-size:10px}.itinerary-day-head button{border:0;background:var(--mobile-gold-surface,#fff0dc);color:var(--mobile-gold-ink,#9b5d3f);border-radius:11px;padding:8px 10px;font-size:11px;font-weight:900}.itinerary-work-row{display:grid;grid-template-columns:38px 1fr auto;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid var(--line)}.itinerary-work-icon{width:36px;height:36px;border-radius:11px;display:grid;place-items:center}.itinerary-work-icon .icon{font-size:18px}.itinerary-work-icon.work{background:var(--mobile-gold-surface,#fff0dc);color:var(--mobile-gold-ink,#9b5d3f)}.itinerary-work-icon.off{background:var(--mobile-gray-surface,#eee);color:var(--mobile-gray-ink,#666)}.itinerary-work-icon.leave{background:var(--mobile-pink-surface,#ffe4e8);color:var(--mobile-pink-ink,#bb3450)}.itinerary-work-row b,.itinerary-work-row small{display:block}.itinerary-work-row small{margin-top:2px;font-size:10px;color:var(--muted)}.itinerary-work-row button{border:0;background:transparent;color:var(--mobile-gold-ink,#9b5d3f);font-size:10px;font-weight:900}.itinerary-event-list{display:grid}.itinerary-event-row{appearance:none;width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;color:inherit;display:grid;grid-template-columns:36px 1fr auto;align-items:center;gap:9px;padding:10px 0;text-align:left}.itinerary-event-row.conflict{background:linear-gradient(90deg,var(--mobile-pink-surface,#fff7f7),transparent);margin:0 -8px;padding-left:8px;padding-right:8px;width:calc(100% + 16px)}.itinerary-event-icon{width:34px;height:34px;border-radius:11px;display:grid;place-items:center}.itinerary-event-icon.event{background:var(--mobile-purple-surface,#eee3ff);color:var(--mobile-purple-ink,#7e55a9)}.itinerary-event-icon.note{background:var(--mobile-blue-surface,#e8f2fb);color:var(--mobile-blue-ink,#55738d)}.itinerary-event-copy b,.itinerary-event-copy small{display:block}.itinerary-event-copy b{font-size:13px}.itinerary-event-copy small{margin-top:2px;color:var(--muted);font-size:10px}.itinerary-event-conflict{border-radius:999px;background:#e8525e;color:#fff;padding:4px 7px;font-size:9px;font-weight:900}.itinerary-row-arrow{font-size:20px;color:var(--muted)}.itinerary-empty{text-align:center;padding:19px 8px;color:var(--muted)}.itinerary-empty b,.itinerary-empty span{display:block}.itinerary-empty b{color:var(--ink);font-size:13px}.itinerary-empty span{font-size:10px;margin-top:4px;line-height:1.45}.itinerary-note-add{width:100%;margin-top:10px;border:1px dashed var(--mobile-line,#e2cdbf);border-radius:12px;background:var(--mobile-surface,#fffaf6);color:var(--mobile-muted,#846456);padding:9px;font-size:11px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px}.itinerary-check{display:flex;align-items:flex-start;gap:8px;padding:10px 11px;border:1px solid var(--mobile-line,#eadbd0);background:var(--mobile-surface,#fffaf6);border-radius:12px;font-size:12px;font-weight:750;line-height:1.45}.itinerary-check input{margin-top:2px}.conflict-pair{display:grid;gap:8px}.conflict-line{border-radius:14px;padding:11px 12px}.conflict-line.work{background:var(--mobile-gold-surface,#fff0dc)}.conflict-line.event{background:var(--mobile-purple-surface,#efe5ff)}.conflict-line span,.conflict-line b,.conflict-line small{display:block}.conflict-line span{font-size:10px;color:var(--muted);font-weight:850}.conflict-line b{margin-top:4px;font-size:15px}.conflict-line small{margin-top:3px;color:var(--muted)}.conflict-message{margin-top:10px;padding:12px;border:1px solid #f0c7ae;border-radius:14px;background:#fff7f0}.dark .conflict-message{background:#3b2d25}.conflict-message b,.conflict-message span{display:block}.conflict-message b{font-size:13px}.conflict-message span{margin-top:4px;font-size:11px;color:var(--muted);line-height:1.5}.conflict-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.conflict-actions .btn:last-child{grid-column:1/-1}
-@media(max-width:760px){.itinerary-head{padding:12px}.itinerary-head .page-title{font-size:21px}.itinerary-sub{font-size:10px}.itinerary-add{padding:9px 11px;font-size:11px}.itinerary-toolbar{margin-top:10px}.itinerary-day{min-height:86px;padding:4px 3px}.itinerary-day-card{padding:11px;border-radius:18px}.itinerary-calendar-card{border-radius:18px}.event-time-fields{grid-template-columns:1fr 1fr}.itinerary-conflict-dialog{max-width:94vw}}
+/* Itinerary list: user-added items only, no full month calendar. */
+.itinerary-list-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin:4px 2px 14px}
+.itinerary-title{font-size:24px}.itinerary-sub{margin-top:6px;color:var(--muted);font-size:13px;font-weight:650}
+.itinerary-head-actions{display:flex;align-items:center;gap:10px}
+.itinerary-all-btn{border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);padding:9px 12px;font-size:12px;font-weight:850;box-shadow:0 5px 14px rgba(99,62,36,.05)}
+.itinerary-all-btn span{font-size:17px;line-height:0;vertical-align:-1px;color:var(--muted)}
+.itinerary-add-fab{width:54px;height:54px;border:2px solid rgba(255,255,255,.92);border-radius:50%;background:linear-gradient(145deg,#d98552,#a95d36);color:#fff;font-size:36px;font-weight:300;line-height:1;display:grid;place-items:center;box-shadow:0 10px 24px rgba(153,82,47,.25)}
+.itinerary-upcoming-list{display:grid;gap:11px}
+.itinerary-list-card{width:100%;appearance:none;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--ink);box-shadow:0 7px 18px rgba(93,64,44,.05);padding:10px 12px;display:grid;grid-template-columns:94px 48px minmax(0,1fr) 28px;align-items:center;gap:10px;text-align:left}
+.itinerary-list-card.conflict{border-color:#eda6aa;background:linear-gradient(90deg,var(--mobile-pink-surface,#fff8f8),var(--card))}
+.itinerary-date-badge{align-self:stretch;border-radius:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:74px;background:var(--mobile-blue-surface,#eef6ff);color:var(--mobile-blue-ink,#2f72bd)}
+.itinerary-list-card:nth-child(4n+2) .itinerary-date-badge{background:var(--mobile-pink-surface,#fff0f1);color:var(--mobile-pink-ink,#c95b62)}
+.itinerary-list-card:nth-child(4n+3) .itinerary-date-badge{background:var(--mobile-green-surface,#edf8ef);color:var(--mobile-green-ink,#4a965d)}
+.itinerary-list-card:nth-child(4n+4) .itinerary-date-badge{background:var(--mobile-gold-surface,#fff5df);color:var(--mobile-gold-ink,#b77716)}
+.itinerary-date-badge b{font-size:16px;line-height:1.2}.itinerary-date-badge span{font-size:11px;margin-top:5px;font-weight:800}
+.itinerary-card-icon{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--mobile-blue-surface,#e8f2ff);color:var(--mobile-blue-ink,#2a72c6)}
+.itinerary-card-icon .icon{font-size:24px}
+.itinerary-card-copy{min-width:0}.itinerary-card-copy time{display:block;font-size:14px;font-weight:900}.itinerary-card-copy b{display:block;margin-top:3px;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.itinerary-card-copy small{display:block;margin-top:5px;color:var(--muted);font-size:10px}
+.itinerary-card-more{color:var(--muted);font-size:20px;letter-spacing:1px;text-align:center}
+.itinerary-card-warning{display:inline-flex;align-items:center;gap:4px;color:#df4a56!important;font-weight:850}
+.itinerary-empty-list{border:1px dashed var(--line);border-radius:20px;background:var(--card);padding:34px 18px;text-align:center;color:var(--muted)}
+.itinerary-empty-list .empty-plus{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;margin:0 auto 12px;background:var(--mobile-gold-surface,#fff0dc);color:var(--mobile-gold-ink,#a85e34);font-size:30px}
+.itinerary-empty-list b{display:block;color:var(--ink);font-size:16px}.itinerary-empty-list span{display:block;margin-top:6px;font-size:11px;line-height:1.55}
+.itinerary-sheet{width:min(520px,100vw);max-width:none;padding:0;border:0;background:var(--card);color:var(--ink);border-radius:26px 26px 0 0;box-shadow:0 -14px 44px rgba(32,22,17,.24);margin:auto auto 0}
+.itinerary-sheet::backdrop,.itinerary-conflict-dialog::backdrop{background:rgba(20,15,12,.48)}
+.itinerary-sheet-handle{width:44px;height:5px;border-radius:99px;background:var(--line);margin:10px auto 4px}
+.itinerary-sheet-head{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 8px}
+.itinerary-sheet-head b{font-size:22px}.itinerary-sheet-head .dialog-close{position:static;border:0;background:transparent;color:var(--muted);font-size:30px;padding:0 4px}
+.itinerary-sheet-body{padding:8px 20px 4px;display:grid;gap:10px}
+.itinerary-form-row{display:grid;grid-template-columns:36px 64px minmax(0,1fr);align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:14px;background:var(--paper)}
+.itinerary-form-icon{color:var(--muted);font-size:22px;display:grid;place-items:center}.itinerary-form-icon .icon{font-size:22px}
+.itinerary-form-row label{font-weight:850;color:var(--muted)}
+.itinerary-form-row input,.itinerary-form-row textarea{min-width:0;width:100%;border:0;outline:0;background:transparent;color:var(--ink);font-size:16px;padding:2px}
+.itinerary-form-row textarea{min-height:54px;resize:none;line-height:1.45}
+.itinerary-time-inputs{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:6px}
+.itinerary-time-inputs span{color:var(--muted);text-align:center}
+.itinerary-sheet-foot{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 20px calc(18px + env(safe-area-inset-bottom))}
+.itinerary-sheet-foot .btn{min-height:50px;border-radius:15px;font-weight:900}
+.itinerary-cancel{border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.itinerary-save{border:0;background:linear-gradient(145deg,#be6e3e,#9d552e);color:#fff}
+.itinerary-delete{grid-column:1/-1;border:0;background:transparent;color:#cf4450;font-weight:850;padding:5px}
+.itinerary-conflict-dialog{width:min(430px,calc(100vw - 28px));padding:22px;border:1px solid var(--line);border-radius:24px;background:var(--card);color:var(--ink);box-shadow:0 20px 55px rgba(30,20,16,.26)}
+.conflict-alert-icon{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;margin:0 auto;background:#ed5360;color:#fff;font-size:32px;font-weight:950;box-shadow:0 0 0 10px rgba(237,83,96,.09)}
+.conflict-alert-title{text-align:center;font-size:21px;font-weight:950;margin-top:18px}
+.conflict-alert-copy{text-align:center;color:var(--muted);font-size:12px;line-height:1.55;margin-top:7px}
+.conflict-alert-list{display:grid;gap:8px;margin-top:15px}
+.conflict-alert-item{padding:11px 12px;border-radius:14px;background:var(--mobile-pink-surface,#fff2f2);color:var(--mobile-pink-ink,#a8333e)}
+.conflict-alert-item b,.conflict-alert-item small{display:block}.conflict-alert-item small{margin-top:3px;font-size:10px;color:var(--muted)}
+.conflict-alert-actions{display:grid;gap:9px;margin-top:16px}.conflict-alert-actions .btn{min-height:48px;border-radius:14px;font-weight:900}
+@media(max-width:760px){
+  .itinerary-list-head{align-items:center;margin-top:2px}.itinerary-title{font-size:21px}.itinerary-sub{font-size:10px}
+  .itinerary-all-btn{padding:8px 10px;font-size:10px}.itinerary-add-fab{width:50px;height:50px;font-size:32px}
+  .itinerary-list-card{grid-template-columns:82px 42px minmax(0,1fr) 20px;padding:9px 9px;gap:8px}
+  .itinerary-date-badge{min-height:70px}.itinerary-date-badge b{font-size:15px}.itinerary-card-icon{width:40px;height:40px;border-radius:12px}.itinerary-card-copy time{font-size:12px}.itinerary-card-copy b{font-size:15px}
+  .itinerary-sheet{max-height:88dvh;overflow:auto}
+}
+
 </style>
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
@@ -499,50 +553,17 @@ html.dark .work-date-dialog{color-scheme:dark}
   </section>
 
   <section class="page" id="page-attendance">
-    <div class="card itinerary-head">
-      <div class="page-head" style="margin:0">
-        <div>
-          <div class="page-title"><svg class="icon" style="font-size:28px;color:var(--mobile-gold-ink, #9b5d3f)"><use href="#i-clock"/></svg>行程</div>
-          <div class="itinerary-sub">班表、私人行程與備註，放在同一個月曆裡。</div>
-        </div>
-        <button class="itinerary-add" id="addItinerary"><svg class="icon"><use href="#i-edit"/></svg><span>新增</span></button>
+    <div class="itinerary-list-head">
+      <div>
+        <div class="page-title itinerary-title"><span class="paw" aria-hidden="true">🐾</span>今日與近期行程</div>
+        <div class="itinerary-sub">記下重要的事，讓生活更有節奏～</div>
+      </div>
+      <div class="itinerary-head-actions">
+        <button type="button" class="itinerary-all-btn" id="itineraryAllBtn">全部行程 <span>›</span></button>
+        <button type="button" class="itinerary-add-fab" id="addItinerary" aria-label="新增行程">＋</button>
       </div>
     </div>
-
-    <div class="month-toolbar itinerary-toolbar">
-      <button class="icon-btn" id="attPrev">‹</button>
-      <div class="month-title" id="attendanceMonth"></div>
-      <button class="icon-btn" id="attNext">›</button>
-      <button class="today-btn" id="attToday">本月</button>
-    </div>
-
-    <button class="itinerary-conflict-banner hidden" id="itineraryConflictBanner" type="button">
-      <span class="itinerary-conflict-icon">!</span>
-      <span><b id="itineraryConflictCount">0 件行程與班表撞期</b><small>點一下查看並處理</small></span>
-      <span class="itinerary-chevron">›</span>
-    </button>
-
-    <div class="card itinerary-calendar-card">
-      <div class="itinerary-weekdays"><div>日</div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div></div>
-      <div class="itinerary-days" id="itineraryDays"></div>
-      <div class="itinerary-legend">
-        <span><i class="it-dot work"></i><b id="itineraryShiftLegend">A班</b></span>
-        <span><i class="it-dot off"></i>休</span>
-        <span><i class="it-dot leave"></i>請假／加班</span>
-        <span><i class="it-dot event"></i>私人行程</span>
-        <span><i class="it-dot note"></i>備註</span>
-      </div>
-    </div>
-
-    <div class="card itinerary-day-card">
-      <div class="itinerary-day-head">
-        <div><b id="itineraryDayTitle">今日</b><small id="itineraryDaySubtitle"></small></div>
-        <button type="button" id="addSelectedEvent">＋ 新增行程</button>
-      </div>
-      <div class="itinerary-work-row" id="itineraryWorkRow"></div>
-      <div class="itinerary-event-list" id="itineraryDayEvents"></div>
-      <button class="itinerary-note-add" type="button" id="addSelectedNote"><svg class="icon"><use href="#i-edit"/></svg> 加一則備註</button>
-    </div>
+    <div class="itinerary-upcoming-list" id="itineraryUpcomingList"></div>
   </section>
 
   <section class="page" id="page-salary">
@@ -753,7 +774,7 @@ html.dark .work-date-dialog{color-scheme:dark}
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>主題切換</div><div class="theme-options"><button class="theme-choice" id="themeLight">☀　淺色模式 <span>○</span></button><button class="theme-choice" id="themeDark">☾　深色模式 <span>○</span></button></div></div>
       <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>排班設定</div><div class="settings-list"><button class="settings-item" data-goto="calendar"><div class="field-icon" style="background:var(--mobile-gold-icon, #fff0dc);color:var(--mobile-gold-ink, #9c5b3b)"><svg class="icon"><use href="#i-calendar"/></svg></div><div><b>排班相關設定</b><small id="settingsScheduleSummary">做2休2・A班</small></div><span>›</span></button></div></div>
       <div class="card settings-card install-only"><div class="section-title"><span class="paw">🐾</span>App 安裝 / 加入主畫面</div><div class="install-row"><div><b>將 App 加入主畫面</b><div class="hint" id="installHint">快速開啟，使用更方便</div></div><button class="btn primary" id="installApp"><svg class="icon" style="display:inline-block;vertical-align:-3px"><use href="#i-phone"/></svg> 安裝</button></div></div>
-      <div class="card settings-card"><div class="install-row"><div><b>ⓘ 關於 喵的，又要上班了</b><div class="hint">版本 1.0.0（介面 v80）・社畜排班、出勤、請假與薪資試算</div></div><span>🐾</span></div></div>
+      <div class="card settings-card"><div class="install-row"><div><b>ⓘ 關於 喵的，又要上班了</b><div class="hint">版本 1.0.0（介面 v81）・社畜排班、出勤、請假與薪資試算</div></div><span>🐾</span></div></div>
     </div>
     <div class="footer-banner"><img src="data:image/webp;base64,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" alt="休息一下，是為了走更長遠的路"></div>
   </section>
@@ -786,43 +807,51 @@ html.dark .work-date-dialog{color-scheme:dark}
 
 <dialog class="dialog" id="dayDialog"><form method="dialog" id="dayForm"><div class="dialog-head"><div><b id="dialogDate">編輯出勤</b><div class="hint" id="dialogBase"></div></div><button class="dialog-close" value="cancel">×</button></div><div class="dialog-body"><div class="field"><label>狀態</label><select id="dialogStatus"><option value="none">正常班表</option><option value="overtime">加班</option><option value="sick">病假</option><option value="menstrual">生理假</option><option value="personal">事假</option><option value="annual">特休</option><option value="custom">自訂假別</option></select></div><div class="field hidden" id="customLabelWrap"><label>自訂假別名稱</label><input id="dialogCustomLabel" placeholder="例如：公假、補休"></div><div class="field" id="hoursWrap"><label>時數</label><input id="dialogHours" type="number" min="0" step="0.5" placeholder="例如 8"></div><div class="field"><label>備註</label><textarea id="dialogNote" placeholder="可留空"></textarea></div></div><div class="dialog-foot"><button class="btn" value="cancel">取消</button><button type="button" class="btn danger" id="clearDay">清除標記</button><button type="button" class="btn primary" id="saveDay">儲存</button></div></form></dialog>
 
-<dialog class="dialog itinerary-dialog" id="eventDialog">
+<dialog class="dialog itinerary-sheet" id="eventDialog">
   <form method="dialog" id="eventForm">
-    <div class="dialog-head"><div><b id="eventDialogTitle">新增行程</b><div class="hint">私人行程會和班表一起顯示；備註不會觸發撞期。</div></div><button class="dialog-close" value="cancel">×</button></div>
-    <div class="dialog-body">
-      <div class="field"><label>類型</label><select id="eventKind"><option value="event">私人行程</option><option value="note">備註</option></select></div>
-      <div class="field"><label>名稱</label><input id="eventTitle" maxlength="40" placeholder="例如：家裡有事、看醫生"></div>
-      <div class="field"><label>日期</label><input id="eventDate" type="date"></div>
-      <div class="form-grid event-time-fields" id="eventTimeFields">
-        <div class="field"><label>開始時間</label><input id="eventStart" type="time"></div>
-        <div class="field"><label>結束時間</label><input id="eventEnd" type="time"></div>
-      </div>
-      <label class="itinerary-check" id="eventOccupiesWrap"><input id="eventOccupies" type="checkbox" checked><span>這個行程需要保留時間，排到上班日要提醒我</span></label>
-      <div class="field" id="eventReminderWrap"><label>提醒</label><select id="eventReminder"><option value="none">不另外提醒</option><option value="same">當天提醒</option><option value="1d">提前 1 天</option><option value="3d">提前 3 天</option></select></div>
-      <div class="field"><label>備註</label><textarea id="eventNote" maxlength="160" placeholder="可留空"></textarea></div>
+    <div class="itinerary-sheet-handle" aria-hidden="true"></div>
+    <div class="itinerary-sheet-head">
+      <b id="eventDialogTitle">新增行程</b>
+      <button class="dialog-close" value="cancel" aria-label="關閉">×</button>
     </div>
-    <div class="dialog-foot">
-      <button type="button" class="btn danger hidden" id="deleteEvent">刪除</button>
-      <button class="btn" value="cancel">取消</button>
-      <button type="button" class="btn primary" id="saveEvent">儲存</button>
+    <div class="itinerary-sheet-body">
+      <div class="itinerary-form-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-calendar"/></svg></span>
+        <label for="eventDate">日期</label>
+        <input id="eventDate" type="date" required>
+      </div>
+      <div class="itinerary-form-row itinerary-time-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
+        <label>時間</label>
+        <div class="itinerary-time-inputs">
+          <input id="eventStart" type="time" required aria-label="開始時間">
+          <span>－</span>
+          <input id="eventEnd" type="time" required aria-label="結束時間">
+        </div>
+      </div>
+      <div class="itinerary-form-row itinerary-note-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-doc"/></svg></span>
+        <label for="eventNote">備註</label>
+        <textarea id="eventNote" maxlength="120" placeholder="例如：牙醫回診" required></textarea>
+      </div>
+    </div>
+    <div class="itinerary-sheet-foot">
+      <button type="button" class="itinerary-delete hidden" id="deleteEvent">刪除</button>
+      <button class="btn itinerary-cancel" value="cancel">取消</button>
+      <button type="button" class="btn itinerary-save" id="saveEvent">儲存</button>
     </div>
   </form>
 </dialog>
 
 <dialog class="dialog itinerary-conflict-dialog" id="conflictDialog">
   <form method="dialog">
-    <div class="dialog-head"><div><b>這個行程和上班日撞期了</b><div class="hint" id="conflictDateText"></div></div><button class="dialog-close" value="cancel">×</button></div>
-    <div class="dialog-body">
-      <div class="conflict-pair">
-        <div class="conflict-line work"><span>工作</span><b id="conflictWorkText"></b></div>
-        <div class="conflict-line event"><span>行程</span><b id="conflictEventText"></b><small id="conflictEventTime"></small></div>
-      </div>
-      <div class="conflict-message"><b>需要安排一下</b><span>這天原本有排班，私人行程也需要保留時間。行程不會被刪除，班表也不會被系統自動更改。</span></div>
-    </div>
-    <div class="dialog-foot conflict-actions">
-      <button type="button" class="btn primary" id="conflictEdit">修改行程</button>
-      <button type="button" class="btn" id="conflictLeave">記錄請假</button>
-      <button class="btn" value="cancel">保留，稍後處理</button>
+    <div class="conflict-alert-icon">!</div>
+    <div class="conflict-alert-title">行程時間有衝突</div>
+    <div class="conflict-alert-copy">你選擇的時間和下列安排重疊，是否仍要新增？</div>
+    <div class="conflict-alert-list" id="conflictAlertList"></div>
+    <div class="conflict-alert-actions">
+      <button type="button" class="btn itinerary-save" id="conflictKeep">仍然新增</button>
+      <button class="btn itinerary-cancel" value="cancel">返回修改</button>
     </div>
   </form>
 </dialog>
@@ -960,6 +989,7 @@ function normalizeState(v){
   s.settings=Object.assign({},s.settings,x.settings||{});
   s.months=x.months||{};
   s.dayStatus=x.dayStatus||{};
+  s.personalEvents=x.personalEvents||{};
   return s;
 }
 async function getAuthClient(){
@@ -1327,14 +1357,23 @@ function twOfficialHoliday(date){return TW_OFFICIAL_HOLIDAYS[date]||null}
 
 function renderCalendar(){const y=current.getFullYear(),m=current.getMonth(),first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate(),today=iso(new Date()),own=state.schedule.shiftName||'A班',other=otherShiftName(own);$('calendarMonth').textContent=`${y} 年 ${m+1} 月`;$('scheduleSummary').textContent=`做${state.schedule.workDays}休${state.schedule.offDays}｜${own}｜第一個上班日 ${state.schedule.startDate}`;$('settingsScheduleSummary').textContent=`做${state.schedule.workDays}休${state.schedule.offDays}・${own}・${state.schedule.startDate}`;$('patternPreset').value=state.schedule.preset;$('shiftName').value=own;$('workDays').value=state.schedule.workDays;$('offDays').value=state.schedule.offDays;setDateControlValue('scheduleStart',state.schedule.startDate);$('workDaysWrap').classList.toggle('hidden',state.schedule.preset!=='custom');$('offDaysWrap').classList.toggle('hidden',state.schedule.preset!=='custom');let html='';for(let i=0;i<first;i++){const prev=new Date(y,m,1-first+i);html+=`<div class="day empty"><span class="date-num">${prev.getDate()}</span></div>`}for(let d=1;d<=days;d++){const dt=new Date(y,m,d),date=iso(dt),base=scheduleForDate(dt),st=state.dayStatus[date],meta=typeMeta(st),holiday=twOfficialHoliday(date);let pills='';if(meta){if(st.type==='overtime'&&base==='work')pills=`<div class="status-pill st-a">${own}</div><div class="status-pill st-ot">${icon('i-clock')}加班</div>`;else pills=`<div class="status-pill ${meta.cls}">${meta.icon?icon(meta.icon):''}${meta.label}</div>`}else{pills=base==='work'?`<div class="status-pill st-a">${own}</div>`:`<div class="status-pill st-b">${other}</div><div class="base-note">休假</div>`}const holidayHtml=holiday?`<div class="holiday-tag ${holiday.kind}" title="${escapeHtml(holiday.full)}">${escapeHtml(holiday.name)}</div>`:'';html+=`<div class="day ${date===today?'today':''} ${holiday?'has-holiday':''}"><span class="date-num">${d}</span>${holidayHtml}<div class="day-status">${pills}</div><button class="day-hit" data-date="${date}" aria-label="編輯 ${date}${holiday?'，'+holiday.full:''}"></button></div>`}const rem=(7-((first+days)%7))%7;for(let i=1;i<=rem;i++)html+=`<div class="day empty"><span class="date-num">${i}</span></div>`;$('calendarDays').innerHTML=html;qsa('.day-hit').forEach(b=>b.onclick=()=>openDay(b.dataset.date));$('calendarLegend').innerHTML=`<span class="legend-item"><span class="dot a"></span>${own}</span><span class="legend-item"><span class="dot b"></span>${other}</span><span class="legend-item"><span class="dot off"></span>休假</span><span class="legend-item"><span class="dot ot"></span>加班</span><span class="legend-item"><span class="dot sick"></span>病假</span><span class="legend-item"><span class="dot menstrual"></span>生理假</span><span class="legend-item"><span class="dot personal"></span>事假</span><span class="legend-item"><span class="dot annual"></span>特休</span><span class="legend-item"><span class="dot custom"></span>自訂假別</span><span class="legend-item"><span class="dot national"></span>國定假日</span><span class="legend-item"><span class="dot govcomp"></span>政府補假</span>`}
 function itineraryEvents(){
-  return Object.values(state.personalEvents||{}).filter(Boolean);
+  return Object.values(state.personalEvents||{}).filter(e=>e&&e.kind!=='note');
 }
-function eventsForDate(date){
-  return itineraryEvents().filter(e=>e.date===date).sort((a,b)=>(a.kind==='note'?1:0)-(b.kind==='note'?1:0)||String(a.start||'').localeCompare(String(b.start||''))||String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
+function eventMinutes(value){
+  const parts=String(value||'').split(':');
+  if(parts.length!==2)return null;
+  const h=Number(parts[0]),m=Number(parts[1]);
+  return Number.isFinite(h)&&Number.isFinite(m)?h*60+m:null;
+}
+function eventsOverlap(a,b){
+  if(!a||!b||a.date!==b.date)return false;
+  const as=eventMinutes(a.start),ae=eventMinutes(a.end),bs=eventMinutes(b.start),be=eventMinutes(b.end);
+  if(as===null||ae===null||bs===null||be===null)return true;
+  return as<be&&bs<ae;
 }
 function eventTimeLabel(e){
-  if(!e||e.kind==='note')return'備註';
-  if(e.start&&e.end)return e.start+'–'+e.end;
+  if(!e)return'';
+  if(e.start&&e.end)return e.start+' - '+e.end;
   if(e.start)return e.start+' 起';
   return'未指定時間';
 }
@@ -1342,136 +1381,98 @@ function isLeaveRecorded(date){
   const st=state.dayStatus[date];
   return !!(st&&st.type&&st.type!=='none'&&st.type!=='overtime');
 }
-function eventConflicts(e){
-  if(!e||e.kind==='note'||e.occupiesTime===false||!e.date)return false;
-  const dt=new Date(e.date+'T00:00:00');
-  if(scheduleForDate(dt)!=='work')return false;
-  if(isLeaveRecorded(e.date))return false;
-  return true;
-}
-function monthConflictEvents(y,m){
-  const prefix=monthKey(y,m)+'-';
-  return itineraryEvents().filter(e=>String(e.date||'').startsWith(prefix)&&eventConflicts(e)).sort((a,b)=>a.date.localeCompare(b.date));
-}
-function itineraryStatusForDate(date,dt){
-  const base=scheduleForDate(dt),st=state.dayStatus[date],own=state.schedule.shiftName||'A班';
-  if(st&&st.type&&st.type!=='none'&&st.type!=='overtime'){
-    const meta=typeMeta(st);return{label:meta?meta.label:'請假',cls:'leave',sub:num(st.hours)?num(st.hours)+' 小時':''};
+function eventConflictDetails(event,ignoreId){
+  if(!event||!event.date)return[];
+  const details=[];
+  const dt=new Date(event.date+'T00:00:00');
+  if(!Number.isNaN(dt.getTime())&&scheduleForDate(dt)==='work'&&!isLeaveRecorded(event.date)){
+    details.push({type:'work',title:(state.schedule.shiftName||'A班')+' 上班日',detail:'這一天依目前班表需要上班'});
   }
-  if(base==='work')return{label:own,cls:'work',sub:(st&&st.type==='overtime')?'＋加班 '+num(st.hours)+' 小時':''};
-  if(st&&st.type==='overtime')return{label:'休＋加班',cls:'leave',sub:num(st.hours)+' 小時'};
-  return{label:'休',cls:'off',sub:''};
+  itineraryEvents().forEach(other=>{
+    if(other.id===ignoreId||other.id===event.id)return;
+    if(eventsOverlap(event,other))details.push({type:'event',title:other.title||other.note||'既有行程',detail:eventTimeLabel(other)});
+  });
+  return details;
 }
-function ensureItinerarySelectedDate(){
-  const d=new Date(selectedItineraryDate+'T00:00:00');
-  if(Number.isNaN(d.getTime())||d.getFullYear()!==current.getFullYear()||d.getMonth()!==current.getMonth()){
-    const today=new Date();
-    selectedItineraryDate=(today.getFullYear()===current.getFullYear()&&today.getMonth()===current.getMonth())?iso(today):monthKey(current.getFullYear(),current.getMonth())+'-01';
-  }
+function itineraryDateMeta(date){
+  const d=new Date(date+'T00:00:00'),today=new Date();today.setHours(0,0,0,0);
+  const tomorrow=new Date(today);tomorrow.setDate(tomorrow.getDate()+1);
+  const weekday=['日','一','二','三','四','五','六'][d.getDay()];
+  let label='';
+  if(iso(d)===iso(today))label='今天';
+  else if(iso(d)===iso(tomorrow))label='明天';
+  else label='週'+weekday;
+  return{label,sub:(d.getMonth()+1)+'/'+d.getDate()+'（'+weekday+'）'};
 }
+let itineraryShowAll=false,pendingItinerarySave=null;
 function renderAttendance(){
-  ensureItinerarySelectedDate();
-  const y=current.getFullYear(),m=current.getMonth(),today=iso(new Date()),days=new Date(y,m+1,0).getDate(),first=new Date(y,m,1).getDay(),own=state.schedule.shiftName||'A班';
-  $('attendanceMonth').textContent=`${y} 年 ${m+1} 月`;
-  const conflicts=monthConflictEvents(y,m);
-  if($('itineraryShiftLegend'))$('itineraryShiftLegend').textContent=own;
-  $('itineraryConflictBanner').classList.toggle('hidden',!conflicts.length);
-  $('itineraryConflictCount').textContent=conflicts.length+' 件行程與班表撞期';
-  $('itineraryConflictBanner').onclick=()=>{if(conflicts[0])openConflict(conflicts[0].id)};
-
-  let html='';
-  const prevDays=new Date(y,m,0).getDate();
-  for(let i=0;i<first;i++){
-    const d=prevDays-first+i+1;
-    html+=`<div class="itinerary-day muted"><span class="itinerary-date">${d}</span></div>`;
+  const today=iso(new Date());
+  const all=itineraryEvents().slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.start||'').localeCompare(String(b.start||''))||String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
+  const rows=itineraryShowAll?all:all.filter(e=>String(e.date||'')>=today);
+  if($('itineraryAllBtn'))$('itineraryAllBtn').innerHTML=(itineraryShowAll?'近期行程':'全部行程')+' <span>›</span>';
+  const box=$('itineraryUpcomingList');
+  if(!box)return;
+  if(!rows.length){
+    box.innerHTML='<div class="itinerary-empty-list"><div class="empty-plus">＋</div><b>'+(itineraryShowAll?'目前還沒有行程':'近期沒有新增行程')+'</b><span>按右上角「＋」新增日期、時間與備註。</span></div>';
+    return;
   }
-  for(let d=1;d<=days;d++){
-    const dt=new Date(y,m,d),date=iso(dt),status=itineraryStatusForDate(date,dt),events=eventsForDate(date),conflict=events.some(eventConflicts);
-    const eventPills=events.slice(0,2).map(e=>`<span class="itinerary-event-pill ${e.kind==='note'?'note':'event'}">${escapeHtml(e.title||'未命名')}</span>`).join('');
-    const more=events.length>2?`<span class="itinerary-more">＋${events.length-2}</span>`:'';
-    html+=`<button type="button" class="itinerary-day ${date===today?'today':''} ${date===selectedItineraryDate?'selected':''} ${conflict?'has-conflict':''}" data-it-date="${date}">
-      <span class="itinerary-date">${d}</span>
-      ${conflict?'<span class="itinerary-warning">!</span>':''}
-      <span class="itinerary-shift ${status.cls}">${escapeHtml(status.label)}</span>
-      ${status.sub?`<span class="itinerary-substatus">${escapeHtml(status.sub)}</span>`:''}
-      ${eventPills}${more}
-    </button>`;
-  }
-  const used=first+days,trail=(7-(used%7))%7;
-  for(let i=1;i<=trail;i++)html+=`<div class="itinerary-day muted"><span class="itinerary-date">${i}</span></div>`;
-  $('itineraryDays').innerHTML=html;
-  qsa('[data-it-date]').forEach(b=>b.onclick=()=>{selectedItineraryDate=b.dataset.itDate;renderAttendance()});
-
-  const sel=new Date(selectedItineraryDate+'T00:00:00'),weekday=['日','一','二','三','四','五','六'][sel.getDay()],dayEvents=eventsForDate(selectedItineraryDate),work=itineraryStatusForDate(selectedItineraryDate,sel);
-  $('itineraryDayTitle').textContent=`${sel.getMonth()+1}月${sel.getDate()}日（${weekday}）`;
-  $('itineraryDaySubtitle').textContent=dayEvents.length?dayEvents.length+' 個私人項目':'今天還沒有私人行程';
-  $('itineraryWorkRow').innerHTML=`<span class="itinerary-work-icon ${work.cls}">${icon(work.cls==='work'?'i-clock':work.cls==='leave'?'i-umbrella':'i-calendar')}</span><div><b>${escapeHtml(work.label)}</b><small>${work.sub?escapeHtml(work.sub):work.cls==='work'?'依排班設定':'今天不用上班'}</small></div><button type="button" data-edit-work="${selectedItineraryDate}">調整班表狀態 ›</button>`;
-  qsa('[data-edit-work]').forEach(b=>b.onclick=()=>openDay(b.dataset.editWork));
-
-  $('itineraryDayEvents').innerHTML=dayEvents.length?dayEvents.map(e=>`<button class="itinerary-event-row ${eventConflicts(e)?'conflict':''}" type="button" data-event-edit="${escapeHtml(e.id)}">
-      <span class="itinerary-event-icon ${e.kind==='note'?'note':'event'}">${icon(e.kind==='note'?'i-edit':'i-clock')}</span>
-      <span class="itinerary-event-copy"><b>${escapeHtml(e.title||'未命名')}</b><small>${escapeHtml(eventTimeLabel(e))}${e.reminder&&e.reminder!=='none'?'・已設提醒':''}</small></span>
-      ${eventConflicts(e)?'<span class="itinerary-event-conflict">撞期</span>':'<span class="itinerary-row-arrow">›</span>'}
-    </button>`).join(''):'<div class="itinerary-empty"><b>這天還沒有私人安排</b><span>加行程、備註或重要提醒，都會和班表放在一起。</span></div>';
-  qsa('[data-event-edit]').forEach(b=>b.onclick=()=>openEvent(selectedItineraryDate,b.dataset.eventEdit));
+  box.innerHTML=rows.map(e=>{
+    const meta=itineraryDateMeta(e.date),conflicts=eventConflictDetails(e,e.id),note=e.title||e.note||'未命名行程';
+    return '<button type="button" class="itinerary-list-card '+(conflicts.length?'conflict':'')+'" data-event-edit="'+escapeHtml(e.id)+'">'+
+      '<span class="itinerary-date-badge"><b>'+escapeHtml(meta.label)+'</b><span>'+escapeHtml(meta.sub)+'</span></span>'+
+      '<span class="itinerary-card-icon">'+icon('i-clock')+'</span>'+
+      '<span class="itinerary-card-copy"><time>'+escapeHtml(eventTimeLabel(e))+'</time><b>'+escapeHtml(note)+'</b>'+
+      (conflicts.length?'<small class="itinerary-card-warning">! 與其他安排有衝突</small>':'')+
+      '</span><span class="itinerary-card-more">•••</span></button>';
+  }).join('');
+  qsa('[data-event-edit]').forEach(b=>b.onclick=()=>openEvent('',b.dataset.eventEdit));
 }
-function toggleEventFields(){
-  const note=$('eventKind').value==='note';
-  $('eventTimeFields').classList.toggle('hidden',note);
-  $('eventOccupiesWrap').classList.toggle('hidden',note);
-  $('eventReminderWrap').classList.toggle('hidden',note);
-  if(note)$('eventOccupies').checked=false;
-}
-function openEvent(date,id,kind){
+function openEvent(date,id){
   editingEventId=id||'';
   const e=id?(state.personalEvents||{})[id]:null;
   $('eventDialogTitle').textContent=e?'編輯行程':'新增行程';
-  $('eventKind').value=e?e.kind:(kind||'event');
-  $('eventTitle').value=e?e.title:'';
-  $('eventDate').value=e?e.date:(date||selectedItineraryDate||iso(new Date()));
+  $('eventDate').value=e&&e.date?e.date:(date||iso(new Date()));
   $('eventStart').value=e&&e.start?e.start:'';
   $('eventEnd').value=e&&e.end?e.end:'';
-  $('eventOccupies').checked=e?e.occupiesTime!==false:true;
-  $('eventReminder').value=e&&e.reminder?e.reminder:'none';
-  $('eventNote').value=e&&e.note?e.note:'';
+  $('eventNote').value=e?(e.title||e.note||''):'';
   $('deleteEvent').classList.toggle('hidden',!e);
-  toggleEventFields();
+  pendingItinerarySave=null;
   $('eventDialog').showModal();
-  setTimeout(()=>$('eventTitle').focus(),40);
 }
-function saveItineraryEvent(){
-  const kind=$('eventKind').value,title=$('eventTitle').value.trim(),date=$('eventDate').value;
-  if(!title){alert(kind==='note'?'請輸入備註內容。':'請輸入行程名稱。');$('eventTitle').focus();return}
-  if(!date){alert('請選擇日期。');return}
+function buildItineraryCandidate(){
+  const date=$('eventDate').value,start=$('eventStart').value,end=$('eventEnd').value,note=$('eventNote').value.trim();
+  if(!date){alert('請選擇日期。');$('eventDate').focus();return null}
+  if(!start||!end){alert('請把開始與結束時間都選好。');(!start?$('eventStart'):$('eventEnd')).focus();return null}
+  const sm=eventMinutes(start),em=eventMinutes(end);
+  if(sm===null||em===null||em<=sm){alert('結束時間要晚於開始時間。');$('eventEnd').focus();return null}
+  if(!note){alert('請填寫行程備註。');$('eventNote').focus();return null}
   const id=editingEventId||('ev-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6));
   const prev=(state.personalEvents||{})[id]||{};
+  return{id,date,start,end,title:note,note,kind:'event',occupiesTime:true,reminder:'none',createdAt:prev.createdAt||new Date().toISOString()};
+}
+function commitItineraryEvent(candidate){
+  if(!candidate)return;
   state.personalEvents=state.personalEvents||{};
-  state.personalEvents[id]={
-    id,date,title,kind,
-    start:kind==='note'?'':$('eventStart').value,
-    end:kind==='note'?'':$('eventEnd').value,
-    occupiesTime:kind==='note'?false:$('eventOccupies').checked,
-    reminder:kind==='note'?'none':$('eventReminder').value,
-    note:$('eventNote').value.trim(),
-    createdAt:prev.createdAt||new Date().toISOString()
-  };
-  selectedItineraryDate=date;
+  state.personalEvents[candidate.id]=candidate;
   changedAndSync();
-  $('eventDialog').close();
+  if($('eventDialog').open)$('eventDialog').close();
+  if($('conflictDialog').open)$('conflictDialog').close();
+  editingEventId='';pendingItinerarySave=null;
   renderAttendance();
-  if(eventConflicts(state.personalEvents[id]))setTimeout(()=>openConflict(id),60);
 }
-function openConflict(id){
-  const e=(state.personalEvents||{})[id];
-  if(!e)return;
-  conflictEventId=id;
-  const dt=new Date(e.date+'T00:00:00'),weekday=['日','一','二','三','四','五','六'][dt.getDay()],own=state.schedule.shiftName||'A班';
-  $('conflictDateText').textContent=`${dt.getFullYear()}年${dt.getMonth()+1}月${dt.getDate()}日（${weekday}）`;
-  $('conflictWorkText').textContent=own+'・依目前班表需上班';
-  $('conflictEventText').textContent=e.title||'私人行程';
-  $('conflictEventTime').textContent=eventTimeLabel(e);
-  $('conflictDialog').showModal();
+function saveItineraryEvent(){
+  const candidate=buildItineraryCandidate();
+  if(!candidate)return;
+  const conflicts=eventConflictDetails(candidate,editingEventId);
+  if(conflicts.length){
+    pendingItinerarySave=candidate;
+    $('conflictAlertList').innerHTML=conflicts.map(c=>'<div class="conflict-alert-item"><b>'+escapeHtml(c.title)+'</b><small>'+escapeHtml(c.detail)+'</small></div>').join('');
+    $('conflictDialog').showModal();
+    return;
+  }
+  commitItineraryEvent(candidate);
 }
+
 const ITEMIZED_FIELDS=[
   {key:'base',label:'底薪',kind:'income'},
   {key:'shiftAllowance',label:'輪班津貼',kind:'income'},
@@ -2555,11 +2556,9 @@ function setTab(tab){
   render();
 }
 qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
-function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}if($('dashPrev'))$('dashPrev').onclick=()=>changeMonth(-1);if($('dashNext'))$('dashNext').onclick=()=>changeMonth(1);$('calPrev').onclick=()=>changeMonth(-1);$('calNext').onclick=()=>changeMonth(1);$('calToday').onclick=()=>{current=new Date();current.setDate(1);render()};$('attPrev').onclick=()=>changeMonth(-1);$('attNext').onclick=()=>changeMonth(1);$('attToday').onclick=()=>{current=new Date();current.setDate(1);render()};
-$('addItinerary').onclick=()=>openEvent(selectedItineraryDate);
-$('addSelectedEvent').onclick=()=>openEvent(selectedItineraryDate);
-$('addSelectedNote').onclick=()=>openEvent(selectedItineraryDate,'','note');
-$('eventKind').onchange=toggleEventFields;
+function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}if($('dashPrev'))$('dashPrev').onclick=()=>changeMonth(-1);if($('dashNext'))$('dashNext').onclick=()=>changeMonth(1);$('calPrev').onclick=()=>changeMonth(-1);$('calNext').onclick=()=>changeMonth(1);$('calToday').onclick=()=>{current=new Date();current.setDate(1);render()};
+$('addItinerary').onclick=()=>openEvent(iso(new Date()));
+$('itineraryAllBtn').onclick=()=>{itineraryShowAll=!itineraryShowAll;renderAttendance()};
 $('saveEvent').onclick=saveItineraryEvent;
 $('deleteEvent').onclick=()=>{
   if(!editingEventId)return;
@@ -2569,15 +2568,8 @@ $('deleteEvent').onclick=()=>{
   editingEventId='';
   renderAttendance();
 };
-$('conflictEdit').onclick=()=>{
-  const id=conflictEventId;$('conflictDialog').close();
-  if(id){const e=(state.personalEvents||{})[id];if(e)openEvent(e.date,id)}
-};
-$('conflictLeave').onclick=()=>{
-  const id=conflictEventId,e=id?(state.personalEvents||{})[id]:null;
-  $('conflictDialog').close();
-  if(e)openDay(e.date,'personal');
-};
+$('conflictKeep').onclick=()=>commitItineraryEvent(pendingItinerarySave);
+$('conflictDialog').addEventListener('close',()=>{if($('conflictDialog').returnValue==='cancel')pendingItinerarySave=null});
 $('toggleSchedule').onclick=()=>{scheduleOpen=!scheduleOpen;$('scheduleSettings').classList.toggle('hidden',!scheduleOpen);$('toggleSchedule').textContent=scheduleOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'};
 $('patternPreset').onchange=e=>{state.schedule.preset=e.target.value;if(e.target.value==='2-2'){state.schedule.workDays=2;state.schedule.offDays=2}else if(e.target.value==='4-3'){state.schedule.workDays=4;state.schedule.offDays=3}saveSchedulePrefs();render()};$('shiftName').oninput=e=>{state.schedule.shiftName=e.target.value||'A班';saveSchedulePrefs();render()};$('workDays').oninput=e=>{state.schedule.workDays=Math.max(1,parseInt(e.target.value)||1);saveSchedulePrefs();render()};$('offDays').oninput=e=>{state.schedule.offDays=Math.max(1,parseInt(e.target.value)||1);saveSchedulePrefs();render()};
 function openDay(date,preset){
@@ -2954,7 +2946,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=80',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=81',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
