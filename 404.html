@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=77">
+<link rel="manifest" href="./manifest.webmanifest?v=78">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -289,7 +289,6 @@ html.dark .work-date-dialog{color-scheme:dark}
 .work-date-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .work-date-actions button{min-height:44px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font-size:14px;font-weight:800}
 .work-date-actions #workDateClear{margin-right:auto;color:var(--muted)}
-.work-date-actions #workDateConfirm{background:var(--orange2);border-color:var(--orange2);color:#382016}
 .work-date-actions button:disabled{opacity:.45;cursor:not-allowed}
 
 </style>
@@ -732,7 +731,7 @@ html.dark .work-date-dialog{color-scheme:dark}
 <dialog class="work-date-dialog" id="workDateDialog" aria-labelledby="workDateTitle" aria-describedby="workDateHelp">
   <div class="work-date-content">
     <h2 id="workDateTitle" tabindex="-1">選擇日期</h2>
-    <p id="workDateHelp">請選完整的年、月、日，再按「確認日期」。</p>
+    <p id="workDateHelp">請依序選擇年、月、日；選完日期後會自動儲存。</p>
     <div class="work-date-parts">
       <div><label for="workDateYear">年</label><select id="workDateYear" aria-label="年份"></select></div>
       <div><label for="workDateMonth">月</label><select id="workDateMonth" aria-label="月份"></select></div>
@@ -742,7 +741,6 @@ html.dark .work-date-dialog{color-scheme:dark}
     <div class="work-date-actions">
       <button type="button" id="workDateClear">清除日期</button>
       <button type="button" id="workDateCancel">取消</button>
-      <button type="button" id="workDateConfirm" disabled>確認日期</button>
     </div>
   </div>
 </dialog>
@@ -2511,8 +2509,7 @@ function updateWorkDateDays(preferred){
 }
 function updateWorkDatePreview(){
   const value=workDateValue(),parts=dateParts(value);
-  $('workDateConfirm').disabled=!parts;
-  $('workDateSelection').textContent=parts?parts.y+' 年 '+parts.m+' 月 '+parts.d+' 日':'尚未選完日期，不會儲存。';
+  $('workDateSelection').textContent=parts?parts.y+' 年 '+parts.m+' 月 '+parts.d+' 日':'請選完整的年、月、日。';
 }
 function openWorkDate(binding){
   const dialog=$('workDateDialog');
@@ -2595,10 +2592,13 @@ function bindWorkDate(id,label,key,isSchedule=false,required=false){
   };
   field.addEventListener('blur',()=>{if(!workDateMedia.matches)finishNative()});
 }
-$('workDateYear').onchange=()=>updateWorkDateDays();
-$('workDateMonth').onchange=()=>updateWorkDateDays();
-$('workDateDay').onchange=updateWorkDatePreview;
-$('workDateConfirm').onclick=()=>commitWorkDate(workDateValue());
+$('workDateYear').onchange=()=>updateWorkDateDays('');
+$('workDateMonth').onchange=()=>updateWorkDateDays('');
+$('workDateDay').onchange=()=>{
+  updateWorkDatePreview();
+  const value=workDateValue();
+  if(value)commitWorkDate(value);
+};
 $('workDateCancel').onclick=closeWorkDate;
 $('workDateClear').onclick=()=>commitWorkDate('');
 $('workDateDialog').addEventListener('cancel',event=>{event.preventDefault();closeWorkDate()});
@@ -2706,7 +2706,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=77',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=78',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
