@@ -349,6 +349,7 @@ html.dark .work-date-dialog{color-scheme:dark}
   .itinerary-sheet{max-height:88dvh;overflow:auto}
 }
 
+.billing-history{margin-top:10px;padding-top:8px;border-top:1px dashed var(--mobile-line,#e1c9ad)}.billing-history summary{cursor:pointer;font-size:11px;font-weight:900;color:var(--mobile-text,#6e4b38)}.billing-history-row{display:grid;grid-template-columns:1fr auto;gap:3px 10px;padding:9px 0;border-bottom:1px solid var(--mobile-line,#eee2d5);font-size:10px}.billing-history-row:last-child{border-bottom:0}.billing-history-row b{font-size:11px}.billing-history-row small{display:block;margin-top:2px;color:var(--muted)}.billing-history-row .amt{font-weight:900;text-align:right}.billing-status{font-weight:900}.billing-status.paid{color:var(--mobile-green-ink,#3b8549)}.billing-status.failed{color:var(--mobile-pink-ink,#b43d4f)}.billing-status.canceled{color:var(--mobile-muted,#806c61)}
 </style>
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
@@ -753,6 +754,10 @@ html.dark .work-date-dialog{color-scheme:dark}
         <div class="settings-actions hidden" id="cancelBillingActions" style="margin-top:8px">
           <button type="button" class="btn danger" id="cancelProBilling">取消下期自動續訂</button>
         </div>
+        <details class="billing-history hidden" id="billingHistoryPanel">
+          <summary>付款／訂閱紀錄</summary>
+          <div id="billingHistoryList"></div>
+        </details>
         <div class="pro-stage-tools hidden" id="proStageTools">
           <div class="hint" style="margin-bottom:8px"><b>開發測試：</b>使用綠界官方 Stage 測試環境，不會產生真實扣款。</div>
           <div class="settings-actions">
