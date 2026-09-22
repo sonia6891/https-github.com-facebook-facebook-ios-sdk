@@ -1,0 +1,23 @@
+<section id="welcomeScreen" class="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" tabindex="-1">
+ <div class="welcome-sheet">
+  <header class="welcome-hero">
+   <div class="welcome-copy"><div class="welcome-eyebrow">給每一位努力上班的你</div><h1 id="welcomeTitle">喵的，<br>又要上班了</h1><p class="welcome-subtitle">把班表、薪資和休假，<br>好好記下來。</p><p class="welcome-handwritten">讓生活有規律，<br>上班也沒那麼難！</p></div>
+   <div class="welcome-art"><p class="welcome-bubble">加油…<br>明天也是好貓！</p><img src="./assets/onboarding-brand-cat.webp?v=112" alt="品牌灰色厭世貓，金色眼睛，靠在辦公桌前" width="420" height="420"></div>
+  </header>
+  <div class="welcome-actions">
+   <button type="button" id="welcomeApple" class="welcome-button welcome-apple" disabled><svg class="welcome-provider-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.76 3.08.82 1.18-.24 2.31-.94 3.57-.85 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.97.48 7.12-.57 1.5-1.31 2.99-2.54 4.09l.01-.01ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg><span>使用 Apple 繼續 <small id="welcomeAppleNote">尚未開放</small></span><span aria-hidden="true">›</span></button>
+   <button type="button" id="welcomeGoogle" class="welcome-button welcome-google"><svg class="welcome-provider-icon" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.17 7.09-10.35 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.41 14.41 0 0 1 9.75 24c0-1.59.27-3.13.78-4.59l-7.98-6.19A23.87 23.87 0 0 0 0 24c0 3.87.93 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>使用 Google 繼續</span><span aria-hidden="true">›</span></button>
+   <details id="welcomeEmailDetails" class="welcome-email"><summary>其他登入方式 <span>⌄</span></summary><form id="welcomeEmailForm"><label for="welcomeEmail">Email</label><input id="welcomeEmail" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required><button type="submit" class="welcome-button welcome-email-button">寄送 6 位驗證碼</button></form><form id="welcomeOtpForm" hidden><label for="welcomeOtp">6 位驗證碼</label><input id="welcomeOtp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required placeholder="123456"><button type="submit" class="welcome-button welcome-email-button">驗證並登入</button><button type="button" class="welcome-text-button" id="welcomeResend">重新寄送驗證碼</button></form></details>
+   <p id="welcomeStatus" class="welcome-status" role="status" aria-live="polite"></p>
+   <button type="button" id="welcomeGuest" class="welcome-button welcome-guest"><svg class="welcome-provider-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3z"/></svg><span>先使用，不登入</span><span aria-hidden="true">›</span></button>
+   <p class="welcome-local-note">資料自動保存在此裝置，之後也能登入。</p>
+  </div>
+  <div class="welcome-features">
+   <div><span class="welcome-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 2v6m10-6v6M3 10h18m-13 5 3 3 5-5"/></svg></span><b>免費使用</b><p>班表・薪資・休假<br>行程都能記錄</p></div>
+   <div><span class="welcome-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 19h11a4 4 0 0 0 .8-7.9A7 7 0 0 0 5.4 9.7 4.7 4.7 0 0 0 7 19Z"/></svg><em>Pro</em></span><b>Pro 雲端同步</b><p>跨裝置・自動備份<br>需有效訂閱或試用</p></div>
+   <div><span class="welcome-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6l8-4Z"/><path d="m8 12 3 3 5-6"/></svg></span><b>資料由你決定</b><p>登入不等於同步<br>啟用前會再次確認</p></div>
+  </div>
+  <p class="welcome-footer">登入不會自動開始試用或收費。<br>免費版與未登入的工作資料，均儲存在此裝置。</p>
+  <button type="button" id="welcomeClosePreview" class="welcome-text-button" hidden>返回 App</button>
+ </div>
+</section>
