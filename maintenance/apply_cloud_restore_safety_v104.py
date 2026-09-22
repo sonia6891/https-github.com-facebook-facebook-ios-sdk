@@ -57,3 +57,4 @@ s=s.replace('manifest.webmanifest?v=103','manifest.webmanifest?v=104').replace('
 p.write_text(s)
 sw=root/'sw.js';w=sw.read_text().replace('meow-work-pwa-v103','meow-work-pwa-v104').replace('manifest.webmanifest?v=103','manifest.webmanifest?v=104');sw.write_text(w)
 print('v104 applied')
+\n# trigger\n
