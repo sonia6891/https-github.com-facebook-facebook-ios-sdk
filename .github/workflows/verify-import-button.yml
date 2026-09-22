@@ -1,0 +1,61 @@
+name: Verify data-management import button v90
+on:
+  push:
+    branches: ["repair/import-button-v90"]
+permissions:
+  contents: write
+concurrency:
+  group: import-button-v90-qa
+  cancel-in-progress: true
+env:
+  BASE: eedb138f2886064ec5420e5b218f9148bbeddb49
+  LIVE_URL: ""
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test browsers
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Build isolated candidate from reviewed source
+        run: |
+          mkdir -p "$RUNNER_TEMP/import-before" "$RUNNER_TEMP/import-after" "$RUNNER_TEMP/import-report"
+          git archive "$BASE" | tar -x -C "$RUNNER_TEMP/import-before"
+          cp -a "$RUNNER_TEMP/import-before/." "$RUNNER_TEMP/import-after/"
+          python maintenance/apply_import_fix.py "$RUNNER_TEMP/import-after"
+          python -c 'import pathlib,re,os; s=pathlib.Path(os.environ["RUNNER_TEMP"],"import-after/index.html").read_text(); pathlib.Path(os.environ["RUNNER_TEMP"],"import-app.js").write_text(re.findall(r"<script[^>]*>([\s\S]*?)</script>",s)[-1])'
+          node --check "$RUNNER_TEMP/import-app.js"
+      - name: Verify shared styles and backup selection, cancel, restore and export
+        run: python maintenance/test_import_ui.py "$RUNNER_TEMP/import-before" "$RUNNER_TEMP/import-after" "$RUNNER_TEMP/import-report"
+      - name: Create tested candidate without updating production
+        if: env.LIVE_URL == ''
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$BASE"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/import-index"
+          git read-tree "$BASE"
+          for path in index.html sw.js; do
+            blob=$(git hash-object -w "$RUNNER_TEMP/import-after/$path")
+            git update-index --add --cacheinfo "100644,$blob,$path"
+          done
+          tree=$(git write-tree)
+          git config user.name 'sonia6891'
+          git config user.email '107385898+sonia6891@users.noreply.github.com'
+          candidate=$(printf '%s\n' 'Use consistent data-management button for backup import (v90)' | git commit-tree "$tree" -p "$BASE")
+          git push origin "$candidate:refs/heads/repair/import-button-candidate-v90"
+          echo "$candidate" > "$RUNNER_TEMP/import-report/candidate-sha.txt"
+          git diff --stat "$BASE" "$candidate" > "$RUNNER_TEMP/import-report/diff-stat.txt"
+      - name: Keep test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: import-button-v90-verification
+          path: ${{ runner.temp }}/import-report
+          retention-days: 7
