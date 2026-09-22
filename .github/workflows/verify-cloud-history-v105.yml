@@ -1,0 +1,32 @@
+name: Verify cloud snapshot history v105
+on:
+  push:
+    branches: ["fix/cloud-snapshot-history-v105"]
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Build and verify
+        run: |
+          mkdir -p "$RUNNER_TEMP/site";git archive bb19e2ee01a71168e50e2f59b0e3088ac5bd7cf1 | tar -x -C "$RUNNER_TEMP/site"
+          python maintenance/apply_cloud_history_v105.py "$RUNNER_TEMP/site"
+          python - <<'PY'
+          import re,pathlib,subprocess,os
+          s=pathlib.Path(os.environ['RUNNER_TEMP'],'site/index.html').read_text()
+          for x in ['version:3','cloudHistoryEntries','newestMeaningfulCloudSnapshot','slice(0,5)','雲端安全快照恢復','v=105']:assert x in s,x
+          js=re.findall(r'<script[^>]*>([\\s\\S]*?)</script>',s)[-1];f=pathlib.Path(os.environ['RUNNER_TEMP'],'app.js');f.write_text(js);subprocess.run(['node','--check',str(f)],check=True)
+          PY
+      - name: Publish candidate
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "bb19e2ee01a71168e50e2f59b0e3088ac5bd7cf1"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/index";git read-tree bb19e2ee01a71168e50e2f59b0e3088ac5bd7cf1
+          for path in index.html sw.js; do blob=$(git hash-object -w "$RUNNER_TEMP/site/$path");git update-index --add --cacheinfo "100644,$blob,$path";done
+          tree=$(git write-tree);git config user.name sonia6891;git config user.email 107385898+sonia6891@users.noreply.github.com
+          candidate=$(printf '%s\n' 'Keep cloud snapshot history for recovery (v105)' | git commit-tree "$tree" -p bb19e2ee01a71168e50e2f59b0e3088ac5bd7cf1)
+          git push origin "$candidate:refs/heads/fix/cloud-history-candidate-v105"
