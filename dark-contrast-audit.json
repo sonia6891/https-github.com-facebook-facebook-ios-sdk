@@ -1,0 +1,1687 @@
+{
+  "ui_version": 76,
+  "scope": "Mobile dark color palette only; no layout or image edits",
+  "changed_declarations": 280,
+  "changes": [
+    {
+      "selector": ".nav-btn",
+      "property": "color",
+      "before": "#765346",
+      "after": "var(--mobile-text, #765346)"
+    },
+    {
+      "selector": ".nav-btn.active",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fff0cc,#ffe6b6)",
+      "after": "var(--mobile-surface, linear-gradient(135deg,#fff0cc,#ffe6b6))"
+    },
+    {
+      "selector": ".nav-btn.active",
+      "property": "color",
+      "before": "#b55f0b",
+      "after": "var(--mobile-text, #b55f0b)"
+    },
+    {
+      "selector": ".paw",
+      "property": "color",
+      "before": "#9a6045",
+      "after": "var(--mobile-text, #9a6045)"
+    },
+    {
+      "selector": ".mini-note",
+      "property": "color",
+      "before": "#9c6244",
+      "after": "var(--mobile-muted, #9c6244)"
+    },
+    {
+      "selector": ".tone-orange",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fff9e9,#fff0cf)",
+      "after": "var(--mobile-gold-surface, linear-gradient(135deg,#fff9e9,#fff0cf))"
+    },
+    {
+      "selector": ".tone-orange .iconbox",
+      "property": "background",
+      "before": "#ffe6aa",
+      "after": "var(--mobile-gold-icon, #ffe6aa)"
+    },
+    {
+      "selector": ".tone-orange .iconbox",
+      "property": "color",
+      "before": "#c96e0a",
+      "after": "var(--mobile-gold-ink, #c96e0a)"
+    },
+    {
+      "selector": ".tone-blue",
+      "property": "background",
+      "before": "linear-gradient(135deg,#f8fcff,#eaf5ff)",
+      "after": "var(--mobile-blue-surface, linear-gradient(135deg,#f8fcff,#eaf5ff))"
+    },
+    {
+      "selector": ".tone-blue .iconbox",
+      "property": "background",
+      "before": "#dceeff",
+      "after": "var(--mobile-blue-icon, #dceeff)"
+    },
+    {
+      "selector": ".tone-blue .iconbox",
+      "property": "color",
+      "before": "#1768b1",
+      "after": "var(--mobile-blue-ink, #1768b1)"
+    },
+    {
+      "selector": ".tone-pink",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fffafa,#ffecef)",
+      "after": "var(--mobile-pink-surface, linear-gradient(135deg,#fffafa,#ffecef))"
+    },
+    {
+      "selector": ".tone-pink .iconbox",
+      "property": "background",
+      "before": "#ffd9de",
+      "after": "var(--mobile-pink-icon, #ffd9de)"
+    },
+    {
+      "selector": ".tone-pink .iconbox",
+      "property": "color",
+      "before": "#db485b",
+      "after": "var(--mobile-pink-ink, #db485b)"
+    },
+    {
+      "selector": ".tone-green",
+      "property": "background",
+      "before": "linear-gradient(135deg,#f8fff9,#e9f7eb)",
+      "after": "var(--mobile-green-surface, linear-gradient(135deg,#f8fff9,#e9f7eb))"
+    },
+    {
+      "selector": ".tone-green .iconbox",
+      "property": "background",
+      "before": "#d9f2df",
+      "after": "var(--mobile-green-icon, #d9f2df)"
+    },
+    {
+      "selector": ".tone-green .iconbox",
+      "property": "color",
+      "before": "#218a43",
+      "after": "var(--mobile-green-ink, #218a43)"
+    },
+    {
+      "selector": ".section-link",
+      "property": "border",
+      "before": "1px solid #dfb98d",
+      "after": "1px solid var(--mobile-line, #dfb98d)"
+    },
+    {
+      "selector": ".section-link",
+      "property": "background",
+      "before": "#fffaf3",
+      "after": "var(--mobile-surface, #fffaf3)"
+    },
+    {
+      "selector": ".section-link",
+      "property": "color",
+      "before": "#754327",
+      "after": "var(--mobile-text, #754327)"
+    },
+    {
+      "selector": ".stat-sub",
+      "property": "color",
+      "before": "#65534a",
+      "after": "var(--mobile-muted, #65534a)"
+    },
+    {
+      "selector": ".bar-chart",
+      "property": "border-left",
+      "before": "1px solid #d8d2cc",
+      "after": "1px solid var(--mobile-line, #d8d2cc)"
+    },
+    {
+      "selector": ".bar-chart",
+      "property": "border-bottom",
+      "before": "1px solid #d8d2cc",
+      "after": "1px solid var(--mobile-line, #d8d2cc)"
+    },
+    {
+      "selector": ".bar",
+      "property": "background",
+      "before": "linear-gradient(180deg,#ffc768,#f3a935)",
+      "after": "var(--mobile-gold-ink, linear-gradient(180deg,#ffc768,#f3a935))"
+    },
+    {
+      "selector": ".bar-label",
+      "property": "color",
+      "before": "#776c66",
+      "after": "var(--mobile-muted, #776c66)"
+    },
+    {
+      "selector": ".c-sick",
+      "property": "background",
+      "before": "#ffe0e4",
+      "after": "var(--mobile-pink-surface, #ffe0e4)"
+    },
+    {
+      "selector": ".c-sick",
+      "property": "color",
+      "before": "#c6283d",
+      "after": "var(--mobile-pink-ink, #c6283d)"
+    },
+    {
+      "selector": ".c-menstrual",
+      "property": "background",
+      "before": "#f4e3ff",
+      "after": "var(--mobile-purple-surface, #f4e3ff)"
+    },
+    {
+      "selector": ".c-menstrual",
+      "property": "color",
+      "before": "#9146b8",
+      "after": "var(--mobile-purple-ink, #9146b8)"
+    },
+    {
+      "selector": ".c-personal",
+      "property": "background",
+      "before": "#e8f0f7",
+      "after": "var(--mobile-blue-surface, #e8f0f7)"
+    },
+    {
+      "selector": ".c-personal",
+      "property": "color",
+      "before": "#52718a",
+      "after": "var(--mobile-blue-ink, #52718a)"
+    },
+    {
+      "selector": ".c-annual",
+      "property": "background",
+      "before": "#e5f6e5",
+      "after": "var(--mobile-green-surface, #e5f6e5)"
+    },
+    {
+      "selector": ".c-annual",
+      "property": "color",
+      "before": "#3b9a4d",
+      "after": "var(--mobile-green-ink, #3b9a4d)"
+    },
+    {
+      "selector": ".c-custom",
+      "property": "background",
+      "before": "#dff6f7",
+      "after": "var(--mobile-teal-surface, #dff6f7)"
+    },
+    {
+      "selector": ".c-custom",
+      "property": "color",
+      "before": "#176d73",
+      "after": "var(--mobile-teal-ink, #176d73)"
+    },
+    {
+      "selector": ".c-ot",
+      "property": "background",
+      "before": "#f8e3ee",
+      "after": "var(--mobile-pink-surface, #f8e3ee)"
+    },
+    {
+      "selector": ".c-ot",
+      "property": "color",
+      "before": "#a72e67",
+      "after": "var(--mobile-pink-ink, #a72e67)"
+    },
+    {
+      "selector": ".quick-btn",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".quick-btn",
+      "property": "color",
+      "before": "#47241b",
+      "after": "var(--mobile-text, #47241b)"
+    },
+    {
+      "selector": ".quick-btn .qicon",
+      "property": "background",
+      "before": "#fff1da",
+      "after": "var(--mobile-surface, #fff1da)"
+    },
+    {
+      "selector": ".quick-btn .qicon",
+      "property": "color",
+      "before": "#b66011",
+      "after": "var(--mobile-text, #b66011)"
+    },
+    {
+      "selector": ".schedule-summary-icon",
+      "property": "background",
+      "before": "#fff0dc",
+      "after": "var(--mobile-surface, #fff0dc)"
+    },
+    {
+      "selector": ".schedule-summary-icon",
+      "property": "color",
+      "before": "#9c5b3b",
+      "after": "var(--mobile-muted, #9c5b3b)"
+    },
+    {
+      "selector": ".schedule-summary-text b",
+      "property": "color",
+      "before": "#876352",
+      "after": "var(--mobile-muted, #876352)"
+    },
+    {
+      "selector": ".expand-btn",
+      "property": "background",
+      "before": "#fff0dc",
+      "after": "var(--mobile-gold-surface, #fff0dc)"
+    },
+    {
+      "selector": ".expand-btn",
+      "property": "color",
+      "before": "#9d531d",
+      "after": "var(--mobile-gold-ink, #9d531d)"
+    },
+    {
+      "selector": ".schedule-settings",
+      "property": "border-top",
+      "before": "1px dashed #e8d4c0",
+      "after": "1px dashed var(--mobile-line, #e8d4c0)"
+    },
+    {
+      "selector": ".field label",
+      "property": "color",
+      "before": "#6e5448",
+      "after": "var(--mobile-muted, #6e5448)"
+    },
+    {
+      "selector": ".field input,.field select,.field textarea",
+      "property": "border",
+      "before": "1px solid #e3d8cf",
+      "after": "1px solid var(--mobile-line, #e3d8cf)"
+    },
+    {
+      "selector": ".field input,.field select,.field textarea",
+      "property": "background",
+      "before": "#fffdf9",
+      "after": "var(--mobile-field, #fffdf9)"
+    },
+    {
+      "selector": ".icon-btn,.today-btn",
+      "property": "border",
+      "before": "1px solid #eadbcc",
+      "after": "1px solid var(--mobile-line, #eadbcc)"
+    },
+    {
+      "selector": ".icon-btn,.today-btn",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".icon-btn,.today-btn",
+      "property": "color",
+      "before": "#4b251a",
+      "after": "var(--mobile-text, #4b251a)"
+    },
+    {
+      "selector": ".weekdays div",
+      "property": "background",
+      "before": "#fffaf5",
+      "after": "var(--mobile-surface, #fffaf5)"
+    },
+    {
+      "selector": ".weekdays div",
+      "property": "color",
+      "before": "#725b50",
+      "after": "var(--mobile-text, #725b50)"
+    },
+    {
+      "selector": ".day",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".day.empty",
+      "property": "background",
+      "before": "#fffaf7",
+      "after": "var(--mobile-surface, #fffaf7)"
+    },
+    {
+      "selector": ".day.empty",
+      "property": "color",
+      "before": "#b4aaa4",
+      "after": "var(--mobile-text, #b4aaa4)"
+    },
+    {
+      "selector": ".day.today .date-num",
+      "property": "background",
+      "before": "#8f5a42",
+      "after": "var(--mobile-surface, #8f5a42)"
+    },
+    {
+      "selector": ".day.today .date-num",
+      "property": "color",
+      "before": "#fff",
+      "after": "var(--mobile-text, #fff)"
+    },
+    {
+      "selector": ".st-a",
+      "property": "background",
+      "before": "#fff0c8",
+      "after": "var(--mobile-gold-surface, #fff0c8)"
+    },
+    {
+      "selector": ".st-a",
+      "property": "color",
+      "before": "#704116",
+      "after": "var(--mobile-gold-ink, #704116)"
+    },
+    {
+      "selector": ".st-b",
+      "property": "background",
+      "before": "#ddecff",
+      "after": "var(--mobile-blue-surface, #ddecff)"
+    },
+    {
+      "selector": ".st-b",
+      "property": "color",
+      "before": "#0a57a0",
+      "after": "var(--mobile-blue-ink, #0a57a0)"
+    },
+    {
+      "selector": ".st-off",
+      "property": "background",
+      "before": "#eee",
+      "after": "var(--mobile-gray-surface, #eee)"
+    },
+    {
+      "selector": ".st-off",
+      "property": "color",
+      "before": "#555",
+      "after": "var(--mobile-gray-ink, #555)"
+    },
+    {
+      "selector": ".st-ot",
+      "property": "background",
+      "before": "#f8e3ee",
+      "after": "var(--mobile-pink-surface, #f8e3ee)"
+    },
+    {
+      "selector": ".st-ot",
+      "property": "color",
+      "before": "#a72e67",
+      "after": "var(--mobile-pink-ink, #a72e67)"
+    },
+    {
+      "selector": ".st-sick",
+      "property": "background",
+      "before": "#ffdce1",
+      "after": "var(--mobile-pink-surface, #ffdce1)"
+    },
+    {
+      "selector": ".st-sick",
+      "property": "color",
+      "before": "#b5162e",
+      "after": "var(--mobile-pink-ink, #b5162e)"
+    },
+    {
+      "selector": ".st-menstrual",
+      "property": "background",
+      "before": "#f0ddff",
+      "after": "var(--mobile-purple-surface, #f0ddff)"
+    },
+    {
+      "selector": ".st-menstrual",
+      "property": "color",
+      "before": "#7b36a1",
+      "after": "var(--mobile-purple-ink, #7b36a1)"
+    },
+    {
+      "selector": ".st-personal",
+      "property": "background",
+      "before": "#e7eff6",
+      "after": "var(--mobile-blue-surface, #e7eff6)"
+    },
+    {
+      "selector": ".st-personal",
+      "property": "color",
+      "before": "#4e6f88",
+      "after": "var(--mobile-blue-ink, #4e6f88)"
+    },
+    {
+      "selector": ".st-annual",
+      "property": "background",
+      "before": "#e4f6e5",
+      "after": "var(--mobile-green-surface, #e4f6e5)"
+    },
+    {
+      "selector": ".st-annual",
+      "property": "color",
+      "before": "#28753a",
+      "after": "var(--mobile-green-ink, #28753a)"
+    },
+    {
+      "selector": ".st-custom",
+      "property": "background",
+      "before": "#d9f3f5",
+      "after": "var(--mobile-teal-surface, #d9f3f5)"
+    },
+    {
+      "selector": ".st-custom",
+      "property": "color",
+      "before": "#126871",
+      "after": "var(--mobile-teal-ink, #126871)"
+    },
+    {
+      "selector": ".holiday-tag.national",
+      "property": "background",
+      "before": "#ffe2e5",
+      "after": "var(--mobile-pink-surface, #ffe2e5)"
+    },
+    {
+      "selector": ".holiday-tag.national",
+      "property": "color",
+      "before": "#b31f35",
+      "after": "var(--mobile-pink-ink, #b31f35)"
+    },
+    {
+      "selector": ".holiday-tag.national",
+      "property": "border",
+      "before": "1px solid #f5c0c7",
+      "after": "1px solid var(--mobile-line, #f5c0c7)"
+    },
+    {
+      "selector": ".holiday-tag.govcomp",
+      "property": "background",
+      "before": "#fff7f7",
+      "after": "var(--mobile-pink-surface, #fff7f7)"
+    },
+    {
+      "selector": ".holiday-tag.govcomp",
+      "property": "color",
+      "before": "#b94c5b",
+      "after": "var(--mobile-pink-ink, #b94c5b)"
+    },
+    {
+      "selector": ".holiday-tag.govcomp",
+      "property": "border",
+      "before": "1px dashed #e8a9b2",
+      "after": "1px dashed var(--mobile-line, #e8a9b2)"
+    },
+    {
+      "selector": ".base-note",
+      "property": "color",
+      "before": "#94817a",
+      "after": "var(--mobile-muted, #94817a)"
+    },
+    {
+      "selector": ".dot.a",
+      "property": "background",
+      "before": "#ffd06f",
+      "after": "var(--mobile-gold-ink, #ffd06f)"
+    },
+    {
+      "selector": ".dot.b",
+      "property": "background",
+      "before": "#73b4f5",
+      "after": "var(--mobile-blue-ink, #73b4f5)"
+    },
+    {
+      "selector": ".dot.off",
+      "property": "background",
+      "before": "#cfcfcf",
+      "after": "var(--mobile-gray-ink, #cfcfcf)"
+    },
+    {
+      "selector": ".dot.ot",
+      "property": "background",
+      "before": "#cf4f88",
+      "after": "var(--mobile-pink-ink, #cf4f88)"
+    },
+    {
+      "selector": ".dot.sick",
+      "property": "background",
+      "before": "#dc3545",
+      "after": "var(--mobile-pink-ink, #dc3545)"
+    },
+    {
+      "selector": ".dot.menstrual",
+      "property": "background",
+      "before": "#b05bd3",
+      "after": "var(--mobile-purple-ink, #b05bd3)"
+    },
+    {
+      "selector": ".dot.personal",
+      "property": "background",
+      "before": "#7892a6",
+      "after": "var(--mobile-blue-ink, #7892a6)"
+    },
+    {
+      "selector": ".dot.annual",
+      "property": "background",
+      "before": "#79ca87",
+      "after": "var(--mobile-green-ink, #79ca87)"
+    },
+    {
+      "selector": ".dot.custom",
+      "property": "background",
+      "before": "#45aeb5",
+      "after": "var(--mobile-teal-ink, #45aeb5)"
+    },
+    {
+      "selector": ".dot.national",
+      "property": "background",
+      "before": "#d73d52",
+      "after": "var(--mobile-pink-ink, #d73d52)"
+    },
+    {
+      "selector": ".dot.govcomp",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-pink-ink, #fff)"
+    },
+    {
+      "selector": ".dot.govcomp",
+      "property": "border",
+      "before": "2px solid #d98592",
+      "after": "2px solid var(--mobile-line, #d98592)"
+    },
+    {
+      "selector": ".record-head",
+      "property": "color",
+      "before": "#6f5c53",
+      "after": "var(--mobile-muted, #6f5c53)"
+    },
+    {
+      "selector": ".record-note",
+      "property": "color",
+      "before": "#6f625c",
+      "after": "var(--mobile-muted, #6f625c)"
+    },
+    {
+      "selector": ".record-more",
+      "property": "color",
+      "before": "#8f776b",
+      "after": "var(--mobile-muted, #8f776b)"
+    },
+    {
+      "selector": ".edit-today",
+      "property": "background",
+      "before": "linear-gradient(90deg,#ffc963,#f6b443)",
+      "after": "var(--mobile-gold-surface, linear-gradient(90deg,#ffc963,#f6b443))"
+    },
+    {
+      "selector": ".edit-today",
+      "property": "color",
+      "before": "#7a3f08",
+      "after": "var(--mobile-gold-ink, #7a3f08)"
+    },
+    {
+      "selector": ".salary-tabs",
+      "property": "background",
+      "before": "#f4ede7",
+      "after": "var(--mobile-surface, #f4ede7)"
+    },
+    {
+      "selector": ".salary-tabs",
+      "property": "border",
+      "before": "1px solid #ebddd2",
+      "after": "1px solid var(--mobile-line, #ebddd2)"
+    },
+    {
+      "selector": ".salary-tab",
+      "property": "color",
+      "before": "#8a6654",
+      "after": "var(--mobile-text, #8a6654)"
+    },
+    {
+      "selector": ".salary-tab.active",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".salary-tab.active",
+      "property": "color",
+      "before": "#7a4329",
+      "after": "var(--mobile-text, #7a4329)"
+    },
+    {
+      "selector": ".salary-section",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".salary-field",
+      "property": "background",
+      "before": "#fff7f1",
+      "after": "var(--mobile-surface, #fff7f1)"
+    },
+    {
+      "selector": ".salary-field",
+      "property": "border",
+      "before": "1px solid #f5e3d7",
+      "after": "1px solid var(--mobile-line, #f5e3d7)"
+    },
+    {
+      "selector": ".salary-field input",
+      "property": "border",
+      "before": "1px solid #d8d0cb",
+      "after": "1px solid var(--mobile-line, #d8d0cb)"
+    },
+    {
+      "selector": ".salary-field input",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-field, #fff)"
+    },
+    {
+      "selector": ".salary-field input",
+      "property": "color",
+      "before": "UA FieldText",
+      "after": "var(--mobile-text, FieldText)"
+    },
+    {
+      "selector": ".compare-diff.negative strong",
+      "property": "color",
+      "before": "#c83f52",
+      "after": "var(--mobile-pink-ink, #c83f52)"
+    },
+    {
+      "selector": ".compare-diff.positive strong",
+      "property": "color",
+      "before": "#248a49",
+      "after": "var(--mobile-green-ink, #248a49)"
+    },
+    {
+      "selector": ".compare-diff.equal strong",
+      "property": "color",
+      "before": "#5f6a63",
+      "after": "var(--mobile-text, #5f6a63)"
+    },
+    {
+      "selector": ".pro-card",
+      "property": "border",
+      "before": "1px solid #eadfd6",
+      "after": "1px solid var(--mobile-line, #eadfd6)"
+    },
+    {
+      "selector": ".pro-card",
+      "property": "background",
+      "before": "#fffaf6",
+      "after": "var(--mobile-surface, #fffaf6)"
+    },
+    {
+      "selector": ".pro-badge",
+      "property": "background",
+      "before": "#2c2420",
+      "after": "var(--mobile-surface, #2c2420)"
+    },
+    {
+      "selector": ".pro-badge",
+      "property": "color",
+      "before": "#fff",
+      "after": "var(--mobile-text, #fff)"
+    },
+    {
+      "selector": ".pro-card.unlocked",
+      "property": "background",
+      "before": "#f7fff8",
+      "after": "var(--mobile-green-surface, #f7fff8)"
+    },
+    {
+      "selector": ".pro-card.unlocked",
+      "property": "border-color",
+      "before": "#cde6d2",
+      "after": "var(--mobile-line, #cde6d2)"
+    },
+    {
+      "selector": ".pro-card.unlocked .pro-badge",
+      "property": "background",
+      "before": "#39864b",
+      "after": "var(--mobile-green-surface, #39864b)"
+    },
+    {
+      "selector": ".pro-card button",
+      "property": "border",
+      "before": "1px solid #e5d8ce",
+      "after": "1px solid var(--mobile-line, #e5d8ce)"
+    },
+    {
+      "selector": ".pro-card button",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".pro-card button",
+      "property": "color",
+      "before": "#73442c",
+      "after": "var(--mobile-text, #73442c)"
+    },
+    {
+      "selector": ".itemized-panel",
+      "property": "border",
+      "before": "1px solid #d7e8da",
+      "after": "1px solid var(--mobile-line, #d7e8da)"
+    },
+    {
+      "selector": ".itemized-panel",
+      "property": "background",
+      "before": "#fbfffc",
+      "after": "var(--mobile-surface, #fbfffc)"
+    },
+    {
+      "selector": ".itemized-head",
+      "property": "border-bottom",
+      "before": "1px solid #e1ece3",
+      "after": "1px solid var(--mobile-line, #e1ece3)"
+    },
+    {
+      "selector": ".itemized-table-head",
+      "property": "background",
+      "before": "#f0f7f1",
+      "after": "var(--mobile-surface, #f0f7f1)"
+    },
+    {
+      "selector": ".itemized-table-head",
+      "property": "color",
+      "before": "#607065",
+      "after": "var(--mobile-text, #607065)"
+    },
+    {
+      "selector": ".itemized-row",
+      "property": "border-top",
+      "before": "1px solid #edf1ed",
+      "after": "1px solid var(--mobile-line, #edf1ed)"
+    },
+    {
+      "selector": ".itemized-row input",
+      "property": "border",
+      "before": "1px solid #d9dfda",
+      "after": "1px solid var(--mobile-line, #d9dfda)"
+    },
+    {
+      "selector": ".itemized-row input",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-field, #fff)"
+    },
+    {
+      "selector": ".itemized-row input",
+      "property": "color",
+      "before": "UA FieldText",
+      "after": "var(--mobile-text, FieldText)"
+    },
+    {
+      "selector": ".itemized-status.ok",
+      "property": "color",
+      "before": "#36854a",
+      "after": "var(--mobile-green-ink, #36854a)"
+    },
+    {
+      "selector": ".itemized-status.bad",
+      "property": "color",
+      "before": "#c23f52",
+      "after": "var(--mobile-pink-ink, #c23f52)"
+    },
+    {
+      "selector": ".itemized-status.warn",
+      "property": "color",
+      "before": "#b46a17",
+      "after": "var(--mobile-gold-ink, #b46a17)"
+    },
+    {
+      "selector": ".itemized-group",
+      "property": "background",
+      "before": "#fff8ed",
+      "after": "var(--mobile-surface, #fff8ed)"
+    },
+    {
+      "selector": ".itemized-group",
+      "property": "color",
+      "before": "#8b5b31",
+      "after": "var(--mobile-text, #8b5b31)"
+    },
+    {
+      "selector": ".itemized-group",
+      "property": "border-top",
+      "before": "1px solid #eee5d8",
+      "after": "1px solid var(--mobile-line, #eee5d8)"
+    },
+    {
+      "selector": ".payslip-scan-panel",
+      "property": "border",
+      "before": "1px solid #efd7b5",
+      "after": "1px solid var(--mobile-line, #efd7b5)"
+    },
+    {
+      "selector": ".payslip-scan-panel",
+      "property": "background",
+      "before": "#fffdf8",
+      "after": "var(--mobile-surface, #fffdf8)"
+    },
+    {
+      "selector": ".scan-head",
+      "property": "border-bottom",
+      "before": "1px solid #f1e3d0",
+      "after": "1px solid var(--mobile-line, #f1e3d0)"
+    },
+    {
+      "selector": ".scan-privacy",
+      "property": "color",
+      "before": "#52815d",
+      "after": "var(--mobile-muted, #52815d)"
+    },
+    {
+      "selector": ".scan-upload-btn",
+      "property": "border",
+      "before": "1px solid #e7cfad",
+      "after": "1px solid var(--mobile-line, #e7cfad)"
+    },
+    {
+      "selector": ".scan-upload-btn",
+      "property": "background",
+      "before": "#fff8e9",
+      "after": "var(--mobile-gold-surface, #fff8e9)"
+    },
+    {
+      "selector": ".scan-upload-btn",
+      "property": "color",
+      "before": "#7c4c22",
+      "after": "var(--mobile-gold-ink, #7c4c22)"
+    },
+    {
+      "selector": ".scan-preview",
+      "property": "border",
+      "before": "1px solid #e7ddd3",
+      "after": "1px solid var(--mobile-line, #e7ddd3)"
+    },
+    {
+      "selector": ".scan-preview",
+      "property": "background",
+      "before": "#f7f4f1",
+      "after": "var(--mobile-surface, #f7f4f1)"
+    },
+    {
+      "selector": ".scan-amount-btn",
+      "property": "border",
+      "before": "1px solid #d9912c",
+      "after": "1px solid var(--mobile-line, #d9912c)"
+    },
+    {
+      "selector": ".scan-amount-btn",
+      "property": "background",
+      "before": "rgba(255,247,218,.96)",
+      "after": "var(--mobile-surface, rgba(255,247,218,.96))"
+    },
+    {
+      "selector": ".scan-amount-btn",
+      "property": "color",
+      "before": "#7d4b13",
+      "after": "var(--mobile-text, #7d4b13)"
+    },
+    {
+      "selector": ".scan-amount-btn:hover,.scan-amount-btn:focus",
+      "property": "outline",
+      "before": "2px solid #e7a642",
+      "after": "2px solid var(--mobile-line, #e7a642)"
+    },
+    {
+      "selector": ".scan-picker-hint",
+      "property": "background",
+      "before": "#fff4df",
+      "after": "var(--mobile-surface, #fff4df)"
+    },
+    {
+      "selector": ".scan-picker-hint",
+      "property": "color",
+      "before": "#8f5a18",
+      "after": "var(--mobile-muted, #8f5a18)"
+    },
+    {
+      "selector": ".ocr-pick-btn",
+      "property": "border",
+      "before": "1px dashed #d9b785",
+      "after": "1px dashed var(--mobile-line, #d9b785)"
+    },
+    {
+      "selector": ".ocr-pick-btn",
+      "property": "background",
+      "before": "#fffaf0",
+      "after": "var(--mobile-surface, #fffaf0)"
+    },
+    {
+      "selector": ".ocr-pick-btn",
+      "property": "color",
+      "before": "#8b5b31",
+      "after": "var(--mobile-text, #8b5b31)"
+    },
+    {
+      "selector": ".scan-status",
+      "property": "background",
+      "before": "#f2f6fb",
+      "after": "var(--mobile-surface, #f2f6fb)"
+    },
+    {
+      "selector": ".scan-status",
+      "property": "color",
+      "before": "#496478",
+      "after": "var(--mobile-text, #496478)"
+    },
+    {
+      "selector": ".scan-progress",
+      "property": "background",
+      "before": "#e6edf3",
+      "after": "var(--mobile-track, #e6edf3)"
+    },
+    {
+      "selector": ".scan-progress i",
+      "property": "background",
+      "before": "#7098b7",
+      "after": "var(--mobile-blue-ink, #7098b7)"
+    },
+    {
+      "selector": ".scan-result-field",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".scan-result-field",
+      "property": "border",
+      "before": "1px solid #ede3da",
+      "after": "1px solid var(--mobile-line, #ede3da)"
+    },
+    {
+      "selector": ".scan-result-field label",
+      "property": "color",
+      "before": "#70584c",
+      "after": "var(--mobile-muted, #70584c)"
+    },
+    {
+      "selector": ".scan-result-field input",
+      "property": "border",
+      "before": "1px solid #ddd3cb",
+      "after": "1px solid var(--mobile-line, #ddd3cb)"
+    },
+    {
+      "selector": ".ocr-confidence",
+      "property": "background",
+      "before": "#eaf7ed",
+      "after": "var(--mobile-surface, #eaf7ed)"
+    },
+    {
+      "selector": ".ocr-confidence",
+      "property": "color",
+      "before": "#347949",
+      "after": "var(--mobile-text, #347949)"
+    },
+    {
+      "selector": ".ocr-confidence.mid",
+      "property": "background",
+      "before": "#fff4df",
+      "after": "var(--mobile-gold-surface, #fff4df)"
+    },
+    {
+      "selector": ".ocr-confidence.mid",
+      "property": "color",
+      "before": "#9a651d",
+      "after": "var(--mobile-gold-ink, #9a651d)"
+    },
+    {
+      "selector": ".ocr-confidence.low",
+      "property": "background",
+      "before": "#ffe9eb",
+      "after": "var(--mobile-pink-surface, #ffe9eb)"
+    },
+    {
+      "selector": ".ocr-confidence.low",
+      "property": "color",
+      "before": "#ad4050",
+      "after": "var(--mobile-pink-ink, #ad4050)"
+    },
+    {
+      "selector": ".ocr-source",
+      "property": "color",
+      "before": "#6d8b72",
+      "after": "var(--mobile-muted, #6d8b72)"
+    },
+    {
+      "selector": ".ocr-warning",
+      "property": "background",
+      "before": "#fff0e8",
+      "after": "var(--mobile-surface, #fff0e8)"
+    },
+    {
+      "selector": ".ocr-warning",
+      "property": "color",
+      "before": "#b05632",
+      "after": "var(--mobile-text, #b05632)"
+    },
+    {
+      "selector": ".scan-result-field.has-warning",
+      "property": "border-color",
+      "before": "#efc4ae",
+      "after": "var(--mobile-line, #efc4ae)"
+    },
+    {
+      "selector": ".scan-result-field.has-warning",
+      "property": "background",
+      "before": "#fffaf7",
+      "after": "var(--mobile-surface, #fffaf7)"
+    },
+    {
+      "selector": ".scan-raw summary",
+      "property": "color",
+      "before": "#776159",
+      "after": "var(--mobile-muted, #776159)"
+    },
+    {
+      "selector": ".scan-raw pre",
+      "property": "background",
+      "before": "#f7f4f1",
+      "after": "var(--mobile-surface, #f7f4f1)"
+    },
+    {
+      "selector": ".salary-history-panel",
+      "property": "border",
+      "before": "1px solid #dfdfec",
+      "after": "1px solid var(--mobile-line, #dfdfec)"
+    },
+    {
+      "selector": ".salary-history-panel",
+      "property": "background",
+      "before": "#fcfcff",
+      "after": "var(--mobile-surface, #fcfcff)"
+    },
+    {
+      "selector": ".history-head",
+      "property": "border-bottom",
+      "before": "1px solid #e8e8f0",
+      "after": "1px solid var(--mobile-line, #e8e8f0)"
+    },
+    {
+      "selector": ".history-yearbar",
+      "property": "background",
+      "before": "#f7f7fc",
+      "after": "var(--mobile-surface, #f7f7fc)"
+    },
+    {
+      "selector": ".history-yearbar button",
+      "property": "border",
+      "before": "1px solid #dcdce8",
+      "after": "1px solid var(--mobile-line, #dcdce8)"
+    },
+    {
+      "selector": ".history-yearbar button",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".history-row",
+      "property": "border-top",
+      "before": "1px solid #eeeeF5",
+      "after": "1px solid var(--mobile-line, #eeeeF5)"
+    },
+    {
+      "selector": ".history-row .diff.neg",
+      "property": "color",
+      "before": "#c23f52",
+      "after": "var(--mobile-pink-ink, #c23f52)"
+    },
+    {
+      "selector": ".history-row .diff.pos",
+      "property": "color",
+      "before": "#2c8a4b",
+      "after": "var(--mobile-green-ink, #2c8a4b)"
+    },
+    {
+      "selector": ".history-row .open-month",
+      "property": "border",
+      "before": "1px solid #dddde8",
+      "after": "1px solid var(--mobile-line, #dddde8)"
+    },
+    {
+      "selector": ".history-row .open-month",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".history-row .open-month",
+      "property": "color",
+      "before": "#65506e",
+      "after": "var(--mobile-text, #65506e)"
+    },
+    {
+      "selector": ".dev-plan-card",
+      "property": "border",
+      "before": "1px dashed #d8a660",
+      "after": "1px dashed var(--mobile-line, #d8a660)"
+    },
+    {
+      "selector": ".dev-plan-card",
+      "property": "background",
+      "before": "#fff8e9",
+      "after": "var(--mobile-surface, #fff8e9)"
+    },
+    {
+      "selector": ".dev-plan-btn",
+      "property": "border",
+      "before": "1px solid #e2c38f",
+      "after": "1px solid var(--mobile-line, #e2c38f)"
+    },
+    {
+      "selector": ".dev-plan-btn",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".dev-plan-btn",
+      "property": "color",
+      "before": "#7a4a1e",
+      "after": "var(--mobile-text, #7a4a1e)"
+    },
+    {
+      "selector": ".dev-plan-btn.active",
+      "property": "background",
+      "before": "#2d2723",
+      "after": "var(--mobile-surface, #2d2723)"
+    },
+    {
+      "selector": ".dev-plan-btn.active",
+      "property": "color",
+      "before": "#fff",
+      "after": "var(--mobile-text, #fff)"
+    },
+    {
+      "selector": ".dev-plan-btn.active",
+      "property": "border-color",
+      "before": "#2d2723",
+      "after": "var(--mobile-line, #2d2723)"
+    },
+    {
+      "selector": ".cloud-protection",
+      "property": "background",
+      "before": "#fff4e7",
+      "after": "var(--mobile-gold-surface, #fff4e7)"
+    },
+    {
+      "selector": ".cloud-protection",
+      "property": "color",
+      "before": "#945e2b",
+      "after": "var(--mobile-text, #945e2b)"
+    },
+    {
+      "selector": ".cloud-protection.safe",
+      "property": "background",
+      "before": "#eaf8ed",
+      "after": "var(--mobile-green-surface, #eaf8ed)"
+    },
+    {
+      "selector": ".cloud-protection.safe",
+      "property": "color",
+      "before": "#347848",
+      "after": "var(--mobile-green-ink, #347848)"
+    },
+    {
+      "selector": ".formula",
+      "property": "background",
+      "before": "#eaf3ff",
+      "after": "var(--mobile-blue-surface, #eaf3ff)"
+    },
+    {
+      "selector": ".formula",
+      "property": "color",
+      "before": "#36526a",
+      "after": "var(--mobile-blue-ink, #36526a)"
+    },
+    {
+      "selector": ".formula b",
+      "property": "color",
+      "before": "#254a6d",
+      "after": "var(--mobile-blue-ink, #254a6d)"
+    },
+    {
+      "selector": ".advanced summary",
+      "property": "color",
+      "before": "#7c5845",
+      "after": "var(--mobile-muted, #7c5845)"
+    },
+    {
+      "selector": ".payday-quote",
+      "property": "color",
+      "before": "#9a5316",
+      "after": "var(--mobile-text, #9a5316)"
+    },
+    {
+      "selector": ".balance-progress",
+      "property": "background",
+      "before": "#f0e8e0",
+      "after": "var(--mobile-track, #f0e8e0)"
+    },
+    {
+      "selector": ".annual-balance .balance-progress i",
+      "property": "background",
+      "before": "#62bd72",
+      "after": "var(--mobile-green-ink, #62bd72)"
+    },
+    {
+      "selector": ".annual-reminder",
+      "property": "background",
+      "before": "#f2fbf3",
+      "after": "var(--mobile-green-surface, #f2fbf3)"
+    },
+    {
+      "selector": ".annual-reminder",
+      "property": "color",
+      "before": "#367944",
+      "after": "var(--mobile-green-ink, #367944)"
+    },
+    {
+      "selector": ".annual-reminder.warn",
+      "property": "background",
+      "before": "#fff3df",
+      "after": "var(--mobile-gold-surface, #fff3df)"
+    },
+    {
+      "selector": ".annual-reminder.warn",
+      "property": "color",
+      "before": "#a66110",
+      "after": "var(--mobile-gold-ink, #a66110)"
+    },
+    {
+      "selector": ".annual-reminder.urgent",
+      "property": "background",
+      "before": "#ffe9ec",
+      "after": "var(--mobile-pink-surface, #ffe9ec)"
+    },
+    {
+      "selector": ".annual-reminder.urgent",
+      "property": "color",
+      "before": "#b52d43",
+      "after": "var(--mobile-pink-ink, #b52d43)"
+    },
+    {
+      "selector": ".sick-balance .balance-progress i",
+      "property": "background",
+      "before": "#d94a5a",
+      "after": "var(--mobile-pink-ink, #d94a5a)"
+    },
+    {
+      "selector": ".personal-balance .balance-progress i",
+      "property": "background",
+      "before": "#7892a6",
+      "after": "var(--mobile-blue-ink, #7892a6)"
+    },
+    {
+      "selector": ".profile-say",
+      "property": "background",
+      "before": "#fff0dc",
+      "after": "var(--mobile-surface, #fff0dc)"
+    },
+    {
+      "selector": ".profile-say",
+      "property": "color",
+      "before": "#985b37",
+      "after": "var(--mobile-text, #985b37)"
+    },
+    {
+      "selector": ".btn",
+      "property": "border",
+      "before": "1px solid #e7d8cb",
+      "after": "1px solid var(--mobile-line, #e7d8cb)"
+    },
+    {
+      "selector": ".btn",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".btn",
+      "property": "color",
+      "before": "#5c3425",
+      "after": "var(--mobile-text, #5c3425)"
+    },
+    {
+      "selector": ".btn.primary",
+      "property": "background",
+      "before": "#fff0d4",
+      "after": "var(--mobile-gold-surface, #fff0d4)"
+    },
+    {
+      "selector": ".btn.primary",
+      "property": "color",
+      "before": "#ae5b0c",
+      "after": "var(--mobile-gold-ink, #ae5b0c)"
+    },
+    {
+      "selector": ".btn.primary",
+      "property": "border-color",
+      "before": "#f3d2a3",
+      "after": "var(--mobile-line, #f3d2a3)"
+    },
+    {
+      "selector": ".btn.danger",
+      "property": "background",
+      "before": "#fff0f1",
+      "after": "var(--mobile-pink-surface, #fff0f1)"
+    },
+    {
+      "selector": ".btn.danger",
+      "property": "color",
+      "before": "#c94251",
+      "after": "var(--mobile-pink-ink, #c94251)"
+    },
+    {
+      "selector": ".btn.danger",
+      "property": "border-color",
+      "before": "#f3c9ce",
+      "after": "var(--mobile-line, #f3c9ce)"
+    },
+    {
+      "selector": ".settings-item",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".theme-choice",
+      "property": "border",
+      "before": "1px solid #e5d9ce",
+      "after": "1px solid var(--mobile-line, #e5d9ce)"
+    },
+    {
+      "selector": ".theme-choice",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".theme-choice.active",
+      "property": "border-color",
+      "before": "#f0a838",
+      "after": "var(--mobile-line, #f0a838)"
+    },
+    {
+      "selector": ".theme-choice.active",
+      "property": "background",
+      "before": "#fff7e8",
+      "after": "var(--mobile-gold-surface, #fff7e8)"
+    },
+    {
+      "selector": ".theme-choice.active",
+      "property": "color",
+      "before": "#bd660e",
+      "after": "var(--mobile-gold-ink, #bd660e)"
+    },
+    {
+      "selector": ".record-row .r-hours",
+      "property": "color",
+      "before": "#7c675c",
+      "after": "var(--mobile-muted, #7c675c)"
+    },
+    {
+      "selector": ".bottom-nav",
+      "property": "background",
+      "before": "rgba(255,252,246,.96)",
+      "after": "var(--mobile-surface, rgba(255,252,246,.96))"
+    },
+    {
+      "selector": ".bottom-nav",
+      "property": "border-top",
+      "before": "1px solid #eadfd4",
+      "after": "1px solid var(--mobile-line, #eadfd4)"
+    },
+    {
+      "selector": "html.dark .bottom-nav",
+      "property": "background",
+      "before": "rgba(37,29,25,.96)",
+      "after": "var(--mobile-surface, rgba(37,29,25,.96))"
+    },
+    {
+      "selector": "html.dark .bottom-nav",
+      "property": "border-color",
+      "before": "#49382f",
+      "after": "var(--mobile-line, #49382f)"
+    },
+    {
+      "selector": ".bottom-nav button",
+      "property": "color",
+      "before": "#79594a",
+      "after": "var(--mobile-muted, #79594a)"
+    },
+    {
+      "selector": ".bottom-nav button.active",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fff0c8,#ffe4ae)",
+      "after": "var(--mobile-nav-active, linear-gradient(135deg,#fff0c8,#ffe4ae))"
+    },
+    {
+      "selector": ".bottom-nav button.active",
+      "property": "color",
+      "before": "#bb650d",
+      "after": "var(--mobile-gold-ink, #bb650d)"
+    },
+    {
+      "selector": ".kpi-progress",
+      "property": "background",
+      "before": "#edf0f3",
+      "after": "var(--mobile-track, #edf0f3)"
+    },
+    {
+      "selector": ".kpi-attendance .iconbox",
+      "property": "background",
+      "before": "#e2efff",
+      "after": "var(--mobile-blue-icon, #e2efff)"
+    },
+    {
+      "selector": ".kpi-attendance .iconbox",
+      "property": "color",
+      "before": "#256fc3",
+      "after": "var(--mobile-blue-ink, #256fc3)"
+    },
+    {
+      "selector": ".kpi-attendance .kpi-progress i",
+      "property": "background",
+      "before": "#7db2ef",
+      "after": "var(--mobile-blue-ink, #7db2ef)"
+    },
+    {
+      "selector": ".kpi-leave .iconbox",
+      "property": "background",
+      "before": "#ffe5e7",
+      "after": "var(--mobile-pink-icon, #ffe5e7)"
+    },
+    {
+      "selector": ".kpi-leave .iconbox",
+      "property": "color",
+      "before": "#d55e68",
+      "after": "var(--mobile-pink-ink, #d55e68)"
+    },
+    {
+      "selector": ".kpi-leave .kpi-progress i",
+      "property": "background",
+      "before": "#e89aa2",
+      "after": "var(--mobile-pink-ink, #e89aa2)"
+    },
+    {
+      "selector": ".kpi-overtime .iconbox",
+      "property": "background",
+      "before": "#fff0cf",
+      "after": "var(--mobile-gold-icon, #fff0cf)"
+    },
+    {
+      "selector": ".kpi-overtime .iconbox",
+      "property": "color",
+      "before": "#d1810a",
+      "after": "var(--mobile-gold-ink, #d1810a)"
+    },
+    {
+      "selector": ".kpi-overtime .kpi-progress i",
+      "property": "background",
+      "before": "#f1bd5f",
+      "after": "var(--mobile-gold-ink, #f1bd5f)"
+    },
+    {
+      "selector": ".kpi-net .iconbox",
+      "property": "background",
+      "before": "#e2f4e5",
+      "after": "var(--mobile-green-icon, #e2f4e5)"
+    },
+    {
+      "selector": ".kpi-net .iconbox",
+      "property": "color",
+      "before": "#45965a",
+      "after": "var(--mobile-green-ink, #45965a)"
+    },
+    {
+      "selector": ".kpi-net .kpi-progress i",
+      "property": "background",
+      "before": "#86c894",
+      "after": "var(--mobile-green-ink, #86c894)"
+    },
+    {
+      "selector": ".dashboard-leave-shell .balance-card",
+      "property": "border-color",
+      "before": "#f0e5dc",
+      "after": "var(--mobile-line, #f0e5dc)"
+    },
+    {
+      "selector": ".dashboard-leave-shell .balance-card",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fffdfb,#fff8f3)",
+      "after": "var(--mobile-surface, linear-gradient(135deg,#fffdfb,#fff8f3))"
+    },
+    {
+      "selector": ".dashboard-leave-shell .annual-balance",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fbfffb,#f2faf3)",
+      "after": "var(--mobile-green-surface, linear-gradient(135deg,#fbfffb,#f2faf3))"
+    },
+    {
+      "selector": ".dashboard-leave-shell .sick-balance",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fffdfd,#fff4f5)",
+      "after": "var(--mobile-pink-surface, linear-gradient(135deg,#fffdfd,#fff4f5))"
+    },
+    {
+      "selector": ".dashboard-leave-shell .personal-balance",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fffefa,#fff8ee)",
+      "after": "var(--mobile-blue-surface, linear-gradient(135deg,#fffefa,#fff8ee))"
+    },
+    {
+      "selector": ".dashboard-month-switch button",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".dashboard-overview-card .dashboard-kpi",
+      "property": "border",
+      "before": "1px solid #e7edf5",
+      "after": "1px solid var(--mobile-line, #e7edf5)"
+    },
+    {
+      "selector": ".dashboard-overview-card .dashboard-kpi",
+      "property": "background",
+      "before": "#fff",
+      "after": "var(--mobile-surface, #fff)"
+    },
+    {
+      "selector": ".dashboard-overview-card .dashboard-kpi:nth-child(1)",
+      "property": "background",
+      "before": "linear-gradient(135deg,#f7fbff,#eef6ff)",
+      "after": "var(--mobile-blue-surface, linear-gradient(135deg,#f7fbff,#eef6ff))"
+    },
+    {
+      "selector": ".dashboard-overview-card .dashboard-kpi:nth-child(2)",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fff,#fff8f8)",
+      "after": "var(--mobile-pink-surface, linear-gradient(135deg,#fff,#fff8f8))"
+    },
+    {
+      "selector": ".dashboard-overview-card .dashboard-kpi:nth-child(3)",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fff,#fffaf1)",
+      "after": "var(--mobile-gold-surface, linear-gradient(135deg,#fff,#fffaf1))"
+    },
+    {
+      "selector": ".dashboard-overview-card .dashboard-kpi:nth-child(4)",
+      "property": "background",
+      "before": "linear-gradient(135deg,#fff,#f5fbf6)",
+      "after": "var(--mobile-green-surface, linear-gradient(135deg,#fff,#f5fbf6))"
+    },
+    {
+      "selector": ".status-visual-ot",
+      "property": "background",
+      "before": "#fff0df",
+      "after": "var(--mobile-gold-icon, #fff0df)"
+    },
+    {
+      "selector": ".status-visual-ot",
+      "property": "color",
+      "before": "#ce7343",
+      "after": "var(--mobile-gold-ink, #ce7343)"
+    },
+    {
+      "selector": ".status-visual-leave",
+      "property": "background",
+      "before": "#e5efff",
+      "after": "var(--mobile-blue-icon, #e5efff)"
+    },
+    {
+      "selector": ".status-visual-leave",
+      "property": "color",
+      "before": "#2d71c5",
+      "after": "var(--mobile-blue-ink, #2d71c5)"
+    },
+    {
+      "selector": ".dashboard-week-chart",
+      "property": "border-bottom",
+      "before": "1px solid #e7e2de",
+      "after": "1px solid var(--mobile-line, #e7e2de)"
+    },
+    {
+      "selector": ".week-bar",
+      "property": "background",
+      "before": "linear-gradient(180deg,#f7c872,#eaa949)",
+      "after": "var(--mobile-gold-ink, linear-gradient(180deg,#f7c872,#eaa949))"
+    },
+    {
+      "selector": ".leave-dot.st-sick",
+      "property": "background",
+      "before": "#ee7a86",
+      "after": "var(--mobile-pink-ink, #ee7a86)"
+    },
+    {
+      "selector": ".leave-dot.st-menstrual",
+      "property": "background",
+      "before": "#b77be4",
+      "after": "var(--mobile-purple-ink, #b77be4)"
+    },
+    {
+      "selector": ".leave-dot.st-personal",
+      "property": "background",
+      "before": "#77aee7",
+      "after": "var(--mobile-blue-ink, #77aee7)"
+    },
+    {
+      "selector": ".leave-dot.st-annual",
+      "property": "background",
+      "before": "#72bf78",
+      "after": "var(--mobile-green-ink, #72bf78)"
+    },
+    {
+      "selector": ".leave-dot.st-custom",
+      "property": "background",
+      "before": "#63b6bb",
+      "after": "var(--mobile-teal-ink, #63b6bb)"
+    }
+  ]
+}
