@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=65">
+<link rel="manifest" href="./manifest.webmanifest?v=66">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -43,7 +43,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 .attendance-head{padding:16px}.status-shortcuts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}.status-shortcut{border:0;border-radius:14px;padding:10px 6px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px}.status-shortcut .icon{font-size:17px}.attendance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.summary-card{padding:14px;display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center}.summary-card strong{font-size:24px;display:block}.summary-card small{color:var(--muted)}.records{padding:0 14px 14px}.record-head,.record-row{display:grid;grid-template-columns:1.2fr .9fr .55fr 1.2fr 32px;gap:8px;align-items:center}.record-head{padding:10px 6px;color:#6f5c53;font-size:11px;font-weight:800;border-bottom:1px solid var(--line)}.record-row{padding:11px 6px;border-bottom:1px solid var(--line);font-size:13px}.record-row:last-child{border-bottom:0}.record-type{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:10px;font-weight:850;width:max-content;max-width:100%}.record-note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f625c}.record-more{border:0;background:transparent;color:#8f776b;font-size:18px}.empty-state{text-align:center;padding:26px;color:var(--muted)}.edit-today{width:100%;margin-top:12px;border:0;border-radius:16px;background:linear-gradient(90deg,#ffc963,#f6b443);color:#7a3f08;padding:14px;font-weight:950;font-size:16px}
 .salary-card{padding:16px}.salary-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px;padding:5px;border-radius:16px;background:#f4ede7;border:1px solid #ebddd2}.salary-tab{border:0;border-radius:12px;background:transparent;color:#8a6654;padding:11px 14px;font-weight:950;font-size:15px}.salary-tab.active{background:#fff;box-shadow:0 4px 14px rgba(100,65,45,.09);color:#7a4329}.salary-pane{min-width:0}.salary-section{border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px;background:#fff}.salary-section-title{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:950;margin-bottom:10px}.salary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-field{padding:10px;border-radius:14px;background:#fff7f1;border:1px solid #f5e3d7}.salary-field .field-icon{width:36px;height:36px;border-radius:12px;font-size:18px;margin-bottom:6px}.salary-field .field-icon .icon{font-size:19px}.salary-field label{font-size:12px;font-weight:850;display:block;margin-bottom:5px}.salary-field input{width:100%;height:40px;border:1px solid #d8d0cb;border-radius:9px;background:#fff;padding:7px 9px;font-size:16px;font-weight:800}.salary-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-compare-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.compare-card{padding:14px}.compare-card b{display:block;font-size:12px;color:var(--muted)}.compare-card strong{display:block;font-size:25px;margin-top:5px}.compare-card small{display:block;margin-top:5px;color:var(--muted)}.compare-diff.negative strong{color:#c83f52}.compare-diff.positive strong{color:#248a49}.compare-diff.equal strong{color:#5f6a63}.pro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pro-grid>.payslip-scan-panel,.pro-grid>.itemized-panel,.pro-grid>.salary-history-panel{grid-column:1/-1;margin-top:0}.pro-card{position:relative;padding:15px;border:1px solid #eadfd6;border-radius:16px;background:#fffaf6;min-height:124px}.pro-card .pro-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.pro-card b{font-size:15px}.pro-card p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.pro-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;background:#2c2420;color:#fff;font-size:10px;font-weight:900;white-space:nowrap}.pro-card.unlocked{background:#f7fff8;border-color:#cde6d2}.pro-card.unlocked .pro-badge{background:#39864b}.pro-card button{margin-top:10px;width:100%;border:1px solid #e5d8ce;background:#fff;border-radius:11px;padding:8px 10px;font-weight:850;color:#73442c}
 .itemized-panel{margin-top:12px;border:1px solid #d7e8da;border-radius:16px;background:#fbfffc;overflow:hidden}.itemized-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e1ece3}.itemized-head b{font-size:16px}.itemized-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.itemized-summary .card{padding:11px}.itemized-summary b{font-size:11px;color:var(--muted);display:block}.itemized-summary strong{font-size:20px;display:block;margin-top:3px}.itemized-progress{font-size:11px;color:var(--muted);padding:0 14px 10px}.itemized-table{display:grid}.itemized-table-head,.itemized-row{display:grid;grid-template-columns:1.1fr .8fr .9fr .9fr;gap:8px;align-items:center;padding:9px 12px}.itemized-table-head{background:#f0f7f1;font-size:11px;font-weight:900;color:#607065}.itemized-row{border-top:1px solid #edf1ed;font-size:12px}.itemized-row .item-label{font-weight:850}.itemized-row .expected{text-align:right;font-weight:800}.itemized-row input{width:100%;height:36px;border:1px solid #d9dfda;border-radius:9px;padding:6px 8px;text-align:right;font-weight:800;background:#fff}.itemized-status{text-align:right;font-weight:900;font-size:11px}.itemized-status.ok{color:#36854a}.itemized-status.bad{color:#c23f52}.itemized-status.warn{color:#b46a17}.itemized-group{padding:8px 12px;background:#fff8ed;color:#8b5b31;font-size:11px;font-weight:950;border-top:1px solid #eee5d8}
-.payslip-scan-panel{margin-top:12px;border:1px solid #efd7b5;border-radius:16px;background:#fffdf8;overflow:hidden}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px;border-bottom:1px solid #f1e3d0}.scan-head b{font-size:16px}.scan-privacy{margin-top:4px;font-size:10px;color:#52815d;font-weight:800}.scan-upload{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}.scan-upload-btn{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #e7cfad;background:#fff8e9;color:#7c4c22;border-radius:13px;padding:11px;font-weight:900}.scan-preview-wrap{padding:0 12px 12px}.scan-preview{display:none;width:100%;max-height:340px;object-fit:contain;border:1px solid #e7ddd3;border-radius:13px;background:#f7f4f1}.scan-preview.show{display:block}.scan-status{margin:0 12px 12px;padding:10px 11px;border-radius:12px;background:#f2f6fb;color:#496478;font-size:11px;font-weight:800}.scan-progress{height:6px;border-radius:999px;background:#e6edf3;overflow:hidden;margin-top:7px}.scan-progress i{display:block;width:0;height:100%;background:#7098b7;transition:width .2s ease}.scan-result{padding:0 12px 12px}.scan-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.scan-result-field{padding:9px;border-radius:12px;background:#fff;border:1px solid #ede3da}.scan-result-field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px;color:#70584c}.scan-result-field input{width:100%;height:36px;border:1px solid #ddd3cb;border-radius:9px;padding:6px 8px;font-weight:850}.ocr-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;font-size:9px;line-height:1.35}.ocr-confidence{display:inline-flex;align-items:center;padding:2px 6px;border-radius:999px;background:#eaf7ed;color:#347949;font-weight:900}.ocr-confidence.mid{background:#fff4df;color:#9a651d}.ocr-confidence.low{background:#ffe9eb;color:#ad4050}.ocr-source{color:#6d8b72;font-weight:800}.ocr-warning{display:block;margin-top:5px;padding:5px 7px;border-radius:8px;background:#fff0e8;color:#b05632;font-size:9px;font-weight:850;line-height:1.4}.scan-result-field.has-warning{border-color:#efc4ae;background:#fffaf7}.scan-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.scan-raw{margin-top:9px}.scan-raw summary{cursor:pointer;font-size:11px;font-weight:850;color:#776159}.scan-raw pre{white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;background:#f7f4f1;border-radius:10px;padding:9px;font-size:9px;line-height:1.5}.salary-history-panel{margin-top:12px;border:1px solid #dfdfec;border-radius:16px;background:#fcfcff;overflow:hidden}.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e8e8f0}.history-head b{font-size:16px}.history-yearbar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:#f7f7fc}.history-yearbar button{width:34px;height:34px;border:1px solid #dcdce8;background:#fff;border-radius:10px;font-weight:950}.history-yearbar strong{min-width:72px;text-align:center}.history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.history-summary .card{padding:11px}.history-summary b{font-size:10px;color:var(--muted);display:block}.history-summary strong{font-size:19px;display:block;margin-top:3px}.history-list{padding:0 12px 12px}.history-row{display:grid;grid-template-columns:.65fr 1fr 1fr .9fr auto;gap:8px;align-items:center;padding:11px 6px;border-top:1px solid #eeeeF5;font-size:12px}.history-row:first-child{border-top:0}.history-row .month{font-weight:950}.history-row .num{text-align:right;font-weight:800}.history-row .diff{text-align:right;font-weight:950}.history-row .diff.neg{color:#c23f52}.history-row .diff.pos{color:#2c8a4b}.history-row .open-month{border:1px solid #dddde8;background:#fff;border-radius:9px;padding:7px 9px;font-weight:850;color:#65506e}.history-meta{font-size:10px;color:var(--muted);grid-column:2/5}.history-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px}.dev-plan-card{border:1px dashed #d8a660;background:#fff8e9}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.dev-plan-btn{border:1px solid #e2c38f;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;color:#7a4a1e}.dev-plan-btn.active{background:#2d2723;color:#fff;border-color:#2d2723}.cloud-protection{margin-top:10px;padding:10px 12px;border-radius:13px;background:#fff4e7;color:#945e2b;font-size:11px;font-weight:850;line-height:1.5}.cloud-protection.safe{background:#eaf8ed;color:#347848}.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.backup-note{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.5}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden}.result-card .summary-icon{flex:0 0 auto}.result-card>div:last-child{min-width:0}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
+.payslip-scan-panel{margin-top:12px;border:1px solid #efd7b5;border-radius:16px;background:#fffdf8;overflow:hidden}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px;border-bottom:1px solid #f1e3d0}.scan-head b{font-size:16px}.scan-privacy{margin-top:4px;font-size:10px;color:#52815d;font-weight:800}.scan-upload{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}.scan-upload-btn{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #e7cfad;background:#fff8e9;color:#7c4c22;border-radius:13px;padding:11px;font-weight:900}.scan-preview-wrap{padding:0 12px 12px}.scan-preview-stage{position:relative}.scan-preview{display:none;width:100%;max-height:340px;object-fit:contain;border:1px solid #e7ddd3;border-radius:13px;background:#f7f4f1}.scan-preview.show{display:block}.scan-amount-overlay{position:absolute;inset:0;z-index:5;pointer-events:auto}.scan-amount-btn{position:absolute;transform:translate(-50%,-50%);border:1px solid #d9912c;background:rgba(255,247,218,.96);color:#7d4b13;border-radius:8px;padding:3px 5px;font-size:9px;font-weight:950;box-shadow:0 2px 8px rgba(64,43,20,.18);white-space:nowrap}.scan-amount-btn:hover,.scan-amount-btn:focus{outline:2px solid #e7a642}.scan-picker-hint{margin-top:7px;padding:7px 9px;border-radius:10px;background:#fff4df;color:#8f5a18;font-size:10px;font-weight:850;line-height:1.45}.ocr-pick-btn{margin-top:6px;border:1px dashed #d9b785;background:#fffaf0;color:#8b5b31;border-radius:8px;padding:5px 7px;font-size:9px;font-weight:900;width:100%}.scan-status{margin:0 12px 12px;padding:10px 11px;border-radius:12px;background:#f2f6fb;color:#496478;font-size:11px;font-weight:800}.scan-progress{height:6px;border-radius:999px;background:#e6edf3;overflow:hidden;margin-top:7px}.scan-progress i{display:block;width:0;height:100%;background:#7098b7;transition:width .2s ease}.scan-result{padding:0 12px 12px}.scan-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.scan-result-field{padding:9px;border-radius:12px;background:#fff;border:1px solid #ede3da}.scan-result-field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px;color:#70584c}.scan-result-field input{width:100%;height:36px;border:1px solid #ddd3cb;border-radius:9px;padding:6px 8px;font-weight:850}.ocr-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;font-size:9px;line-height:1.35}.ocr-confidence{display:inline-flex;align-items:center;padding:2px 6px;border-radius:999px;background:#eaf7ed;color:#347949;font-weight:900}.ocr-confidence.mid{background:#fff4df;color:#9a651d}.ocr-confidence.low{background:#ffe9eb;color:#ad4050}.ocr-source{color:#6d8b72;font-weight:800}.ocr-warning{display:block;margin-top:5px;padding:5px 7px;border-radius:8px;background:#fff0e8;color:#b05632;font-size:9px;font-weight:850;line-height:1.4}.scan-result-field.has-warning{border-color:#efc4ae;background:#fffaf7}.scan-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.scan-raw{margin-top:9px}.scan-raw summary{cursor:pointer;font-size:11px;font-weight:850;color:#776159}.scan-raw pre{white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;background:#f7f4f1;border-radius:10px;padding:9px;font-size:9px;line-height:1.5}.salary-history-panel{margin-top:12px;border:1px solid #dfdfec;border-radius:16px;background:#fcfcff;overflow:hidden}.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e8e8f0}.history-head b{font-size:16px}.history-yearbar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:#f7f7fc}.history-yearbar button{width:34px;height:34px;border:1px solid #dcdce8;background:#fff;border-radius:10px;font-weight:950}.history-yearbar strong{min-width:72px;text-align:center}.history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.history-summary .card{padding:11px}.history-summary b{font-size:10px;color:var(--muted);display:block}.history-summary strong{font-size:19px;display:block;margin-top:3px}.history-list{padding:0 12px 12px}.history-row{display:grid;grid-template-columns:.65fr 1fr 1fr .9fr auto;gap:8px;align-items:center;padding:11px 6px;border-top:1px solid #eeeeF5;font-size:12px}.history-row:first-child{border-top:0}.history-row .month{font-weight:950}.history-row .num{text-align:right;font-weight:800}.history-row .diff{text-align:right;font-weight:950}.history-row .diff.neg{color:#c23f52}.history-row .diff.pos{color:#2c8a4b}.history-row .open-month{border:1px solid #dddde8;background:#fff;border-radius:9px;padding:7px 9px;font-weight:850;color:#65506e}.history-meta{font-size:10px;color:var(--muted);grid-column:2/5}.history-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px}.dev-plan-card{border:1px dashed #d8a660;background:#fff8e9}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.dev-plan-btn{border:1px solid #e2c38f;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;color:#7a4a1e}.dev-plan-btn.active{background:#2d2723;color:#fff;border-color:#2d2723}.cloud-protection{margin-top:10px;padding:10px 12px;border-radius:13px;background:#fff4e7;color:#945e2b;font-size:11px;font-weight:850;line-height:1.5}.cloud-protection.safe{background:#eaf8ed;color:#347848}.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.backup-note{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.5}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden}.result-card .summary-icon{flex:0 0 auto}.result-card>div:last-child{min-width:0}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
 .work-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.work-card{padding:15px;display:grid;grid-template-columns:50px 1fr;gap:12px;align-items:center}.work-card b{font-size:13px}.work-card strong{display:block;font-size:26px;margin-top:3px;line-height:1.15}.work-card small{display:block;color:var(--muted);margin-top:4px}.payday-quote{font-size:14px;font-weight:900;color:#9a5316;margin-top:5px;line-height:1.35}.leave-balance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.balance-card{padding:15px}.balance-title{display:flex;align-items:center;gap:9px}.balance-card>strong{display:block;font-size:23px;margin:10px 0 4px}.balance-card>small{color:var(--muted);display:block;min-height:32px}.balance-progress{height:7px;background:#f0e8e0;border-radius:999px;overflow:hidden;margin-top:10px}.balance-progress i{display:block;height:100%;width:0;border-radius:999px;transition:width .25s ease}.annual-balance .balance-progress i{background:#62bd72}.annual-reminder{margin-top:9px;padding:8px 10px;border-radius:10px;background:#f2fbf3;color:#367944;font-size:11px;font-weight:850;line-height:1.45}.annual-reminder.warn{background:#fff3df;color:#a66110}.annual-reminder.urgent{background:#ffe9ec;color:#b52d43}.sick-balance .balance-progress i{background:#d94a5a}.personal-balance .balance-progress i{background:#7892a6}
 .settings-stack{display:grid;gap:12px}.settings-card{padding:16px}.profile-row{display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center}.profile-preview{width:110px;height:110px;border-radius:50%;object-fit:cover;border:5px solid #f7e2cd;box-shadow:var(--shadow)}.profile-copy b{font-size:20px}.profile-copy p{margin:5px 0;color:var(--muted)}.profile-say{display:inline-block;padding:8px 10px;border-radius:14px;background:#fff0dc;color:#985b37;font-weight:800}.settings-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #e7d8cb;background:#fff;border-radius:13px;padding:10px 13px;font-weight:850;color:#5c3425}.btn.primary{background:#fff0d4;color:#ae5b0c;border-color:#f3d2a3}.btn.danger{background:#fff0f1;color:#c94251;border-color:#f3c9ce}.settings-list{display:grid;gap:1px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.settings-item{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:center;padding:13px;background:#fff;border-bottom:1px solid var(--line)}.settings-item:last-child{border-bottom:0}.settings-item .field-icon{width:40px;height:40px;border-radius:12px}.settings-item b{display:block}.settings-item small{color:var(--muted)}.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.theme-choice{border:1px solid #e5d9ce;background:#fff;border-radius:16px;padding:13px;display:flex;align-items:center;justify-content:space-between;font-weight:900}.theme-choice.active{border-color:#f0a838;background:#fff7e8;color:#bd660e}.install-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .footer-banner{margin-top:18px}.footer-banner img{width:100%;display:block;border-radius:22px;box-shadow:var(--shadow);border:1px solid #f0e0d1}.bottom-nav{display:none}.dialog{border:0;border-radius:22px;padding:0;width:min(520px,calc(100vw - 22px));background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.25)}.dialog::backdrop{background:rgba(34,22,17,.45)}.dialog-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}.dialog-head b{font-size:18px}.dialog-close{border:0;background:transparent;font-size:24px;color:var(--muted)}.dialog-body{padding:16px 18px;display:grid;gap:12px;max-height:70vh;overflow:auto}.dialog-foot{padding:14px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}.hidden{display:none!important}
@@ -380,7 +380,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
         <div class="payslip-scan-panel hidden" id="payslipScanPanel">
           <div class="scan-head">
             <div>
-              <b>📷 Pro 本地薪資單辨識 <span style="font-size:10px;color:#9a7a67;font-weight:800">OCR v60</span></b>
+              <b>📷 Pro 本地薪資單辨識 <span style="font-size:10px;color:#9a7a67;font-weight:800">OCR v3</span></b>
               <div class="hint">點「拍照或上傳」後，可依裝置選擇拍照、相簿或檔案。辨識結果會留在這張卡正下方，確認後才導入逐項薪資對帳。</div>
               <div class="scan-privacy">🔒 圖片只在你的瀏覽器本地處理，不上傳薪資單影像。</div>
             </div>
@@ -390,7 +390,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
             <label class="scan-upload-btn" for="payslipFileInput">📷 拍照或上傳</label>
             <input class="hidden" id="payslipFileInput" type="file" accept="image/*">
           </div>
-          <div class="scan-preview-wrap"><img id="payslipPreview" class="scan-preview" alt="薪資單預覽"></div>
+          <div class="scan-preview-wrap"><div class="scan-preview-stage"><img id="payslipPreview" class="scan-preview" alt="薪資單預覽"><div class="scan-amount-overlay hidden" id="payslipAmountOverlay"></div></div><div class="scan-picker-hint hidden" id="payslipPickerHint"></div></div>
           <div class="scan-status" id="payslipScanStatus">
             請點「拍照或上傳」選擇薪資單。第一次使用會先下載中文字庫，可能需要一些時間。
             <div class="scan-progress"><i id="payslipScanProgress"></i></div>
@@ -1053,7 +1053,7 @@ const ITEMIZED_FIELDS=[
   {key:'dedHealthExtra',label:'健保補扣',kind:'deduction'},
   {key:'dedOther',label:'其他扣款',kind:'deduction'}
 ];
-let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0};
+let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0},payslipManualFieldKey='';
 const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v2';
 const PAYSLIP_OCR_FIELDS=[
   {key:'actualNet',label:'實發金額',kind:'net',priority:30,terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
@@ -1290,8 +1290,8 @@ function numericTokenInfo(text){
 function numericTokenValue(text){const x=numericTokenInfo(text);return x?x.value:null}
 function plausibleAmountForField(def,amount){
   if(!amount)return false;
-  const v=num(amount.value!==undefined?amount.value:amount),rateLike=!!amount.rateLike;
-  if(rateLike)return false;
+  const v=num(amount.value!==undefined?amount.value:amount),rateLike=!!amount.rateLike,quantityLike=!!amount.quantityLike;
+  if(rateLike||quantityLike)return false;
   if(def.key==='base'||def.key==='actualNet')return v>=1000;
   if(def.key==='otPay')return v>=50;
   if(['shiftAllowance','meal','performance','transport','otherIncome'].includes(def.key))return v>=20;
@@ -1302,7 +1302,10 @@ function extractSpatialAmounts(line){
   const amounts=[];
   line.words.forEach((w,i)=>{
     const info=numericTokenInfo(w.text);if(!info)return;
-    amounts.push({id:line.index+'-'+i,value:info.value,rateLike:info.rateLike,percent:info.percent,hasDecimal:info.hasDecimal,bbox:w.bbox,confidence:w.confidence,lineIndex:line.index,text:w.text});
+    const nearby=line.words.slice(Math.max(0,i-2),Math.min(line.words.length,i+3)).filter(x=>x!==w).map(x=>normalizeOcrText(x.text)).join('');
+    const quantityLike=/(時數|工時|小時|時薪|天數|日數|倍率|倍數|費率|單價|HOUR|HOURS|HRS|DAY|DAYS)/.test(nearby);
+    const moneyHint=/(金額|應發|實發|應扣|扣款|合計|小計|薪資|工資|津貼|加給|獎金|保費|福利金|所得稅|加班費)/.test(nearby);
+    amounts.push({id:line.index+'-'+i,value:info.value,rateLike:info.rateLike,percent:info.percent,hasDecimal:info.hasDecimal,quantityLike,moneyHint,bbox:w.bbox,confidence:w.confidence,lineIndex:line.index,text:w.text});
   });
   return amounts;
 }
@@ -1341,6 +1344,7 @@ function findSpatialAmountForHit(hit,lines,width,height,used){
       if(l.index===hit.lineIndex)score+=.04;
       if(a.value>=100)score+=.08;
       if(a.value>=1000)score+=.03;
+      if(a.moneyHint)score+=.12;
       if(a.confidence>=80)score+=.03;
       candidates.push({a,score});
     });
@@ -1364,11 +1368,46 @@ function consolidateOccurrences(def,occurrences){
   const best=list.reduce((a,b)=>a.confidence>b.confidence?a:b,list[0]);
   return Object.assign({},best,{value,confidence:list.reduce((s,x)=>s+x.confidence,0)/list.length});
 }
-function pairTableRowsByColumns(lines,width,height,used,byKey,labelAnchors,variant){
+function detectPayrollSectionMarkers(lines,width,height){
+  const out=[];
+  const incomeRe=/(應發|收入|所得項目|給付項目|薪資項目|發放項目|應領項目)/;
+  const dedRe=/(應扣|扣款|扣除|代扣|扣繳|扣項|扣款項目)/;
+  lines.forEach(line=>{
+    line.words.forEach(w=>{
+      const t=normalizeOcrText(w.text),kind=dedRe.test(t)?'deduction':incomeRe.test(t)?'income':'';
+      if(kind)out.push({kind,x:w.bbox.cx/width,y:w.bbox.cy/height,bbox:w.bbox,text:w.text});
+    });
+    const t=normalizeOcrText(line.text);
+    if(!out.some(m=>Math.abs(m.y-line.cy/height)<.008)){
+      const kind=dedRe.test(t)?'deduction':incomeRe.test(t)?'income':'';
+      if(kind)out.push({kind,x:(line.x0+line.x1)/2/width,y:line.cy/height,bbox:{cx:(line.x0+line.x1)/2,cy:line.cy},text:line.text});
+    }
+  });
+  return out;
+}
+function sectionForLabel(labelBox,markers,width,height){
+  if(!markers.length)return null;
+  const x=labelBox.cx/width,y=labelBox.cy/height;
+  let best=null;
+  markers.forEach(m=>{
+    const dy=y-m.y,dx=Math.abs(x-m.x);
+    if(dy<-.03||dy>.38)return;
+    const d=Math.max(0,dy)*1.25+dx*.55;
+    if(!best||d<best.d)best={kind:m.kind,d};
+  });
+  return best&&best.d<.34?best.kind:null;
+}
+function fieldAllowedInSection(def,section){
+  if(!section||def.kind==='net')return true;
+  if(def.kind==='deduction'&&section==='income')return false;
+  if(def.kind==='income'&&section==='deduction')return false;
+  return true;
+}
+function pairTableRowsByColumns(lines,width,height,used,byKey,labelAnchors,variant,sectionMarkers){
   lines.forEach((labelLine,i)=>{
     const hits=spatialLineHits(labelLine).filter(h=>h.labelBox);
     if(hits.length<2)return;
-    const sortedHits=[...hits].sort((a,b)=>a.labelBox.cx-b.labelBox.cx);
+    const sortedHits=[...hits].filter(h=>fieldAllowedInSection(h.def,sectionForLabel(h.labelBox,sectionMarkers,width,height))).sort((a,b)=>a.labelBox.cx-b.labelBox.cx);if(sortedHits.length<2)return;
     let bestRow=null,bestScore=-1;
     for(let step=1;step<=4&&i+step<lines.length;step++){
       const amountLine=lines[i+step],amounts=amountLine.amounts.filter(a=>!used.has(a.id)).sort((a,b)=>a.bbox.cx-b.bbox.cx);
@@ -1398,13 +1437,14 @@ function pairTableRowsByColumns(lines,width,height,used,byKey,labelAnchors,varia
 }
 function parseSpatialOcr(data,variant){
   const width=variant.width||1,height=variant.height||1,words=collectOcrWords(data),lines=groupOcrWordsIntoLines(words);
-  const used=new Set(),byKey={},labelAnchors={};
+  const used=new Set(),byKey={},labelAnchors={},sectionMarkers=detectPayrollSectionMarkers(lines,width,height);
   // First pass: detect classic payroll tables where labels are one row and values the next row.
-  pairTableRowsByColumns(lines,width,height,used,byKey,labelAnchors,variant);
+  pairTableRowsByColumns(lines,width,height,used,byKey,labelAnchors,variant,sectionMarkers);
   // Second pass: individual same-row / same-column matching.
   lines.forEach(line=>{
     spatialLineHits(line).forEach(hit=>{
-      const lb=hit.labelBox,labelNorm={x:lb.cx/width,y:lb.cy/height};
+      const lb=hit.labelBox,section=sectionForLabel(lb,sectionMarkers,width,height);if(!fieldAllowedInSection(hit.def,section))return;
+      const labelNorm={x:lb.cx/width,y:lb.cy/height};
       if(!labelAnchors[hit.def.key]||hit.score>labelAnchors[hit.def.key].score)labelAnchors[hit.def.key]={x:labelNorm.x,y:labelNorm.y,score:hit.score,term:hit.term};
       const pair=findSpatialAmountForHit(hit,lines,width,height,used);
       if(!pair)return;
@@ -1418,7 +1458,8 @@ function parseSpatialOcr(data,variant){
   const fields={};
   PAYSLIP_OCR_FIELDS.forEach(def=>{const v=consolidateOccurrences(def,byKey[def.key]||[]);if(v)fields[def.key]=v});
   const allAmounts=lines.flatMap(l=>l.amounts.map(a=>Object.assign({},a,{norm:{x:a.bbox.cx/width,y:a.bbox.cy/height}})));
-  return{fields,labelAnchors,allAmounts,lines,words,width,height,aspect:width/height,text:(data&&data.text)||'',variant:variant.name};
+  const amountPattern=allAmounts.filter(a=>!a.rateLike&&!a.quantityLike).slice(0,50).map(a=>({x:a.norm.x,y:a.norm.y}));
+  return{fields,labelAnchors,allAmounts,amountPattern,sectionMarkers,lines,words,width,height,aspect:width/height,text:(data&&data.text)||'',variant:variant.name};
 }
 function detailedLineAmounts(line){
   const text=normalizeOcrDigits(line),ms=text.match(/[-+]?\d[\d,.%]*/g)||[];
@@ -1454,15 +1495,27 @@ function loadPayslipFormatMemory(){
 function savePayslipFormatMemory(list){
   try{localStorage.setItem(PAYSLIP_FORMAT_MEMORY_KEY,JSON.stringify((list||[]).slice(0,8)))}catch(e){}
 }
+function numericLayoutSimilarity(a,b){
+  if(!Array.isArray(a)||!Array.isArray(b)||a.length<4||b.length<4)return 0;
+  const sample=a.slice(0,30),avg=sample.reduce((s,p)=>{
+    let best=Infinity;b.slice(0,40).forEach(q=>{best=Math.min(best,Math.hypot(p.x-q.x,p.y-q.y))});return s+best;
+  },0)/sample.length;
+  const coverage=Math.min(1,Math.min(a.length,b.length)/10);
+  return Math.max(0,Math.min(1,(1-Math.min(1,avg/.08))*.78+coverage*.22));
+}
 function templateSimilarity(template,run){
   if(!template||!template.anchors||!run)return 0;
   if(template.aspect&&run.aspect&&Math.abs(template.aspect-run.aspect)/Math.max(template.aspect,run.aspect)>.18)return 0;
   const keys=Object.keys(template.anchors).filter(k=>run.labelAnchors[k]);
-  if(keys.length<2)return 0;
-  const avg=keys.reduce((s,k)=>{
-    const a=template.anchors[k],b=run.labelAnchors[k];return s+Math.hypot((a.labelX??a.x)-b.x,(a.labelY??a.y)-b.y);
-  },0)/keys.length;
-  return Math.max(0,Math.min(1,(keys.length/Math.min(5,Object.keys(template.anchors).length))*.55+(1-Math.min(1,avg/.16))*.45));
+  let labelScore=0;
+  if(keys.length>=2){
+    const avg=keys.reduce((s,k)=>{
+      const a=template.anchors[k],b=run.labelAnchors[k];return s+Math.hypot((a.labelX??a.x)-b.x,(a.labelY??a.y)-b.y);
+    },0)/keys.length;
+    labelScore=Math.max(0,Math.min(1,(keys.length/Math.min(5,Object.keys(template.anchors).length))*.55+(1-Math.min(1,avg/.16))*.45));
+  }
+  const numericScore=numericLayoutSimilarity(template.amountPattern||[],run.amountPattern||[]);
+  return Math.max(labelScore,numericScore*.92);
 }
 function bestPayslipTemplate(run){
   let best=null;loadPayslipFormatMemory().forEach(t=>{const score=templateSimilarity(t,run);if(score>=.5&&(!best||score>best.score))best={template:t,score}});
@@ -1533,7 +1586,11 @@ function mergePayslipRuns(runs){
   result.__runSummaries=runs.map(r=>({variant:r.variant,found:Object.keys(r.fields).length,usedMemory:!!r.usedMemory}));
   result.__usedMemory=runs.some(r=>r.usedMemory);
   const bestRun=[...runs].sort((a,b)=>Object.keys(b.fields).length-Object.keys(a.fields).length)[0];
-  if(bestRun){result.__aspect=bestRun.aspect;result.__labelAnchors=bestRun.labelAnchors}
+  if(bestRun){
+    result.__aspect=bestRun.aspect;result.__labelAnchors=bestRun.labelAnchors;
+    result.__amountCandidates=(bestRun.allAmounts||[]).map(a=>({value:a.value,text:a.text,confidence:a.confidence,rateLike:!!a.rateLike,quantityLike:!!a.quantityLike,moneyHint:!!a.moneyHint,norm:a.norm,lineIndex:a.lineIndex}));
+    result.__amountPattern=bestRun.amountPattern||[];
+  }
   return result;
 }
 function expectedOcrValues(){
@@ -1570,7 +1627,7 @@ function rememberPayslipFormat(values){
     anchors[m.key]={labelX:m.labelNorm?.x,labelY:m.labelNorm?.y,amountX:m.amountNorm?.x,amountY:m.amountNorm?.y,term:m.term||''};
   });
   if(Object.keys(anchors).length<2)return;
-  const list=loadPayslipFormatMemory(),template={id:'fmt-'+Date.now(),savedAt:new Date().toISOString(),aspect:payslipOcrResult.__aspect||0,anchors};
+  const list=loadPayslipFormatMemory(),template={id:'fmt-'+Date.now(),savedAt:new Date().toISOString(),aspect:payslipOcrResult.__aspect||0,anchors,amountPattern:(payslipOcrResult.__amountCandidates||[]).filter(a=>!a.rateLike&&!a.quantityLike).slice(0,50).map(a=>({x:a.norm.x,y:a.norm.y}))};
   let replaced=false;
   for(let i=0;i<list.length;i++){
     const fakeRun={aspect:template.aspect,labelAnchors:Object.fromEntries(Object.entries(anchors).map(([k,a])=>[k,{x:a.labelX,y:a.labelY}]))};
@@ -1633,23 +1690,59 @@ function renderPayslipDetected(){
     const warn=[disagreement[def.key],validation[def.key]].filter(Boolean).join(' ');
     return '<div class="scan-result-field'+(warn?' has-warning':'')+'"><label>'+escapeHtml(def.label)+'</label><input type="number" min="0" step="1" data-ocr-field="'+def.key+'" value="'+(value===''?'':escapeHtml(value))+'" placeholder="未辨識">'+
       '<div class="ocr-meta">'+(has?'<span class="ocr-confidence'+confClass+'">信心 '+conf+'%</span>':(labelSeen?'<span class="ocr-confidence mid">欄位已讀到</span>':'<span class="ocr-confidence low">未辨識</span>'))+'<span class="ocr-source">'+escapeHtml(source)+(hit&&hit.term?'・'+escapeHtml(hit.term):'')+'</span></div>'+
-      (warn?'<span class="ocr-warning">⚠ '+escapeHtml(warn)+'</span>':'')+'</div>';
+      (warn?'<span class="ocr-warning">⚠ '+escapeHtml(warn)+'</span>':'')+
+      '<button type="button" class="ocr-pick-btn" data-ocr-pick="'+def.key+'">從圖片指定金額</button></div>';
   }).join('');
   qsa('[data-ocr-field]').forEach(input=>input.onchange=e=>{
     const key=e.target.dataset.ocrField,raw=e.target.value;if(raw==='')delete payslipOcrResult[key];else payslipOcrResult[key]=num(raw);renderPayslipDetected();
   });
+  qsa('[data-ocr-pick]').forEach(btn=>btn.onclick=()=>showPayslipAmountPicker(btn.dataset.ocrPick));
+}
+function hidePayslipAmountPicker(){
+  payslipManualFieldKey='';
+  const overlay=$('payslipAmountOverlay'),hint=$('payslipPickerHint');
+  if(overlay){overlay.innerHTML='';overlay.classList.add('hidden')}
+  if(hint){hint.textContent='';hint.classList.add('hidden')}
+}
+function showPayslipAmountPicker(fieldKey){
+  const def=PAYSLIP_OCR_FIELDS.find(x=>x.key===fieldKey),overlay=$('payslipAmountOverlay'),hint=$('payslipPickerHint'),img=$('payslipPreview');
+  if(!def||!overlay||!hint||!img||!img.classList.contains('show'))return;
+  const all=(payslipOcrResult.__amountCandidates||[]).filter(a=>plausibleAmountForField(def,a));
+  const unique=[];all.forEach(a=>{
+    const dup=unique.some(x=>Math.abs(x.norm.x-a.norm.x)<.008&&Math.abs(x.norm.y-a.norm.y)<.008&&Math.abs(x.value-a.value)<.01);
+    if(!dup)unique.push(a);
+  });
+  if(!unique.length){alert('這張圖片目前沒有可指定的金額候選。可以先手動輸入金額，再按「確認並導入」，App 仍會記住已辨識到的位置。');return}
+  payslipManualFieldKey=fieldKey;overlay.innerHTML='';
+  unique.slice(0,45).forEach((a,i)=>{
+    const b=document.createElement('button');b.type='button';b.className='scan-amount-btn';b.textContent=Math.round(a.value).toLocaleString('zh-TW');
+    b.style.left=(a.norm.x*100)+'%';b.style.top=(a.norm.y*100)+'%';b.title='指定 '+def.label+' = '+a.value;
+    b.onclick=e=>{e.stopPropagation();applyManualPayslipAmount(fieldKey,a);};
+    overlay.appendChild(b);
+  });
+  overlay.classList.remove('hidden');hint.textContent='正在指定「'+def.label+'」：請點薪資單圖片上正確的金額。';hint.classList.remove('hidden');
+}
+function applyManualPayslipAmount(fieldKey,a){
+  const def=PAYSLIP_OCR_FIELDS.find(x=>x.key===fieldKey);if(!def)return;
+  payslipOcrResult[fieldKey]=num(a.value);payslipOcrResult.__confidence=payslipOcrResult.__confidence||{};payslipOcrResult.__confidence[fieldKey]=1;
+  payslipOcrResult.__fieldWarnings=payslipOcrResult.__fieldWarnings||{};delete payslipOcrResult.__fieldWarnings[fieldKey];
+  payslipOcrResult.__matches=Array.isArray(payslipOcrResult.__matches)?payslipOcrResult.__matches.filter(m=>m.key!==fieldKey):[];
+  const anchor=payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[fieldKey];
+  payslipOcrResult.__matches.push({key:fieldKey,label:def.label,term:'人工指定',amount:num(a.value),value:num(a.value),confidence:1,method:'人工指定',source:'人工指定',labelNorm:anchor?{x:anchor.x,y:anchor.y}:null,amountNorm:a.norm,line:'使用者從圖片指定'});
+  payslipOcrResult.__manualKeys=payslipOcrResult.__manualKeys||{};payslipOcrResult.__manualKeys[fieldKey]=true;
+  hidePayslipAmountPicker();renderPayslipDetected();
 }
 function ocrStatusLabel(status){
   const map={'loading tesseract core':'載入 OCR 核心','initializing tesseract':'初始化 OCR','loading language traineddata':'下載中文字庫','initializing api':'準備辨識','recognizing text':'辨識文字'};
   return map[status]||status||'處理中';
 }
 function resetPayslipScan(clearPreview=true){
-  payslipOcrResult={};payslipRawText='';payslipOcrRuns=[];payslipOcrDocument={width:0,height:0};
+  payslipOcrResult={};payslipRawText='';payslipOcrRuns=[];payslipOcrDocument={width:0,height:0};hidePayslipAmountPicker();
   if($('payslipScanResult'))$('payslipScanResult').classList.add('hidden');
   if($('payslipRawText'))$('payslipRawText').textContent='';
   if($('payslipMissingFields')){$('payslipMissingFields').textContent='';$('payslipMissingFields').classList.add('hidden')}
   if($('payslipScanProgress'))$('payslipScanProgress').style.width='0%';
-  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始第二代本地辨識（3 次交叉比對）。 ';
+  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始第三代本地辨識（3 次交叉比對）。 ';
   if($('payslipFileInput'))$('payslipFileInput').value='';
   if(clearPreview){
     if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}payslipPreviewUrl=''}
@@ -1658,7 +1751,7 @@ function resetPayslipScan(clearPreview=true){
 }
 async function runPayslipOcr(file){
   if(!canUse('payslip_scan'))return;
-  if(!file||!String(file.type||'').startsWith('image/')){alert('目前第二代本地辨識先支援圖片檔。');return}
+  if(!file||!String(file.type||'').startsWith('image/')){alert('目前第三代本地辨識先支援圖片檔。');return}
   if(file.size>20*1024*1024){alert('圖片太大，請使用 20MB 以下的薪資單照片。');return}
   resetPayslipScan(false);
   if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}}
@@ -1698,7 +1791,7 @@ async function runPayslipOcr(file){
     payslipOcrResult=mergePayslipRuns(runs);
     renderPayslipDetected();$('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';$('payslipScanResult').classList.remove('hidden');
     const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),labelOnlyDefs=missingDefs.filter(def=>payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[def.key]),reallyMissingDefs=missingDefs.filter(def=>!labelOnlyDefs.includes(def));
-    status.childNodes[0].nodeValue='第二代辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
+    status.childNodes[0].nodeValue='第三代辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
     if($('payslipMissingFields')){
       const warningCount=Object.keys(validatePayslipValues(payslipOcrResult)).length+Object.keys(payslipOcrResult.__fieldWarnings||{}).length;
       $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0&&warningCount===0);
@@ -2251,7 +2344,7 @@ $('accountLogout').onclick=signOutAccount;
 initAuth();
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v65';
+    const reloadKey='meow-sw-reloaded-v66';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -2260,7 +2353,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=65',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=66',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
