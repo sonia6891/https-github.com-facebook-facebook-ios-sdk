@@ -1,0 +1,35 @@
+name: Verify overtime hourly display v100
+on:
+  push:
+    branches: ["fix/overtime-hourly-display-v100"]
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Build and verify
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          git archive 99454d008a1c6f98cc4c2e9c83969d90f8f819c4 | tar -x -C "$RUNNER_TEMP/site"
+          python maintenance/apply_overtime_v100.py "$RUNNER_TEMP/site"
+          python - <<'PY'
+          import re,pathlib,subprocess,os
+          s=pathlib.Path(os.environ['RUNNER_TEMP'],'site/index.html').read_text()
+          for x in ['resultHourlyLabel','實際加班時薪','加班分段時薪','基礎時薪','今年已使用特休時數（補登）','v=100']:
+              assert x in s,x
+          js=re.findall(r'<script[^>]*>([\\s\\S]*?)</script>',s)[-1]
+          f=pathlib.Path(os.environ['RUNNER_TEMP'],'app.js');f.write_text(js);subprocess.run(['node','--check',str(f)],check=True)
+          PY
+      - name: Publish candidate
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "99454d008a1c6f98cc4c2e9c83969d90f8f819c4"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/index"; git read-tree 99454d008a1c6f98cc4c2e9c83969d90f8f819c4
+          for path in index.html sw.js; do blob=$(git hash-object -w "$RUNNER_TEMP/site/$path"); git update-index --add --cacheinfo "100644,$blob,$path"; done
+          tree=$(git write-tree); git config user.name sonia6891; git config user.email 107385898+sonia6891@users.noreply.github.com
+          candidate=$(printf '%s\n' 'Show actual overtime hourly rate from selected multiplier (v100)' | git commit-tree "$tree" -p 99454d008a1c6f98cc4c2e9c83969d90f8f819c4)
+          git push origin "$candidate:refs/heads/fix/overtime-hourly-candidate-v100"
