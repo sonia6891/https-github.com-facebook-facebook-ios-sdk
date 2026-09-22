@@ -1,0 +1,79 @@
+name: Verify single schedule dropdown v94
+on:
+  push:
+    branches: ["repair/single-dropdown-v94"]
+permissions:
+  contents: write
+concurrency:
+  group: single-dropdown-v94
+  cancel-in-progress: true
+env:
+  BASE: 6b7090a9654649773dc4eb4db393ad7487f13422
+  LIVE_URL: ""
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install isolated test browsers
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Build and check reviewed dropdown-only change
+        run: |
+          mkdir -p "$RUNNER_TEMP/dropdown-before" "$RUNNER_TEMP/dropdown-after" "$RUNNER_TEMP/dropdown-report"
+          git archive "$BASE" | tar -x -C "$RUNNER_TEMP/dropdown-before"
+          cp -a "$RUNNER_TEMP/dropdown-before/." "$RUNNER_TEMP/dropdown-after/"
+          python maintenance/apply_dropdown_v94.py "$RUNNER_TEMP/dropdown-after"
+          python -c 'import pathlib,re,os; s=pathlib.Path(os.environ["RUNNER_TEMP"],"dropdown-after/index.html").read_text(); pathlib.Path(os.environ["RUNNER_TEMP"],"app.js").write_text(re.findall(r"<script[^>]*>([\s\S]*?)</script>",s)[-1])'
+          node --check "$RUNNER_TEMP/app.js"
+      - name: Wait for exact approved source when verifying production
+        if: env.LIVE_URL != ''
+        run: |
+          python - <<'PY'
+          import os,time,hashlib,urllib.request
+          expected='7ffe3d74bf234cc565480389dc1b250984323987f7560e45c693d071478e3fc2'
+          for attempt in range(24):
+            try:
+              with urllib.request.urlopen(urllib.request.Request(os.environ['LIVE_URL'],headers={'Cache-Control':'no-cache'}),timeout=15) as r:
+                if r.status==200 and hashlib.sha256(r.read()).hexdigest()==expected:
+                  print('Exact approved source is published')
+                  break
+            except Exception as e:
+              print(type(e).__name__)
+            time.sleep(5)
+          else:
+            raise SystemExit('Published source does not match approved files')
+          PY
+      - name: Verify single dropdown, calendar parity, saved settings and backups
+        run: python maintenance/test_dropdown_v94.py "$RUNNER_TEMP/dropdown-before" "$RUNNER_TEMP/dropdown-after" "$RUNNER_TEMP/dropdown-report"
+      - name: Prepare tested candidate without changing main
+        if: env.LIVE_URL == ''
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$BASE"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/dropdown-index"
+          git read-tree "$BASE"
+          for path in index.html sw.js; do
+            blob=$(git hash-object -w "$RUNNER_TEMP/dropdown-after/$path")
+            git update-index --add --cacheinfo "100644,$blob,$path"
+          done
+          tree=$(git write-tree)
+          git config user.name 'sonia6891'
+          git config user.email '107385898+sonia6891@users.noreply.github.com'
+          candidate=$(printf '%s\n' 'Move two-shift cycles into one grouped schedule dropdown (v94)' | git commit-tree "$tree" -p "$BASE")
+          git push origin "$candidate:refs/heads/repair/single-dropdown-candidate-v94"
+          echo "$candidate" > "$RUNNER_TEMP/dropdown-report/candidate-sha.txt"
+          git diff --stat "$BASE" "$candidate" > "$RUNNER_TEMP/dropdown-report/diff-stat.txt"
+      - name: Save verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: single-dropdown-v94-verification
+          path: ${{ runner.temp }}/dropdown-report
+          retention-days: 7
