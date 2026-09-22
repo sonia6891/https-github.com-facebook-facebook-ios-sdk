@@ -1,0 +1,36 @@
+name: Verify Free final overtime source v101
+on:
+  push:
+    branches: ["fix/free-final-overtime-source-v101"]
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with: {fetch-depth: 0}
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - name: Build and static regression
+        run: |
+          mkdir -p "$RUNNER_TEMP/site"
+          git archive b93d3854fd66cdeb78e60da392864c31a50563c2 | tar -x -C "$RUNNER_TEMP/site"
+          python maintenance/apply_free_final_v101.py "$RUNNER_TEMP/site"
+          python - <<'PY'
+          import re,pathlib,subprocess,os
+          s=pathlib.Path(os.environ['RUNNER_TEMP'],'site/index.html').read_text()
+          for x in ['salaryOtHoursHint',"'salaryOtHours').disabled=hasCalendarOt",'本期已使用特休時數（補登）',"base==='work'?'regular':'rest'",'v=101']:
+              assert x in s,x
+          assert "state.months[mk].overtimeHours=rows.reduce" not in s
+          js=re.findall(r'<script[^>]*>([\\s\\S]*?)</script>',s)[-1]
+          f=pathlib.Path(os.environ['RUNNER_TEMP'],'app.js');f.write_text(js);subprocess.run(['node','--check',str(f)],check=True)
+          PY
+      - name: Publish candidate
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "b93d3854fd66cdeb78e60da392864c31a50563c2"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/index";git read-tree b93d3854fd66cdeb78e60da392864c31a50563c2
+          for path in index.html sw.js; do blob=$(git hash-object -w "$RUNNER_TEMP/site/$path");git update-index --add --cacheinfo "100644,$blob,$path";done
+          tree=$(git write-tree);git config user.name sonia6891;git config user.email 107385898+sonia6891@users.noreply.github.com
+          candidate=$(printf '%s\n' 'Separate manual and calendar overtime sources (v101)' | git commit-tree "$tree" -p b93d3854fd66cdeb78e60da392864c31a50563c2)
+          git push origin "$candidate:refs/heads/fix/free-final-candidate-v101"
