@@ -52,7 +52,7 @@ jobs:
           git config user.name 'sonia6891'
           git config user.email '107385898+sonia6891@users.noreply.github.com'
           candidate=$(printf '%s\n' 'Add configurable four-team three-shift scheduling mode (v91)' | git commit-tree "$tree" -p "$BASE")
-          git push origin "$candidate:refs/heads/feature/four-three-candidate-v91"
+          git push origin "$candidate:refs/heads/feature/four-three-candidate-v91-webkit"
           echo "$candidate" > "$RUNNER_TEMP/rotation-report/candidate-sha.txt"
           git diff --stat "$BASE" "$candidate" > "$RUNNER_TEMP/rotation-report/diff-stat.txt"
       - name: Keep verification results

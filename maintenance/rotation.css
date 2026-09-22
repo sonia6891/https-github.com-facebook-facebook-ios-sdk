@@ -1,7 +1,7 @@
 /* Rotation controls are scoped to the calendar and its setup dialog. */
 .schedule-mode-row{display:flex;align-items:center;gap:12px;padding:14px 0 0;flex-wrap:wrap}
 .schedule-mode-row label{font-size:14px;font-weight:800;color:var(--ink)}
-.schedule-mode-row select{min-width:0;max-width:100%;flex:1;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:10px 12px;background:var(--paper);color:var(--ink);font:inherit}
+.schedule-mode-row select{min-width:0;max-width:100%;flex:1;min-height:44px;border:1px solid var(--line);border-radius:12px;padding:10px 32px 10px 12px;color:var(--ink);font:inherit;appearance:none;-webkit-appearance:none;background-color:var(--paper);background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 17px) 50%,calc(100% - 12px) 50%;background-size:5px 5px;background-repeat:no-repeat}
 .rotation-active-info{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--paper)}
 .rotation-active-info p{min-width:0;margin:0;font-size:13px;line-height:1.6;color:var(--ink);overflow-wrap:anywhere}.rotation-active-info button{flex-shrink:0;min-height:44px}
 .rotation-dialog{width:min(480px,calc(100vw - 28px));max-height:calc(100dvh - 28px);padding:20px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--ink);overflow:auto}
@@ -14,5 +14,5 @@
 .rotation-actions{display:flex;gap:10px;margin-top:14px}.rotation-actions button{flex:1;min-height:46px}
 .st-r-early{background:#ffedbd;color:#78521a}.st-r-middle{background:#cfe6ff;color:#215483}.st-r-night{background:#e7dafa;color:#613d85}.st-r-off{background:#e9e5e1;color:#51483f}
 html.dark .st-r-early{background:#463627;color:#ffe1a5}html.dark .st-r-middle{background:#243d52;color:#bde2ff}html.dark .st-r-night{background:#3e2f51;color:#e6cfff}html.dark .st-r-off{background:#37332f;color:#e7d9ce}
-html.dark .rotation-dialog{color-scheme:dark}
+html.dark .rotation-dialog,html.dark .schedule-mode-row select{color-scheme:dark}
 @media(max-width:380px){.rotation-active-info{align-items:flex-start;flex-direction:column}.rotation-active-info button{width:100%}}
