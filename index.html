@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=111">
+<link rel="manifest" href="./manifest.webmanifest?v=112">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <script id="meow-theme-boot">
@@ -36,6 +36,10 @@
   var meta=document.querySelector('meta[name=theme-color]');
   if(meta)meta.setAttribute('content',theme==='dark'?'#2b211c':'#f7b342');
 })();
+</script>
+<link rel="stylesheet" href="./assets/onboarding.css?v=112">
+<script id="meow-welcome-boot">
+(function(){try{if(localStorage.getItem('meow-work-welcome-v1')!=='done'||new URLSearchParams(location.search).get('welcome')==='1')document.documentElement.classList.add('welcome-open')}catch(e){document.documentElement.classList.add('welcome-open')}})();
 </script>
 <style>
 :root{
@@ -451,6 +455,29 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
 </head>
 <body>
+<section id="welcomeScreen" class="welcome-screen" role="dialog" aria-modal="true" aria-labelledby="welcomeTitle" tabindex="-1">
+ <div class="welcome-sheet">
+  <header class="welcome-hero">
+   <div class="welcome-copy"><div class="welcome-eyebrow">給每一位努力上班的你</div><h1 id="welcomeTitle">喵的，<br>又要上班了</h1><p class="welcome-subtitle">把班表、薪資和休假，<br>好好記下來。</p><p class="welcome-handwritten">讓生活有規律，<br>上班也沒那麼難！</p></div>
+   <div class="welcome-art"><p class="welcome-bubble">加油…<br>明天也是好貓！</p><img src="./assets/onboarding-brand-cat.webp?v=112" alt="品牌灰色厭世貓，金色眼睛，靠在辦公桌前" width="420" height="420"></div>
+  </header>
+  <div class="welcome-actions">
+   <button type="button" id="welcomeApple" class="welcome-button welcome-apple" disabled><svg class="welcome-provider-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.76 3.08.82 1.18-.24 2.31-.94 3.57-.85 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.97.48 7.12-.57 1.5-1.31 2.99-2.54 4.09l.01-.01ZM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25Z"/></svg><span>使用 Apple 繼續 <small id="welcomeAppleNote">尚未開放</small></span><span aria-hidden="true">›</span></button>
+   <button type="button" id="welcomeGoogle" class="welcome-button welcome-google"><svg class="welcome-provider-icon" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.17 7.09-10.35 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59A14.41 14.41 0 0 1 9.75 24c0-1.59.27-3.13.78-4.59l-7.98-6.19A23.87 23.87 0 0 0 0 24c0 3.87.93 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.91-5.8l-7.73-6c-2.15 1.45-4.92 2.3-8.18 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg><span>使用 Google 繼續</span><span aria-hidden="true">›</span></button>
+   <details id="welcomeEmailDetails" class="welcome-email"><summary>其他登入方式 <span>⌄</span></summary><form id="welcomeEmailForm"><label for="welcomeEmail">Email</label><input id="welcomeEmail" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com" required><button type="submit" class="welcome-button welcome-email-button">寄送 6 位驗證碼</button></form><form id="welcomeOtpForm" hidden><label for="welcomeOtp">6 位驗證碼</label><input id="welcomeOtp" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required placeholder="123456"><button type="submit" class="welcome-button welcome-email-button">驗證並登入</button><button type="button" class="welcome-text-button" id="welcomeResend">重新寄送驗證碼</button></form></details>
+   <p id="welcomeStatus" class="welcome-status" role="status" aria-live="polite"></p>
+   <button type="button" id="welcomeGuest" class="welcome-button welcome-guest"><svg class="welcome-provider-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3z"/></svg><span>先使用，不登入</span><span aria-hidden="true">›</span></button>
+   <p class="welcome-local-note">資料自動保存在此裝置，之後也能登入。</p>
+  </div>
+  <div class="welcome-features">
+   <div><span class="welcome-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M7 2v6m10-6v6M3 10h18m-13 5 3 3 5-5"/></svg></span><b>免費使用</b><p>班表・薪資・休假<br>行程都能記錄</p></div>
+   <div><span class="welcome-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 19h11a4 4 0 0 0 .8-7.9A7 7 0 0 0 5.4 9.7 4.7 4.7 0 0 0 7 19Z"/></svg><em>Pro</em></span><b>Pro 雲端同步</b><p>跨裝置・自動備份<br>需有效訂閱或試用</p></div>
+   <div><span class="welcome-feature-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 8 4v6c0 5-8 10-8 10S4 17 4 12V6l8-4Z"/><path d="m8 12 3 3 5-6"/></svg></span><b>資料由你決定</b><p>登入不等於同步<br>啟用前會再次確認</p></div>
+  </div>
+  <p class="welcome-footer">登入不會自動開始試用或收費。<br>免費版與未登入的工作資料，均儲存在此裝置。</p>
+  <button type="button" id="welcomeClosePreview" class="welcome-text-button" hidden>返回 App</button>
+ </div>
+</section>
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h5v-6h4v6h5v-9.5"/></symbol>
 <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 9h18M7 13h2M11 13h2M15 13h2M7 17h2M11 17h2M15 17h2"/></symbol>
@@ -896,17 +923,28 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
         </div>
         <div class="hint" id="devPlanStatus" style="margin-top:8px"></div>
       </div>
-      <div class="card settings-card"><div class="section-title"><span class="paw">🐾</span>資料管理</div><div class="settings-list">
-        <button class="settings-item" id="saveDevice"><div class="field-icon" style="background:var(--mobile-gold-icon, #e2f0ff);color:var(--mobile-gold-ink, #2072bf)"><svg class="icon"><use href="#i-cloud"/></svg></div><div><b>儲存到此裝置</b><small id="saveState">將目前設定與資料儲存到本機裝置</small></div><span>›</span></button>
-        <button class="settings-item" id="exportBackup"><div class="field-icon" style="background:var(--mobile-gold-icon, #e9f7ec);color:var(--mobile-gold-ink, #31824a)">⇩</div><div><b>匯出備份檔</b><small>存到 iPhone「檔案」或其他安全位置，重裝後可還原</small></div><span>›</span></button>
-        <button type="button" class="settings-item" id="importBackup" aria-controls="importBackupInput"><div class="field-icon" style="background:var(--mobile-gold-icon, #fff1dc);color:var(--mobile-gold-ink, #a96720)">⇧</div><div><b>匯入備份檔</b><small>從先前匯出的 JSON 備份還原資料</small></div><span>›</span></button>
+      <div class="card settings-card" id="dataSyncCard"><div class="section-title"><span class="paw">🐾</span>資料與同步</div>
+       <div class="data-status-line"><b>本機工作區</b><span id="localOwnerLabel">資料儲存在此裝置</span></div>
+       <div class="settings-list">
+        <button class="settings-item" id="saveDevice"><div class="field-icon">▣</div><div><b>儲存到此裝置</b><small id="saveState">本機自動保存，不代表已上傳雲端</small></div><span>›</span></button>
+        <button class="settings-item" id="exportBackup"><div class="field-icon">⇩</div><div><b>手動匯出本機備份</b><small>免費使用；JSON 備份檔可自行保管</small></div><span>›</span></button>
+        <button class="settings-item" id="importBackup" aria-controls="importBackupInput"><div class="field-icon">⇧</div><div><b>匯入本機備份檔</b><small>還原工作資料，不會變更訂閱資格</small></div><span>›</span></button>
         <input class="hidden" id="importBackupInput" type="file" accept=".json,application/json">
-        <button class="settings-item" id="clearDevice"><div class="field-icon" style="background:var(--mobile-gold-icon, #ffe6e8);color:var(--mobile-gold-ink, #dd4a59)"><svg class="icon"><use href="#i-trash"/></svg></div><div><b>清除已儲存資料</b><small>只刪除這台裝置；已登入的雲端資料不會刪除</small></div><span>›</span></button>
-      </div></div>
+       </div>
+       <div class="cloud-state-card"><div class="data-status-line"><b>雲端同步</b><span id="cloudModeState">Pro 專屬</span></div>
+        <div id="cloudProtection" class="cloud-protection">工作資料目前只保存在此裝置。</div>
+        <div class="backup-actions"><button type="button" class="btn primary" id="cloudBackupNow">🔒 Pro 雲端同步</button><button type="button" class="btn" id="cloudRestoreNow" disabled>從雲端還原</button><button type="button" class="btn" id="cloudStop" hidden>暫停同步</button></div>
+        <div id="syncConflict" class="sync-conflict" hidden><b>本機與雲端資料不同</b><p class="hint">先保存兩份安全副本，再選擇要使用的資料。未選擇前不會覆蓋。</p><div class="backup-actions"><button type="button" class="btn" id="syncKeepLocal">保留本機內容</button><button type="button" class="btn" id="syncUseCloud">使用雲端副本</button></div></div>
+        <button type="button" class="btn" id="exportExistingCloud" hidden>取回既有雲端備份檔</button><p class="hint">取回舊備份不需要 Pro；這是手動匯出，不會啟用同步。可用「匯入本機備份檔」還原。</p>
+       </div>
+       <button type="button" class="settings-item" id="clearDevice"><div class="field-icon">⌫</div><div><b>清除此工作區的本機資料</b><small>不刪除雲端，也不刪除其他帳號的本機副本</small></div><span>›</span></button>
+       <button type="button" class="btn welcome-reopen" id="showWelcome">查看首次使用歡迎頁</button><p class="hint">版本 v112・帳號登入與 Pro 雲端同步分開管理</p>
+      </div>
+
       <div class="card settings-card">
-        <div class="section-title"><span class="paw">🐾</span>帳號與即時同步</div>
+        <div class="section-title"><span class="paw">🐾</span>帳號與登入</div>
         <div id="emailLoginPanel">
-          <div class="hint" style="margin-top:10px">登入後會自動開啟雲端同步；換手機或重新安裝後，使用同一帳號即可恢復資料。</div>
+          <div class="hint" style="margin-top:10px">登入只辨識帳號與方案。免費版資料保存在此裝置，Pro 雲端同步需另外確認啟用。</div>
           <div class="settings-actions" style="margin-top:12px">
             <button class="btn primary" id="googleLogin" type="button">G　使用 Google 繼續</button>
           </div>
@@ -938,14 +976,11 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
             </div>
             <button class="btn danger" id="accountLogout">登出</button>
           </div>
-          <div class="backup-actions">
-            <button class="btn primary" id="cloudBackupNow">立即備份到雲端</button>
-            <button class="btn" id="cloudRestoreNow">從雲端還原</button>
-          </div>
+
         </div>
-        <div class="cloud-protection" id="cloudProtection">⚠ 尚未啟用雲端保護。刪除 App 或網站資料後，本機資料可能無法找回。</div>
-        <div class="hint" id="accountStatus" style="margin-top:10px">使用同一個登入帳號後，App 會讀取同一份雲端資料並自動同步。</div>
-        <div class="backup-note">建議：重要資料除了登入雲端同步，也定期「匯出備份檔」存到 iPhone 檔案或雲端硬碟。</div>
+
+        <div class="hint" id="accountStatus" style="margin-top:10px">登入狀態不代表工作資料已上傳。請在「資料與同步」查看實際結果。</div>
+        <div class="backup-note">重要資料建議定期手動匯出備份；沒有 Pro 也能保留本機備份檔。</div>
       </div>
       <div class="card settings-card install-only"><div class="section-title"><span class="paw">🐾</span>App 安裝 / 加入主畫面</div><div class="install-row"><div><b>將 App 加入主畫面</b><div class="hint" id="installHint">快速開啟，使用更方便</div></div><button class="btn primary" id="installApp"><svg class="icon" style="display:inline-block;vertical-align:-3px"><use href="#i-phone"/></svg> 安裝</button></div></div>
       <div class="card settings-card"><div class="install-row"><div><b>ⓘ 關於 喵的，又要上班了</b><div class="hint">版本 1.0.0（介面 v110）・輪班排班、行程、請假與薪資試算</div></div><span>🐾</span></div></div>
@@ -1064,6 +1099,9 @@ const DEVICE_ID_KEY='meow-work-device-id-v1';
 const DEV_MODE_KEY='meow-work-dev-mode-v1';
 const DEV_PLAN_KEY='meow-work-dev-plan-v1';
 const FEATURE_CATALOG={
+  cloud_sync:{label:'工作資料雲端同步',tier:'pro'},
+  cloud_backup:{label:'雲端備份與還原',tier:'pro'},
+  local_backup:{label:'本機備份檔',tier:'free'},
   basic_salary_compare:{label:'基本薪資對帳',tier:'free'},
   payslip_scan:{label:'薪資單拍照／上傳辨識',tier:'pro'},
   itemized_salary_compare:{label:'逐項薪資對帳',tier:'pro'},
@@ -1080,7 +1118,7 @@ if(DEV_TESTING_ENABLED){
 }
 function currentPlan(){
   if(DEV_TESTING_ENABLED)return devPlan==='free'?'free':'pro';
-  return serverPlan==='pro'?'pro':'free';
+  return hasLivePro()?'pro':'free';
 }
 function isDeveloperTest(){return DEV_TESTING_ENABLED&&devPlan==='dev'}
 function canUse(feature){const meta=FEATURE_CATALOG[feature];return !!meta&&(meta.tier==='free'||currentPlan()==='pro')}
@@ -1088,7 +1126,7 @@ const statusMap={
  none:{label:'正常班表',cls:'',icon:''},overtime:{label:'加班',cls:'st-ot',icon:'i-clock'},sick:{label:'病假',cls:'st-sick',icon:'i-cross'},menstrual:{label:'生理假',cls:'st-menstrual',icon:'i-drop'},personal:{label:'事假',cls:'st-personal',icon:'i-doc'},annual:{label:'特休',cls:'st-annual',icon:'i-star'},custom:{label:'自訂假別',cls:'st-custom',icon:'i-star'}
 };
 function defaultState(){const d=new Date();return{theme:'light',profile:{avatar:'',name:'喵星人'},schedule:{preset:'2-2',shiftName:'A班',workDays:2,offDays:2,startDate:iso(d)},settings:{baseSalary:0,shiftAllowancePerDay:0,mealAllowance:0,performanceAllowance:0,transportAllowance:0,otherIncome:0,payday:0,hireDate:'',dailyWorkHours:8,defaultOvertimeHours:10,overtimeRateMode:'unselected',overtimeFixedRate:2,overtimeRegularFirst:4/3,overtimeRegularLater:5/3,overtimeRestFirst:4/3,overtimeRestLater:5/3,overtimeRestOver8:8/3,annualUsedHoursByPeriod:{},annualLeaveCycle:'anniversary',annualCustomDate:'',sickLeaveDays:0,personalLeaveDays:0,sickUsedHours:0,personalUsedHours:0},months:{},dayStatus:{},personalEvents:{}}}
-function loadSaved(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return{state:defaultState(),savedAt:null};const p=JSON.parse(raw);const s=defaultState(),v=p.state||p;s.theme=preferredTheme();s.profile=Object.assign({},s.profile,v.profile||{});s.schedule=Object.assign({},s.schedule,v.schedule||{});s.settings=Object.assign({},s.settings,v.settings||{});s.months=v.months||{};s.dayStatus=v.dayStatus||{};s.personalEvents=v.personalEvents||{};return{state:s,savedAt:p.savedAt||null}}catch(e){return{state:defaultState(),savedAt:null}}}
+function loadSaved(){try{const owner=localStorage.getItem('meow-work-workspace-owner-v1')||'guest';const raw=localStorage.getItem('meow-work-workspace-v1:'+owner)||localStorage.getItem(SAVE_KEY);if(!raw)return{state:defaultState(),savedAt:null};const p=JSON.parse(raw);const s=defaultState(),v=p.state||p;s.theme=preferredTheme();s.profile=Object.assign({},s.profile,v.profile||{});s.schedule=Object.assign({},s.schedule,v.schedule||{});s.settings=Object.assign({},s.settings,v.settings||{});s.months=v.months||{};s.dayStatus=v.dayStatus||{};s.personalEvents=v.personalEvents||{};return{state:s,savedAt:p.savedAt||null}}catch(e){return{state:defaultState(),savedAt:null}}}
 let loaded=loadSaved(),state=loaded.state,lastSavedAt=loaded.savedAt,current=new Date();
 state.theme=preferredTheme();
 try{
@@ -1113,6 +1151,156 @@ function normalizeState(v){
   return s;
 }
 let authClient=null,authUser=null,authChannel=null,authTimer=null,authBusy=false;
+// Auth identifies an account. Only verified, unexpired Pro AND explicit consent enable work sync.
+const WELCOME_KEY='meow-work-welcome-v1',OWNER_KEY='meow-work-workspace-owner-v1',WORKSPACE_PREFIX='meow-work-workspace-v1:',CONSENT_PREFIX='meow-work-cloud-consent-v1:';
+let localOwner='guest';try{localOwner=localStorage.getItem(OWNER_KEY)||'guest'}catch(e){}
+let localRevision=0,localSaveFailed=false,entitlementChecked=false,entitlementRequest=0,accountEpoch=0,expiryTimer=null;
+let cloudConsent=false,cloudDirty=false,cloudAck='',cloudBaseKnown=false,cloudBaseStamp=null,cloudConflict=null,cloudGeneration=0;
+let welcomeForced=new URLSearchParams(location.search).get('welcome')==='1',welcomeInitiatedLogin=false,appleAvailable=false;
+function hasLivePro(){return !!(authUser&&entitlementChecked&&serverPlan==='pro'&&['active','trialing'].includes(entitlementStatus)&&Number.isFinite(Date.parse(entitlementUntil))&&Date.parse(entitlementUntil)>Date.now())}
+function canCloudSync(){return hasLivePro()&&cloudConsent&&localOwner===authUser.id&&!cloudConflict}
+function cloudSession(uid,epoch){return !!(canCloudSync()&&authUser.id===uid&&accountEpoch===epoch)}
+function workJson(value){const copy=JSON.parse(JSON.stringify(value||{}));delete copy.theme;return JSON.stringify(copy)}
+function cloudNotice(){
+ if(!authUser)return '未登入・工作資料只保存在此裝置';
+ if(!entitlementChecked)return entitlementStatus==='error'?'方案確認失敗・雲端同步暫停，本機仍可使用':'正在確認方案・尚未啟動工作資料同步';
+ if(!hasLivePro())return ['expired','canceled','past_due'].includes(entitlementStatus)||trialStartedAt?'雲端同步已暫停・本機資料保留':'免費版・工作資料只保存在此裝置';
+ if(!cloudConsent)return 'Pro 已可使用・尚未同意啟用雲端同步';
+ if(cloudConflict)return '本機與雲端內容不同・請選擇要使用的副本';
+ if(!navigator.onLine)return '目前離線・變更尚未上傳';
+ if(cloudDirty)return '本機有變更・尚未完成雲端同步';
+ if(cloudAck)return '已同步・最後成功時間 '+new Date(cloudAck).toLocaleString('zh-TW');
+ return '雲端同步已啟用・尚未確認備份成功';
+}
+function renderCloudState(){
+ const status=$('cloudProtection');if(status){status.textContent=cloudNotice();status.classList.toggle('safe',!!(canCloudSync()&&cloudAck&&!cloudDirty&&navigator.onLine))}
+ if($('cloudModeState'))$('cloudModeState').textContent=hasLivePro()?(cloudConsent?'已啟用':'尚未啟用'):'Pro 專屬';
+ if($('cloudBackupNow'))$('cloudBackupNow').textContent=canCloudSync()?'立即同步到雲端':hasLivePro()?'啟用 Pro 雲端同步':'🔒 Pro 雲端同步';
+ if($('cloudRestoreNow'))$('cloudRestoreNow').disabled=!hasLivePro();
+ if($('cloudStop'))$('cloudStop').hidden=!cloudConsent;
+ if($('exportExistingCloud'))$('exportExistingCloud').hidden=!authUser;
+ if($('syncConflict'))$('syncConflict').hidden=!cloudConflict;
+ if($('localOwnerLabel'))$('localOwnerLabel').textContent=authUser&&localOwner===authUser.id?'目前帳號的本機工作區':'未登入的本機工作區';
+}
+function switchLocalWorkspace(nextOwner,allowGuestClaim=false){
+ if(nextOwner===localOwner)return true;
+ if(!persistLocalSnapshot()){alert('本機儲存失敗。請先匯出備份，再切換帳號。');return false}
+ const previousOwner=localOwner;
+ try{
+  let raw=localStorage.getItem(WORKSPACE_PREFIX+nextOwner),saved=raw?JSON.parse(raw):null;
+  if(!saved&&allowGuestClaim&&previousOwner==='guest'&&hasMeaningfulUserData()&&confirm('要將目前這份本機資料帶入此帳號嗎？\n\n只保存在這台裝置，不會上傳雲端。未登入工作區的副本也會保留。'))saved={state:JSON.parse(JSON.stringify(state)),savedAt:lastSavedAt};
+  const nextState=normalizeState(saved&&saved.state||defaultState()),nextTime=saved&&saved.savedAt||null;
+  const nextRaw=JSON.stringify({owner:nextOwner,state:nextState,savedAt:nextTime});
+  localStorage.setItem(WORKSPACE_PREFIX+nextOwner,nextRaw);
+  localStorage.setItem(SAVE_KEY,nextRaw);
+  localStorage.setItem(OWNER_KEY,nextOwner);
+  localOwner=nextOwner;state=nextState;lastSavedAt=nextTime;localRevision++;
+  try{localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule))}catch(e){}
+  cloudBaseKnown=false;cloudBaseStamp=null;cloudAck='';cloudDirty=false;cloudConflict=null;
+  applyTheme();render();return true;
+ }catch(e){try{localStorage.setItem(OWNER_KEY,previousOwner)}catch(_){}alert('無法安全切換本機工作區，原資料仍保留。');return false}
+}
+function rememberCloudConsent(value){
+ if(!authUser)return false;
+ try{localStorage.setItem(CONSENT_PREFIX+authUser.id,value?'yes':'no');cloudConsent=value;return true}catch(e){alert('無法保存同步設定，請先確認裝置的儲存空間。');return false}
+}
+async function enableCloudSync(){
+ if(!hasLivePro()){alert(authUser?'雲端同步為 Pro 專屬。登入不會自動開始試用或收費。':'請先登入，再確認 Pro 方案。');return}
+ if(!cloudConsent&&!confirm('啟用 Pro 雲端同步？\n\n班表、薪資、假別、行程與個人工作資料將保存到此帳號的雲端空間。淺色／深色仍由這台裝置決定。'))return;
+ if(!rememberCloudConsent(true))return;
+ await loadAccountState();if(canCloudSync())await subscribeAccountRealtime();renderSettings();
+}
+async function disableCloudSync(){if(!rememberCloudConsent(false))return;await stopAccountRealtime();setAccountStatus('已暫停同步，本機與既有雲端資料未刪除');renderSettings()}
+function showCloudConflict(row){cloudConflict=row;cloudDirty=true;setAccountStatus('同步暫停，兩份資料都保留；請選擇要使用的版本。');renderSettings()}
+function preserveRecovery(snapshot,label){
+ try{localStorage.setItem('meow-work-recovery-v1:'+localOwner+':'+label,JSON.stringify(snapshot));return true}catch(e){alert('無法保存安全副本。請先匯出備份，暫不覆蓋資料。');return false}
+}
+async function resolveCloudConflict(useLocal){
+ const pending=cloudConflict;if(!pending||!hasLivePro())return;
+ if(!preserveRecovery({state:JSON.parse(JSON.stringify(state)),savedAt:lastSavedAt},'local')||!preserveRecovery(pending.payload,'cloud'))return;
+ if(!confirm(useLocal?'保留本機內容並更新雲端？原雲端副本已另行保留。':'使用雲端內容？原本機副本已另行保留。'))return;
+ cloudBaseKnown=true;cloudBaseStamp=pending.updated_at;cloudConflict=null;
+ if(useLocal)await saveAccountState(true);
+ else{state=normalizeState(pending.payload.state);persistLocalSnapshot();cloudDirty=false;cloudAck=pending.updated_at;applyTheme();render();}
+ if(canCloudSync())await subscribeAccountRealtime();
+}
+async function exportExistingCloud(){
+ if(!authUser){alert('請先登入，才能取回此帳號的既有雲端備份。');return}
+ try{
+  const result=await invokeUserFunction('export-work-backup',{});
+  if(!result.state){alert('這個帳號目前沒有可取回的雲端備份。');return}
+  downloadBlob(new Blob([JSON.stringify(result,null,2)],{type:'application/json'}),'meow-existing-cloud-backup-'+iso(new Date())+'.json');
+  setAccountStatus('已匯出既有副本；未開啟自動同步，也未覆蓋本機資料。');
+ }catch(e){alert('既有備份取回失敗，資料未刪除。請稍後再試。')}
+}
+function scheduleEntitlementExpiry(){
+ clearTimeout(expiryTimer);expiryTimer=null;
+ if(!hasLivePro())return;
+ const delay=Math.min(2147483000,Math.max(1,Date.parse(entitlementUntil)-Date.now()+30));
+ expiryTimer=setTimeout(()=>{if(!hasLivePro()){serverPlan='free';entitlementStatus='expired';stopAccountRealtime();render();}else scheduleEntitlementExpiry()},delay);
+}
+async function reconcileCloudAccess(){
+ scheduleEntitlementExpiry();
+ if(!canCloudSync()){await stopAccountRealtime();renderSettings();return}
+ await loadAccountState();if(canCloudSync())await subscribeAccountRealtime();
+}
+function openWelcome(force=false){
+ if(force)welcomeForced=true;
+ document.documentElement.classList.add('welcome-open');
+ const app=document.querySelector('.app');if(app){app.inert=true;app.setAttribute('aria-hidden','true')}
+ $('welcomeClosePreview').hidden=!force;
+ $('welcomeScreen').scrollTop=0;$('welcomeScreen').focus({preventScroll:true});
+}
+function closeWelcome(persist=true){
+ if(persist){try{localStorage.setItem(WELCOME_KEY,'done')}catch(e){}}
+ document.documentElement.classList.remove('welcome-open');
+ const app=document.querySelector('.app');if(app){app.inert=false;app.removeAttribute('aria-hidden')}
+ if(new URLSearchParams(location.search).has('welcome')){const url=new URL(location.href);url.searchParams.delete('welcome');history.replaceState(null,'',url.pathname+url.search+url.hash)}
+ welcomeForced=false;welcomeInitiatedLogin=false;
+}
+async function selectGuest(){
+ if(authUser){if(!confirm('目前已登入。要登出並使用未登入的本機工作區嗎？原帳號的本機資料會保留。'))return;await signOutAccount();if(authUser)return}
+ if(localOwner!=='guest'&&!switchLocalWorkspace('guest'))return;
+ closeWelcome();render();
+}
+async function signInWithApple(){
+ if(!appleAvailable){$('welcomeStatus').textContent='Apple 登入尚未開放，請使用 Google、Email，或先使用不登入。';return}
+ try{const client=await getAuthClient();welcomeInitiatedLogin=true;const {error}=await client.auth.signInWithOAuth({provider:'apple',options:{redirectTo:location.origin+location.pathname}});if(error)throw error}catch(e){$('welcomeStatus').textContent='Apple 登入未完成，原本機資料仍保留。'}
+}
+async function checkAppleAvailability(){
+ try{const res=await fetch(SUPABASE_URL+'/auth/v1/settings',{headers:{apikey:SUPABASE_KEY}});if(!res.ok)return;const config=await res.json();appleAvailable=config.external&&config.external.apple===true;if(appleAvailable){$('welcomeApple').disabled=false;$('welcomeAppleNote').hidden=true}}catch(e){}
+}
+function initWelcome(){
+ let seen=false;try{seen=localStorage.getItem(WELCOME_KEY)==='done'}catch(e){}
+ if(!seen||welcomeForced)openWelcome(welcomeForced);
+ $('welcomeGuest').onclick=selectGuest;
+ $('welcomeGoogle').onclick=()=>{welcomeInitiatedLogin=true;$('welcomeStatus').textContent='正在前往 Google 登入…';signInWithGoogle().then(()=>{$('welcomeStatus').textContent=accountStatusText})};
+ $('welcomeApple').onclick=signInWithApple;
+ $('welcomeClosePreview').onclick=()=>closeWelcome(false);
+ if($('showWelcome'))$('showWelcome').onclick=()=>openWelcome(true);
+ $('welcomeEmailForm').onsubmit=async event=>{event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;$('emailLoginInput').value=$('welcomeEmail').value;try{await sendEmailOtp();$('welcomeStatus').textContent=accountStatusText;if(pendingEmail){$('welcomeOtpForm').hidden=false;$('welcomeOtp').focus()}}finally{button.disabled=false}};
+ $('welcomeOtpForm').onsubmit=async event=>{event.preventDefault();const button=event.currentTarget.querySelector('button');button.disabled=true;$('emailOtpInput').value=$('welcomeOtp').value;welcomeInitiatedLogin=true;try{await verifyEmailOtp();$('welcomeStatus').textContent=accountStatusText}finally{button.disabled=false}};
+ $('welcomeResend').onclick=()=>$('welcomeEmailForm').requestSubmit();
+ $('welcomeOtp').oninput=event=>{event.target.value=event.target.value.replace(/\D/g,'').slice(0,6)};
+ $('cloudBackupNow').onclick=()=>cloudConsent?saveAccountState(true):enableCloudSync();
+ $('cloudRestoreNow').onclick=()=>restoreFromCloud(true);
+ $('cloudStop').onclick=disableCloudSync;
+ $('exportExistingCloud').onclick=exportExistingCloud;
+ $('syncKeepLocal').onclick=()=>resolveCloudConflict(true);$('syncUseCloud').onclick=()=>resolveCloudConflict(false);
+ document.addEventListener('keydown',event=>{
+  if(!document.documentElement.classList.contains('welcome-open'))return;
+  if(event.key==='Escape'&&welcomeForced){closeWelcome(false);return}
+  if(event.key!=='Tab')return;
+  const list=Array.from($('welcomeScreen').querySelectorAll('button:not(:disabled),summary,input')).filter(el=>el.getClientRects().length&&!el.hidden);
+  if(!list.length)return;const first=list[0],last=list[list.length-1];
+  if(event.shiftKey&&(document.activeElement===first||document.activeElement===$('welcomeScreen'))){event.preventDefault();last.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+ });
+ checkAppleAvailability();
+ window.addEventListener('online',()=>{if(authUser)loadEntitlement();renderSettings()});
+ window.addEventListener('offline',()=>{stopAccountRealtime();renderSettings()});
+}
+// End onboarding / account / cloud separation.
+
 let accountStatusText='尚未登入';
 let deviceId='';
 try{
@@ -1135,36 +1323,40 @@ function openBackupDb(){
   });
 }
 async function writeIndexedBackup(snapshot){
+  snapshot=JSON.parse(JSON.stringify(snapshot));const owner=snapshot.owner||localOwner;
   try{
     const db=await openBackupDb();if(!db)return;
     await new Promise((resolve,reject)=>{
       const tx=db.transaction(BACKUP_STORE,'readwrite');
-      tx.objectStore(BACKUP_STORE).put(snapshot,'latest');
+      tx.objectStore(BACKUP_STORE).put(snapshot,'workspace:'+owner);
       tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);
     });
     db.close();
   }catch(e){}
 }
 async function readIndexedBackup(){
+  const owner=localOwner;
   try{
     const db=await openBackupDb();if(!db)return null;
     const value=await new Promise((resolve,reject)=>{
-      const tx=db.transaction(BACKUP_STORE,'readonly');
-      const req=tx.objectStore(BACKUP_STORE).get('latest');
-      req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);
-    });
-    db.close();return value;
+      const tx=db.transaction(BACKUP_STORE,'readonly'),store=tx.objectStore(BACKUP_STORE);
+      const current=store.get('workspace:'+owner),legacy=owner==='guest'?store.get('latest'):null;
+      tx.oncomplete=()=>resolve(current.result||(legacy&&legacy.result)||null);tx.onerror=()=>reject(tx.error);
+    });db.close();return value;
   }catch(e){return null}
 }
 async function restoreIndexedMirrorIfNewer(){
+  const owner=localOwner,revision=localRevision;
   const backup=await readIndexedBackup();
+  if(localOwner!==owner||localRevision!==revision||(backup&&backup.owner&&backup.owner!==owner))return;
   if(!backup||!backup.state)return;
   const localTime=lastSavedAt?Date.parse(lastSavedAt):0,backupTime=backup.savedAt?Date.parse(backup.savedAt):0;
   if(backupTime>localTime){
     state=normalizeState(backup.state);
     lastSavedAt=backup.savedAt;
     try{
-      localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
+      localStorage.setItem(WORKSPACE_PREFIX+localOwner,JSON.stringify({owner:localOwner,savedAt:lastSavedAt,state}));
+      localStorage.setItem(SAVE_KEY,JSON.stringify({owner:localOwner,savedAt:lastSavedAt,state}));
       localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
       localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
     }catch(e){}
@@ -1172,13 +1364,15 @@ async function restoreIndexedMirrorIfNewer(){
   }
 }
 function persistLocalSnapshot(){
+  const savedAt=new Date().toISOString(),snapshot={owner:localOwner,savedAt,state:JSON.parse(JSON.stringify(state))};
   try{
-    lastSavedAt=new Date().toISOString();
-    localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
-    localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
-    localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
-    writeIndexedBackup({savedAt:lastSavedAt,state});
-  }catch(e){}
+    const json=JSON.stringify(snapshot);
+    localStorage.setItem(WORKSPACE_PREFIX+localOwner,json);
+    localStorage.setItem(SAVE_KEY,json);
+    lastSavedAt=savedAt;localRevision++;localSaveFailed=false;
+    try{localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule))}catch(e){}
+    writeIndexedBackup(snapshot);return true;
+  }catch(e){localSaveFailed=true;if($('saveState'))$('saveState').textContent='本機儲存未完成，請匯出備份並確認儲存空間。';return false}
 }
 function syncPayload(history=[]){return{version:3,savedAt:lastSavedAt||new Date().toISOString(),deviceId,state,history}}
 function cloudHistoryEntries(payload){return Array.isArray(payload&&payload.history)?payload.history.filter(x=>x&&x.state):[]}
@@ -1190,13 +1384,14 @@ function newestMeaningfulCloudSnapshot(payload){
 }
 function hasMeaningfulUserData(v=state){
   const d=defaultState(),x=v||{};
-  if(Object.keys(x.dayStatus||{}).length||Object.keys(x.personalEvents||{}).length||Object.keys(x.months||{}).length)return true;
+  if(Object.keys(x.dayStatus||{}).length||Object.keys(x.personalEvents||{}).length||Object.values(x.months||{}).some(m=>Object.keys(m||{}).length))return true;
+  if(x.schedule&&['preset','shiftName','workDays','offDays','startDate'].some(k=>x.schedule[k]!==d.schedule[k]))return true;
   if((x.profile&&x.profile.avatar)||(x.profile&&x.profile.name&&x.profile.name!==d.profile.name))return true;
   const st=x.settings||{},ds=d.settings;
   return Object.keys(ds).some(k=>JSON.stringify(st[k]??ds[k])!==JSON.stringify(ds[k]));
 }
 async function clearIndexedBackup(){
-  try{const db=await openBackupDb();if(!db)return;await new Promise((resolve,reject)=>{const tx=db.transaction(BACKUP_STORE,'readwrite');tx.objectStore(BACKUP_STORE).delete('latest');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close()}catch(e){}
+  try{const db=await openBackupDb();if(!db)return;await new Promise((resolve,reject)=>{const tx=db.transaction(BACKUP_STORE,'readwrite');tx.objectStore(BACKUP_STORE).delete('workspace:'+localOwner);if(localOwner==='guest')tx.objectStore(BACKUP_STORE).delete('latest');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close()}catch(e){}
 }
 
 function normalizeState(v){
@@ -1221,142 +1416,114 @@ async function getAuthClient(){
 function setAccountStatus(msg){accountStatusText=msg;if($('accountStatus'))$('accountStatus').textContent=msg}
 function entitlementIsActive(row){
   if(!row||row.plan!=='pro'||!['active','trialing'].includes(row.status))return false;
-  if(!row.pro_until)return true;
+  if(!row.pro_until)return false;
   const until=Date.parse(row.pro_until);
   return Number.isFinite(until)&&until>Date.now();
 }
 async function loadEntitlement(){
-  serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;
-  if(!authUser){renderProEntitlements();renderSettings();return}
-  try{
-    const client=await getAuthClient();
-    const {data,error}=await client.from('user_entitlements').select('plan,status,pro_until,trial_started_at,billing_provider,provider_subscription_id,cancel_at_period_end,canceled_at,updated_at').eq('user_id',authUser.id).maybeSingle();
-    if(error)throw error;
-    if(data){
-      entitlementStatus=data.status||'free';
-      entitlementUntil=data.pro_until||null;
-      trialStartedAt=data.trial_started_at||null;
-      billingProvider=data.billing_provider||null;
-      providerSubscriptionId=data.provider_subscription_id||null;
-      cancelAtPeriodEnd=!!data.cancel_at_period_end;
-      canceledAt=data.canceled_at||null;
-      serverPlan=entitlementIsActive(data)?'pro':'free';
-    }
-  }catch(e){
-    serverPlan='free';entitlementStatus='error';entitlementUntil=null;
-    console.warn('[meow-entitlement] plan lookup failed',e);
-  }
-  renderProEntitlements();
-  renderSettings();
+ const uid=authUser&&authUser.id,epoch=accountEpoch,request=++entitlementRequest;
+ entitlementChecked=false;serverPlan='free';entitlementStatus='checking';entitlementUntil=null;
+ if(!uid){entitlementStatus='free';await stopAccountRealtime();renderSettings();return}
+ try{
+  const client=await getAuthClient();
+  const {data,error}=await client.from('user_entitlements').select('plan,status,pro_until,trial_started_at,billing_provider,provider_subscription_id,cancel_at_period_end,canceled_at,updated_at').eq('user_id',uid).maybeSingle();
+  if(request!==entitlementRequest||!authUser||authUser.id!==uid||epoch!==accountEpoch)return;
+  if(error)throw error;
+  entitlementStatus=data&&data.status||'free';entitlementUntil=data&&data.pro_until||null;trialStartedAt=data&&data.trial_started_at||null;
+  billingProvider=data&&data.billing_provider||null;providerSubscriptionId=data&&data.provider_subscription_id||null;cancelAtPeriodEnd=!!(data&&data.cancel_at_period_end);canceledAt=data&&data.canceled_at||null;
+  serverPlan=entitlementIsActive(data)?'pro':'free';entitlementChecked=true;
+ }catch(e){if(request!==entitlementRequest||epoch!==accountEpoch)return;serverPlan='free';entitlementStatus='error';entitlementChecked=false;console.warn('[meow-entitlement] lookup failed',e)}
+ await reconcileCloudAccess();renderProEntitlements();renderSettings();
 }
 async function stopAccountRealtime(){
-  if(authClient&&authChannel){try{await authClient.removeChannel(authChannel)}catch(e){}}
-  authChannel=null;
+ clearTimeout(authTimer);authTimer=null;cloudGeneration++;
+ const channel=authChannel;authChannel=null;
+ if(authClient&&channel){try{await authClient.removeChannel(channel)}catch(e){}}
 }
 async function subscribeAccountRealtime(){
-  if(!authUser)return;
-  const client=await getAuthClient();
-  await stopAccountRealtime();
-  authChannel=client.channel('meow-user-'+authUser.id)
-    .on('postgres_changes',{event:'*',schema:'public',table:'user_sync_state',filter:'user_id=eq.'+authUser.id},async(payload)=>{
-      const row=payload.new||{},cloud=row.payload||{};
-      if(cloud.deviceId===deviceId)return;
-      if(cloud.state){
-        state=normalizeState(cloud.state);
-        lastSavedAt=cloud.savedAt||row.updated_at||new Date().toISOString();
-        try{
-          localStorage.setItem(SAVE_KEY,JSON.stringify({savedAt:lastSavedAt,state}));
-          localStorage.setItem(AVATAR_KEY,state.profile.avatar||'');
-          localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));
-        }catch(e){}
-        applyTheme();render();
-        setAccountStatus('即時同步完成・'+new Date(row.updated_at||Date.now()).toLocaleString('zh-TW'));
-      }
-    })
-    .subscribe(status=>{if(status==='SUBSCRIBED')setAccountStatus('即時同步已連線')});
+ if(!canCloudSync()||!navigator.onLine)return;
+ await stopAccountRealtime();
+ const uid=authUser.id,epoch=accountEpoch,generation=cloudGeneration;
+ const client=await getAuthClient();if(!cloudSession(uid,epoch)||generation!==cloudGeneration)return;
+ authChannel=client.channel('meow-user-'+uid)
+  .on('postgres_changes',{event:'*',schema:'public',table:'user_sync_state',filter:'user_id=eq.'+uid},payload=>{
+   if(!cloudSession(uid,epoch)||generation!==cloudGeneration)return;
+   const row=payload.new||{},cloud=row.payload||{};if(cloud.deviceId===deviceId||!cloud.state)return;
+   if(cloudDirty||authBusy){showCloudConflict(row);return}
+   if(!preserveRecovery({state:JSON.parse(JSON.stringify(state)),savedAt:lastSavedAt},'before-sync'))return;
+   state=normalizeState(cloud.state);persistLocalSnapshot();cloudBaseKnown=true;cloudBaseStamp=row.updated_at;cloudAck=row.updated_at;cloudDirty=false;applyTheme();render();
+  }).subscribe(status=>{if(cloudSession(uid,epoch)&&generation===cloudGeneration&&status==='SUBSCRIBED')setAccountStatus('即時連線已建立；備份狀態請看「資料與同步」。')});
 }
 async function saveAccountState(showAlert=false){
-  if(!authUser||authBusy)return;
-  authBusy=true;
-  try{
-    persistLocalSnapshot();
-    setAccountStatus('正在同步…');
-    const client=await getAuthClient();
-    const {data:previous}=await client.from('user_sync_state').select('payload').eq('user_id',authUser.id).maybeSingle();
-    const oldPayload=previous&&previous.payload?previous.payload:null;
-    let history=cloudHistoryEntries(oldPayload);
-    if(oldPayload&&oldPayload.state&&meaningfulSnapshot(oldPayload)){
-      history=[{savedAt:oldPayload.savedAt||new Date().toISOString(),state:oldPayload.state},...history];
-    }
-    const seen=new Set();history=history.filter(x=>{const key=String(x.savedAt||'')+'|'+JSON.stringify(x.state||{});if(seen.has(key))return false;seen.add(key);return true}).slice(0,5);
-    const {error}=await client.from('user_sync_state').upsert({
-      user_id:authUser.id,payload:syncPayload(history),updated_at:new Date().toISOString()
-    },{onConflict:'user_id'});
-    if(error)throw error;
-    setAccountStatus('已同步・'+new Date().toLocaleString('zh-TW'));
-    if(showAlert)alert('雲端同步完成。');
-  }catch(e){
-    setAccountStatus('同步失敗，本機資料仍保留');
-    if(showAlert)alert('雲端同步失敗，請稍後再試。');
-  }finally{authBusy=false;renderSettings()}
+ if(!canCloudSync()){if(showAlert)alert(cloudNotice());renderSettings();return false}
+ if(authBusy)return false;
+ if(!persistLocalSnapshot())return false;
+ if(!navigator.onLine){cloudDirty=true;renderSettings();return false}
+ const uid=authUser.id,epoch=accountEpoch,revision=localRevision;
+ const local=JSON.parse(JSON.stringify(state)),savedAt=lastSavedAt;
+ authBusy=true;cloudDirty=true;
+ try{
+  const client=await getAuthClient();
+  const {data:previous,error:readError}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+  if(!cloudSession(uid,epoch))return false;if(readError)throw readError;
+  if(previous&&((cloudBaseKnown&&previous.updated_at!==cloudBaseStamp)||(!cloudBaseKnown&&previous.payload&&previous.payload.state&&workJson(previous.payload.state)!==workJson(local)))){showCloudConflict(previous);return false}
+  let history=cloudHistoryEntries(previous&&previous.payload);if(previous&&previous.payload&&previous.payload.state)history=[{savedAt:previous.payload.savedAt||previous.updated_at,state:previous.payload.state},...history];
+  const row={user_id:uid,payload:{version:3,savedAt,deviceId,state:local,history:history.slice(0,5)},updated_at:new Date().toISOString()};
+  if(!cloudSession(uid,epoch))return false;
+  const query=previous?client.from('user_sync_state').update(row).eq('user_id',uid).eq('updated_at',previous.updated_at):client.from('user_sync_state').insert(row);
+  const {data,error}=await query.select('updated_at');
+  if(!cloudSession(uid,epoch))return false;if(error)throw error;
+  if(!data||!data.length){setAccountStatus('雲端副本已更新，暫停覆蓋；請重新同步確認。');cloudBaseKnown=false;return false}
+  cloudBaseKnown=true;cloudBaseStamp=data[0].updated_at;cloudAck=data[0].updated_at;cloudDirty=localRevision!==revision;
+  setAccountStatus(cloudDirty?'仍有新變更待同步':'工作資料已成功同步');if(showAlert)alert(cloudDirty?'本次副本已同步，最新變更仍待同步。':'雲端同步完成。');return true;
+ }catch(e){if(authUser&&authUser.id===uid&&accountEpoch===epoch){cloudDirty=true;setAccountStatus('同步未完成，本機資料保留');if(showAlert)alert('同步未完成。請確認網路與 Pro 資格，本機資料未刪除。')}return false}
+ finally{authBusy=false;renderSettings();if(canCloudSync()&&cloudDirty&&localRevision!==revision)queueAccountSave()}
 }
 function queueAccountSave(delay=350){
-  if(!authUser)return;
-  clearTimeout(authTimer);
-  authTimer=setTimeout(()=>{authTimer=null;saveAccountState(false)},delay);
+ if(!canCloudSync())return;clearTimeout(authTimer);
+ const uid=authUser.id,epoch=accountEpoch;
+ authTimer=setTimeout(()=>{authTimer=null;if(cloudSession(uid,epoch))saveAccountState(false)},delay);
 }
-function changedAndSync(){persistLocalSnapshot();queueAccountSave()}
+function changedAndSync(){cloudDirty=true;persistLocalSnapshot();queueAccountSave();renderCloudState()}
 async function loadAccountState(){
-  if(!authUser)return;
-  const client=await getAuthClient();
-  setAccountStatus('正在讀取雲端資料…');
-  const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',authUser.id).maybeSingle();
-  if(error){setAccountStatus('雲端讀取失敗，本機資料仍可使用');return}
-  if(!data){
-    if(hasMeaningfulUserData()){
-      setAccountStatus('第一次登入，正在建立雲端資料…');
-      await saveAccountState(false);
-    }else{
-      setAccountStatus('這個帳號目前沒有可還原的雲端資料');
-    }
-    return
-  }
-  const cloud=data.payload||{};
-  const snapshot=newestMeaningfulCloudSnapshot(cloud)||(cloud.state?cloud:null);
-  if(snapshot&&snapshot.state){
-    state=normalizeState(snapshot.state);
-    lastSavedAt=snapshot.savedAt||data.updated_at||new Date().toISOString();
-    persistLocalSnapshot();
-    applyTheme();render();
-    setAccountStatus(snapshot===cloud?'已同步・'+new Date(data.updated_at||Date.now()).toLocaleString('zh-TW'):'已從雲端安全快照恢復・'+new Date(lastSavedAt).toLocaleString('zh-TW'));
-  }else setAccountStatus('這個帳號目前沒有可還原的雲端資料');
+ if(!canCloudSync()||!navigator.onLine)return;
+ const uid=authUser.id,epoch=accountEpoch,revision=localRevision;
+ const client=await getAuthClient();
+ const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+ if(!cloudSession(uid,epoch))return;
+ if(error){setAccountStatus('雲端讀取未完成，本機仍可使用');renderSettings();return}
+ if(revision!==localRevision){if(data)showCloudConflict(data);else queueAccountSave();return}
+ if(!data){cloudBaseKnown=true;cloudBaseStamp=null;if(hasMeaningfulUserData())await saveAccountState(false);else setAccountStatus('雲端尚無工作資料');return}
+ const snapshot=data.payload||{};if(!snapshot.state)return;
+ if(workJson(normalizeState(snapshot.state))!==workJson(state)&&hasMeaningfulUserData()){showCloudConflict(data);return}
+ state=normalizeState(snapshot.state);persistLocalSnapshot();cloudDirty=false;cloudBaseKnown=true;cloudBaseStamp=data.updated_at;cloudAck=data.updated_at;applyTheme();render();
 }
 async function handleSignedIn(user){
-  authUser=user;
-  setAccountStatus('已登入，正在同步…');
-  await subscribeAccountRealtime();
-  await loadAccountState();
-  await loadEntitlement();
-  await loadBillingHistory();
-  renderSettings();
+ const changed=!authUser||authUser.id!==user.id;
+ if(changed){accountEpoch++;authUser=user;await stopAccountRealtime();entitlementChecked=false;cloudConsent=false;cloudAck='';cloudConflict=null;
+  if(!switchLocalWorkspace(user.id,true)){setAccountStatus('已登入，但本機資料尚未歸入此帳號；雲端同步未啟用。');return}
+  try{cloudConsent=localStorage.getItem(CONSENT_PREFIX+user.id)==='yes'}catch(e){}
+ }
+ authUser=user;setAccountStatus('已登入・正在確認方案');
+ if(!welcomeForced||welcomeInitiatedLogin)closeWelcome();
+ await loadEntitlement();await loadBillingHistory();renderSettings();
 }
 async function handleSignedOut(){
-  authUser=null;serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;billingHistory=[];
-  await stopAccountRealtime();
-  setAccountStatus('尚未登入');
-  renderSalary();renderSettings();
+ accountEpoch++;entitlementRequest++;authUser=null;serverPlan='free';entitlementChecked=false;entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;billingHistory=[];
+ cloudConsent=false;cloudAck='';cloudConflict=null;clearTimeout(expiryTimer);await stopAccountRealtime();switchLocalWorkspace('guest');setAccountStatus('未登入・本機資料照常保存');render();
 }
 async function initAuth(){
-  try{
-    const client=await getAuthClient();
-    const {data}=await client.auth.getSession();
-    if(data&&data.session&&data.session.user)await handleSignedIn(data.session.user);
-    client.auth.onAuthStateChange(async(event,session)=>{
-      if(session&&session.user)await handleSignedIn(session.user);
-      else if(event==='SIGNED_OUT')await handleSignedOut();
-    });
-  }catch(e){setAccountStatus('登入服務初始化失敗')}
+ try{
+  const client=await getAuthClient();
+  client.auth.onAuthStateChange((event,session)=>{
+   // Do not await Supabase APIs inside its auth lock.
+   setTimeout(()=>{if(session&&session.user)handleSignedIn(session.user);else if(event==='SIGNED_OUT')handleSignedOut()},0);
+  });
+  const {data,error}=await client.auth.getSession();if(error)throw error;
+  if(data&&data.session&&data.session.user)await handleSignedIn(data.session.user);
+ }catch(e){setAccountStatus('登入服務暫時無法連線・仍可不登入使用');if($('welcomeStatus'))$('welcomeStatus').textContent='登入服務暫時無法連線，你仍可選擇「先使用，不登入」。'}
 }
+
 let pendingEmail='';
 function normalizeEmail(v){return String(v||'').trim().toLowerCase()}
 async function signInWithGoogle(){
@@ -1407,13 +1574,13 @@ async function verifyEmailOtp(){
     if(error)throw error;
     if(!data||!data.session)throw new Error('沒有取得登入工作階段');
     pendingEmail='';
-    setAccountStatus('登入成功，正在同步…');
+    setAccountStatus('登入成功，正在確認方案…');
   }catch(e){
     setAccountStatus('驗證失敗');
     alert('驗證碼不正確或已過期，請重新確認。');
   }
 }
-async function signOutAccount(){const client=await getAuthClient();await client.auth.signOut()}
+async function signOutAccount(){if(!persistLocalSnapshot()){alert('本機儲存未完成，請先匯出備份。');return}await stopAccountRealtime();const client=await getAuthClient();const {error}=await client.auth.signOut();if(error){alert('登出未完成，請稍後再試。');return}await handleSignedOut()}
 function saveSchedulePrefs(){
   try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));}catch(e){}
   changedAndSync();
@@ -3153,7 +3320,7 @@ async function invokeUserFunction(name,body){
   return json;
 }
 async function startProTrialFlow(){
-  if(!authUser){alert('請先用 Email 登入，再開始 Pro 免費試用。');setTab('settings');return}
+  if(!authUser){alert('請先登入，再開始 Pro 免費試用。');setTab('settings');return}
   const btn=$('startProTrial');if(btn)btn.disabled=true;
   try{
     const result=await invokeUserFunction('start-pro-trial',{});
@@ -3183,7 +3350,7 @@ function submitGatewayForm(result){
   form.submit();
 }
 async function startLiveCheckout(plan){
-  if(!authUser){alert('請先用 Email 登入再升級 Pro。');return}
+  if(!authUser){alert('請先登入再升級 Pro。');return}
   const isYear=plan==='yearly';
   const amount=Number(isYear?billingYearly:billingMonthly);
   if(!billingConfigured||!amount){alert('正式訂閱尚未開放。');return}
@@ -3219,7 +3386,7 @@ async function cancelProBillingFlow(){
 }
 async function startStageCheckout(plan){
   if(!DEV_TESTING_ENABLED){alert('綠界 Stage 付款只在開發測試模式顯示。');return}
-  if(!authUser){alert('請先用 Email 登入再測試付款。');return}
+  if(!authUser){alert('請先登入再測試付款。');return}
   try{
     const result=await invokeUserFunction('create-ecpay-stage-checkout',{plan});
     submitGatewayForm(result);
@@ -3294,7 +3461,7 @@ function renderAccountPlan(){
     hint.textContent='目前方案：Free';
   }
 }
-function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';}$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'已登入':'尚未登入';if($('accountEmail'))$('accountEmail').textContent=authUser?(authUser.email||''):'';if($('emailLoginPanel'))$('emailLoginPanel').classList.toggle('hidden',!!authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);if($('cloudProtection')){$('cloudProtection').classList.toggle('safe',!!authUser);$('cloudProtection').textContent=authUser?'✓ 已啟用雲端保護。刪除 App 後，只要使用同一個登入帳號即可還原。':'⚠ 尚未啟用雲端保護。刪除 App 或網站資料後，本機資料可能無法找回。';}
+function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){$('themeLight').classList.toggle('active',state.theme==='light');$('themeDark').classList.toggle('active',state.theme==='dark');$('themeLight').lastElementChild.textContent=state.theme==='light'?'●':'○';$('themeDark').lastElementChild.textContent=state.theme==='dark'?'●':'○';}$('saveState').textContent=localSaveFailed?'本機儲存未完成，請匯出備份並確認空間。':lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'已登入':'尚未登入';if($('accountEmail'))$('accountEmail').textContent=authUser?(authUser.email||''):'';if($('emailLoginPanel'))$('emailLoginPanel').classList.toggle('hidden',!!authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);renderCloudState();
 const setWork=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=(v??'')};
 setWork('settingPayday',state.settings.payday||'');
 setDateControlValue('settingHireDate',state.settings.hireDate);
@@ -3492,30 +3659,9 @@ async function importBackupFile(file){
   }catch(e){alert('備份檔無法讀取，請確認是本 App 匯出的 JSON 檔。')}
 }
 async function restoreFromCloud(showAlert=true){
-  if(!authUser){if(showAlert)alert('請先用 Email 登入，再從雲端還原。');return false}
-  try{
-    const client=await getAuthClient();
-    setAccountStatus('正在從雲端還原…');
-    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',authUser.id).maybeSingle();
-    if(error)throw error;
-    if(!data||!data.payload||!data.payload.state){
-      setAccountStatus('雲端尚無備份');
-      if(showAlert)alert('這個帳號目前還沒有雲端備份。');
-      return false;
-    }
-    const snapshot=newestMeaningfulCloudSnapshot(data.payload)||data.payload;
-    state=normalizeState(snapshot.state);
-    lastSavedAt=snapshot.savedAt||data.updated_at||new Date().toISOString();
-    persistLocalSnapshot();
-    applyTheme();render();
-    setAccountStatus('已從雲端還原・'+new Date(data.updated_at||Date.now()).toLocaleString('zh-TW'));
-    if(showAlert)alert('雲端資料已還原到這台裝置。');
-    return true;
-  }catch(e){
-    setAccountStatus('雲端還原失敗');
-    if(showAlert)alert('雲端還原失敗，請稍後再試。');
-    return false;
-  }
+  if(!hasLivePro()){if(showAlert)alert('雲端還原為 Pro 功能。取回既有備份檔請使用下方的手動取回入口。');return false}
+  if(!cloudConsent){await enableCloudSync();return canCloudSync()}
+  await loadAccountState();renderSettings();return canCloudSync();
 }
 function setDevPlan(plan){
   if(!DEV_TESTING_ENABLED)return;
@@ -3713,20 +3859,14 @@ $('removeAvatar').onclick=()=>{
   changedAndSync();
   renderSettings();
 };
-$('saveDevice').onclick=async()=>{try{persistLocalSnapshot();renderSettings();if(authUser)await saveAccountState(false);alert(authUser?'已儲存到這台裝置並同步登入帳號。':'已儲存到這台裝置。')}catch(e){alert('儲存失敗，請確認瀏覽器沒有封鎖儲存空間。')}};$('clearDevice').onclick=async()=>{
-  if(!confirm('確定清除這台裝置已儲存的資料？雲端資料不會刪除。'))return;
-  const wasLoggedIn=!!authUser;
-  if(wasLoggedIn){
-    clearTimeout(authTimer);authTimer=null;
-    await saveAccountState(false);
-    const client=await getAuthClient();
-    await client.auth.signOut();
-  }
-  localStorage.removeItem(SAVE_KEY);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);
-  await clearIndexedBackup();
-  state=defaultState();lastSavedAt=null;applyTheme();render();
-  alert(wasLoggedIn?'已清除此裝置資料並登出；雲端備份仍保留。請重新登入同一帳號即可還原。':'已清除此裝置資料。');
+$('saveDevice').onclick=()=>{const ok=persistLocalSnapshot();renderSettings();alert(ok?'已儲存到此裝置。這不是雲端同步。':'本機儲存未完成，請先匯出備份。')};
+$('clearDevice').onclick=async()=>{
+ if(!confirm('只清除目前工作區的本機資料？\n其他帳號的本機副本與雲端資料不會刪除，雲端同步會先暫停。'))return;
+ if(authUser)rememberCloudConsent(false);await stopAccountRealtime();
+ localStorage.removeItem(SAVE_KEY);localStorage.removeItem(WORKSPACE_PREFIX+localOwner);localStorage.removeItem(AVATAR_KEY);localStorage.removeItem(SCHEDULE_KEY);await clearIndexedBackup();
+ state=defaultState();lastSavedAt=null;localRevision++;cloudAck='';cloudConflict=null;cloudDirty=false;applyTheme();render();
 };
+
 if($('startProTrial'))$('startProTrial').onclick=startProTrialFlow;
 if($('liveMonthlyCheckout'))$('liveMonthlyCheckout').onclick=()=>startLiveCheckout('monthly');
 if($('liveYearlyCheckout'))$('liveYearlyCheckout').onclick=()=>startLiveCheckout('yearly');
@@ -3805,6 +3945,7 @@ if($('importBackupInput'))$('importBackupInput').onchange=e=>{const file=e.targe
 if($('cloudBackupNow'))$('cloudBackupNow').onclick=()=>saveAccountState(true);
 if($('cloudRestoreNow'))$('cloudRestoreNow').onclick=()=>restoreFromCloud(true);
 $('accountLogout').onclick=signOutAccount;
+initWelcome();
 initAuth();
 loadBillingConfig();
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
@@ -3814,7 +3955,7 @@ try{
 }catch(e){}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v111';
+    const reloadKey='meow-sw-reloaded-v112';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -3823,7 +3964,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=111',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=112',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
