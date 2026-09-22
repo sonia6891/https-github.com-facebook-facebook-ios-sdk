@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=56">
+<link rel="manifest" href="./manifest.webmanifest?v=57">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
 <style>
@@ -43,7 +43,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 .attendance-head{padding:16px}.status-shortcuts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px}.status-shortcut{border:0;border-radius:14px;padding:10px 6px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px}.status-shortcut .icon{font-size:17px}.attendance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px}.summary-card{padding:14px;display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center}.summary-card strong{font-size:24px;display:block}.summary-card small{color:var(--muted)}.records{padding:0 14px 14px}.record-head,.record-row{display:grid;grid-template-columns:1.2fr .9fr .55fr 1.2fr 32px;gap:8px;align-items:center}.record-head{padding:10px 6px;color:#6f5c53;font-size:11px;font-weight:800;border-bottom:1px solid var(--line)}.record-row{padding:11px 6px;border-bottom:1px solid var(--line);font-size:13px}.record-row:last-child{border-bottom:0}.record-type{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:10px;font-weight:850;width:max-content;max-width:100%}.record-note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#6f625c}.record-more{border:0;background:transparent;color:#8f776b;font-size:18px}.empty-state{text-align:center;padding:26px;color:var(--muted)}.edit-today{width:100%;margin-top:12px;border:0;border-radius:16px;background:linear-gradient(90deg,#ffc963,#f6b443);color:#7a3f08;padding:14px;font-weight:950;font-size:16px}
 .salary-card{padding:16px}.salary-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:12px;padding:5px;border-radius:16px;background:#f4ede7;border:1px solid #ebddd2}.salary-tab{border:0;border-radius:12px;background:transparent;color:#8a6654;padding:11px 14px;font-weight:950;font-size:15px}.salary-tab.active{background:#fff;box-shadow:0 4px 14px rgba(100,65,45,.09);color:#7a4329}.salary-pane{min-width:0}.salary-section{border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px;background:#fff}.salary-section-title{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:950;margin-bottom:10px}.salary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-field{padding:10px;border-radius:14px;background:#fff7f1;border:1px solid #f5e3d7}.salary-field .field-icon{width:36px;height:36px;border-radius:12px;font-size:18px;margin-bottom:6px}.salary-field .field-icon .icon{font-size:19px}.salary-field label{font-size:12px;font-weight:850;display:block;margin-bottom:5px}.salary-field input{width:100%;height:40px;border:1px solid #d8d0cb;border-radius:9px;background:#fff;padding:7px 9px;font-size:16px;font-weight:800}.salary-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.salary-compare-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.compare-card{padding:14px}.compare-card b{display:block;font-size:12px;color:var(--muted)}.compare-card strong{display:block;font-size:25px;margin-top:5px}.compare-card small{display:block;margin-top:5px;color:var(--muted)}.compare-diff.negative strong{color:#c83f52}.compare-diff.positive strong{color:#248a49}.compare-diff.equal strong{color:#5f6a63}.pro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.pro-grid>.payslip-scan-panel,.pro-grid>.itemized-panel,.pro-grid>.salary-history-panel{grid-column:1/-1;margin-top:0}.pro-card{position:relative;padding:15px;border:1px solid #eadfd6;border-radius:16px;background:#fffaf6;min-height:124px}.pro-card .pro-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}.pro-card b{font-size:15px}.pro-card p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.pro-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;background:#2c2420;color:#fff;font-size:10px;font-weight:900;white-space:nowrap}.pro-card.unlocked{background:#f7fff8;border-color:#cde6d2}.pro-card.unlocked .pro-badge{background:#39864b}.pro-card button{margin-top:10px;width:100%;border:1px solid #e5d8ce;background:#fff;border-radius:11px;padding:8px 10px;font-weight:850;color:#73442c}
 .itemized-panel{margin-top:12px;border:1px solid #d7e8da;border-radius:16px;background:#fbfffc;overflow:hidden}.itemized-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e1ece3}.itemized-head b{font-size:16px}.itemized-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.itemized-summary .card{padding:11px}.itemized-summary b{font-size:11px;color:var(--muted);display:block}.itemized-summary strong{font-size:20px;display:block;margin-top:3px}.itemized-progress{font-size:11px;color:var(--muted);padding:0 14px 10px}.itemized-table{display:grid}.itemized-table-head,.itemized-row{display:grid;grid-template-columns:1.1fr .8fr .9fr .9fr;gap:8px;align-items:center;padding:9px 12px}.itemized-table-head{background:#f0f7f1;font-size:11px;font-weight:900;color:#607065}.itemized-row{border-top:1px solid #edf1ed;font-size:12px}.itemized-row .item-label{font-weight:850}.itemized-row .expected{text-align:right;font-weight:800}.itemized-row input{width:100%;height:36px;border:1px solid #d9dfda;border-radius:9px;padding:6px 8px;text-align:right;font-weight:800;background:#fff}.itemized-status{text-align:right;font-weight:900;font-size:11px}.itemized-status.ok{color:#36854a}.itemized-status.bad{color:#c23f52}.itemized-status.warn{color:#b46a17}.itemized-group{padding:8px 12px;background:#fff8ed;color:#8b5b31;font-size:11px;font-weight:950;border-top:1px solid #eee5d8}
-.payslip-scan-panel{margin-top:12px;border:1px solid #efd7b5;border-radius:16px;background:#fffdf8;overflow:hidden}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px;border-bottom:1px solid #f1e3d0}.scan-head b{font-size:16px}.scan-privacy{margin-top:4px;font-size:10px;color:#52815d;font-weight:800}.scan-upload{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}.scan-upload-btn{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #e7cfad;background:#fff8e9;color:#7c4c22;border-radius:13px;padding:11px;font-weight:900}.scan-preview-wrap{padding:0 12px 12px}.scan-preview{display:none;width:100%;max-height:340px;object-fit:contain;border:1px solid #e7ddd3;border-radius:13px;background:#f7f4f1}.scan-preview.show{display:block}.scan-status{margin:0 12px 12px;padding:10px 11px;border-radius:12px;background:#f2f6fb;color:#496478;font-size:11px;font-weight:800}.scan-progress{height:6px;border-radius:999px;background:#e6edf3;overflow:hidden;margin-top:7px}.scan-progress i{display:block;width:0;height:100%;background:#7098b7;transition:width .2s ease}.scan-result{padding:0 12px 12px}.scan-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.scan-result-field{padding:9px;border-radius:12px;background:#fff;border:1px solid #ede3da}.scan-result-field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px;color:#70584c}.scan-result-field input{width:100%;height:36px;border:1px solid #ddd3cb;border-radius:9px;padding:6px 8px;font-weight:850}.scan-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.scan-raw{margin-top:9px}.scan-raw summary{cursor:pointer;font-size:11px;font-weight:850;color:#776159}.scan-raw pre{white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;background:#f7f4f1;border-radius:10px;padding:9px;font-size:9px;line-height:1.5}.salary-history-panel{margin-top:12px;border:1px solid #dfdfec;border-radius:16px;background:#fcfcff;overflow:hidden}.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e8e8f0}.history-head b{font-size:16px}.history-yearbar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:#f7f7fc}.history-yearbar button{width:34px;height:34px;border:1px solid #dcdce8;background:#fff;border-radius:10px;font-weight:950}.history-yearbar strong{min-width:72px;text-align:center}.history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.history-summary .card{padding:11px}.history-summary b{font-size:10px;color:var(--muted);display:block}.history-summary strong{font-size:19px;display:block;margin-top:3px}.history-list{padding:0 12px 12px}.history-row{display:grid;grid-template-columns:.65fr 1fr 1fr .9fr auto;gap:8px;align-items:center;padding:11px 6px;border-top:1px solid #eeeeF5;font-size:12px}.history-row:first-child{border-top:0}.history-row .month{font-weight:950}.history-row .num{text-align:right;font-weight:800}.history-row .diff{text-align:right;font-weight:950}.history-row .diff.neg{color:#c23f52}.history-row .diff.pos{color:#2c8a4b}.history-row .open-month{border:1px solid #dddde8;background:#fff;border-radius:9px;padding:7px 9px;font-weight:850;color:#65506e}.history-meta{font-size:10px;color:var(--muted);grid-column:2/5}.history-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px}.dev-plan-card{border:1px dashed #d8a660;background:#fff8e9}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.dev-plan-btn{border:1px solid #e2c38f;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;color:#7a4a1e}.dev-plan-btn.active{background:#2d2723;color:#fff;border-color:#2d2723}.cloud-protection{margin-top:10px;padding:10px 12px;border-radius:13px;background:#fff4e7;color:#945e2b;font-size:11px;font-weight:850;line-height:1.5}.cloud-protection.safe{background:#eaf8ed;color:#347848}.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.backup-note{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.5}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden}.result-card .summary-icon{flex:0 0 auto}.result-card>div:last-child{min-width:0}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
+.payslip-scan-panel{margin-top:12px;border:1px solid #efd7b5;border-radius:16px;background:#fffdf8;overflow:hidden}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px;border-bottom:1px solid #f1e3d0}.scan-head b{font-size:16px}.scan-privacy{margin-top:4px;font-size:10px;color:#52815d;font-weight:800}.scan-upload{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}.scan-upload-btn{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #e7cfad;background:#fff8e9;color:#7c4c22;border-radius:13px;padding:11px;font-weight:900}.scan-preview-wrap{padding:0 12px 12px}.scan-preview{display:none;width:100%;max-height:340px;object-fit:contain;border:1px solid #e7ddd3;border-radius:13px;background:#f7f4f1}.scan-preview.show{display:block}.scan-status{margin:0 12px 12px;padding:10px 11px;border-radius:12px;background:#f2f6fb;color:#496478;font-size:11px;font-weight:800}.scan-progress{height:6px;border-radius:999px;background:#e6edf3;overflow:hidden;margin-top:7px}.scan-progress i{display:block;width:0;height:100%;background:#7098b7;transition:width .2s ease}.scan-result{padding:0 12px 12px}.scan-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.scan-result-field{padding:9px;border-radius:12px;background:#fff;border:1px solid #ede3da}.scan-result-field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px;color:#70584c}.scan-result-field input{width:100%;height:36px;border:1px solid #ddd3cb;border-radius:9px;padding:6px 8px;font-weight:850}.ocr-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;font-size:9px;line-height:1.35}.ocr-confidence{display:inline-flex;align-items:center;padding:2px 6px;border-radius:999px;background:#eaf7ed;color:#347949;font-weight:900}.ocr-confidence.mid{background:#fff4df;color:#9a651d}.ocr-confidence.low{background:#ffe9eb;color:#ad4050}.ocr-source{color:#6d8b72;font-weight:800}.ocr-warning{display:block;margin-top:5px;padding:5px 7px;border-radius:8px;background:#fff0e8;color:#b05632;font-size:9px;font-weight:850;line-height:1.4}.scan-result-field.has-warning{border-color:#efc4ae;background:#fffaf7}.scan-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.scan-raw{margin-top:9px}.scan-raw summary{cursor:pointer;font-size:11px;font-weight:850;color:#776159}.scan-raw pre{white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;background:#f7f4f1;border-radius:10px;padding:9px;font-size:9px;line-height:1.5}.salary-history-panel{margin-top:12px;border:1px solid #dfdfec;border-radius:16px;background:#fcfcff;overflow:hidden}.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid #e8e8f0}.history-head b{font-size:16px}.history-yearbar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:#f7f7fc}.history-yearbar button{width:34px;height:34px;border:1px solid #dcdce8;background:#fff;border-radius:10px;font-weight:950}.history-yearbar strong{min-width:72px;text-align:center}.history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px}.history-summary .card{padding:11px}.history-summary b{font-size:10px;color:var(--muted);display:block}.history-summary strong{font-size:19px;display:block;margin-top:3px}.history-list{padding:0 12px 12px}.history-row{display:grid;grid-template-columns:.65fr 1fr 1fr .9fr auto;gap:8px;align-items:center;padding:11px 6px;border-top:1px solid #eeeeF5;font-size:12px}.history-row:first-child{border-top:0}.history-row .month{font-weight:950}.history-row .num{text-align:right;font-weight:800}.history-row .diff{text-align:right;font-weight:950}.history-row .diff.neg{color:#c23f52}.history-row .diff.pos{color:#2c8a4b}.history-row .open-month{border:1px solid #dddde8;background:#fff;border-radius:9px;padding:7px 9px;font-weight:850;color:#65506e}.history-meta{font-size:10px;color:var(--muted);grid-column:2/5}.history-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px}.dev-plan-card{border:1px dashed #d8a660;background:#fff8e9}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.dev-plan-btn{border:1px solid #e2c38f;background:#fff;border-radius:12px;padding:9px 12px;font-weight:900;color:#7a4a1e}.dev-plan-btn.active{background:#2d2723;color:#fff;border-color:#2d2723}.cloud-protection{margin-top:10px;padding:10px 12px;border-radius:13px;background:#fff4e7;color:#945e2b;font-size:11px;font-weight:850;line-height:1.5}.cloud-protection.safe{background:#eaf8ed;color:#347848}.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.backup-note{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.5}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden}.result-card .summary-icon{flex:0 0 auto}.result-card>div:last-child{min-width:0}.result-card b{font-size:12px}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%}.formula{margin-top:12px;padding:14px;border-radius:16px;background:#eaf3ff;color:#36526a;font-size:12px;line-height:1.7}.formula b{font-size:15px;color:#254a6d}.advanced{margin-top:10px}.advanced summary{cursor:pointer;font-weight:850;color:#7c5845}
 .work-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.work-card{padding:15px;display:grid;grid-template-columns:50px 1fr;gap:12px;align-items:center}.work-card b{font-size:13px}.work-card strong{display:block;font-size:26px;margin-top:3px;line-height:1.15}.work-card small{display:block;color:var(--muted);margin-top:4px}.payday-quote{font-size:14px;font-weight:900;color:#9a5316;margin-top:5px;line-height:1.35}.leave-balance-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.balance-card{padding:15px}.balance-title{display:flex;align-items:center;gap:9px}.balance-card>strong{display:block;font-size:23px;margin:10px 0 4px}.balance-card>small{color:var(--muted);display:block;min-height:32px}.balance-progress{height:7px;background:#f0e8e0;border-radius:999px;overflow:hidden;margin-top:10px}.balance-progress i{display:block;height:100%;width:0;border-radius:999px;transition:width .25s ease}.annual-balance .balance-progress i{background:#62bd72}.annual-reminder{margin-top:9px;padding:8px 10px;border-radius:10px;background:#f2fbf3;color:#367944;font-size:11px;font-weight:850;line-height:1.45}.annual-reminder.warn{background:#fff3df;color:#a66110}.annual-reminder.urgent{background:#ffe9ec;color:#b52d43}.sick-balance .balance-progress i{background:#d94a5a}.personal-balance .balance-progress i{background:#7892a6}
 .settings-stack{display:grid;gap:12px}.settings-card{padding:16px}.profile-row{display:grid;grid-template-columns:120px 1fr auto;gap:16px;align-items:center}.profile-preview{width:110px;height:110px;border-radius:50%;object-fit:cover;border:5px solid #f7e2cd;box-shadow:var(--shadow)}.profile-copy b{font-size:20px}.profile-copy p{margin:5px 0;color:var(--muted)}.profile-say{display:inline-block;padding:8px 10px;border-radius:14px;background:#fff0dc;color:#985b37;font-weight:800}.settings-actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #e7d8cb;background:#fff;border-radius:13px;padding:10px 13px;font-weight:850;color:#5c3425}.btn.primary{background:#fff0d4;color:#ae5b0c;border-color:#f3d2a3}.btn.danger{background:#fff0f1;color:#c94251;border-color:#f3c9ce}.settings-list{display:grid;gap:1px;border:1px solid var(--line);border-radius:16px;overflow:hidden}.settings-item{display:grid;grid-template-columns:46px 1fr auto;gap:10px;align-items:center;padding:13px;background:#fff;border-bottom:1px solid var(--line)}.settings-item:last-child{border-bottom:0}.settings-item .field-icon{width:40px;height:40px;border-radius:12px}.settings-item b{display:block}.settings-item small{color:var(--muted)}.theme-options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.theme-choice{border:1px solid #e5d9ce;background:#fff;border-radius:16px;padding:13px;display:flex;align-items:center;justify-content:space-between;font-weight:900}.theme-choice.active{border-color:#f0a838;background:#fff7e8;color:#bd660e}.install-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .footer-banner{margin-top:18px}.footer-banner img{width:100%;display:block;border-radius:22px;box-shadow:var(--shadow);border:1px solid #f0e0d1}.bottom-nav{display:none}.dialog{border:0;border-radius:22px;padding:0;width:min(520px,calc(100vw - 22px));background:var(--paper);color:var(--ink);box-shadow:0 30px 80px rgba(0,0,0,.25)}.dialog::backdrop{background:rgba(34,22,17,.45)}.dialog-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}.dialog-head b{font-size:18px}.dialog-close{border:0;background:transparent;font-size:24px;color:var(--muted)}.dialog-body{padding:16px 18px;display:grid;gap:12px;max-height:70vh;overflow:auto}.dialog-foot{padding:14px 18px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}.hidden{display:none!important}
@@ -59,7 +59,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 @media(max-width:760px){.salary-tabs{margin-top:8px}.salary-tab{font-size:13px;padding:10px 8px}.scan-upload{grid-template-columns:1fr 1fr}.scan-result-grid{grid-template-columns:1fr 1fr}.scan-head{padding:11px}.scan-preview{max-height:280px}}
 @media(max-width:1100px) and (min-width:761px){#page-dashboard.active{grid-template-columns:1fr}.desktop-dashboard-profile{display:none}#page-dashboard>.section,.footer-art{grid-column:1}.footer-art{grid-row:auto;justify-content:center}.footer-art picture{width:min(100%,420px)}}
 </style>
-<link rel="manifest" href="./manifest.webmanifest?v=56">
+<link rel="manifest" href="./manifest.webmanifest?v=57">
 <link rel="apple-touch-icon" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
@@ -960,7 +960,8 @@ const ITEMIZED_FIELDS=[
   {key:'dedHealthExtra',label:'健保補扣',kind:'deduction'},
   {key:'dedOther',label:'其他扣款',kind:'deduction'}
 ];
-let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),payslipOcrResult={},payslipRawText='',payslipPreviewUrl='';
+let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0};
+const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v2';
 const PAYSLIP_OCR_FIELDS=[
   {key:'actualNet',label:'實發金額',kind:'net',terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
   {key:'dedHealthExtra',label:'健保補扣／補充保費',kind:'deduction',terms:['健保補扣','補充保費','補充健保費','二代健保','二代健保補充保費'],mode:'sum'},
@@ -1027,131 +1028,410 @@ function chooseOcrAmount(line,mode){
   if(mode==='last')return nums[nums.length-1];
   return Math.max(...nums);
 }
-function findNearbyOcrAmount(lines,index,mode){
-  const direct=chooseOcrAmount(lines[index],mode);
-  if(direct!==null)return direct;
-  const checks=[index+1,index+2,index+3,index-1];
-  for(const i of checks){
-    if(i<0||i>=lines.length)continue;
-    const nums=amountCandidates(lines[i]);
-    if(!nums.length)continue;
-    const otherFields=ocrFieldsForLine(lines[i]);
-    if(otherFields.length&&i!==index+1)continue;
-    const candidate=chooseOcrAmount(lines[i],mode);
-    if(candidate!==null)return candidate;
+function levenshteinDistance(a,b){
+  a=String(a||'');b=String(b||'');
+  const m=a.length,n=b.length,prev=new Array(n+1),cur=new Array(n+1);
+  for(let j=0;j<=n;j++)prev[j]=j;
+  for(let i=1;i<=m;i++){
+    cur[0]=i;
+    for(let j=1;j<=n;j++)cur[j]=Math.min(cur[j-1]+1,prev[j]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));
+    for(let j=0;j<=n;j++)prev[j]=cur[j];
   }
-  return null;
+  return prev[n];
 }
-function ocrFieldsForLine(line){
-  const compact=normalizeOcrText(line),hits=[];
+function fuzzyAliasThreshold(alias){
+  const n=alias.length;
+  if(n<=2)return 1;
+  if(n===3)return .66;
+  if(n<=5)return .72;
+  return .77;
+}
+function fuzzyAliasInText(text,alias){
+  const hay=normalizeOcrText(text),needle=normalizeOcrText(alias);
+  if(!hay||!needle)return{score:0,start:-1,end:-1,exact:false};
+  const exact=hay.indexOf(needle);
+  if(exact>=0)return{score:1,start:exact,end:exact+needle.length,exact:true};
+  if(needle.length<=2)return{score:0,start:-1,end:-1,exact:false};
+  let best={score:0,start:-1,end:-1,exact:false};
+  const minLen=Math.max(2,needle.length-1),maxLen=Math.min(hay.length,needle.length+1);
+  for(let len=minLen;len<=maxLen;len++){
+    for(let i=0;i+len<=hay.length;i++){
+      const part=hay.slice(i,i+len);
+      const d=levenshteinDistance(part,needle),score=1-d/Math.max(part.length,needle.length);
+      if(score>best.score)best={score,start:i,end:i+len,exact:false};
+    }
+  }
+  return best;
+}
+function fuzzyFieldsForText(text){
+  const hits=[];
   PAYSLIP_OCR_FIELDS.forEach(def=>{
     let best=null;
     def.terms.forEach(term=>{
-      const alias=normalizeOcrText(term);
-      if(!alias)return;
-      const pos=compact.indexOf(alias);
-      if(pos>=0&&(!best||alias.length>best.alias.length))best={def,term,alias,pos};
+      const match=fuzzyAliasInText(text,term),alias=normalizeOcrText(term);
+      if(match.score>=fuzzyAliasThreshold(alias)&&(!best||match.score>best.score||(match.score===best.score&&alias.length>best.alias.length))){
+        best={def,term,alias,score:match.score,start:match.start,end:match.end,exact:match.exact};
+      }
     });
     if(best)hits.push(best);
   });
-  return hits.sort((a,b)=>a.pos-b.pos||b.alias.length-a.alias.length);
+  return hits.sort((a,b)=>a.start-b.start||b.score-a.score);
 }
-function bestOcrFieldForLine(line){
-  const hits=ocrFieldsForLine(line);
-  return hits.length?Object.assign({},hits[0],{score:hits[0].alias.length}):null;
+function normalizeOcrBox(box){
+  if(!box)return null;
+  const x0=Number(box.x0??box.left??box[0]),y0=Number(box.y0??box.top??box[1]),x1=Number(box.x1??box.right??box[2]),y1=Number(box.y1??box.bottom??box[3]);
+  if(![x0,y0,x1,y1].every(Number.isFinite))return null;
+  return{x0,y0,x1,y1,cx:(x0+x1)/2,cy:(y0+y1)/2,w:Math.max(1,x1-x0),h:Math.max(1,y1-y0)};
 }
-function parsePayslipText(text){
-  const result={},matches=[];
-  const lines=String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-  const apply=(hit,amount,line)=>{
-    if(amount===null||amount===undefined)return;
-    const key=hit.def.key;
-    if(hit.def.mode==='sum')result[key]=num(result[key])+amount;
-    else if(hit.def.mode==='max')result[key]=Math.max(num(result[key]),amount);
-    else result[key]=amount;
-    matches.push({key,label:hit.def.label,term:hit.term,amount,line});
+function collectOcrWords(data){
+  const out=[],seen=new Set();
+  const add=w=>{
+    if(!w)return;
+    const text=String(w.text||'').trim(),bbox=normalizeOcrBox(w.bbox||w.box);
+    if(!text||!bbox)return;
+    const key=text+'|'+Math.round(bbox.x0)+'|'+Math.round(bbox.y0)+'|'+Math.round(bbox.x1)+'|'+Math.round(bbox.y1);
+    if(seen.has(key))return;seen.add(key);
+    out.push({text,bbox,confidence:Math.max(0,Math.min(100,Number(w.confidence??w.conf??70)||70))});
   };
-
-  lines.forEach((line,index)=>{
-    const hits=ocrFieldsForLine(line);
-    if(!hits.length)return;
-
-    // Common table format: several item names in one row, amounts in the same or next row.
-    if(hits.length>1){
-      const sameNums=amountCandidates(line);
-      let nums=sameNums.length>=hits.length?sameNums:[];
-      if(nums.length<hits.length){
-        for(let step=1;step<=3&&index+step<lines.length;step++){
-          const candidate=amountCandidates(lines[index+step]);
-          if(candidate.length>=hits.length){nums=candidate;break}
-        }
-      }
-      if(nums.length>=hits.length){
-        const chosen=nums.slice(nums.length-hits.length);
-        hits.forEach((hit,i)=>apply(hit,chosen[i],line));
-        return;
-      }
+  if(data&&Array.isArray(data.words))data.words.forEach(add);
+  const walk=node=>{
+    if(!node)return;
+    if(Array.isArray(node)){node.forEach(walk);return}
+    if(Array.isArray(node.words)){node.words.forEach(add);return}
+    ['blocks','paragraphs','lines'].forEach(k=>{if(Array.isArray(node[k]))node[k].forEach(walk)});
+  };
+  if(data&&Array.isArray(data.blocks))data.blocks.forEach(walk);
+  return out;
+}
+function groupOcrWordsIntoLines(words){
+  const sorted=[...words].sort((a,b)=>a.bbox.cy-b.bbox.cy||a.bbox.x0-b.bbox.x0),lines=[];
+  sorted.forEach(word=>{
+    let best=null,bestDist=Infinity;
+    lines.forEach(line=>{
+      const avgH=Math.max(8,line.avgH),dist=Math.abs(word.bbox.cy-line.cy);
+      const overlap=Math.max(0,Math.min(word.bbox.y1,line.y1)-Math.max(word.bbox.y0,line.y0));
+      if((dist<=avgH*.72||overlap>=Math.min(word.bbox.h,avgH)*.35)&&dist<bestDist){best=line;bestDist=dist}
+    });
+    if(!best){
+      best={words:[],cy:word.bbox.cy,avgH:word.bbox.h,y0:word.bbox.y0,y1:word.bbox.y1};lines.push(best);
     }
-
-    const hit=hits[0];
-    const amount=findNearbyOcrAmount(lines,index,hit.def.mode);
-    if(amount!==null)apply(hit,amount,line);
+    best.words.push(word);
+    best.cy=best.words.reduce((s,w)=>s+w.bbox.cy,0)/best.words.length;
+    best.avgH=best.words.reduce((s,w)=>s+w.bbox.h,0)/best.words.length;
+    best.y0=Math.min(best.y0,word.bbox.y0);best.y1=Math.max(best.y1,word.bbox.y1);
   });
-
-  result.__matches=matches;
+  lines.forEach((line,index)=>{
+    line.index=index;line.words.sort((a,b)=>a.bbox.x0-b.bbox.x0);
+    let norm='',raw='',offset=0;line.segments=[];
+    line.words.forEach((w,i)=>{
+      raw+=(i?' ':'')+w.text;
+      const part=normalizeOcrText(w.text);
+      if(part){line.segments.push({start:offset,end:offset+part.length,word:w});norm+=part;offset+=part.length}
+    });
+    line.text=raw;line.normText=norm;
+    line.x0=Math.min(...line.words.map(w=>w.bbox.x0));line.x1=Math.max(...line.words.map(w=>w.bbox.x1));
+    line.amounts=extractSpatialAmounts(line);
+  });
+  return lines.sort((a,b)=>a.cy-b.cy);
+}
+function numericTokenValue(text){
+  const raw=normalizeOcrDigits(text).replace(/[$NT＄元圓]/gi,'').trim();
+  if(!/[0-9]/.test(raw))return null;
+  const compact=raw.replace(/\s/g,'');
+  if(!/^[+\-]?[0-9][0-9,.]*$/.test(compact))return null;
+  const n=Number(compact.replace(/,/g,''));
+  return Number.isFinite(n)&&Math.abs(n)<=10000000?Math.abs(n):null;
+}
+function extractSpatialAmounts(line){
+  const amounts=[];
+  line.words.forEach((w,i)=>{
+    const value=numericTokenValue(w.text);
+    if(value===null)return;
+    amounts.push({id:line.index+'-'+i,value,bbox:w.bbox,confidence:w.confidence,lineIndex:line.index,text:w.text});
+  });
+  return amounts;
+}
+function lineLabelBox(line,hit){
+  const seg=line.segments.find(s=>hit.start>=s.start&&hit.start<s.end)||line.segments.find(s=>s.start>=hit.start&&s.start<hit.end);
+  if(seg)return seg.word.bbox;
+  return{x0:line.x0,y0:line.y0,x1:line.x1,y1:line.y1,cx:(line.x0+line.x1)/2,cy:line.cy,w:line.x1-line.x0,h:line.y1-line.y0};
+}
+function spatialLineHits(line){
+  return fuzzyFieldsForText(line.normText||line.text).map(hit=>Object.assign({},hit,{labelBox:lineLabelBox(line,hit),lineIndex:line.index}));
+}
+function findSpatialAmountForHit(hit,lines,width,height,used){
+  const label=hit.labelBox,line=lines[hit.lineIndex],same=(line&&line.amounts)||[];
+  const nextLabelX=(spatialLineHits(line||{normText:'',text:'',segments:[]}).filter(h=>h.labelBox.x0>label.x0).sort((a,b)=>a.labelBox.x0-b.labelBox.x0)[0]||{}).labelBox?.x0;
+  let candidates=same.filter(a=>!used.has(a.id)&&a.bbox.cx>=label.cx-(label.w*.2)&&(nextLabelX===undefined||a.bbox.cx<nextLabelX));
+  if(candidates.length){
+    candidates.sort((a,b)=>Math.abs(a.bbox.x0-label.x1)-Math.abs(b.bbox.x0-label.x1));
+    const a=candidates[0];return{amount:a,proximity:.98};
+  }
+  candidates=[];
+  lines.forEach(l=>{
+    if(Math.abs(l.index-hit.lineIndex)>3)return;
+    l.amounts.forEach(a=>{
+      if(used.has(a.id))return;
+      const dx=Math.abs(a.bbox.cx-label.cx)/Math.max(1,width),dy=Math.abs(a.bbox.cy-label.cy)/Math.max(1,height);
+      if(dx<=.22&&dy<=.16)candidates.push({a,score:1-Math.min(1,dx*2.5+dy*4)});
+    });
+  });
+  if(!candidates.length)return null;
+  candidates.sort((a,b)=>b.score-a.score);
+  return{amount:candidates[0].a,proximity:Math.max(.35,candidates[0].score)};
+}
+function consolidateOccurrences(def,occurrences){
+  if(!occurrences.length)return null;
+  if(def.mode==='last')return occurrences[occurrences.length-1];
+  if(def.mode==='max')return occurrences.reduce((best,x)=>x.value>best.value?x:best,occurrences[0]);
+  const byTerm=new Map();
+  occurrences.forEach(o=>{
+    const k=normalizeOcrText(o.term||def.key)||def.key,prev=byTerm.get(k);
+    if(!prev||o.value>prev.value)byTerm.set(k,o);
+  });
+  const list=[...byTerm.values()],value=list.reduce((s,x)=>s+x.value,0);
+  const best=list.reduce((a,b)=>a.confidence>b.confidence?a:b,list[0]);
+  return Object.assign({},best,{value,confidence:list.reduce((s,x)=>s+x.confidence,0)/list.length});
+}
+function parseSpatialOcr(data,variant){
+  const width=variant.width||1,height=variant.height||1,words=collectOcrWords(data),lines=groupOcrWordsIntoLines(words);
+  const used=new Set(),byKey={},labelAnchors={};
+  lines.forEach(line=>{
+    spatialLineHits(line).forEach(hit=>{
+      const lb=hit.labelBox,labelNorm={x:lb.cx/width,y:lb.cy/height};
+      if(!labelAnchors[hit.def.key]||hit.score>labelAnchors[hit.def.key].score)labelAnchors[hit.def.key]={x:labelNorm.x,y:labelNorm.y,score:hit.score,term:hit.term};
+      const pair=findSpatialAmountForHit(hit,lines,width,height,used);
+      if(!pair)return;
+      used.add(pair.amount.id);
+      const conf=Math.min(.99,hit.score*.58+(pair.amount.confidence/100)*.17+pair.proximity*.25);
+      const occ={key:hit.def.key,value:pair.amount.value,term:hit.term,confidence:conf,method:hit.exact?'座標精確':'座標模糊',variant:variant.name,
+        labelNorm,amountNorm:{x:pair.amount.bbox.cx/width,y:pair.amount.bbox.cy/height},line:line.text};
+      (byKey[hit.def.key]||(byKey[hit.def.key]=[])).push(occ);
+    });
+  });
+  const fields={};
+  PAYSLIP_OCR_FIELDS.forEach(def=>{const v=consolidateOccurrences(def,byKey[def.key]||[]);if(v)fields[def.key]=v});
+  const allAmounts=lines.flatMap(l=>l.amounts.map(a=>Object.assign({},a,{norm:{x:a.bbox.cx/width,y:a.bbox.cy/height}})));
+  return{fields,labelAnchors,allAmounts,lines,words,width,height,aspect:width/height,text:(data&&data.text)||'',variant:variant.name};
+}
+function findNearbyTextAmount(lines,index,mode){
+  const direct=chooseOcrAmount(lines[index],mode);if(direct!==null)return direct;
+  const checks=[index+1,index+2,index+3,index-1];
+  for(const i of checks){if(i<0||i>=lines.length)continue;const v=chooseOcrAmount(lines[i],mode);if(v!==null)return v}
+  return null;
+}
+function parseTextOcr(text,variant){
+  const fields={},byKey={},lines=String(text||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+  lines.forEach((line,index)=>{
+    fuzzyFieldsForText(line).forEach(hit=>{
+      const amount=findNearbyTextAmount(lines,index,hit.def.mode);if(amount===null)return;
+      const occ={key:hit.def.key,value:amount,term:hit.term,confidence:Math.min(.82,hit.score*.7),method:hit.exact?'文字精確':'文字模糊',variant:variant.name,line};
+      (byKey[hit.def.key]||(byKey[hit.def.key]=[])).push(occ);
+    });
+  });
+  PAYSLIP_OCR_FIELDS.forEach(def=>{const v=consolidateOccurrences(def,byKey[def.key]||[]);if(v)fields[def.key]=v});
+  return fields;
+}
+function loadPayslipFormatMemory(){
+  try{const v=JSON.parse(localStorage.getItem(PAYSLIP_FORMAT_MEMORY_KEY)||'[]');return Array.isArray(v)?v:[]}catch(e){return[]}
+}
+function savePayslipFormatMemory(list){
+  try{localStorage.setItem(PAYSLIP_FORMAT_MEMORY_KEY,JSON.stringify((list||[]).slice(0,8)))}catch(e){}
+}
+function templateSimilarity(template,run){
+  if(!template||!template.anchors||!run)return 0;
+  if(template.aspect&&run.aspect&&Math.abs(template.aspect-run.aspect)/Math.max(template.aspect,run.aspect)>.18)return 0;
+  const keys=Object.keys(template.anchors).filter(k=>run.labelAnchors[k]);
+  if(keys.length<2)return 0;
+  const avg=keys.reduce((s,k)=>{
+    const a=template.anchors[k],b=run.labelAnchors[k];return s+Math.hypot((a.labelX??a.x)-b.x,(a.labelY??a.y)-b.y);
+  },0)/keys.length;
+  return Math.max(0,Math.min(1,(keys.length/Math.min(5,Object.keys(template.anchors).length))*.55+(1-Math.min(1,avg/.16))*.45));
+}
+function bestPayslipTemplate(run){
+  let best=null;loadPayslipFormatMemory().forEach(t=>{const score=templateSimilarity(t,run);if(score>=.5&&(!best||score>best.score))best={template:t,score}});
+  return best;
+}
+function nearestAmountForTemplate(run,anchor){
+  if(!run||!run.allAmounts||!anchor)return null;
+  const tx=Number(anchor.amountX),ty=Number(anchor.amountY);
+  if(Number.isFinite(tx)&&Number.isFinite(ty)){
+    const list=run.allAmounts.map(a=>({a,d:Math.hypot(a.norm.x-tx,a.norm.y-ty)})).filter(x=>x.d<.14).sort((a,b)=>a.d-b.d);
+    if(list.length)return{amount:list[0].a,score:1-Math.min(1,list[0].d/.14)};
+  }
+  const lx=Number(anchor.labelX),ly=Number(anchor.labelY);
+  if(Number.isFinite(lx)&&Number.isFinite(ly)){
+    const list=run.allAmounts.map(a=>({a,dx:a.norm.x-lx,dy:Math.abs(a.norm.y-ly)})).filter(x=>x.dx>-.03&&x.dx<.28&&x.dy<.13).map(x=>({a:x.a,d:Math.abs(x.dx)*1.2+x.dy*2.5})).sort((a,b)=>a.d-b.d);
+    if(list.length)return{amount:list[0].a,score:Math.max(.35,1-list[0].d)};
+  }
+  return null;
+}
+function applyFormatMemory(run){
+  const found=bestPayslipTemplate(run);if(!found)return run;
+  Object.entries(found.template.anchors||{}).forEach(([key,anchor])=>{
+    const current=run.fields[key];if(current&&current.confidence>=.78)return;
+    const hit=nearestAmountForTemplate(run,anchor);if(!hit)return;
+    const def=PAYSLIP_OCR_FIELDS.find(x=>x.key===key);if(!def)return;
+    run.fields[key]={key,value:hit.amount.value,term:anchor.term||'格式記憶',confidence:Math.min(.94,.76+found.score*.14+hit.score*.04),method:'格式記憶',variant:run.variant,
+      labelNorm:{x:anchor.labelX,y:anchor.labelY},amountNorm:hit.amount.norm,line:'本機格式記憶'};
+  });
+  run.usedMemory=found.score;run.memoryTemplateId=found.template.id;
+  return run;
+}
+function parseSingleOcrRun(data,variant){
+  const run=parseSpatialOcr(data,variant),textFields=parseTextOcr((data&&data.text)||'',variant);
+  PAYSLIP_OCR_FIELDS.forEach(def=>{
+    const spatial=run.fields[def.key],text=textFields[def.key];
+    if(!spatial&&text)run.fields[def.key]=text;
+    else if(spatial&&text&&Math.abs(spatial.value-text.value)<=Math.max(2,spatial.value*.004))spatial.confidence=Math.min(.99,spatial.confidence+.05);
+  });
+  return applyFormatMemory(run);
+}
+function clusterOcrCandidates(candidates){
+  const clusters=[];
+  candidates.forEach(c=>{
+    let best=null;
+    clusters.forEach(g=>{const tol=Math.max(2,Math.abs(g.mean)*.005);if(Math.abs(c.value-g.mean)<=tol&&(!best||Math.abs(c.value-g.mean)<best.d))best={g,d:Math.abs(c.value-g.mean)}});
+    if(best){best.g.items.push(c);best.g.mean=best.g.items.reduce((s,x)=>s+x.value,0)/best.g.items.length}
+    else clusters.push({mean:c.value,items:[c]});
+  });
+  clusters.forEach(g=>{g.score=g.items.reduce((s,x)=>s+x.confidence,0)/g.items.length+Math.min(.22,(g.items.length-1)*.11)});
+  return clusters.sort((a,b)=>b.score-a.score);
+}
+function mergePayslipRuns(runs){
+  const result={__matches:[],__confidence:{},__fieldWarnings:{},__runSummaries:[],__usedMemory:false,__aspect:runs[0]?.aspect||0,__labelAnchors:runs[0]?.labelAnchors||{}};
+  PAYSLIP_OCR_FIELDS.forEach(def=>{
+    const candidates=runs.map(r=>r.fields[def.key]).filter(Boolean);if(!candidates.length)return;
+    const clusters=clusterOcrCandidates(candidates),winner=clusters[0],value=Math.round(winner.mean*100)/100;
+    const selected=winner.items.reduce((a,b)=>a.confidence>b.confidence?a:b,winner.items[0]);
+    const agreement=winner.items.length;
+    const confidence=Math.min(.99,Math.max(selected.confidence,winner.score));
+    result[def.key]=value;result.__confidence[def.key]=confidence;
+    result.__matches.push(Object.assign({},selected,{amount:value,confidence,agreement,source:agreement>=2?(agreement+' 次 OCR 一致'):selected.method}));
+    if(clusters.length>1&&clusters[1].score>.62){
+      const alt=Math.round(clusters[1].mean*100)/100;
+      result.__fieldWarnings[def.key]='多次 OCR 結果不一致（另一次辨識為 '+alt+'），請確認。';
+    }
+  });
+  result.__runSummaries=runs.map(r=>({variant:r.variant,found:Object.keys(r.fields).length,usedMemory:!!r.usedMemory}));
+  result.__usedMemory=runs.some(r=>r.usedMemory);
+  const bestRun=[...runs].sort((a,b)=>Object.keys(b.fields).length-Object.keys(a.fields).length)[0];
+  if(bestRun){result.__aspect=bestRun.aspect;result.__labelAnchors=bestRun.labelAnchors}
   return result;
 }
-async function preprocessPayslipImage(file){
+function expectedOcrValues(){
+  const mc=calcMonth(),map=itemizedExpectedMap(mc);return Object.assign({actualNet:mc.net},map);
+}
+function validatePayslipValues(values){
+  const warnings={},expected=expectedOcrValues();
+  Object.keys(values||{}).forEach(key=>{
+    if(key.startsWith('__'))return;
+    const v=num(values[key]),exp=num(expected[key]);
+    if(key==='base'&&(v<8000||v>300000))warnings[key]='底薪金額看起來不尋常，請確認是否少／多辨識一位數。';
+    if(key==='actualNet'&&(v<1000||v>800000))warnings[key]='實發金額看起來不尋常，請確認薪資單數字。';
+    if(exp>0){
+      const ratio=Math.abs(v-exp)/Math.max(1,exp),abs=Math.abs(v-exp);
+      const threshold=key==='base'?.35:key==='actualNet'?.45:(key.startsWith('ded')?1.5:2.2);
+      const minAbs=key==='base'||key==='actualNet'?3000:800;
+      if(ratio>threshold&&abs>minAbs)warnings[key]=(warnings[key]?warnings[key]+' ':'')+'與 App 目前預估 '+money(exp)+' 差異較大。';
+    }
+  });
+  const incomeKeys=['base','shiftAllowance','meal','performance','transport','otherIncome','otPay'],dedKeys=['dedLabor','dedHealth','dedWelfare','dedPension','dedAttendance','dedTax','dedHealthExtra','dedOther'];
+  const recognized=[...incomeKeys,...dedKeys].filter(k=>Object.prototype.hasOwnProperty.call(values||{},k));
+  if(Object.prototype.hasOwnProperty.call(values||{},'actualNet')&&recognized.length>=7){
+    const calc=incomeKeys.reduce((s,k)=>s+(Object.prototype.hasOwnProperty.call(values,k)?num(values[k]):0),0)-dedKeys.reduce((s,k)=>s+(Object.prototype.hasOwnProperty.call(values,k)?num(values[k]):0),0);
+    const actual=num(values.actualNet);
+    if(calc>0&&Math.abs(calc-actual)>Math.max(1500,actual*.12))warnings.actualNet=(warnings.actualNet?warnings.actualNet+' ':'')+'逐項金額加總與實發金額對不上，請再核對。';
+  }
+  return warnings;
+}
+function rememberPayslipFormat(values){
+  const matches=Array.isArray(payslipOcrResult.__matches)?payslipOcrResult.__matches:[],anchors={};
+  matches.forEach(m=>{
+    if(!Object.prototype.hasOwnProperty.call(values,m.key))return;
+    if(!m.labelNorm&&!m.amountNorm)return;
+    anchors[m.key]={labelX:m.labelNorm?.x,labelY:m.labelNorm?.y,amountX:m.amountNorm?.x,amountY:m.amountNorm?.y,term:m.term||''};
+  });
+  if(Object.keys(anchors).length<2)return;
+  const list=loadPayslipFormatMemory(),template={id:'fmt-'+Date.now(),savedAt:new Date().toISOString(),aspect:payslipOcrResult.__aspect||0,anchors};
+  let replaced=false;
+  for(let i=0;i<list.length;i++){
+    const fakeRun={aspect:template.aspect,labelAnchors:Object.fromEntries(Object.entries(anchors).map(([k,a])=>[k,{x:a.labelX,y:a.labelY}]))};
+    if(templateSimilarity(list[i],fakeRun)>.72){list[i]=template;replaced=true;break}
+  }
+  if(!replaced)list.unshift(template);savePayslipFormatMemory(list);
+}
+function canvasToBlob(canvas,type='image/jpeg',quality=.94){
+  return new Promise(resolve=>canvas.toBlob(blob=>resolve(blob),type,quality));
+}
+function otsuThreshold(values){
+  const hist=new Array(256).fill(0);values.forEach(v=>hist[Math.max(0,Math.min(255,Math.round(v)))]++);
+  const total=values.length;let sum=0;for(let i=0;i<256;i++)sum+=i*hist[i];
+  let sumB=0,wB=0,best=0,maxVar=-1;
+  for(let t=0;t<256;t++){
+    wB+=hist[t];if(!wB)continue;const wF=total-wB;if(!wF)break;
+    sumB+=t*hist[t];const mB=sumB/wB,mF=(sum-sumB)/wF,between=wB*wF*(mB-mF)*(mB-mF);
+    if(between>maxVar){maxVar=between;best=t}
+  }
+  return best||170;
+}
+async function preprocessPayslipVariants(file){
   return await new Promise((resolve,reject)=>{
     const url=URL.createObjectURL(file),img=new Image();
-    img.onload=()=>{
+    img.onload=async()=>{
       try{
-        const maxSide=2400;
-        let scale=Math.min(maxSide/Math.max(img.width,img.height),1.8);
-        if(Math.max(img.width,img.height)<1500)scale=Math.min(1.8,1500/Math.max(img.width,img.height));
-        scale=Math.max(.6,scale);
+        const maxSide=2400,scale=Math.max(.7,Math.min(maxSide/Math.max(img.width,img.height),Math.max(1,1500/Math.max(img.width,img.height))));
         const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));
-        const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
-        const ctx=canvas.getContext('2d',{willReadFrequently:true});
-        ctx.drawImage(img,0,0,w,h);
-        const data=ctx.getImageData(0,0,w,h),p=data.data;
-        for(let i=0;i<p.length;i+=4){
-          let g=.299*p[i]+.587*p[i+1]+.114*p[i+2];
-          g=(g-128)*1.32+128;
-          g=Math.max(0,Math.min(255,g));
-          p[i]=p[i+1]=p[i+2]=g;
+        const base=document.createElement('canvas');base.width=w;base.height=h;
+        const ctx=base.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,w,h);
+        const original=await canvasToBlob(base);
+        const src=ctx.getImageData(0,0,w,h),grayVals=new Array(w*h),grayData=new ImageData(new Uint8ClampedArray(src.data),w,h);
+        for(let i=0,j=0;i<grayData.data.length;i+=4,j++){
+          let g=.299*grayData.data[i]+.587*grayData.data[i+1]+.114*grayData.data[i+2];
+          g=Math.max(0,Math.min(255,(g-128)*1.48+128));grayVals[j]=g;
+          grayData.data[i]=grayData.data[i+1]=grayData.data[i+2]=g;
         }
-        ctx.putImageData(data,0,0);
-        canvas.toBlob(blob=>{URL.revokeObjectURL(url);resolve(blob||file)},'image/jpeg',.94);
-      }catch(e){URL.revokeObjectURL(url);resolve(file)}
+        const gray=document.createElement('canvas');gray.width=w;gray.height=h;gray.getContext('2d').putImageData(grayData,0,0);
+        const highContrast=await canvasToBlob(gray);
+        const threshold=otsuThreshold(grayVals),binData=new ImageData(new Uint8ClampedArray(grayData.data),w,h);
+        for(let i=0;i<binData.data.length;i+=4){const v=binData.data[i]>threshold?255:0;binData.data[i]=binData.data[i+1]=binData.data[i+2]=v}
+        const binary=document.createElement('canvas');binary.width=w;binary.height=h;binary.getContext('2d').putImageData(binData,0,0);
+        const binaryBlob=await canvasToBlob(binary);
+        URL.revokeObjectURL(url);
+        resolve([{name:'原圖增強',image:original,width:w,height:h},{name:'高對比',image:highContrast,width:w,height:h},{name:'二值化',image:binaryBlob,width:w,height:h}]);
+      }catch(e){URL.revokeObjectURL(url);reject(e)}
     };
-    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('圖片讀取失敗'))};
-    img.src=url;
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('圖片讀取失敗'))};img.src=url;
   });
 }
 function renderPayslipDetected(){
-  const box=$('payslipDetectedFields');
-  if(!box)return;
-  const matches=Array.isArray(payslipOcrResult.__matches)?payslipOcrResult.__matches:[];
+  const box=$('payslipDetectedFields');if(!box)return;
+  const matches=Array.isArray(payslipOcrResult.__matches)?payslipOcrResult.__matches:[],validation=validatePayslipValues(payslipOcrResult);
+  const disagreement=payslipOcrResult.__fieldWarnings||{};
   box.innerHTML=PAYSLIP_OCR_FIELDS.map(def=>{
-    const has=Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key);
-    const value=has?payslipOcrResult[def.key]:'';
-    const hit=matches.find(m=>m.key===def.key);
-    const hint=hit?'<small style="display:block;margin-top:4px;color:#6d8b72">辨識自：'+escapeHtml(hit.term)+'</small>':'';
-    return '<div class="scan-result-field"><label>'+escapeHtml(def.label)+'</label><input type="number" min="0" step="1" data-ocr-field="'+def.key+'" value="'+(value===''?'':escapeHtml(value))+'" placeholder="未辨識">'+hint+'</div>';
+    const has=Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key),value=has?payslipOcrResult[def.key]:'',hit=matches.find(m=>m.key===def.key);
+    const conf=has?Math.round(100*num(payslipOcrResult.__confidence?.[def.key]||hit?.confidence||0)):0;
+    const confClass=conf>=85?'':conf>=65?' mid':' low',source=hit?(hit.source||hit.method||'OCR'):'未辨識';
+    const warn=[disagreement[def.key],validation[def.key]].filter(Boolean).join(' ');
+    return '<div class="scan-result-field'+(warn?' has-warning':'')+'"><label>'+escapeHtml(def.label)+'</label><input type="number" min="0" step="1" data-ocr-field="'+def.key+'" value="'+(value===''?'':escapeHtml(value))+'" placeholder="未辨識">'+
+      '<div class="ocr-meta">'+(has?'<span class="ocr-confidence'+confClass+'">信心 '+conf+'%</span>':'<span class="ocr-confidence low">未辨識</span>')+'<span class="ocr-source">'+escapeHtml(source)+(hit&&hit.term?'・'+escapeHtml(hit.term):'')+'</span></div>'+
+      (warn?'<span class="ocr-warning">⚠ '+escapeHtml(warn)+'</span>':'')+'</div>';
   }).join('');
+  qsa('[data-ocr-field]').forEach(input=>input.onchange=e=>{
+    const key=e.target.dataset.ocrField,raw=e.target.value;if(raw==='')delete payslipOcrResult[key];else payslipOcrResult[key]=num(raw);renderPayslipDetected();
+  });
 }
 function ocrStatusLabel(status){
-  const map={'loading tesseract core':'載入 OCR 核心','initializing tesseract':'初始化 OCR','loading language traineddata':'下載中文字庫','initializing api':'準備辨識','recognizing text':'正在辨識文字'};
+  const map={'loading tesseract core':'載入 OCR 核心','initializing tesseract':'初始化 OCR','loading language traineddata':'下載中文字庫','initializing api':'準備辨識','recognizing text':'辨識文字'};
   return map[status]||status||'處理中';
 }
 function resetPayslipScan(clearPreview=true){
-  payslipOcrResult={};payslipRawText='';
+  payslipOcrResult={};payslipRawText='';payslipOcrRuns=[];payslipOcrDocument={width:0,height:0};
   if($('payslipScanResult'))$('payslipScanResult').classList.add('hidden');
   if($('payslipRawText'))$('payslipRawText').textContent='';
   if($('payslipMissingFields')){$('payslipMissingFields').textContent='';$('payslipMissingFields').classList.add('hidden')}
   if($('payslipScanProgress'))$('payslipScanProgress').style.width='0%';
-  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始本地辨識。第一次使用會先下載中文字庫，可能需要一些時間。 ';
+  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始第二代本地辨識（3 次交叉比對）。 ';
   if($('payslipCameraInput'))$('payslipCameraInput').value='';
   if($('payslipFileInput'))$('payslipFileInput').value='';
   if(clearPreview){
@@ -1161,65 +1441,74 @@ function resetPayslipScan(clearPreview=true){
 }
 async function runPayslipOcr(file){
   if(!canUse('payslip_scan'))return;
-  if(!file||!String(file.type||'').startsWith('image/')){alert('目前本地辨識第一版先支援圖片檔。');return}
+  if(!file||!String(file.type||'').startsWith('image/')){alert('目前第二代本地辨識先支援圖片檔。');return}
   if(file.size>20*1024*1024){alert('圖片太大，請使用 20MB 以下的薪資單照片。');return}
   resetPayslipScan(false);
   if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}}
-  payslipPreviewUrl=URL.createObjectURL(file);
-  $('payslipPreview').src=payslipPreviewUrl;$('payslipPreview').classList.add('show');
+  payslipPreviewUrl=URL.createObjectURL(file);$('payslipPreview').src=payslipPreviewUrl;$('payslipPreview').classList.add('show');
   const status=$('payslipScanStatus'),bar=$('payslipScanProgress');
+  let worker=null,currentPass=0;
   try{
-    if(!window.Tesseract||!window.Tesseract.recognize)throw new Error('OCR 元件尚未載入，請確認網路後重新整理。');
-    status.childNodes[0].nodeValue='正在強化圖片並準備本地 OCR… ';
-    const ocrImage=await preprocessPayslipImage(file);
-    const result=await window.Tesseract.recognize(ocrImage,'chi_tra+eng',{logger:m=>{
-      const pct=Math.round((m.progress||0)*100);
-      status.childNodes[0].nodeValue=ocrStatusLabel(m.status)+(pct?' '+pct+'%':'')+' ';
-      bar.style.width=pct+'%';
-    }});
-    payslipRawText=(result&&result.data&&result.data.text)||'';
-    payslipOcrResult=parsePayslipText(payslipRawText);
-    renderPayslipDetected();
-    $('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';
-    $('payslipScanResult').classList.remove('hidden');
-    const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key));
-    const missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key));
-    const found=foundDefs.length;
-    status.childNodes[0].nodeValue='辨識完成：找到 '+found+' / '+PAYSLIP_OCR_FIELDS.length+' 個薪資欄位。請先確認或修改，再導入。 ';
+    if(!window.Tesseract)throw new Error('OCR 元件尚未載入，請確認網路後重新整理。');
+    status.childNodes[0].nodeValue='正在產生 3 種影像版本… ';
+    const variants=await preprocessPayslipVariants(file);payslipOcrDocument={width:variants[0].width,height:variants[0].height};
+    const logger=m=>{
+      const local=Math.max(0,Math.min(1,m.progress||0)),overall=Math.round(((currentPass+local)/variants.length)*100);
+      status.childNodes[0].nodeValue='第 '+(currentPass+1)+' / '+variants.length+' 次（'+variants[currentPass].name+'）：'+ocrStatusLabel(m.status)+(m.progress!==undefined?' '+Math.round(local*100)+'%':'')+' ';
+      bar.style.width=overall+'%';
+    };
+    if(window.Tesseract.createWorker){
+      worker=await window.Tesseract.createWorker('chi_tra+eng',window.Tesseract.OEM?.LSTM_ONLY||1,{logger});
+    }
+    const runs=[];
+    for(currentPass=0;currentPass<variants.length;currentPass++){
+      const variant=variants[currentPass];let data;
+      if(worker){
+        let res;
+        try{res=await worker.recognize(variant.image,{}, {text:true,blocks:true,tsv:true})}catch(e){res=await worker.recognize(variant.image)}
+        data=res.data;
+      }else{
+        const res=await window.Tesseract.recognize(variant.image,'chi_tra+eng',{logger});data=res.data;
+      }
+      runs.push(parseSingleOcrRun(data,variant));
+    }
+    if(worker){await worker.terminate();worker=null}
+    payslipOcrRuns=runs;payslipRawText=runs.map(r=>'【'+r.variant+'】\n'+(r.text||'')).join('\n\n');
+    payslipOcrResult=mergePayslipRuns(runs);
+    renderPayslipDetected();$('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';$('payslipScanResult').classList.remove('hidden');
+    const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key));
+    status.childNodes[0].nodeValue='第二代辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
     if($('payslipMissingFields')){
-      $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0);
-      $('payslipMissingFields').textContent=missingDefs.length?'尚未辨識：'+missingDefs.map(def=>def.label).join('、'):'';
+      const warningCount=Object.keys(validatePayslipValues(payslipOcrResult)).length+Object.keys(payslipOcrResult.__fieldWarnings||{}).length;
+      $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0&&warningCount===0);
+      $('payslipMissingFields').textContent=(missingDefs.length?'尚未辨識：'+missingDefs.map(def=>def.label).join('、')+'。 ':'')+(warningCount?'另有 '+warningCount+' 個欄位需要人工確認。':'');
     }
     bar.style.width='100%';
   }catch(e){
-    status.childNodes[0].nodeValue='辨識失敗：'+((e&&e.message)||'請換一張較清楚的照片再試。')+' ';
-    bar.style.width='0%';
+    if(worker){try{await worker.terminate()}catch(_){}}
+    status.childNodes[0].nodeValue='辨識失敗：'+((e&&e.message)||'請換一張較清楚的照片再試。')+' ';bar.style.width='0%';
   }
 }
 function importPayslipDetected(){
   if(!canUse('payslip_scan'))return;
+  const confirmed={};qsa('[data-ocr-field]').forEach(input=>{if(input.value!=='')confirmed[input.dataset.ocrField]=num(input.value)});
+  const keys=Object.keys(confirmed);if(!keys.length){alert('目前沒有可導入的辨識欄位。');return}
+  const warnings=validatePayslipValues(confirmed),disagreement=payslipOcrResult.__fieldWarnings||{},warningKeys=[...new Set([...Object.keys(warnings),...Object.keys(disagreement)])];
+  if(warningKeys.length){
+    const labels=warningKeys.map(k=>(PAYSLIP_OCR_FIELDS.find(x=>x.key===k)||{label:k}).label).join('、');
+    if(!confirm('仍有需要確認的欄位：'+labels+'。\n\n請確認畫面上的金額無誤後再導入。仍要導入嗎？'))return;
+  }
   const mm=mb();mm.actualItems=mm.actualItems||{};
-  let count=0;
-  qsa('[data-ocr-field]').forEach(input=>{
-    const raw=input.value,key=input.dataset.ocrField;
-    if(raw==='')return;
-    const value=num(raw);
-    if(key==='actualNet')mm.actualNet=value;
-    else mm.actualItems[key]=value;
-    count++;
-  });
-  if(!count){alert('目前沒有可導入的辨識欄位。');return}
-  captureSalarySnapshot(calcMonth(),mm);
-  changedAndSync();
-  payslipScanOpen=false;itemizedOpen=true;salaryHistoryOpen=false;salarySubTab='reconcile';
-  renderSalary();
+  Object.entries(confirmed).forEach(([key,value])=>{if(key==='actualNet')mm.actualNet=value;else mm.actualItems[key]=value});
+  rememberPayslipFormat(confirmed);
+  captureSalarySnapshot(calcMonth(),mm);changedAndSync();
+  payslipScanOpen=false;itemizedOpen=true;salaryHistoryOpen=false;salarySubTab='reconcile';renderSalary();
   if($('itemizedComparePanel'))$('itemizedComparePanel').scrollIntoView({behavior:'smooth',block:'start'});
 }
 function renderPayslipScan(){
   if(!$('payslipScanPanel'))return;
   placeProPanel('payslip_scan','payslipScanPanel');
-  const unlocked=canUse('payslip_scan');
-  if(!unlocked)payslipScanOpen=false;
+  const unlocked=canUse('payslip_scan');if(!unlocked)payslipScanOpen=false;
   $('payslipScanPanel').classList.toggle('hidden',!unlocked||!payslipScanOpen);
   if($('payslipImportMonth'))$('payslipImportMonth').textContent=(current.getFullYear())+' 年 '+(current.getMonth()+1)+' 月';
 }
