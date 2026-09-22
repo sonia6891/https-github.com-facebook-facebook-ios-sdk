@@ -1,0 +1,51 @@
+name: Validate mobile dark contrast v76
+on:
+  push:
+    branches: [repair/mobile-dark-contrast-v76]
+    paths: ['maintenance/**', '.github/workflows/mobile-dark-contrast-v76.yml']
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser and contrast tools
+        run: |
+          pip install -q tinycss2==1.4.0 Pillow==11.3.0 playwright==1.57.0
+          python -m playwright install --with-deps chromium webkit > /tmp/install.log 2>&1 || (tail -50 /tmp/install.log; exit 1)
+      - name: Rework original color declarations
+        run: |
+          git worktree add --detach /tmp/meow-dark-before 8a1bcdd7e74863718b6d40301ef83d7182e6dca4
+          python maintenance/repair-mobile-dark-v76.py .
+      - name: Verify dark contrast and unchanged light and desktop
+        run: python maintenance/verify-mobile-dark-v76.py
+      - name: Save validated sources on repair branch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html 404.html sw.js dark-contrast-audit.json
+          git commit -m 'Validated mobile dark contrast v76 [skip ci]'
+          git push origin HEAD:repair/mobile-dark-contrast-v76
+      - name: Save comparison evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-dark-v76-staging
+          path: dark-qa
+          retention-days: 3
+      - name: Verify published site after release
+        run: python maintenance/verify-mobile-dark-v76.py --live
+      - name: Save published evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-dark-v76-live
+          path: live-dark-qa
+          retention-days: 3

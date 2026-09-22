@@ -1,0 +1,8 @@
+root => {
+ const rgba=c=>{const m=c.match(/[\d.]+/g);if(!m)return [0,0,0,0];const a=m.map(Number);return [a[0],a[1],a[2],a.length>3?a[3]:1];};
+ const blend=(f,b)=>[0,1,2].map(i=>f[i]*f[3]+b[i]*(1-f[3])).concat(1);
+ const lum=c=>c.slice(0,3).map(v=>{v/=255;return v<=.04045?v/12.92:((v+.055)/1.055)**2.4;}).reduce((s,v,i)=>s+v*[.2126,.7152,.0722][i],0);
+ const ratio=(a,b)=>{a=lum(a);b=lum(b);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);};
+ function backgrounds(e){const layers=[];for(let n=e;n;n=n.parentElement){const s=getComputedStyle(n);let colors=[];if(s.backgroundImage.includes('gradient'))colors=(s.backgroundImage.match(/rgba?\([^)]+\)/g)||[]).map(rgba);if(!colors.length)colors=[rgba(s.backgroundColor)];layers.push(colors);if(colors.every(c=>c[3]>=1))break;}let result=[[255,255,255,1]];for(const colors of layers.reverse())result=colors.flatMap(f=>result.map(b=>blend(f,b)));return result;}
+ const report=[];for(const e of root.querySelectorAll('*')){const s=getComputedStyle(e),r=e.getBoundingClientRect();if(!r.width||!r.height||s.visibility==='hidden'||s.display==='none'||e.closest('[hidden]'))continue;const own=Array.from(e.childNodes).filter(n=>n.nodeType===3).map(n=>n.textContent.trim()).filter(Boolean).join(' ');const input=e.matches('input:not([type=hidden]):not([type=file]):not([type=checkbox]):not([type=range]),select,textarea');if(!own&&!input)continue;const fg=rgba(s.color),bgs=backgrounds(e);report.push({text:(own||(input&&(e.value||e.placeholder))||'').slice(0,90),tag:e.tagName,id:e.id,cls:typeof e.className==='string'?e.className:'',color:s.color,backgrounds:bgs,ratio:Math.min(...bgs.map(bg=>ratio(blend(fg,bg),bg))),font:s.fontSize});}return report;
+}
