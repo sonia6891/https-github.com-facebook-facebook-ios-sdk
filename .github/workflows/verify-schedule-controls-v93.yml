@@ -1,0 +1,79 @@
+name: Verify approved schedule controls v93
+on:
+  push:
+    branches: ["repair/schedule-controls-v93"]
+permissions:
+  contents: write
+concurrency:
+  group: schedule-controls-v93
+  cancel-in-progress: true
+env:
+  BASE: 47e90d13b2b3286a0bd591c8951fe52b7a2a61ea
+  LIVE_URL: ""
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install isolated test browsers
+        run: |
+          python -m pip install playwright==1.55.0
+          python -m playwright install --with-deps chromium webkit
+      - name: Reproduce exact approved local files
+        run: |
+          mkdir -p "$RUNNER_TEMP/controls-before" "$RUNNER_TEMP/controls-after" "$RUNNER_TEMP/controls-report"
+          git archive "$BASE" | tar -x -C "$RUNNER_TEMP/controls-before"
+          cp -a "$RUNNER_TEMP/controls-before/." "$RUNNER_TEMP/controls-after/"
+          python maintenance/apply_controls_v93.py "$RUNNER_TEMP/controls-after"
+          python -c 'import pathlib,re,os; s=pathlib.Path(os.environ["RUNNER_TEMP"],"controls-after/index.html").read_text(); pathlib.Path(os.environ["RUNNER_TEMP"],"app.js").write_text(re.findall(r"<script[^>]*>([\s\S]*?)</script>",s)[-1])'
+          node --check "$RUNNER_TEMP/app.js"
+      - name: Wait for published version when verifying production
+        if: env.LIVE_URL != ''
+        run: |
+          python - <<'PY'
+          import os,time,hashlib,urllib.request
+          expected='59ef1f9c7b890cfceb8772919ba78151d8e7f23c4ec332dfca48a420d9cb3f88'
+          for attempt in range(24):
+            try:
+              with urllib.request.urlopen(urllib.request.Request(os.environ['LIVE_URL'],headers={'Cache-Control':'no-cache'}),timeout=15) as r:
+                if r.status==200 and hashlib.sha256(r.read()).hexdigest()==expected:
+                  print('Exact approved source is published')
+                  break
+            except Exception as e:
+              print(type(e).__name__)
+            time.sleep(5)
+          else:
+            raise SystemExit('Published source does not match approved files')
+          PY
+      - name: Verify buttons, existing cycles, stored records and backups
+        run: python maintenance/test_controls_v93.py "$RUNNER_TEMP/controls-before" "$RUNNER_TEMP/controls-after" "$RUNNER_TEMP/controls-report"
+      - name: Prepare tested candidate without changing main
+        if: env.LIVE_URL == ''
+        run: |
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$BASE"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/controls-index"
+          git read-tree "$BASE"
+          for path in index.html sw.js; do
+            blob=$(git hash-object -w "$RUNNER_TEMP/controls-after/$path")
+            git update-index --add --cacheinfo "100644,$blob,$path"
+          done
+          tree=$(git write-tree)
+          git config user.name 'sonia6891'
+          git config user.email '107385898+sonia6891@users.noreply.github.com'
+          candidate=$(printf '%s\n' 'Use approved single schedule dropdown and direct cycle buttons (v93)' | git commit-tree "$tree" -p "$BASE")
+          git push origin "$candidate:refs/heads/repair/schedule-controls-candidate-v93"
+          echo "$candidate" > "$RUNNER_TEMP/controls-report/candidate-sha.txt"
+          git diff --stat "$BASE" "$candidate" > "$RUNNER_TEMP/controls-report/diff-stat.txt"
+      - name: Save verification results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: schedule-controls-v93-verification
+          path: ${{ runner.temp }}/controls-report
+          retention-days: 7
