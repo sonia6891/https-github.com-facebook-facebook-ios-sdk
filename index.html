@@ -11,9 +11,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=112">
+<link rel="manifest" href="./manifest.webmanifest?v=113">
 <link rel="shortcut icon" type="image/jpeg" href="./app-icon-512.jpg?v=8">
 <title>喵的，又要上班了</title>
+<meta name="meow-ui-build" content="v113-framed-welcome">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -450,10 +451,11 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
 <link rel="apple-touch-icon-precomposed" sizes="120x120" href="./workcat-home-v12.png">
 <link rel="icon" type="image/png" sizes="120x120" href="./workcat-home-v12.png">
 <style id="meow-welcome-styles">
-/* The welcome screen shares the application's cream/apricot/brown palette. */
-.meow-welcome{padding:0;border:0;max-width:none;max-height:none;width:100%;height:100dvh;inset:0;margin:0;background:var(--bg);color:var(--ink);overflow:auto;overscroll-behavior:contain}
-.meow-welcome::backdrop{background:var(--bg)}
-.welcome-sheet{max-width:460px;margin:0 auto;min-height:100%;background:#fff9f1;padding-top:env(safe-area-inset-top);padding-bottom:max(14px,env(safe-area-inset-bottom));color:#3c1c15}
+/* Framed welcome card: device safe areas stay outside the scrollable card. */
+.meow-welcome{padding:0;border:2px solid #fffdf8;border-radius:28px;width:calc(100% - 32px);max-width:460px;height:auto;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));inset:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);margin:auto;background:#fff9f1;color:var(--ink);overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-shadow:0 18px 60px rgba(96,60,34,.17),0 0 0 1px rgba(195,150,109,.2)}
+.meow-welcome::backdrop{background:rgba(244,233,217,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+html.meow-welcome-open,html.meow-welcome-open body{overflow:hidden}
+.welcome-sheet{width:100%;margin:0;background:#fff9f1;padding:0 0 18px;color:#3c1c15}
 .welcome-art{display:block;width:100%;height:auto;object-fit:contain}
 .welcome-content{padding:0 20px 6px}.welcome-actions{display:grid;gap:10px}
 .welcome-button{position:relative;min-height:50px;width:100%;display:grid;grid-template-columns:28px 1fr 14px;align-items:center;gap:12px;padding:12px 20px;border-radius:16px;font-size:17px;font-weight:750;line-height:1.4;border:1px solid #dedbd5;background:#fff;color:#202632;text-align:center;box-shadow:0 2px 5px rgba(111,70,43,.025)}
@@ -467,7 +469,9 @@ html.dark .rotation-dialog,html.dark .schedule-plan-header>select{color-scheme:d
 .welcome-email-fields{padding:13px;background:#fff3e3;border:1px solid #ecd7bf;border-radius:16px;display:grid;gap:9px}.welcome-email-fields label{font-size:13px;display:block;margin:4px 0}.welcome-email-fields input{width:100%;min-height:44px;padding:10px;border-radius:10px;border:1px solid #d9c1a9;background:#fff;color:#3c1c15;font-size:16px}.welcome-email-fields .btn{width:100%;margin-top:6px}
 .sync-detail{font-size:12px;line-height:1.65;margin-top:8px;color:var(--muted)}.sync-status-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.sync-conflict{border:1px solid #e4a04f;padding:12px;border-radius:12px;margin-top:12px;background:var(--orangeSoft)}
 @media(max-width:350px){.welcome-content{padding-left:14px;padding-right:14px}.welcome-button{font-size:15px}.welcome-benefits b{font-size:11px}.welcome-benefits p{font-size:10px}}
-@media(min-width:761px){.meow-welcome{background:#f0e6da}.welcome-sheet{box-shadow:0 0 60px #6e49311a}}
+@media(min-width:761px){.meow-welcome{max-height:calc(100dvh - 64px)}}
+html.dark .meow-welcome{background:#241d19;border-color:#645044;box-shadow:0 18px 60px #0006}
+html.dark .meow-welcome::backdrop{background:rgba(28,22,18,.85)}
 html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-local,html.dark .welcome-foot,html.dark .welcome-apple-note,html.dark .welcome-benefits p{color:#d5beaf}html.dark .welcome-divider{color:#d5beaf}html.dark .welcome-benefit-icon{background:#493322}html.dark .welcome-guest{background:#483322;color:#ffd49b}html.dark .welcome-email{background:#3b302a;color:#fff4eb}
 .welcome-benefit-icon svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
@@ -1074,7 +1078,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 
 <dialog id="welcomeDialog" class="meow-welcome" aria-labelledby="welcomeTitle">
   <div class="welcome-sheet">
-    <h1 id="welcomeTitle" class="welcome-sr">喵的，又要上班了</h1>
+    <h1 id="welcomeTitle" class="welcome-sr" tabindex="-1">喵的，又要上班了</h1>
     <img class="welcome-art" src="./assets/welcome-brand-v112.webp" alt="灰色厭世貓戴著領帶，托腮坐在辦公桌前。喵的，又要上班了：把班表、薪資和休假，好好記下來。" width="540" height="360">
     <div class="welcome-content">
       <div class="welcome-actions">
@@ -1288,6 +1292,8 @@ async function getAuthClient(){
 }
 // Account identity, local workspaces and Pro cloud access are independent.
 const WELCOME_KEY='meow-work-welcome-v1',OWNER_KEY='meow-work-local-owner-v1';
+// Separate UI acknowledgement; never clear account, workspace or saved data.
+const WELCOME_FRAME_KEY='meow-work-welcome-frame-v1';
 let localOwner=readSnapshotOwner()||readLocalString(OWNER_KEY)||'guest';
 let accessEpoch=0,accessCheckedUser='',accessServerMs=0,accessLocalMs=0;
 let cloudRevision=null,cloudPayload=null,cloudReady=false,cloudStatus='未啟用・Pro 專屬';
@@ -1466,6 +1472,7 @@ async function handleSignedIn(user){
   authUser=user;
   if(!switchWorkspace(user.id)){setAccountStatus('已登入，但工作區尚未切換；雲端未啟用');return}
   setAccountStatus('已登入・正在確認方案');
+  if($('welcomeDialog').open)$('welcomeGuestText').textContent='返回 App';
   if(!welcomeManual)finishWelcome();
   await loadEntitlement();
   if(authUser&&authUser.id===user.id){await loadBillingHistory();setAccountStatus('帳號已登入');renderSettings()}
@@ -1527,20 +1534,27 @@ function renderSyncStatus(){
   if($('saveState'))$('saveState').textContent=localSaveError?'本機儲存失敗，請匯出備份後檢查空間':(lastSavedAt?'本機已儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'資料會自動保存在這台裝置');
 }
 function finishWelcome(){
-  try{localStorage.setItem(WELCOME_KEY,'done')}catch(e){}
-  if($('welcomeDialog').open)$('welcomeDialog').close();welcomeManual=false;
+  try{localStorage.setItem(WELCOME_KEY,'done');localStorage.setItem(WELCOME_FRAME_KEY,'done')}catch(e){}
+  if($('welcomeDialog').open)$('welcomeDialog').close();
+  document.documentElement.classList.remove('meow-welcome-open');welcomeManual=false;
+  // A preview URL is one-use; preserve every unrelated query parameter/hash.
+  try{const url=new URL(location.href);if(url.searchParams.get('welcome')==='1'){url.searchParams.delete('welcome');history.replaceState(history.state,'',url.href)}}catch(e){}
 }
 function openWelcome(manual=false){
   welcomeManual=manual;$('welcomeGuestText').textContent=authUser?'返回 App':'先使用，不登入';$('welcomeMessage').textContent='';
-  if(!$('welcomeDialog').open)$('welcomeDialog').showModal();$('welcomeDialog').scrollTop=0;
+  document.documentElement.classList.add('meow-welcome-open');
+  if(!$('welcomeDialog').open)$('welcomeDialog').showModal();
+  $('welcomeTitle').focus({preventScroll:true});$('welcomeDialog').scrollTop=0;
 }
 async function initWelcome(){
-  const force=new URLSearchParams(location.search).get('welcome')==='1';
-  const first=!readLocalString(WELCOME_KEY)&&!readLocalString(SAVE_KEY);
-  if(force||first)openWelcome(force);
-  else if(!readLocalString(WELCOME_KEY)){try{localStorage.setItem(WELCOME_KEY,'done')}catch(e){}}
+  const params=new URLSearchParams(location.search),force=params.get('welcome')==='1';
+  const returningFromAuth=params.has('code')||/(?:^#|&)(?:access_token|error|error_description)=/.test(location.hash);
+  // Show the new card once even on an existing v112 installation. A restored
+  // session must not dismiss it before the person can see it or switch accounts.
+  if(force||readLocalString(WELCOME_FRAME_KEY)!=='done')openWelcome(force||!returningFromAuth);
   $('welcomeGuest').onclick=finishWelcome;
   $('welcomeDialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome()});
+  $('welcomeDialog').addEventListener('close',()=>document.documentElement.classList.remove('meow-welcome-open'));
   $('welcomeGoogle').onclick=async()=>{welcomeManual=false;const b=$('welcomeGoogle');b.disabled=true;try{await signInWithGoogle()}finally{b.disabled=false}};
   $('welcomeEmail').onclick=()=>{const open=$('welcomeEmailFields').hidden;$('welcomeEmailFields').hidden=!open;$('welcomeEmail').setAttribute('aria-expanded',String(open));if(open)$('welcomeEmailInput').focus()};
   $('welcomeSendOtp').onclick=async()=>{const b=$('welcomeSendOtp');b.disabled=true;try{$('emailLoginInput').value=$('welcomeEmailInput').value;await sendEmailOtp();$('welcomeOtpFields').hidden=$('otpPanel').classList.contains('hidden')}finally{b.disabled=false}};
@@ -4001,7 +4015,7 @@ try{
 }catch(e){}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v112';
+    const reloadKey='meow-sw-reloaded-v113';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -4010,7 +4024,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=112',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=113',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
