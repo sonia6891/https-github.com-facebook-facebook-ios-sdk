@@ -41,7 +41,7 @@ def check(name,value):
 
 def opened(page):return page.locator('#welcomeDialog').evaluate('x=>x.open')
 def ready(page):
- page.wait_for_function('window.__logoutApi && window.__authCallback');page.wait_for_timeout(180)
+ page.wait_for_function('Boolean(window.__logoutApi && window.__authCallback)');page.wait_for_timeout(180)
 def settings(page):page.locator('[data-tab="settings"]:visible').first.click()
 def logout(page):
  settings(page);page.locator('#accountLogout').click();page.wait_for_function('!window.__logoutApi.getUser() && document.getElementById("welcomeDialog").open')
