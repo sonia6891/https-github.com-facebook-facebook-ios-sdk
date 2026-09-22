@@ -1,7 +1,7 @@
 name: Verify Free final overtime source v101
 on:
   push:
-    branches: ["fix/free-final-overtime-source-v101"]
+    branches: ["fix/free-final-overtime-source-v101", "fix/free-final-overtime-source-v101-run"]
 permissions:
   contents: write
 jobs:
