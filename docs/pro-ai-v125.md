@@ -43,6 +43,7 @@ AI 不得自行改寫 App 已算出的薪資數字，也不得自行判定公司
 - 後端會再次呼叫 `meow_account_access` 驗證 Pro entitlement
 - 目前允許 `plan=pro` 且 `status=active/trialing` 且 `pro_until` 尚未到期
 - OpenAI API key 只放在 Supabase Edge Function Secret，不寫入 GitHub、PWA 或原生 App
+- AI 用量寫入也只由 Edge Function 的 `SUPABASE_SERVICE_ROLE_KEY` 執行
 - 輸入 context 上限 120,000 字元
 - 圖片 Data URL 上限 12,000,000 字元
 - 只接受 JPEG／PNG／WebP
@@ -116,7 +117,8 @@ AI 回傳欄位限制在：
 - AI 文字分析／問答：每月 100 次
 - 月份依 Asia/Taipei 計算
 - 額度由 `public.ai_usage_monthly` 紀錄
-- `meow_claim_ai_usage(mode)` 原子遞增並回傳剩餘次數
+- `meow_claim_ai_usage(user_id, mode)` 原子遞增並回傳剩餘次數
+- 此 RPC 僅授權 `service_role`；App 使用者無法直接呼叫或竄改用量
 - 前端成功後顯示本月剩餘額度
 
 這是 v1 成本保護值；上架後應依真實 API 成本與使用率調整。
