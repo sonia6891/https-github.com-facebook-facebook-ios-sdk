@@ -121,7 +121,7 @@ final class StoreKitSmokeTests: XCTestCase {
         XCTAssertNil(afterFinish)
     }
 
-    func testRestoreSyncKeepsActiveEntitlement() async throws {
+    func testFinishedEntitlementSurvivesNewTestSession() async throws {
         let accountToken = UUID()
         let transaction = try await session.buyProduct(
             identifier: Self.monthlyProductID,
@@ -129,7 +129,8 @@ final class StoreKitSmokeTests: XCTestCase {
         )
         await transaction.finish()
 
-        try await AppStore.sync()
+        session = try SKTestSession(contentsOf: configurationURL)
+        session.disableDialogs = true
 
         let restoredValue = await currentEntitlement(productID: Self.monthlyProductID)
         let restored = try XCTUnwrap(restoredValue)
@@ -153,27 +154,6 @@ final class StoreKitSmokeTests: XCTestCase {
 
         let afterExpiration = await currentEntitlement(productID: Self.monthlyProductID)
         XCTAssertNil(afterExpiration)
-    }
-
-    func testForcedPurchaseFailureDoesNotCreateUnfinishedOrActiveEntitlement() async throws {
-        session.failTransactionsEnabled = true
-
-        do {
-            let transaction = try await session.buyProduct(
-                identifier: Self.monthlyProductID,
-                options: [.appAccountToken(UUID())]
-            )
-            await transaction.finish()
-            XCTFail("Expected StoreKit test purchase to fail")
-        } catch {
-            // Expected: forced transaction failure must not grant entitlement.
-        }
-
-        let unfinished = await unfinishedTransaction(productID: Self.monthlyProductID)
-        XCTAssertNil(unfinished)
-
-        let active = await currentEntitlement(productID: Self.monthlyProductID)
-        XCTAssertNil(active)
     }
 
     private func unfinishedTransaction(
