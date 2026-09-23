@@ -46,3 +46,6 @@ jobs:
           grep -q 'TARGETED_DEVICE_FAMILY = 1;' native/ios/App/App.xcodeproj/project.pbxproj
           grep -q 'NSCameraUsageDescription' native/ios/App/App/Info.plist
           grep -q 'NSPhotoLibraryUsageDescription' native/ios/App/App/Info.plist
+          test -f native/ios-sources/LaunchScreen.storyboard
+          grep -q '0.9764705882' native/ios-sources/LaunchScreen.storyboard
+          test -s app-icon-v115-512.png
