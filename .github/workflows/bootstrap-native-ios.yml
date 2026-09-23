@@ -94,6 +94,9 @@ jobs:
           grep -q 'NSPrivacyCollectedDataTypePhotosorVideos' ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'NSPrivacyCollectedDataTypeOtherUserContent' ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'PrivacyInfo.xcprivacy in Resources' ios/App/App.xcodeproj/project.pbxproj
+          test -f ios/App/App/App.entitlements
+          grep -q 'com.apple.developer.applesignin' ios/App/App/App.entitlements
+          grep -q 'CODE_SIGN_ENTITLEMENTS = App/App.entitlements;' ios/App/App.xcodeproj/project.pbxproj
           if grep -q 'ViewController.swift in Sources' ios/App/App.xcodeproj/project.pbxproj; then
             echo "Unexpected duplicate ViewController source reference"
             exit 1
