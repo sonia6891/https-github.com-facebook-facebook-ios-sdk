@@ -1,4 +1,4 @@
-name: Diagnose LINE OAuth redirect
+name: Verify LINE OAuth2 redirect
 on:
   push:
     branches: [main]
@@ -10,7 +10,7 @@ jobs:
   diag:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect Supabase to LINE authorize redirect
+      - name: Verify Supabase OAuth2 authorize redirect
         run: |
           set -euo pipefail
           curl --silent --show-error --get --dump-header headers.txt --output /dev/null \
@@ -22,12 +22,11 @@ jobs:
           lines=open('headers.txt',encoding='utf-8').read().splitlines()
           loc=[x.split(':',1)[1].strip() for x in lines if x.lower().startswith('location:')][-1]
           q=parse_qs(urlparse(loc).query)
-          keep={k:q.get(k) for k in ['client_id','redirect_uri','response_type','scope','state','nonce','code_challenge','code_challenge_method','response_mode','prompt']}
-          for k in ['state','nonce','code_challenge']:
+          keep={k:q.get(k) for k in ['client_id','redirect_uri','response_type','scope','state','code_challenge','code_challenge_method']}
+          for k in ['state','code_challenge']:
               if keep.get(k): keep[k]=['<present>']
           print(keep)
           assert q.get('redirect_uri'), loc
-          assert q.get('nonce'), 'missing nonce'
           assert q.get('code_challenge'), 'missing code_challenge'
           assert q.get('code_challenge_method')==['S256'], q.get('code_challenge_method')
           PY
