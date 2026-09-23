@@ -3388,6 +3388,7 @@ function fuzzyAliasInText(text,alias){
 }
 function ocrFieldContextAllowed(def,text){
   const t=normalizeOcrText(text);
+  if(def.key==='dedHealthExtra'&&!/(補|補充|二代|追補|補繳|補收)/.test(t))return false;
   const employer=/(雇主|僱主|公司|單位)(負擔|提撥|提繳|提存|負擔額)|雇提|僱提|公司提撥|公司提繳|單位提撥/;
   if(['dedPension','dedLabor','dedHealth'].includes(def.key)&&employer.test(t))return false;
   if(def.key==='dedPension'&&/(新制雇主|勞退雇主|雇主退休金)/.test(t))return false;
