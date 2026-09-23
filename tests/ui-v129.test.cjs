@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v146-attendance-add-chooser'),'expected v146 attendance add chooser build');
+assert(html.includes('v147-todo-complete-visible'),'expected v147 todo completion visibility build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -103,3 +103,8 @@ assert(html.includes("attendanceAddEvent').onclick"),'chooser event action missi
 assert(html.includes("attendanceAddTodo').onclick"),'chooser todo action missing');
 assert(!html.includes('<div class="empty-plus">＋</div>'),'empty-state decorative plus should be removed');
 console.log('PASS v146 attendance add chooser structure');
+
+
+assert(html.includes("todoShowCompleted=true"),'completed todos should be visible by default');
+assert(html.includes(".todo-card-v142.completed{\n  opacity:.78;\n  order:2;"),'completed todo visual state missing');
+console.log('PASS v147 completed todos remain visible');
