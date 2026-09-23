@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v147-todo-complete-visible'),'expected v147 todo completion visibility build');
+assert(html.includes('v148-local-reminders'),'expected v148 local reminders build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -108,3 +108,21 @@ console.log('PASS v146 attendance add chooser structure');
 assert(html.includes("todoShowCompleted=true"),'completed todos should be visible by default');
 assert(html.includes(".todo-card-v142.completed{\n  opacity:.78;\n  order:2;"),'completed todo visual state missing');
 console.log('PASS v147 completed todos remain visible');
+
+
+for(const id of ['eventReminder','todoReminder']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert(html.includes('<option value="3d">前 3 天</option>'),'event reminder 3-day option missing');
+assert(html.includes('<option value="1d">前 1 天</option>'),'event reminder 1-day option missing');
+assert(html.includes('<option value="1h">前 1 小時</option>'),'event reminder 1-hour option missing');
+assert(html.includes('<option value="1d">前 1 天・上午 9:00</option>'),'todo reminder 1-day option missing');
+assert(html.includes("function reminderBridge()"),'native reminder bridge helper missing');
+assert(html.includes("function reminderFireDate(item)"),'reminder fire-date calculation missing');
+assert(html.includes("function scheduleItemReminder(item"),'reminder scheduling helper missing');
+assert(html.includes("function cancelItemReminder(kind,id)"),'reminder cancellation helper missing');
+assert(html.includes("void scheduleItemReminder(candidate)"),'event save must schedule reminder');
+assert(html.includes("void scheduleItemReminder(saved)"),'todo save must schedule reminder');
+assert(html.includes("void cancelItemReminder('event',editingEventId)"),'event delete must cancel reminder');
+assert(html.includes("void cancelItemReminder('todo',editingTodoId)"),'todo delete must cancel reminder');
+console.log('PASS v148 itinerary/todo reminders structure');
