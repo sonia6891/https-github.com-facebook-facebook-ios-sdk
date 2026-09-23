@@ -94,6 +94,11 @@ jobs:
           grep -q 'NSPrivacyCollectedDataTypePhotosorVideos' ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'NSPrivacyCollectedDataTypeOtherUserContent' ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'PrivacyInfo.xcprivacy in Resources' ios/App/App.xcodeproj/project.pbxproj
+          grep -q 'TARGETED_DEVICE_FAMILY = 1;' ios/App/App.xcodeproj/project.pbxproj
+          if grep -q 'TARGETED_DEVICE_FAMILY = "1,2";' ios/App/App.xcodeproj/project.pbxproj; then
+            echo "v1 must remain iPhone-only until iPad UI is separately validated."
+            exit 1
+          fi
           if grep -q 'ViewController.swift in Sources' ios/App/App.xcodeproj/project.pbxproj; then
             echo "Unexpected duplicate ViewController source reference"
             exit 1
