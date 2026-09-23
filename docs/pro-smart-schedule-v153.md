@@ -53,32 +53,14 @@ Pro 的價值來自便利性與隱私，不靠雲端 API 補貼。
 - 建議使用者先裁切，只保留日期與自己的班表列。
 - 所有結果都必須先預覽，不自動覆蓋請假或加班紀錄。
 
-## 現在唯一使用 OpenAI 的功能
+## 雲端 AI 狀態
 
-目前只有 `assistant`（喵助理問答）會使用 App 擁有者設定的 OpenAI API Key。
+正式版不再使用 OpenAI API。
 
-- 喵助理每位 Pro 使用者每月最多 20 次。
-- 薪資單辨識改用既有本機 OCR。
-- 薪資差異說明改由 App 本機比較預估與實際數值。
-- 本月薪資預測改由 App 已有公式與本機摘要產生。
-- 異常掃描改為本機「變動提醒」，只比較使用者已輸入的數值，不做法律或公司制度判定。
+- 「喵助理／Pro AI 工作助理」已移除。
+- 智慧匯入班表：Apple Vision 本機處理。
+- 薪資單辨識：Apple Vision 本機處理；非 iOS 使用本機 Tesseract fallback。
+- 逐項薪資對帳：App 本機數值比較與對帳結論。
+- Supabase `pro-ai` version 10 僅為舊版相容端點，固定回傳 `FEATURE_REMOVED`。
 
-因此高頻工作流程不再產生 OpenAI API 邊際成本；雲端 AI 成本只剩低頻、有限額的喵助理。
-
-
-## 喵助理成本與塞車保護
-
-唯一的雲端 AI「喵助理」目前有以下保護：
-
-- 每位 Pro 使用者：每月 20 次。
-- 全 App 月度保險絲：預設 10,000 次請求。
-- 全 App token 保險絲：預設每月 50,000,000 tokens。
-- 正式模型固定：`gpt-5.6-luna`。
-- 單次 App context 上限：30,000 字元。
-- 單次模型輸出上限：1,200 tokens。
-- OpenAI 回傳的 `input_tokens`／`output_tokens` 會寫入月度用量表。
-- 暫時性 429／5xx 最多短重試兩次；429 有短 `Retry-After` 時會遵守並加 jitter。
-- 最終失敗會退回使用者該次月額度，不讓使用者為服務失敗白白少一次。
-- 若 OpenAI 要求長時間等待，App 直接回覆服務忙碌，不讓畫面長時間卡住。
-
-全 App 上限可透過 `AI_GLOBAL_MONTHLY_CALL_LIMIT` 與 `AI_GLOBAL_MONTHLY_TOKEN_LIMIT` 調整；不要直接移除保險絲。
+因此目前班表與薪資 Pro 核心功能沒有 OpenAI API 使用費，也沒有 OpenAI rate limit 塞車風險。
