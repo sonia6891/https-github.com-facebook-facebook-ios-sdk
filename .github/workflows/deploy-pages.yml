@@ -8,7 +8,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: pages-production-v123
+  group: pages-production-v124
   cancel-in-progress: true
 jobs:
   deploy:
@@ -89,10 +89,16 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v123-line-single-window' in html
+          assert 'v124-store-subscriptions' in html
           assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           assert "const LINE_PROVIDER_ID='custom:line'" in html
           assert "scopes:'openid profile'" in html
+          assert '3 天免費試用' in html
+          assert 'NT$99' in html and 'NT$790' in html
+          assert 'App Store／Google Play' in html
+          assert "create-ecpay-checkout" not in html
+          assert "start-pro-trial" not in html
+          assert "window.MeowStoreBilling" in html
           assert 'class="auth-booting"' in html
           assert "window.open('about:blank','meow-auth-window')" not in html
           assert "client.auth.setSession({" not in html
@@ -109,6 +115,12 @@ jobs:
           assert "from('user_legacy_exports').select('payload,original_updated_at')" in html
           api=re.search(r"const SUPABASE_URL='([^']+)'",html).group(1)
           key=re.search(r"const SUPABASE_KEY='([^']+)'",html).group(1)
+          with urllib.request.urlopen(api+'/functions/v1/billing-config',timeout=15) as response:
+              billing=json.load(response)
+          assert billing.get('provider')=='app_store_play', billing
+          assert billing.get('trial_days')==3, billing
+          assert billing.get('monthly')==99 and billing.get('yearly')==790, billing
+          result['billing_config']=billing
           try:
               req=urllib.request.Request(api+'/auth/v1/settings',headers={'apikey':key})
               with urllib.request.urlopen(req,timeout=15) as response:
@@ -125,6 +137,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v123-line-single-window-verification
+          name: meow-v124-store-subscriptions-verification
           path: test-results/
           retention-days: 3
