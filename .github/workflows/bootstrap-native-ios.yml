@@ -100,6 +100,11 @@ jobs:
           test -f ios/App/App/App.entitlements
           grep -q 'com.apple.developer.applesignin' ios/App/App/App.entitlements
           grep -q 'CODE_SIGN_ENTITLEMENTS = App/App.entitlements;' ios/App/App.xcodeproj/project.pbxproj
+          grep -q 'TARGETED_DEVICE_FAMILY = 1;' ios/App/App.xcodeproj/project.pbxproj
+          if grep -q 'TARGETED_DEVICE_FAMILY = "1,2";' ios/App/App.xcodeproj/project.pbxproj; then
+            echo "Unexpected iPad support in iPhone-only v1 target"
+            exit 1
+          fi
           if grep -q 'ViewController.swift in Sources' ios/App/App.xcodeproj/project.pbxproj; then
             echo "Unexpected duplicate ViewController source reference"
             exit 1
