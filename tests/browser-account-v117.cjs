@@ -128,7 +128,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV119.openWelcome()));
     check('登入頁已具備 Google、LINE、Apple 三個登入入口結構', await guest.locator('#welcomeGoogle, #welcomeLine, #welcomeApple').count() === 3);
     check('Apple provider 尚未完成外部設定前不公開失敗入口', await guest.locator('#welcomeApple').isHidden());
-    check('沒有訪客登入入口', await guest.locator('#welcomeGuest').count() === 0);
+    check('免費基本功能可不登入直接使用', await guest.locator('#welcomeGuest').count() === 1 && await guest.locator('#welcomeGuest').isVisible());
     check('沒有公開 Email 或 OTP 入口', await guest.locator('#welcomeEmail, #emailLoginInput, #emailOtpInput, #sendEmailOtp, #verifyEmailOtp').count() === 0);
     await guest.locator('#welcomeGoogle').click();
     check('Google 按鈕使用 google provider', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'google'));
@@ -136,6 +136,10 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('LINE 按鈕使用 custom:line', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line'));
     check('LINE 要求 openid profile', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.scopes === 'openid profile'));
     check('Apple OAuth 程式端已鎖定 apple provider', html.includes("provider:'apple'"));
+    await guest.locator('#welcomeGuest').click();
+    check('先使用免費版會關閉強制登入頁', !(await guest.evaluate(() => window.__accountV119.openWelcome())));
+    check('未登入免費版不會取得雲端同步', await guest.evaluate(() => !window.__accountV119.canCloudSync()));
+    check('未登入免費版不會誤開 Pro 功能', await guest.evaluate(() => !window.__accountV119.canUse('payslip_scan')));
     await guestContext.close();
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
