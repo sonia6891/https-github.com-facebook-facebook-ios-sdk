@@ -10,6 +10,8 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "getProducts", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "purchase", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "finishTransaction", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "getUnfinishedTransactions", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "restorePurchases", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "getCurrentEntitlements", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "manageSubscriptions", returnType: CAPPluginReturnPromise)
@@ -19,6 +21,33 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
         "meowwork.pro.monthly",
         "meowwork.pro.yearly"
     ]
+
+    private var transactionUpdatesTask: Task<Void, Never>?
+
+    override public func load() {
+        super.load()
+        transactionUpdatesTask = Task { [weak self] in
+            for await result in StoreKit.Transaction.updates {
+                guard let self else { return }
+                guard case .verified(let transaction) = result,
+                      self.productIDs.contains(transaction.productID) else { continue }
+
+                self.notifyListeners(
+                    "transactionUpdated",
+                    data: [
+                        "platform": "ios",
+                        "transaction": self.transactionPayload(transaction),
+                        "signedTransaction": result.jwsRepresentation
+                    ],
+                    retainUntilConsumed: true
+                )
+            }
+        }
+    }
+
+    deinit {
+        transactionUpdatesTask?.cancel()
+    }
 
     @objc func getProducts(_ call: CAPPluginCall) {
         Task {
@@ -56,7 +85,7 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
             do {
                 let products = try await Product.products(for: [productID])
                 guard let product = products.first else {
-                    call.reject("Product not found in App Store Connect")
+                    call.reject("Product not found in App Store Connect or StoreKit test configuration")
                     return
                 }
 
@@ -64,18 +93,17 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
                 switch result {
                 case .success(let verification):
                     guard case .verified(let transaction) = verification else {
-                        call.reject("App Store transaction could not be verified")
+                        call.reject("App Store transaction could not be verified on device")
                         return
                     }
 
-                    let response = transactionPayload(transaction)
-                    let signedTransaction = verification.jwsRepresentation
-                    await transaction.finish()
+                    // Do NOT finish here. The web layer sends the JWS to the
+                    // Supabase verifier first, then calls finishTransaction().
                     call.resolve([
                         "cancelled": false,
                         "platform": "ios",
-                        "transaction": response,
-                        "signedTransaction": signedTransaction
+                        "transaction": transactionPayload(transaction),
+                        "signedTransaction": verification.jwsRepresentation
                     ])
 
                 case .pending:
@@ -97,6 +125,43 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
             } catch {
                 call.reject("App Store purchase failed", nil, error)
             }
+        }
+    }
+
+    @objc func finishTransaction(_ call: CAPPluginCall) {
+        guard let rawID = call.getString("transactionId"),
+              let transactionID = UInt64(rawID) else {
+            call.reject("Missing or invalid transactionId")
+            return
+        }
+
+        Task {
+            for await result in StoreKit.Transaction.unfinished {
+                guard case .verified(let transaction) = result else { continue }
+                guard transaction.id == transactionID else { continue }
+                await transaction.finish()
+                call.resolve(["finished": true, "transactionId": rawID])
+                return
+            }
+            // It may already be finished by a prior successful retry.
+            call.resolve(["finished": true, "alreadyFinished": true, "transactionId": rawID])
+        }
+    }
+
+    @objc func getUnfinishedTransactions(_ call: CAPPluginCall) {
+        Task {
+            var values: [[String: Any]] = []
+            for await result in StoreKit.Transaction.unfinished {
+                guard case .verified(let transaction) = result,
+                      productIDs.contains(transaction.productID) else { continue }
+                var payload = transactionPayload(transaction)
+                payload["signedTransaction"] = result.jwsRepresentation
+                values.append(payload)
+            }
+            call.resolve([
+                "platform": "ios",
+                "transactions": values
+            ])
         }
     }
 
@@ -142,7 +207,7 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
 
     private func currentEntitlementPayloads() async -> [[String: Any]] {
         var values: [[String: Any]] = []
-        for await result in Transaction.currentEntitlements {
+        for await result in StoreKit.Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
                   productIDs.contains(transaction.productID) else { continue }
             var payload = transactionPayload(transaction)
