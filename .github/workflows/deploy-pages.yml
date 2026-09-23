@@ -55,7 +55,7 @@ jobs:
       - name: Stage public application files only
         run: |
           mkdir -p _site
-          cp index.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v115-180.png app-icon-v115-192.png app-icon-v115-512.png _site/
+          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v115-180.png app-icon-v115-192.png app-icon-v115-512.png _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
       - name: Setup Pages
@@ -76,7 +76,7 @@ jobs:
           import hashlib,json,os,re,time,urllib.request,urllib.error
           result={'commit':os.environ['GITHUB_SHA'],'files':{}}
           base=os.environ['PAGE_URL']
-          for name in ['index.html','sw.js','manifest.webmanifest','app-icon-v115-180.png','app-icon-v115-192.png','app-icon-v115-512.png','assets/welcome-brand-v112.webp']:
+          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v115-180.png','app-icon-v115-192.png','app-icon-v115-512.png','assets/welcome-brand-v112.webp']:
               expected=hashlib.sha256(Path(name).read_bytes()).hexdigest()
               url=base+name+'?build-check='+os.environ['GITHUB_SHA']
               for attempt in range(10):
@@ -115,6 +115,11 @@ jobs:
           assert "storeDisplayPrice" in html
           assert "eligibleForIntroOffer" in html
           assert 'id="proTrialOfferHint"' in html
+          assert 'id="deleteAccount"' in html
+          assert "invokeUserFunction('delete-account'" in html
+          assert 'href="./privacy.html"' in html
+          assert 'href="./terms.html"' in html
+          assert 'href="./support.html"' in html
           assert 'class="auth-booting"' in html
           assert "window.open('about:blank','meow-auth-window')" not in html
           assert "client.auth.setSession({" not in html
@@ -149,13 +154,20 @@ jobs:
               raise AssertionError('app-store-notifications-v2 should reject missing signedPayload')
           except urllib.error.HTTPError as error:
               assert error.code==400, error.code
+          delete_req=urllib.request.Request(api+'/functions/v1/delete-account',data=b'{}',method='POST',headers={'Content-Type':'application/json'})
+          try:
+              urllib.request.urlopen(delete_req,timeout=15)
+              raise AssertionError('delete-account should reject anonymous request')
+          except urllib.error.HTTPError as error:
+              assert error.code==401, error.code
           result['apple_functions_online']=True
+          result['account_deletion_online']=True
           try:
               req=urllib.request.Request(api+'/auth/v1/settings',headers={'apikey':key})
               with urllib.request.urlopen(req,timeout=15) as response:
                   cfg=json.load(response)
               ext=cfg.get('external',{})
-              result['login_providers']={'google':bool(ext.get('google')),'line_custom_oidc':'custom:line' in html}
+              result['login_providers']={'google':bool(ext.get('google')),'apple':bool(ext.get('apple')),'line_custom_oidc':'custom:line' in html}
           except Exception as error:
               result['provider_check_error']=type(error).__name__
           result['published_files_verified']=True
