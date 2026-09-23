@@ -45,6 +45,9 @@ jobs:
       - name: Verify backend-before-finish gate
         run: node --test tests/storekit-verification-gate-v130.test.cjs
 
+      - name: Verify App Store Sandbox consistency
+        run: node --test tests/app-store-sandbox-preflight-v131.test.cjs
+
       - name: Install XcodeGen
         run: |
           brew install xcodegen
