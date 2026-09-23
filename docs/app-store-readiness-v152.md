@@ -101,7 +101,7 @@ App Store Connect 選「會收集資料」，依目前 App 功能至少檢查以
 - Purchases：Purchase History
 - Financial Info：Other Financial Info（薪資／扣款）
 - Health & Fitness：Health（病假／生理假等健康相關假別資料，若啟用雲端）
-- User Content：Photos or Videos（僅使用者主動使用薪資單雲端 AI 辨識時；智慧班表圖片留在本機）、Other User Content（班表／行程／待辦／備註）
+- User Content：Other User Content（班表／行程／待辦／備註，以及使用者主動詢問喵助理時所需的 App 摘要）
 
 目前用途：App Functionality。  
 與帳號連結：是（雲端／AI／訂閱流程）。  
@@ -154,12 +154,24 @@ CI 必須同時通過：
 
 - [x] 班表圖片匯入已改用 Apple Vision 在 iPhone 本機辨識
 - [x] 前端不再呼叫 OpenAI `schedule_scan`
-- [x] Supabase `pro-ai` version 6 已移除 `schedule_scan`
+- [x] Supabase `pro-ai` version 7 已只保留 `assistant`／`status`
 - [x] AI 用量 RPC 不再接受 `schedule_scan`
 - [x] 班表匯入 OpenAI API 邊際成本為 0
 - [x] 隱私政策已明確標示班表圖片不傳 Supabase／OpenAI
 - [x] Xcode Simulator／Release device build 均通過 Apple Vision bridge 編譯
 - [x] 瀏覽器 regression 已驗證本機解析器與無雲端 schedule scan
+
+## 2026-09-24 AI 成本收斂
+
+- [x] 雲端 AI 已收斂為只剩喵助理 `assistant`
+- [x] 喵助理 Pro 月額度：20 次
+- [x] 薪資單改用既有本機 OCR，不上傳 OpenAI
+- [x] 差異說明改成本機數值比較
+- [x] 本月預測改用 App 既有薪資公式與本機摘要
+- [x] 異常掃描改成本機「變動提醒」
+- [x] Supabase `pro-ai` version 7 僅允許 `assistant` / `status`
+- [x] `meow_claim_ai_usage` 僅允許 `assistant`，每月上限 20
+- [x] 高頻工作流程的 OpenAI API 邊際成本已降為 0
 
 ## 2026-09-24 v152 補強紀錄
 
