@@ -101,10 +101,10 @@ App Store Connect 選「會收集資料」，依目前 App 功能至少檢查以
 - Purchases：Purchase History
 - Financial Info：Other Financial Info（薪資／扣款）
 - Health & Fitness：Health（病假／生理假等健康相關假別資料，若啟用雲端）
-- User Content：Other User Content（班表／行程／待辦／備註，以及使用者主動詢問喵助理時所需的 App 摘要）
+- User Content：Other User Content（班表／行程／待辦／備註；僅在使用者主動啟用 Pro 雲端同步時上傳支援的工作資料）
 
 目前用途：App Functionality。  
-與帳號連結：是（雲端／AI／訂閱流程）。  
+與帳號連結：是（雲端同步／訂閱流程）。  
 Tracking：否。  
 本 App 不使用 ATT 追蹤，也沒有廣告追蹤用途。
 
@@ -123,7 +123,7 @@ CI 必須同時通過：
 
 - Pages UI/browser regression
 - LINE provider preflight
-- Pro AI preflight
+- Pro payroll intelligence preflight
 - StoreKit local purchase smoke
 - Capacitor native iOS bootstrap
 - Debug simulator build
@@ -137,7 +137,7 @@ CI 必須同時通過：
 ## 2026-09-24 最終自動驗證狀態
 
 - [x] LINE login + UI preflight：PASS
-- [x] Pro AI preflight：PASS
+- [x] Pro payroll intelligence preflight：PASS
 - [x] StoreKit local purchase smoke：PASS
 - [x] iOS Simulator build：PASS
 - [x] unsigned iPhoneOS Release build：PASS
@@ -150,28 +150,22 @@ CI 必須同時通過：
 
 目前程式端已進入「可接 App Store Connect / TestFlight 前置」狀態。正式送審仍需完成 Apple Developer、App Store Connect、Supabase Apple provider 與真實公開聯絡資訊等外部設定。
 
-## 2026-09-24 本機智慧班表成本調整
+## 2026-09-24 本機智慧辨識與薪資對帳定稿
 
-- [x] 班表圖片匯入已改用 Apple Vision 在 iPhone 本機辨識
-- [x] 前端不再呼叫 OpenAI `schedule_scan`
-- [x] Supabase `pro-ai` version 7 已只保留 `assistant`／`status`
-- [x] AI 用量 RPC 不再接受 `schedule_scan`
-- [x] 班表匯入 OpenAI API 邊際成本為 0
-- [x] 隱私政策已明確標示班表圖片不傳 Supabase／OpenAI
-- [x] Xcode Simulator／Release device build 均通過 Apple Vision bridge 編譯
-- [x] 瀏覽器 regression 已驗證本機解析器與無雲端 schedule scan
-
-## 2026-09-24 AI 成本收斂
-
-- [x] 雲端 AI 已收斂為只剩喵助理 `assistant`
-- [x] 喵助理 Pro 月額度：20 次
-- [x] 薪資單改用既有本機 OCR，不上傳 OpenAI
-- [x] 差異說明改成本機數值比較
-- [x] 本月預測改用 App 既有薪資公式與本機摘要
-- [x] 異常掃描改成本機「變動提醒」
-- [x] Supabase `pro-ai` version 7 僅允許 `assistant` / `status`
-- [x] `meow_claim_ai_usage` 僅允許 `assistant`，每月上限 20
-- [x] 高頻工作流程的 OpenAI API 邊際成本已降為 0
+- [x] 「喵助理／Pro AI 工作助理」已從第一版移除
+- [x] App 前端不再呼叫 `pro-ai`
+- [x] Supabase `pro-ai` version 10 為舊版相容端點，只回傳 `FEATURE_REMOVED`，不呼叫 OpenAI
+- [x] 正式版不需要 `OPENAI_API_KEY`
+- [x] 智慧匯入班表使用 Apple Vision 本機辨識
+- [x] 智慧匯入班表使用獨立 Pro entitlement `smart_schedule_import`
+- [x] iPhone 薪資單辨識改用 Apple Vision 為主要 OCR 引擎
+- [x] 非 iOS 薪資單辨識保留本機 Tesseract fallback
+- [x] 薪資單仍使用同義詞、欄位位置、格式記憶與 3 次影像交叉比對
+- [x] 逐項薪資對帳直接標示一致／少發／多發／多扣／少扣
+- [x] 對帳摘要以公司薪資單「實發金額」對 App 預估實領計算總差額
+- [x] 對帳結論會列出主要差異，並指出尚未被已辨識項目解釋的差額
+- [x] 班表與薪資辨識圖片不因這些功能上傳 OpenAI
+- [x] OpenAI API 邊際成本：0
 
 ## 2026-09-24 v152 補強紀錄
 
