@@ -174,6 +174,22 @@ function schemaFor(mode: string) {
   return assistantSchema;
 }
 
+function positiveIntegerEnv(name: string, fallback: number) {
+  const value = Number(Deno.env.get(name) || fallback);
+  return Number.isFinite(value) && value >= 1 ? Math.floor(value) : fallback;
+}
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function providerUsage(payload: any) {
+  return {
+    inputTokens: Math.max(0, Number(payload?.usage?.input_tokens) || 0),
+    outputTokens: Math.max(0, Number(payload?.usage?.output_tokens) || 0)
+  };
+}
+
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -272,19 +288,23 @@ Deno.serve(async (req: Request) => {
 
   if (mode === "status") {
     const apiKeyConfigured = !!Deno.env.get("OPENAI_API_KEY");
-    const configuredModel = Deno.env.get("OPENAI_MODEL") || "gpt-6-luna";
+    const configuredModel = Deno.env.get("OPENAI_MODEL") || "gpt-5.6-luna";
     return json({
       ok: true,
       mode,
       configured: apiKeyConfigured,
       model: configuredModel,
       privacy: { store: false },
-      quota: { assistant_monthly: 20 }
+      quota: {
+        assistant_monthly: 20,
+        app_monthly_calls: positiveIntegerEnv("AI_GLOBAL_MONTHLY_CALL_LIMIT", 10000),
+        app_monthly_tokens: positiveIntegerEnv("AI_GLOBAL_MONTHLY_TOKEN_LIMIT", 50000000)
+      }
     });
   }
 
   const contextString = JSON.stringify(body?.context ?? {});
-  if (contextString.length > 120000) return json({ ok: false, code: "CONTEXT_TOO_LARGE" }, 413);
+  if (contextString.length > 30000) return json({ ok: false, code: "CONTEXT_TOO_LARGE" }, 413);
 
   const apiKey = Deno.env.get("OPENAI_API_KEY") || "";
   if (!apiKey) return json({ ok: false, code: "AI_NOT_CONFIGURED" }, 503);
@@ -294,17 +314,35 @@ Deno.serve(async (req: Request) => {
   const adminClient = createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false }
   });
+  const globalCallLimit = positiveIntegerEnv("AI_GLOBAL_MONTHLY_CALL_LIMIT", 10000);
+  const globalTokenLimit = positiveIntegerEnv("AI_GLOBAL_MONTHLY_TOKEN_LIMIT", 50000000);
   const usageClaim = await adminClient.rpc("meow_claim_ai_usage", {
     p_user_id: user.id,
-    p_mode: mode
+    p_mode: mode,
+    p_global_limit: globalCallLimit,
+    p_global_token_limit: globalTokenLimit
   });
   if (usageClaim.error) return json({ ok: false, code: "AI_USAGE_CHECK_FAILED" }, 503);
   if (!usageClaim.data?.allowed) {
-    return json({ ok: false, code: "AI_QUOTA_EXCEEDED", usage: usageClaim.data }, 429);
+    const code = usageClaim.data?.reason === "GLOBAL_LIMIT"
+      ? "AI_GLOBAL_BUDGET_EXCEEDED"
+      : "AI_QUOTA_EXCEEDED";
+    return json({ ok: false, code, usage: usageClaim.data }, 429);
   }
   const usage = usageClaim.data;
 
-  const model = Deno.env.get("OPENAI_MODEL") || "gpt-6-luna";
+  const finalizeUsage = async (success: boolean, providerPayload: any = null) => {
+    const tokens = providerUsage(providerPayload);
+    const { error } = await adminClient.rpc("meow_finalize_ai_usage", {
+      p_user_id: user.id,
+      p_success: success,
+      p_input_tokens: tokens.inputTokens,
+      p_output_tokens: tokens.outputTokens
+    });
+    if (error) console.error("AI usage finalize failed", error.message);
+  };
+
+  const model = Deno.env.get("OPENAI_MODEL") || "gpt-5.6-luna";
   const systemPrompt = [
     "You are the Pro AI engine for the Taiwan shift-worker app '喵的，又要上班了'.",
     "Return only data matching the requested JSON schema.",
@@ -319,44 +357,62 @@ Deno.serve(async (req: Request) => {
   const userContent: any[] = [{
     type: "input_text",
     text: "MODE: " + mode + "\nAPP_CONTEXT_JSON:\n" + contextString +
-      (body?.question ? "\nUSER_QUESTION:\n" + String(body.question).slice(0, 4000) : "")
+      (body?.question ? "\nUSER_QUESTION:\n" + String(body.question).slice(0, 1000) : "")
   }];
 
   const safetyId = await safetyIdentifier(user.id);
-  let aiResponse: Response;
-  try {
-    aiResponse = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer " + apiKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model,
-        store: false,
-        safety_identifier: safetyId,
-        reasoning: { effort: reasoningEffort(mode) },
-        input: [
-          { role: "system", content: [{ type: "input_text", text: systemPrompt }] },
-          { role: "user", content: userContent }
-        ],
-        text: {
-          format: {
-            type: "json_schema",
-            name: "meow_pro_ai_" + mode,
-            strict: true,
-            schema: schemaFor(mode)
-          }
-        },
-        max_output_tokens: 1800
-      })
-    });
-  } catch {
-    return json({ ok: false, code: "AI_NETWORK_ERROR" }, 502);
-  }
+  const requestBody = JSON.stringify({
+    model,
+    store: false,
+    safety_identifier: safetyId,
+    reasoning: { effort: reasoningEffort(mode) },
+    input: [
+      { role: "system", content: [{ type: "input_text", text: systemPrompt }] },
+      { role: "user", content: userContent }
+    ],
+    text: {
+      format: {
+        type: "json_schema",
+        name: "meow_pro_ai_" + mode,
+        strict: true,
+        schema: schemaFor(mode)
+      }
+    },
+    max_output_tokens: 1200
+  });
 
-  const payload = await aiResponse.json().catch(() => null);
-  if (!aiResponse.ok) {
+  let aiResponse: Response | null = null;
+  let payload: any = null;
+  const retryableStatuses = new Set([429, 500, 502, 503, 504]);
+
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      aiResponse = await fetch("https://api.openai.com/v1/responses", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + apiKey,
+          "Content-Type": "application/json"
+        },
+        body: requestBody
+      });
+    } catch {
+      if (attempt < 2) {
+        await sleep(attempt === 0 ? 500 : 1500);
+        continue;
+      }
+      await finalizeUsage(false);
+      return json({ ok: false, code: "AI_NETWORK_ERROR" }, 502);
+    }
+
+    payload = await aiResponse.json().catch(() => null);
+    if (aiResponse.ok) break;
+
+    if (retryableStatuses.has(aiResponse.status) && attempt < 2) {
+      await sleep(attempt === 0 ? 500 : 1500);
+      continue;
+    }
+
+    await finalizeUsage(false, payload);
     return json({
       ok: false,
       code: "AI_PROVIDER_ERROR",
@@ -364,15 +420,25 @@ Deno.serve(async (req: Request) => {
     }, 502);
   }
 
+  if (!aiResponse?.ok) {
+    await finalizeUsage(false, payload);
+    return json({ ok: false, code: "AI_PROVIDER_ERROR" }, 502);
+  }
+
   const text = outputText(payload);
-  if (!text) return json({ ok: false, code: "AI_EMPTY_RESPONSE" }, 502);
+  if (!text) {
+    await finalizeUsage(false, payload);
+    return json({ ok: false, code: "AI_EMPTY_RESPONSE" }, 502);
+  }
 
   let result: unknown;
   try {
     result = JSON.parse(text);
   } catch {
+    await finalizeUsage(false, payload);
     return json({ ok: false, code: "AI_INVALID_RESPONSE" }, 502);
   }
 
+  await finalizeUsage(true, payload);
   return json({ ok: true, mode, model, usage, result });
 });
