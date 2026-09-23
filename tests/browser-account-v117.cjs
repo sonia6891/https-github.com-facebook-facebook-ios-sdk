@@ -164,6 +164,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       await page.locator('#accountUsername').fill('輪班喵'+width);
       await page.locator('#saveAccountUsername').click();
       check(`${width}px 使用者名稱可自訂修改`, await page.locator('#profileName').innerText() === '輪班喵'+width);
+      await page.locator('#accountUpgrade').scrollIntoViewIfNeeded();
       const accountScroll = await page.evaluate(() => scrollY);
       await page.locator('#accountUpgrade').click();
       check(`${width}px Pro 方案在獨立方案卡內就地展開`, await page.locator('#proPlanSettings').isVisible() && await page.evaluate(() => document.getElementById('accountPlanCard').contains(document.getElementById('proPlanSettings'))));
