@@ -127,9 +127,9 @@ AI 回傳欄位限制在：
 
 ## 9. AI 模型與 Secret
 
-Edge Function 需要：
+Edge Function 目前需要：
 - `OPENAI_API_KEY`：必填
-- `OPENAI_MODEL`：選填；未設定時目前預設 `gpt-5.6-luna`
+- 模型固定為 `gpt-5.6-luna`；正式版不接受 `OPENAI_MODEL` 覆寫
 
 Secret 不得提交 GitHub。
 
