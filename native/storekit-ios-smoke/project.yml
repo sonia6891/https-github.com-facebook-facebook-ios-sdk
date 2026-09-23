@@ -26,7 +26,7 @@ targets:
           - UIInterfaceOrientationPortrait
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.lumilab.meowwork.storekitsmoke
+        PRODUCT_BUNDLE_IDENTIFIER: com.lumilab.meowwork
         TARGETED_DEVICE_FAMILY: "1"
     scheme:
       testTargets:
