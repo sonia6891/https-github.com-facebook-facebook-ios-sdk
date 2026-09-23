@@ -69,3 +69,14 @@ test('unfinished transaction recovery stays wired on app startup path', () => {
     /for\(const item of items\)\{[\s\S]*?await verifyAndFinishStoreItem\(item,bridge\);[\s\S]*?catch\(e\)\{\}/
   );
 });
+
+
+test('restore purchases remains wired to AppStore.sync and current entitlements', () => {
+  const nativeSource = fs.readFileSync(
+    path.join(__dirname, '..', 'native', 'ios-sources', 'ViewController.swift'),
+    'utf8'
+  );
+  assert.match(nativeSource, /func restorePurchases/);
+  assert.match(nativeSource, /AppStore\.sync\(\)/);
+  assert.match(nativeSource, /Transaction\.currentEntitlements/);
+});
