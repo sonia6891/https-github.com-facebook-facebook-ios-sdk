@@ -1,0 +1,17 @@
+{
+  "name":"安好｜家人安心守護",
+  "short_name":"安好",
+  "description":"長者關懷、平安報到、健康摘要與家人守護的行動工具",
+  "lang":"zh-Hant",
+  "id":"/https-github.com-facebook-facebook-ios-sdk/anhao/",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "orientation":"portrait",
+  "background_color":"#edf6ff",
+  "theme_color":"#edf6ff",
+  "categories":["health","lifestyle"],
+  "icons":[
+    {"src":"./icon.svg?v=1","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
