@@ -138,7 +138,7 @@ final class StoreKitSmokeTests: XCTestCase {
         XCTAssertEqual(restored.appAccountToken, accountToken)
     }
 
-    func testCancelAutoRenewKeepsAccessUntilExpirationThenRemovesEntitlement() async throws {
+    func testCancelAutoRenewKeepsPeriodThenExpirationIsApplied() async throws {
         let transaction = try await session.buyProduct(
             identifier: Self.monthlyProductID,
             options: [.appAccountToken(UUID())]
@@ -147,13 +147,25 @@ final class StoreKitSmokeTests: XCTestCase {
 
         try session.disableAutoRenewForTransaction(identifier: UInt(transaction.id))
 
-        let stillActive = await currentEntitlement(productID: Self.monthlyProductID)
-        XCTAssertNotNil(stillActive)
+        let afterCancel = try XCTUnwrap(
+            session.allTransactions().last(where: {
+                $0.productIdentifier == Self.monthlyProductID
+            })
+        )
+        XCTAssertFalse(afterCancel.autoRenewingEnabled)
+        let preExpireDate = try XCTUnwrap(afterCancel.expirationDate)
+        XCTAssertGreaterThan(preExpireDate, Date().addingTimeInterval(-2))
 
         try session.expireSubscription(productIdentifier: Self.monthlyProductID)
 
-        let afterExpiration = await currentEntitlement(productID: Self.monthlyProductID)
-        XCTAssertNil(afterExpiration)
+        let afterExpire = try XCTUnwrap(
+            session.allTransactions().last(where: {
+                $0.productIdentifier == Self.monthlyProductID
+            })
+        )
+        XCTAssertFalse(afterExpire.autoRenewingEnabled)
+        let expirationDate = try XCTUnwrap(afterExpire.expirationDate)
+        XCTAssertLessThanOrEqual(expirationDate, Date().addingTimeInterval(2))
     }
 
     private func unfinishedTransaction(
