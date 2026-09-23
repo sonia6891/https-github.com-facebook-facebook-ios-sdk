@@ -1,0 +1,48 @@
+name: MeowStoreKitSmoke
+
+options:
+  bundleIdPrefix: com.lumilab.meowwork
+  deploymentTarget:
+    iOS: "17.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+
+targets:
+  MeowStoreKitSmokeHost:
+    type: application
+    platform: iOS
+    sources:
+      - path: Host
+      - path: MeowWork.storekit
+        buildPhase: resources
+    info:
+      path: Host/Info.plist
+      properties:
+        CFBundleDisplayName: Meow StoreKit Smoke
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lumilab.meowwork.storekitsmoke
+        TARGETED_DEVICE_FAMILY: "1"
+    scheme:
+      testTargets:
+        - MeowStoreKitSmokeTests
+      storeKitConfiguration: MeowWork.storekit
+
+  MeowStoreKitSmokeTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: Tests
+      - path: MeowWork.storekit
+        buildPhase: resources
+    dependencies:
+      - target: MeowStoreKitSmokeHost
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lumilab.meowwork.storekitsmoke.tests
+        TARGETED_DEVICE_FAMILY: "1"

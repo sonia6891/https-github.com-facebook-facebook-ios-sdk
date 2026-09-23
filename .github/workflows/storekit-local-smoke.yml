@@ -7,7 +7,7 @@ on:
       - index.html
       - native/ios-sources/MeowWork.storekit
       - native/ios-sources/ViewController.swift
-      - native/storekit-smoke/**
+      - native/storekit-ios-smoke/**
       - tests/storekit-verification-gate-v130.test.cjs
       - .github/workflows/storekit-local-smoke.yml
   pull_request:
@@ -15,7 +15,7 @@ on:
       - index.html
       - native/ios-sources/MeowWork.storekit
       - native/ios-sources/ViewController.swift
-      - native/storekit-smoke/**
+      - native/storekit-ios-smoke/**
       - tests/storekit-verification-gate-v130.test.cjs
       - .github/workflows/storekit-local-smoke.yml
   workflow_dispatch:
@@ -25,16 +25,14 @@ permissions:
 
 jobs:
   storekit-smoke:
-    # StoreKitTest SKTestSession is currently unreliable on the hosted Xcode
-    # 26.5/26.6 runtime (SKInternalErrorDomain Code=3). Xcode 26.2 on the
-    # macOS 26 image runs the same test APIs without that runner regression.
     runs-on: macos-26
     steps:
-      - name: Select StoreKitTest-compatible Xcode
+      - name: Select Xcode 26.2 and iOS 26.2 runtime
         run: |
           sudo xcode-select -s /Applications/Xcode_26.2.app
           xcodebuild -version
-          swift --version
+          xcrun simctl list runtimes | grep 'iOS 26.2'
+          xcrun simctl list devices available | grep -A 12 'iOS 26.2'
 
       - name: Checkout
         uses: actions/checkout@v6
@@ -47,6 +45,26 @@ jobs:
       - name: Verify backend-before-finish gate
         run: node --test tests/storekit-verification-gate-v130.test.cjs
 
-      - name: Run StoreKitTest purchase smoke
-        working-directory: native/storekit-smoke
-        run: swift test
+      - name: Install XcodeGen
+        run: |
+          brew install xcodegen
+          xcodegen --version
+
+      - name: Generate iOS StoreKit smoke host
+        working-directory: native/storekit-ios-smoke
+        run: |
+          cp ../ios-sources/MeowWork.storekit ./MeowWork.storekit
+          xcodegen generate
+          xcodebuild -project MeowStoreKitSmoke.xcodeproj -list
+
+      - name: Run iOS-hosted StoreKitTest purchase smoke
+        working-directory: native/storekit-ios-smoke
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project MeowStoreKitSmoke.xcodeproj \
+            -scheme MeowStoreKitSmokeHost \
+            -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2' \
+            -derivedDataPath "${RUNNER_TEMP}/meow-storekit-derived" \
+            CODE_SIGNING_ALLOWED=NO \
+            | tee "${RUNNER_TEMP}/meow-storekit-xcodebuild.log"
