@@ -1,4 +1,4 @@
-name: LINE login v128 preflight
+name: LINE login + UI preflight
 on:
   push:
     branches: [main]
@@ -22,14 +22,16 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           html=Path('index.html').read_text()
-          assert 'v128-storekit-localized' in html
+          import re
+          m=re.search(r'<meta name="meow-ui-build" content="v(\\d+)[^"]*">',html)
+          assert m and int(m.group(1))>=129, 'expected app build v129 or newer'
           assert 'class="auth-booting"' in html
           assert "document.documentElement.classList.remove('auth-booting')" in html
           assert "window.open('about:blank','meow-auth-window')" not in html
           assert "client.auth.setSession({" not in html
           assert "provider:LINE_PROVIDER_ID" in html
           assert "scopes:'openid profile'" in html
-          print('static v128 checks passed')
+          print('static current-build checks passed')
           PY
       - name: Verify live Supabase to LINE authorize request
         run: |
