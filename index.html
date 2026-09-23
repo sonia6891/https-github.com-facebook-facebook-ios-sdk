@@ -11,10 +11,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=115">
+<link rel="manifest" href="./manifest.webmanifest?v=116">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v114-logout-welcome">
+<meta name="meow-ui-build" content="v116-google-line-login">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -461,7 +461,7 @@ html.meow-welcome-open,html.meow-welcome-open body{overflow:hidden}
 .welcome-button{position:relative;min-height:50px;width:100%;display:grid;grid-template-columns:28px 1fr 14px;align-items:center;gap:12px;padding:12px 20px;border-radius:16px;font-size:17px;font-weight:750;line-height:1.4;border:1px solid #dedbd5;background:#fff;color:#202632;text-align:center;box-shadow:0 2px 5px rgba(111,70,43,.025)}
 .welcome-button[hidden],.welcome-email-fields[hidden],#welcomeOtpFields[hidden]{display:none!important}
 .welcome-button:disabled{opacity:.55;cursor:wait}.welcome-button>svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.welcome-google>svg{stroke:none}.welcome-apple{background:#171717;color:#fff;border-color:#171717}.welcome-email{background:#eeebe8;border-color:transparent}.welcome-guest{background:#fff0d4;color:#754327;border:1.5px solid #cf7b43}.welcome-guest svg{fill:#a66641;stroke:#a66641}
+.welcome-google>svg{stroke:none}.welcome-line{background:#06c755;color:#fff;border-color:#06c755;box-shadow:0 6px 16px rgba(6,199,85,.18)}.welcome-line-mark{width:27px;height:27px;border-radius:50%;display:grid;place-items:center;background:#fff;color:#06c755;font-size:9px;font-weight:950;letter-spacing:-.4px}.welcome-apple{background:#171717;color:#fff;border-color:#171717}.welcome-email{background:#eeebe8;border-color:transparent}.welcome-guest{background:#fff0d4;color:#754327;border:1.5px solid #cf7b43}.welcome-guest svg{fill:#a66641;stroke:#a66641}
 .welcome-divider{display:flex;align-items:center;gap:12px;color:#7c7169;font-size:12px;margin:2px 0}.welcome-divider:before,.welcome-divider:after{content:"";height:1px;flex:1;background:#d9cdc1}
 .welcome-local{text-align:center;font-size:12px;line-height:1.6;margin:9px 0 0;color:#7b604e}.welcome-message{font-size:12px;color:#9a4427;line-height:1.5;text-align:center;margin:6px 0;min-height:0}.welcome-message:empty{display:none}
 .welcome-benefits{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:16px -7px 0;gap:0}.welcome-benefits>div{text-align:center;min-width:0;padding:0 4px;position:relative}.welcome-benefits>div+div:before{content:"";height:54px;width:1px;background:#e4d5c5;position:absolute;left:0;bottom:2px}.welcome-benefits b{display:block;font-size:12px;margin:6px -3px 0;line-height:1.5}.welcome-benefits p{font-size:10.5px;color:#7a6b60;line-height:1.7;margin:3px 0}.welcome-benefit-icon{position:relative;display:grid;place-items:center;width:44px;height:44px;margin:auto;background:#ffedd6;border-radius:50%;font-size:27px;font-weight:600}.welcome-benefit-icon i{position:absolute;top:-3px;right:-5px;padding:2px 4px;background:#f6b444;color:#633211;border-radius:6px;font-size:8px;font-style:normal}
@@ -1084,24 +1084,15 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       <div class="welcome-actions">
         <button type="button" id="welcomeApple" class="welcome-button welcome-apple" hidden><svg viewBox="0 0 24 24" aria-hidden="true" style="fill:currentColor;stroke:none"><path d="M17.05 12.54c.03 3.22 2.83 4.29 2.86 4.31-.02.08-.45 1.53-1.48 3.03-.9 1.3-1.84 2.6-3.31 2.62-1.44.03-1.9-.85-3.55-.85-1.64 0-2.16.82-3.52.88-1.42.05-2.5-1.41-3.41-2.71-1.85-2.68-3.27-7.58-1.37-10.89.94-1.64 2.62-2.68 4.44-2.71 1.38-.03 2.68.93 3.52.93.84 0 2.42-1.15 4.08-.98.7.03 2.68.28 3.95 2.14-.1.06-2.36 1.37-2.33 4.23ZM14.33 4.42c.76-.93 1.28-2.22 1.14-3.5-1.1.04-2.44.74-3.23 1.67-.71.81-1.33 2.12-1.16 3.37 1.23.1 2.49-.62 3.25-1.54Z"/></svg><span>使用 Apple 繼續</span><span aria-hidden="true">›</span></button>
         <button type="button" id="welcomeGoogle" class="welcome-button welcome-google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.61 4.61 0 0 1-2 3.03v2.52h3.24c1.9-1.75 2.98-4.33 2.98-7.38Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.61-2.4l-3.23-2.52c-.9.6-2.06.97-3.38.97-2.6 0-4.81-1.76-5.6-4.13H3.06v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.4 13.92A6 6 0 0 1 6.09 12c0-.66.11-1.3.31-1.92V7.49H3.06A10 10 0 0 0 2 12c0 1.61.38 3.14 1.06 4.51l3.34-2.59Z"/><path fill="#EA4335" d="M12 5.95c1.47 0 2.79.5 3.82 1.49l2.87-2.87A9.63 9.63 0 0 0 12 2a10 10 0 0 0-8.94 5.49l3.34 2.59A6 6 0 0 1 12 5.95Z"/></svg><span>使用 Google 繼續</span><span aria-hidden="true">›</span></button>
-        <div class="welcome-divider"><span>其他登入方式</span></div>
-        <button type="button" id="welcomeEmail" class="welcome-button welcome-email" aria-expanded="false" aria-controls="welcomeEmailFields"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 5 9 7 9-7"/></svg><span>使用 Email 登入</span><span aria-hidden="true">›</span></button>
-        <div id="welcomeEmailFields" class="welcome-email-fields" hidden>
-          <label for="welcomeEmailInput">電子郵件</label><input id="welcomeEmailInput" type="email" inputmode="email" autocomplete="email" placeholder="name@example.com">
-          <button type="button" id="welcomeSendOtp" class="btn primary">寄送 6 位驗證碼</button>
-          <div id="welcomeOtpFields" hidden><label for="welcomeOtpInput">驗證碼</label><input id="welcomeOtpInput" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*" placeholder="6 位數字"><button type="button" id="welcomeVerifyOtp" class="btn primary">驗證並登入</button></div>
-        </div>
-        <button type="button" id="welcomeGuest" class="welcome-button welcome-guest"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="7" r="4"/><path d="M4 22v-3a8 8 0 0 1 16 0v3"/></svg><span id="welcomeGuestText">先使用，不登入</span><span aria-hidden="true">›</span></button>
-      </div>
-      <p class="welcome-local">資料自動保存在此裝置，之後也能登入。</p>
+        <button type="button" id="welcomeLine" class="welcome-button welcome-line"><span class="welcome-line-mark" aria-hidden="true">LINE</span><span>使用 LINE 繼續</span><span aria-hidden="true">›</span></button>
       <p id="welcomeMessage" class="welcome-message" role="status" aria-live="polite"></p>
       <div class="welcome-benefits">
         <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="17" rx="3"/><path d="M7 2v6m10-6v6M3 10h18m-14 5 3 3 7-6"/></svg></span><b>免費使用</b><p>班表・薪資・休假<br>行程都能記錄</p></div>
         <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><path d="M6 20a5 5 0 0 1-1-10 7 7 0 0 1 13-2 6 6 0 0 1 0 12Z"/></svg><i>Pro</i></span><b>Pro 雲端同步</b><p>跨裝置・自動備份<br>需有效訂閱或試用</p></div>
         <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><path d="M12 2 3 6v6c0 5 9 10 9 10s9-5 9-10V6Z"/><path d="M12 16s-5-3-5-6c0-3 4-3 5-1 1-2 5-2 5 1 0 3-5 6-5 6Z"/></svg></span><b>你的資料，你決定</b><p>工作資料僅在你<br>啟用同步後上傳</p></div>
       </div>
-      <p class="welcome-foot">登入不會自動開始試用或收費，方案內容可在 App 內隨時查看與管理。</p>
-      <p class="welcome-apple-note" id="welcomeAppleNote">Apple 登入尚未開放；目前可使用 Google、Email 或不登入。</p>
+      <p class="welcome-foot">登入後即為 Free 帳號；Pro 可在「設定」中試用或訂閱。登入本身不會啟用雲端同步或收費。</p>
+      <p class="welcome-apple-note" id="welcomeAppleNote" hidden>Apple 登入尚未開放。</p>
     </div>
   </div>
 </dialog>
@@ -1121,6 +1112,7 @@ const AVATAR_KEY='meow-work-avatar-v1';
 const SCHEDULE_KEY='meow-work-schedule-v1';
 const SUPABASE_URL='https://ygrlvmyqrhyfkglomsbq.supabase.co';
 const SUPABASE_KEY='sb_publishable_yMJb1rIra-0if8nDZwxO9A_N4n7BtAv';
+const LINE_PROVIDER_ID='custom:line';
 const DEVICE_ID_KEY='meow-work-device-id-v1';
 const DEV_MODE_KEY='meow-work-dev-mode-v1';
 const DEV_PLAN_KEY='meow-work-dev-plan-v1';
@@ -1474,38 +1466,25 @@ async function handleSignedIn(user){
   authUser=user;
   if(!switchWorkspace(user.id)){setAccountStatus('已登入，但工作區尚未切換；雲端未啟用');return}
   setAccountStatus('已登入・正在確認方案');
-  if($('welcomeDialog').open)$('welcomeGuestText').textContent='返回 App';
-  if(!welcomeManual)finishWelcome();
+  if($('welcomeDialog').open&&!welcomeManual)finishWelcome();
   await loadEntitlement();
   if(authUser&&authUser.id===user.id){await loadBillingHistory();setAccountStatus('帳號已登入');renderSettings()}
 }
 async function handleSignedOut(){
-  const needsLogin=!!authUser||localOwner!=='guest';
   const epoch=++accessEpoch;
   entitlementRequest++;authUser=null;resetEntitlement();billingHistory=[];clearTimeout(expiryTimer);
-  // Save only the UI intent. The existing workspace switch archives account data.
-  if(needsLogin){try{localStorage.setItem(WELCOME_REAUTH_KEY,'pending')}catch(e){}}
   await stopAccountRealtime();
-  // A newer sign-in must not be overwritten by a delayed sign-out callback.
   if(epoch!==accessEpoch||authUser)return;
   cloudReady=false;pendingCloud=null;switchWorkspace('guest');
-  setAccountStatus('尚未登入・使用本機工作區');setCloudStatus('未啟用・Pro 專屬');render();
-  if(needsLogin||readLocalString(WELCOME_REAUTH_KEY)==='pending'){
-    pendingEmail='';
-    ['welcomeEmailInput','welcomeOtpInput','emailLoginInput','emailOtpInput'].forEach(id=>{if($(id))$(id).value=''});
-    $('welcomeEmailFields').hidden=true;$('welcomeOtpFields').hidden=true;
-    $('welcomeEmail').setAttribute('aria-expanded','false');$('otpPanel').classList.add('hidden');
-    openWelcome(false);
-    setAccountStatus('請重新登入，或選擇「先使用，不登入」。本機資料仍保留。');
-  }
+  setAccountStatus('請使用 Google 或 LINE 登入');setCloudStatus('未啟用・Pro 專屬');render();
+  openWelcome(false);
 }
 async function initAuth(){
   try{
     const client=await getAuthClient();
     const {data}=await client.auth.getSession();
     if(data&&data.session&&data.session.user)await handleSignedIn(data.session.user);
-    else if(localOwner!=='guest')await handleSignedOut();
-    // Never await another Supabase request while an auth callback holds its lock.
+    else await handleSignedOut();
     client.auth.onAuthStateChange((event,session)=>{
       if(!['SIGNED_IN','SIGNED_OUT','TOKEN_REFRESHED','USER_UPDATED'].includes(event))return;
       clearTimeout(authEventTimer);
@@ -1515,7 +1494,10 @@ async function initAuth(){
         else if(event==='SIGNED_OUT')void handleSignedOut();
       },0);
     });
-  }catch(e){setAccountStatus('登入服務暫時無法連線；仍可使用本機資料。')}
+  }catch(e){
+    setAccountStatus('登入服務暫時無法連線');
+    openWelcome(false);
+  }
 }
 async function toggleCloud(){
   if(!hasCloudEntitlement()){alert('登入只確認帳號身分。雲端同步為 Pro 專屬，請先查看「Pro 方案」。');return}
@@ -1558,41 +1540,23 @@ function finishWelcome(){
   try{const url=new URL(location.href);if(url.searchParams.get('welcome')==='1'){url.searchParams.delete('welcome');history.replaceState(history.state,'',url.href)}}catch(e){}
 }
 function openWelcome(manual=false){
-  welcomeManual=manual;$('welcomeGuestText').textContent=authUser?'返回 App':'先使用，不登入';$('welcomeMessage').textContent='';
+  welcomeManual=manual;$('welcomeMessage').textContent='';
   document.documentElement.classList.add('meow-welcome-open');
   if(!$('welcomeDialog').open)$('welcomeDialog').showModal();
   $('welcomeTitle').focus({preventScroll:true});$('welcomeDialog').scrollTop=0;
 }
 async function initWelcome(){
-  const params=new URLSearchParams(location.search),force=params.get('welcome')==='1';
-  const returningFromAuth=params.has('code')||/(?:^#|&)(?:access_token|error|error_description)=/.test(location.hash);
-  // Show the new card once even on an existing v112 installation. A restored
-  // session must not dismiss it before the person can see it or switch accounts.
-  const reauthPending=readLocalString(WELCOME_REAUTH_KEY)==='pending';
-  if(force||reauthPending||readLocalString(WELCOME_FRAME_KEY)!=='done')openWelcome(force||(!returningFromAuth&&!reauthPending));
-  $('welcomeGuest').onclick=finishWelcome;
-  $('welcomeDialog').addEventListener('cancel',event=>{event.preventDefault();finishWelcome()});
+  $('welcomeGoogle').onclick=async()=>{const b=$('welcomeGoogle');b.disabled=true;try{await signInWithGoogle()}finally{b.disabled=false}};
+  $('welcomeLine').onclick=async()=>{const b=$('welcomeLine');b.disabled=true;try{await signInWithLine()}finally{b.disabled=false}};
+  $('welcomeDialog').addEventListener('cancel',event=>{event.preventDefault();if(welcomeManual)finishWelcome()});
   $('welcomeDialog').addEventListener('close',()=>document.documentElement.classList.remove('meow-welcome-open'));
-  $('welcomeGoogle').onclick=async()=>{welcomeManual=false;const b=$('welcomeGoogle');b.disabled=true;try{await signInWithGoogle()}finally{b.disabled=false}};
-  $('welcomeEmail').onclick=()=>{const open=$('welcomeEmailFields').hidden;$('welcomeEmailFields').hidden=!open;$('welcomeEmail').setAttribute('aria-expanded',String(open));if(open)$('welcomeEmailInput').focus()};
-  $('welcomeSendOtp').onclick=async()=>{const b=$('welcomeSendOtp');b.disabled=true;try{$('emailLoginInput').value=$('welcomeEmailInput').value;await sendEmailOtp();$('welcomeOtpFields').hidden=$('otpPanel').classList.contains('hidden')}finally{b.disabled=false}};
-  $('welcomeVerifyOtp').onclick=async()=>{const b=$('welcomeVerifyOtp');b.disabled=true;try{welcomeManual=false;$('emailOtpInput').value=$('welcomeOtpInput').value;await verifyEmailOtp()}finally{b.disabled=false}};
-  $('welcomeOtpInput').oninput=e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,6)};
-  $('showWelcome').onclick=()=>openWelcome(true);
+  if($('showWelcome'))$('showWelcome').onclick=()=>openWelcome(true);
   $('toggleCloudSync').onclick=toggleCloud;
   $('legacyCloudExport').onclick=exportLegacyCloud;
   $('keepCloudVersion').onclick=()=>{if(pendingCloud&&canCloudSync()&&confirm('先保留本機安全副本，再使用雲端版本？'))applyRemoteRow(pendingCloud)};
   $('keepLocalVersion').onclick=()=>{if(pendingCloud&&canCloudSync()&&confirm('用本機版本更新雲端？原雲端版本會保留在備份歷史內。'))void saveAccountState(true,true)};
-  try{
-    const response=await fetch(SUPABASE_URL+'/auth/v1/settings',{headers:{apikey:SUPABASE_KEY}});
-    if(!response.ok)return;const config=await response.json();
-    if(config&&config.external&&config.external.apple===true){
-      $('welcomeApple').hidden=false;$('welcomeAppleNote').hidden=true;
-      $('welcomeApple').onclick=async()=>{const b=$('welcomeApple');b.disabled=true;try{welcomeManual=false;const client=await getAuthClient();const {error}=await client.auth.signInWithOAuth({provider:'apple',options:{redirectTo:location.origin+location.pathname}});if(error)throw error}catch(e){setAccountStatus('Apple 登入暫時無法完成，請改用其他方式。')}finally{b.disabled=false}};
-    }
-  }catch(e){}
 }
-window.addEventListener('offline',()=>{if(canCloudSync())setCloudStatus('離線・變更尚未上傳')});
+window.addEventListener('offline' ,()=>{if(canCloudSync())setCloudStatus('離線・變更尚未上傳')});
 window.addEventListener('online',()=>{if(authUser){cloudReady=false;void loadEntitlement()}});
 setInterval(()=>{if(authUser)void loadEntitlement()},60000);
 
@@ -1613,6 +1577,22 @@ async function signInWithGoogle(){
     alert('Google 登入失敗：'+(e&&e.message?e.message:'請稍後再試。'));
   }
 }
+async function signInWithLine(){
+  try{
+    const client=await getAuthClient();
+    setAccountStatus('正在前往 LINE 登入…');
+    const redirectTo=location.origin+location.pathname;
+    const {error}=await client.auth.signInWithOAuth({
+      provider:LINE_PROVIDER_ID,
+      options:{redirectTo,scopes:'openid profile'}
+    });
+    if(error)throw error;
+  }catch(e){
+    setAccountStatus('LINE 登入尚未完成設定');
+    alert('LINE 登入目前尚未完成設定，請先使用 Google 登入。');
+  }
+}
+
 async function sendEmailOtp(){
   const email=normalizeEmail($('emailLoginInput')&&$('emailLoginInput').value);
   if(!email||!email.includes('@')){alert('請先輸入正確的 Email。');return}
@@ -4047,7 +4027,7 @@ try{
 }catch(e){}
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v115';
+    const reloadKey='meow-sw-reloaded-v116';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -4056,7 +4036,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=115',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=116',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
