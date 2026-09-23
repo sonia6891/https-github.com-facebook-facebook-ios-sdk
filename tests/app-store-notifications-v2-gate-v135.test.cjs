@@ -39,11 +39,33 @@ test('valid App Store states are written to user entitlements', () => {
   assert.match(source, /provider_subscription_id:tx\.originalTransactionId/);
 });
 
-test('server notification events are durably recorded', () => {
+test('server notification events are durably recorded without retaining decoded identity payloads', () => {
   assert.match(source, /from\("store_subscription_events"\)/);
   assert.match(source, /event_type:notificationType/);
   assert.match(source, /original_transaction_id:tx\?\.originalTransactionId/);
-  assert.match(source, /raw:\{notification,transaction:tx\}/);
+  assert.match(source, /raw:\{verified:true,source:"app_store_server"/);
+  assert.doesNotMatch(source, /raw:\{notification,transaction:tx\}/);
+});
+
+test('client transaction audit rows do not retain appAccountToken payloads', () => {
+  const verifySource = fs.readFileSync(
+    path.join(__dirname, '..', 'supabase', 'functions', 'verify-app-store-transaction', 'index.ts'),
+    'utf8'
+  );
+  assert.match(verifySource, /raw:\{verified:true,source:"client_transaction"/);
+  assert.doesNotMatch(verifySource, /raw:tx[\s,}]/);
+});
+
+test('account deletion scrubs old App Store raw payloads before deleting auth user', () => {
+  const deleteSource = fs.readFileSync(
+    path.join(__dirname, '..', 'supabase', 'functions', 'delete-account', 'index.ts'),
+    'utf8'
+  );
+  const scrubAt = deleteSource.indexOf('redacted_after_account_deletion');
+  const deleteAt = deleteSource.indexOf('admin.auth.admin.deleteUser');
+  assert.ok(scrubAt > 0 && deleteAt > scrubAt);
+  assert.match(deleteSource, /PRIVACY_SCRUB_FAILED/);
+  assert.match(deleteSource, /\.eq\("user_id", user\.id\)/);
 });
 
 test('TEST notifications are accepted without changing entitlement', () => {
