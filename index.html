@@ -1137,7 +1137,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
               <b class="account-current-plan-title">目前方案</b>
               <div class="hint" id="proPlanSettingsHint" style="margin-top:4px">解鎖雲端同步、自動備份，以及薪資單辨識、逐項對帳、歷史薪資與報告匯出。</div>
             </div>
-            <span class="account-plan-badge" id="settingsPlanBadge">Free</span>
+            <span class="account-plan-badge" id="settingsPlanDetailBadge">Free</span>
           </div>
           <div class="pro-plan-feature-grid">
             <span>☁️ 雲端同步</span><span>💾 自動備份</span><span>📷 薪資單 OCR v4</span><span>🧾 逐項薪資對帳</span><span>✨ AI 班表／薪資助理</span><span>📚 歷史薪資</span><span>📄 PDF／Excel</span>
@@ -1911,7 +1911,9 @@ function updateScheduleUiSummary(){
   }
   if($('scheduleUiStart')){
     const r=threeShiftPlan();
-    $('scheduleUiStart').textContent=state.schedule.preset==='four-three'?(r?r.startDate:'—'):(state.schedule.startDate||'—');
+    const start=state.schedule.preset==='four-three'?(r?r.startDate:''):(state.schedule.startDate||'');
+    const parts=start&&start.match(/^\d{4}-(\d{2})-(\d{2})$/);
+    $('scheduleUiStart').textContent=parts?(Number(parts[1])+'/'+Number(parts[2])):(start||'—');
   }
 }
 function syncScheduleChoices(){
@@ -4116,6 +4118,7 @@ window.addEventListener('meow-store-entitlement-changed',()=>{void (async()=>{aw
 
 function renderProPlanSettings(){
   const badge=$('settingsPlanBadge');
+  const detailBadge=$('settingsPlanDetailBadge');
   const box=$('proPlanStatusBox');
   const live=$('liveBillingActions');
   const unavailable=$('billingUnavailable');
@@ -4126,6 +4129,7 @@ function renderProPlanSettings(){
   const pro=plan==='pro';
   badge.textContent=pro?(DEV_TESTING_ENABLED?'Pro 測試':'Pro'):'Free';
   badge.classList.toggle('pro',pro);
+  if(detailBadge){detailBadge.textContent=badge.textContent;detailBadge.classList.toggle('pro',pro)}
 
   if(!authUser){
     box.innerHTML='<b>目前：Free</b>登入後可選擇月繳 NT$99 或年繳 NT$790；首次符合資格可享 3 天免費試用。';
@@ -4196,7 +4200,7 @@ function openProSettings(){
   accountProOpen=true;
   renderSettings();
 }
-function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){const mode=themeModePreference;$('themeLight').classList.toggle('active',mode==='light');$('themeDark').classList.toggle('active',mode==='dark');if($('themeSystem'))$('themeSystem').classList.toggle('active',mode==='system');$('themeLight').lastElementChild.textContent=mode==='light'?'●':'○';$('themeDark').lastElementChild.textContent=mode==='dark'?'●':'○';if($('themeSystem'))$('themeSystem').lastElementChild.textContent=mode==='system'?'●':'○';}$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'帳號已登入':'尚未登入';if($('accountLoginMethod'))$('accountLoginMethod').textContent=accountProviderText(authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);if($('accountLoggedOut'))$('accountLoggedOut').classList.toggle('hidden',!!authUser);
+function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){const mode=themeModePreference;$('themeLight').classList.toggle('active',mode==='light');$('themeDark').classList.toggle('active',mode==='dark');if($('themeSystem'))$('themeSystem').classList.toggle('active',mode==='system');$('themeLight').lastElementChild.textContent=mode==='light'?'●':'○';$('themeDark').lastElementChild.textContent=mode==='dark'?'●':'○';if($('themeSystem'))$('themeSystem').lastElementChild.textContent=mode==='system'?'●':'○';}$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'帳號已登入':'尚未登入';if($('accountLoginMethod'))$('accountLoginMethod').textContent=accountProviderText(authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);if($('accountLoggedOut'))$('accountLoggedOut').classList.toggle('hidden',!!authUser);if($('accountLogout'))$('accountLogout').classList.toggle('hidden',!authUser);
 if($('proPlanSettings'))$('proPlanSettings').classList.toggle('hidden',!accountProOpen||!authUser);
 if($('accountUpgrade')){$('accountUpgrade').setAttribute('aria-expanded',String(accountProOpen));$('accountUpgrade').setAttribute('aria-label',accountProOpen?'收起 Pro 方案':'展開 Pro 方案');if($('accountPlanChevron'))$('accountPlanChevron').textContent=accountProOpen?'⌃':'⌄'}
 if($('dataSyncBody'))$('dataSyncBody').classList.toggle('hidden',!dataSyncOpen);
