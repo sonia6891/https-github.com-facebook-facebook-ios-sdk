@@ -13,7 +13,7 @@ assert(html.includes('id="aiScheduleCard"'));
 assert(html.includes('id="proAiPanel"'));
 assert(html.includes("invokeUserFunction('pro-ai'"));
 assert(html.includes('scheduleOverrides'));
-assert(html.includes('圖片只在你的瀏覽器本地處理，不上傳薪資單影像'));
+assert(html.includes('iPhone 使用 Apple Vision 在裝置端辨識，不上傳薪資單影像'));
 assert(html.includes('本機薪資單 OCR'));
 assert(html.includes('不會因這些功能產生 OpenAI API 費用'));
 
