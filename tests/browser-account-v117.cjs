@@ -140,6 +140,10 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('先使用免費版會關閉強制登入頁', !(await guest.evaluate(() => window.__accountV119.openWelcome())));
     check('未登入免費版不會取得雲端同步', await guest.evaluate(() => !window.__accountV119.canCloudSync()));
     check('未登入免費版不會誤開 Pro 功能', await guest.evaluate(() => !window.__accountV119.canUse('payslip_scan')));
+    await guest.reload({ waitUntil: 'domcontentloaded' });
+    await guest.waitForFunction(() => window.__accountV119 !== undefined);
+    await guest.waitForTimeout(120);
+    check('選過免費版後重開 App 不會再次強制登入', !(await guest.evaluate(() => window.__accountV119.openWelcome())));
     await guestContext.close();
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
