@@ -1300,7 +1300,7 @@ let cloudLastSuccess='',pendingCloud=null,localEditVersion=0,localSaveError=fals
 let localDirty=readWorkspaceMeta().dirty!==false;
 let cloudConsent=readLocalString('meow-work-cloud-consent:'+localOwner)==='yes';
 let expiryTimer=null,entitlementRequest=0,authEventTimer=null,authBusyEpoch=-1;
-let welcomeManual=false;
+let welcomeManual=false,authSessionHandoffSent=false;
 function readLocalString(key){try{return localStorage.getItem(key)||''}catch(e){return ''}}
 function readSnapshotOwner(){try{return JSON.parse(readLocalString(SAVE_KEY)||'null')?.owner||''}catch(e){return ''}}
 function workspaceKey(owner){return 'meow-work-workspace-v1:'+owner}
@@ -1500,7 +1500,8 @@ async function handleSignedIn(user,session=null){
   const changed=!authUser||authUser.id!==user.id;
   if(changed){accessEpoch++;await stopAccountRealtime();resetEntitlement();cloudReady=false;pendingCloud=null}
   authUser=user;
-  if(window.opener&&window.opener!==window&&session&&session.access_token&&session.refresh_token){
+  if(window.opener&&window.opener!==window&&!authSessionHandoffSent&&session&&session.access_token&&session.refresh_token){
+    authSessionHandoffSent=true;
     try{
       window.opener.postMessage({
         type:'meow-auth-session',
