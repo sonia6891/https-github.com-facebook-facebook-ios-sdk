@@ -71,7 +71,24 @@ jobs:
           grep -q '"displayPrice" : "790"' ios/App/MeowWork.storekit
           grep -q 'StoreKitConfigurationFileReference' ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
           grep -q '../../MeowWork.storekit' ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
-          plutil -lint ios/App/MeowWork.storekit
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          cfg=json.loads(Path('ios/App/MeowWork.storekit').read_text())
+          groups=cfg.get('subscriptionGroups') or []
+          assert len(groups)==1, groups
+          subs=groups[0].get('subscriptions') or []
+          by_id={x.get('productID'):x for x in subs}
+          assert by_id['meowwork.pro.monthly']['displayPrice']=='99'
+          assert by_id['meowwork.pro.monthly']['recurringSubscriptionPeriod']=='P1M'
+          assert by_id['meowwork.pro.monthly']['introductoryOffer']['paymentMode']=='free'
+          assert by_id['meowwork.pro.monthly']['introductoryOffer']['subscriptionPeriod']=='P3D'
+          assert by_id['meowwork.pro.yearly']['displayPrice']=='790'
+          assert by_id['meowwork.pro.yearly']['recurringSubscriptionPeriod']=='P1Y'
+          assert by_id['meowwork.pro.yearly']['introductoryOffer']['paymentMode']=='free'
+          assert by_id['meowwork.pro.yearly']['introductoryOffer']['subscriptionPeriod']=='P3D'
+          print('StoreKit local config JSON verified')
+          PY
 
       - name: Build iOS simulator app
         working-directory: native
