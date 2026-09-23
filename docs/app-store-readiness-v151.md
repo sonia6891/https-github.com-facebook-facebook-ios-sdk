@@ -40,8 +40,9 @@ Bundle ID：`com.lumilab.meowwork`
 ### P0 — 送審前一定要完成
 
 - [ ] **Sign in with Apple（外部設定待 Apple 恢復）**
-  - [x] App 登入頁加入 Apple 同等登入選項
+  - [x] App 登入頁與 Apple OAuth 程式端已備妥（目前以 feature gate 隱藏，避免 provider 未設定時出現壞按鈕）
   - [x] 前端 OAuth provider／回呼錯誤／登入方式顯示與 regression test
+  - [ ] Apple provider 驗證成功後將 `APPLE_LOGIN_ENABLED` 切為 `true`
   - [ ] Apple Developer 開啟 Sign in with Apple capability
   - [ ] 建立需要的 Services ID／Key
   - [ ] Supabase Auth 啟用 Apple provider
