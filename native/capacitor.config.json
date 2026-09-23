@@ -1,0 +1,10 @@
+{
+  "appId": "com.lumilab.meowwork",
+  "appName": "喵的，又要上班了",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile"
+  }
+}
