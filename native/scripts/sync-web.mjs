@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -26,5 +26,17 @@ for (const name of files) {
   cpSync(source, join(out, name));
 }
 cpSync(join(repoRoot, 'assets'), join(out, 'assets'), { recursive: true });
+
+const nativeIndex = join(out, 'index.html');
+let html = readFileSync(nativeIndex, 'utf8');
+html = html.replace(
+  "const bridge=window.MeowStoreBilling;",
+  "const bridge=window.MeowStoreBilling||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.MeowStoreBilling);"
+);
+html = html.replace(
+  "目前是網頁預覽版，不會進行付款。",
+  "目前這個環境尚未連上商店付款。"
+);
+writeFileSync(nativeIndex, html);
 
 console.log(`Synced web app into ${out}`);
