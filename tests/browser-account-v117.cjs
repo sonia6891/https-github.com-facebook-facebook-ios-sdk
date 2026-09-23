@@ -21,6 +21,7 @@ const bridge = `window.__accountV119={
   settings:()=>setTab('settings'),
   calendar:()=>setTab('calendar'),
   attendance:()=>setTab('attendance'),
+  parseLocalScheduleVision,
   openWelcome:()=>document.getElementById('welcomeDialog').open
 };`;
 const bridgeAt = html.lastIndexOf('})();');
@@ -124,6 +125,8 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('本機儲存使用 localStorage 與 IndexedDB 鏡像', html.includes("localStorage.setItem(SAVE_KEY") && html.includes("indexedDB.open(BACKUP_DB_NAME"));
     check('舊版雲端備份使用獨立唯讀資料表', html.includes("from('user_legacy_exports').select('payload,original_updated_at')"));
     check('舊版取回只下載 JSON 而不套用遠端狀態', html.includes("'meow-legacy-backup.json'") && !/exportLegacyCloud[\s\S]*?applyRemoteRow\(/.test(html.slice(html.indexOf('async function exportLegacyCloud'), html.indexOf('function renderSyncStatus'))));
+    check('智慧匯入班表不再呼叫 OpenAI schedule_scan', !html.includes("invokeUserFunction('pro-ai',{mode:'schedule_scan'"));
+    check('智慧匯入班表使用 iPhone 本機 Vision bridge', html.includes('MeowScheduleVision') && html.includes('Apple Vision 本機辨識'));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV119.openWelcome()));
     check('網頁登入頁保留 Google、LINE 兩個登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine').count() === 2);
@@ -136,6 +139,18 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('LINE 按鈕使用 custom:line', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line'));
     check('LINE 要求 openid profile', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.scopes === 'openid profile'));
     check('Apple 原生流程使用 signInWithIdToken', html.includes("signInWithIdToken(payload)"));
+    const localScheduleParsed=await guest.evaluate(()=>window.__accountV119.parseLocalScheduleVision([
+      {text:'1',confidence:.99,x:.08,y:.80,width:.04,height:.03},
+      {text:'2',confidence:.99,x:.18,y:.80,width:.04,height:.03},
+      {text:'3',confidence:.99,x:.28,y:.80,width:.04,height:.03},
+      {text:'4',confidence:.99,x:.38,y:.80,width:.04,height:.03},
+      {text:'A',confidence:.97,x:.08,y:.70,width:.04,height:.03},
+      {text:'B',confidence:.96,x:.18,y:.70,width:.04,height:.03},
+      {text:'休',confidence:.98,x:.28,y:.70,width:.04,height:.03},
+      {text:'N',confidence:.95,x:.38,y:.70,width:.04,height:.03}
+    ]));
+    check('本機 Vision 班表解析器可把日期對到班別', localScheduleParsed.shifts.length===4 && localScheduleParsed.shifts.map(x=>x.code).join(',')==='A,B,休,N');
+    check('本機 Vision 解析保留休假狀態', localScheduleParsed.shifts[2].is_workday===false && localScheduleParsed.shifts[3].name==='夜班');
     await guestContext.close();
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
