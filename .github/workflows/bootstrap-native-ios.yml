@@ -56,6 +56,9 @@ jobs:
           node scripts/patch-ios-bridge.mjs
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations array" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait" ios/App/App/Info.plist
           cp ios-sources/MeowWork.storekit ios/App/MeowWork.storekit
           mkdir -p ios/App/App.xcodeproj/xcshareddata/xcschemes
           cp ios-sources/App.xcscheme ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
@@ -175,6 +178,12 @@ jobs:
           test -f "$APP_DIR/public/terms.html"
           test -f "$APP_DIR/public/support.html"
           /usr/libexec/PlistBuddy -c "Print :ITSAppUsesNonExemptEncryption" "$APP_DIR/Info.plist" | grep -q false
+          IPHONE_ORIENTATIONS="$(/usr/libexec/PlistBuddy -c "Print :UISupportedInterfaceOrientations" "$APP_DIR/Info.plist")"
+          echo "$IPHONE_ORIENTATIONS" | grep -q UIInterfaceOrientationPortrait
+          if echo "$IPHONE_ORIENTATIONS" | grep -q UIInterfaceOrientationLandscape; then
+            echo "iPhone landscape must remain disabled for v1."
+            exit 1
+          fi
           PRIVACY_MANIFEST_COUNT="$(find "$APP_DIR" -name PrivacyInfo.xcprivacy -type f | wc -l | tr -d ' ')"
           test "$PRIVACY_MANIFEST_COUNT" -ge 2
           test -f "$APP_DIR/PrivacyInfo.xcprivacy"
