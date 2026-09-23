@@ -1,4 +1,4 @@
-name: LINE login v124 preflight
+name: LINE login v125 preflight
 on:
   push:
     branches: [main]
@@ -6,6 +6,8 @@ on:
       - index.html
       - sw.js
       - tests/browser-account-v117.cjs
+      - tests/pro-ai-v125.cjs
+      - supabase/functions/pro-ai/index.ts
       - .github/workflows/line-login-v123-preflight.yml
 permissions:
   contents: read
@@ -20,14 +22,14 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           html=Path('index.html').read_text()
-          assert 'v124-store-subscriptions' in html
+          assert 'v125-pro-ai-v1' in html
           assert 'class="auth-booting"' in html
           assert "document.documentElement.classList.remove('auth-booting')" in html
           assert "window.open('about:blank','meow-auth-window')" not in html
           assert "client.auth.setSession({" not in html
           assert "provider:LINE_PROVIDER_ID" in html
           assert "scopes:'openid profile'" in html
-          print('static v124 checks passed')
+          print('static v125 checks passed')
           PY
       - name: Verify live Supabase to LINE authorize request
         run: |
@@ -64,3 +66,6 @@ jobs:
               subprocess.run(['node','--check',str(p)],check=True)
           print(f'{len(scripts)} inline scripts parsed')
           PY
+
+      - name: Pro AI v125 static checks
+        run: node tests/pro-ai-v125.cjs
