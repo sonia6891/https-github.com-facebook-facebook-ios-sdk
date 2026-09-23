@@ -54,14 +54,16 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
         Task {
             do {
                 let products = try await Product.products(for: productIDs)
-                let payload = products.map { product in
-                    [
+                var payload: [[String: Any]] = []
+                for product in products {
+                    let eligible = await product.subscription?.isEligibleForIntroOffer ?? false
+                    payload.append([
                         "id": product.id,
                         "displayName": product.displayName,
                         "displayPrice": product.displayPrice,
                         "description": product.description,
-                        "eligibleForIntroOffer": product.subscription?.isEligibleForIntroOffer ?? false
-                    ] as [String : Any]
+                        "eligibleForIntroOffer": eligible
+                    ])
                 }
                 call.resolve(["products": payload])
             } catch {
@@ -223,9 +225,13 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
             "id": String(transaction.id),
             "originalID": String(transaction.originalID),
             "productId": transaction.productID,
-            "purchaseDate": ISO8601DateFormatter().string(from: transaction.purchaseDate),
-            "environment": String(describing: transaction.environment)
+            "purchaseDate": ISO8601DateFormatter().string(from: transaction.purchaseDate)
         ]
+        if #available(iOS 16.0, *) {
+            payload["environment"] = String(describing: transaction.environment)
+        } else {
+            payload["environment"] = "unknown"
+        }
         if let expirationDate = transaction.expirationDate {
             payload["expirationDate"] = ISO8601DateFormatter().string(from: expirationDate)
         }
