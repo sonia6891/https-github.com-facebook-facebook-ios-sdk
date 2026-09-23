@@ -21,4 +21,8 @@ assert(edge.includes('OPENAI_API_KEY'));
 assert(edge.includes('json_schema'));
 assert(edge.includes('meow_claim_ai_usage'));
 assert(edge.includes('AI_QUOTA_EXCEEDED'));
+assert(edge.includes('SUPABASE_SERVICE_ROLE_KEY'));
+assert(edge.includes('p_user_id: user.id'));
+assert(!edge.includes('userClient.rpc("meow_claim_ai_usage"'));
+assert(edge.includes('adminClient.rpc("meow_claim_ai_usage"'));
 console.log('pro-ai-v125 static checks passed');
