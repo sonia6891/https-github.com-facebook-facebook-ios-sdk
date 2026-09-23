@@ -31,3 +31,19 @@ assert(html.includes("meow-work-theme-mode-v1"));
 assert(html.includes("if($('accountLogout'))$('accountLogout').classList.toggle('hidden',!authUser)"));
 assert(html.includes('id="settingsScheduleSummary"'));
 console.log('PASS v129 schedule/settings UI structure');
+
+
+const scheduleSection=html.slice(
+  html.indexOf('<section class="page" id="page-calendar">'),
+  html.indexOf('<section class="page" id="page-attendance">')
+);
+assert(html.includes('v137-schedule-ai-card'),'expected v137 schedule AI-card build');
+for(const id of ['scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuEvent','scheduleMenuClearAi']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert(scheduleSection.includes('schedule-card-v136'),'schedule page must use v136+ AI-card layout');
+assert(!scheduleSection.includes('schedule-v129-head'),'old visible schedule-settings header must be removed from schedule page');
+assert(scheduleSection.indexOf('id="aiScheduleCard"') < scheduleSection.indexOf('id="calPrev"'),'AI import card must remain directly above calendar controls');
+assert(scheduleSection.includes('id="toggleSchedule"'),'calendar-plus schedule settings trigger missing');
+assert(scheduleSection.includes('<use href="#i-calendar"/>'),'schedule settings trigger should use calendar icon');
+console.log('PASS v137 schedule AI card structure');
