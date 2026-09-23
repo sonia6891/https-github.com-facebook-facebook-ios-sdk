@@ -4060,11 +4060,17 @@ async function runPayslipOcr(file){
       labelOnlyDefs=missingDefs.filter(def=>payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[def.key]),
       reallyMissingDefs=missingDefs.filter(def=>!labelOnlyDefs.includes(def));
     const engine=nativeVision?'Apple Vision':'Tesseract fallback';
-    status.childNodes[0].nodeValue=engine+' 辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
+    const recognizedKeys=foundDefs.map(def=>def.key);
+    const manualKeys=payslipOcrResult.__manualKeys||{};
+    const lowConfidenceKeys=recognizedKeys.filter(key=>!manualKeys[key]&&num(payslipOcrResult.__confidence?.[key])<.72);
+    const highConfidenceCount=recognizedKeys.filter(key=>manualKeys[key]||num(payslipOcrResult.__confidence?.[key])>=.85).length;
+    status.childNodes[0].nodeValue=engine+' 辨識完成：找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位・高信心 '+highConfidenceCount+' 項・需確認 '+lowConfidenceKeys.length+' 項'+(payslipOcrResult.__usedMemory?'・已套用本機格式記憶':'')+'。 ';
     if($('payslipMissingFields')){
-      const warningCount=Object.keys(validatePayslipValues(payslipOcrResult)).length+Object.keys(payslipOcrResult.__fieldWarnings||{}).length;
-      $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0&&warningCount===0);
-      $('payslipMissingFields').textContent=(labelOnlyDefs.length?'已讀到欄位名稱但尚未抓到金額：'+labelOnlyDefs.map(def=>def.label).join('、')+'。 ':'')+(reallyMissingDefs.length?'完全未辨識：'+reallyMissingDefs.map(def=>def.label).join('、')+'。 ':'')+(warningCount?'另有 '+warningCount+' 個欄位需要人工確認。':'');
+      const valueWarnings=validatePayslipValues(payslipOcrResult);
+      const disagreement=payslipOcrResult.__fieldWarnings||{};
+      const warningKeys=[...new Set([...Object.keys(valueWarnings),...Object.keys(disagreement),...lowConfidenceKeys])];
+      $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0&&warningKeys.length===0);
+      $('payslipMissingFields').textContent=(labelOnlyDefs.length?'已讀到欄位名稱但尚未抓到金額：'+labelOnlyDefs.map(def=>def.label).join('、')+'。 ':'')+(reallyMissingDefs.length?'完全未辨識：'+reallyMissingDefs.map(def=>def.label).join('、')+'。 ':'')+(warningKeys.length?'需要人工確認：'+warningKeys.map(k=>(PAYSLIP_OCR_FIELDS.find(x=>x.key===k)||{label:k}).label).join('、')+'。':'');
     }
     bar.style.width='100%';
   }catch(e){
@@ -4076,10 +4082,12 @@ function importPayslipDetected(){
   if(!canUse('payslip_scan'))return;
   const confirmed={};qsa('[data-ocr-field]').forEach(input=>{if(input.value!=='')confirmed[input.dataset.ocrField]=num(input.value)});
   const keys=Object.keys(confirmed);if(!keys.length){alert('目前沒有可導入的辨識欄位。');return}
-  const warnings=validatePayslipValues(confirmed),disagreement=payslipOcrResult.__fieldWarnings||{},warningKeys=[...new Set([...Object.keys(warnings),...Object.keys(disagreement)])];
+  const warnings=validatePayslipValues(confirmed),disagreement=payslipOcrResult.__fieldWarnings||{},manualKeys=payslipOcrResult.__manualKeys||{};
+  const lowConfidenceKeys=keys.filter(key=>!manualKeys[key]&&num(payslipOcrResult.__confidence?.[key])<.72);
+  const warningKeys=[...new Set([...Object.keys(warnings),...Object.keys(disagreement),...lowConfidenceKeys])];
   if(warningKeys.length){
     const labels=warningKeys.map(k=>(PAYSLIP_OCR_FIELDS.find(x=>x.key===k)||{label:k}).label).join('、');
-    if(!confirm('仍有需要確認的欄位：'+labels+'。\n\n請確認畫面上的金額無誤後再導入。仍要導入嗎？'))return;
+    if(!confirm('以下欄位辨識信心較低、交叉結果不一致，或金額看起來需要確認：'+labels+'。\n\n請先核對畫面上的金額；如果已確認正確，再繼續導入逐項對帳。'))return;
   }
   const mm=mb();mm.actualItems=mm.actualItems||{};
   Object.entries(confirmed).forEach(([key,value])=>{if(key==='actualNet')mm.actualNet=value;else mm.actualItems[key]=value});
