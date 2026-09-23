@@ -126,7 +126,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('舊版取回只下載 JSON 而不套用遠端狀態', html.includes("'meow-legacy-backup.json'") && !/exportLegacyCloud[\s\S]*?applyRemoteRow\(/.test(html.slice(html.indexOf('async function exportLegacyCloud'), html.indexOf('function renderSyncStatus'))));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV119.openWelcome()));
-    check('登入頁只保留兩個登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine').count() === 2);
+    check('登入頁提供 Google、LINE、Apple 三個同等登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine, #welcomeApple').count() === 3);
     check('沒有訪客登入入口', await guest.locator('#welcomeGuest').count() === 0);
     check('沒有公開 Email 或 OTP 入口', await guest.locator('#welcomeEmail, #emailLoginInput, #emailOtpInput, #sendEmailOtp, #verifyEmailOtp').count() === 0);
     await guest.locator('#welcomeGoogle').click();
@@ -134,6 +134,8 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     await guest.locator('#welcomeLine').click();
     check('LINE 按鈕使用 custom:line', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line'));
     check('LINE 要求 openid profile', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.scopes === 'openid profile'));
+    await guest.locator('#welcomeApple').click();
+    check('Apple 按鈕使用 apple provider', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'apple'));
     await guestContext.close();
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
@@ -372,12 +374,25 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     const user = { id: 'acct-logout', email: 'member@example.test', app_metadata: { provider: 'google' } };
     const { context, page } = await openPage(browser, base, 390, user);
     await page.evaluate(() => window.__accountV119.settings());
+    await page.locator('.settings-account-details > summary').click();
+    await page.locator('#accountUsername').fill('重新登入保留資料');
+    await page.locator('#saveAccountUsername').click();
+    check('登出前帳號工作區已保存本機資料', await page.locator('#profileName').innerText() === '重新登入保留資料');
     await page.locator('#accountLogout').click();
     await page.waitForFunction(() => document.getElementById('welcomeDialog').open === true);
     check('主動登出後重新顯示登入頁', await page.evaluate(() => window.__accountV119.openWelcome()));
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => window.__accountV119 !== undefined);
     check('登出後重開仍顯示登入頁', await page.evaluate(() => window.__accountV119.openWelcome()));
+    await page.evaluate(user => {
+      localStorage.removeItem('__account_test_signed_out');
+      const session={user};
+      localStorage.setItem('__mock_auth_session',JSON.stringify(session));
+      window.__accountTest.user=user;
+      window.__authCallback?.('SIGNED_IN',session);
+    }, user);
+    await page.waitForFunction(() => document.getElementById('welcomeDialog').open === false && document.getElementById('profileName').textContent === '重新登入保留資料');
+    check('同帳號重新登入會回到原本本機工作區', await page.locator('#profileName').innerText() === '重新登入保留資料');
     await context.close();
   } finally {
     await browser.close();
