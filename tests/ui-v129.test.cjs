@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v145-schedule-date-fit'),'expected v145 schedule date fit build');
+assert(html.includes('v146-attendance-add-chooser'),'expected v146 attendance add chooser build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -92,3 +92,14 @@ assert(html.includes('#scheduleAddDate,\n#scheduleAddShift{'),'schedule add cont
 assert(html.includes('min-inline-size:0'),'schedule date must be allowed to shrink on mobile');
 assert(html.includes('#scheduleAddDialog .dialog-body{\n  overflow-x:hidden;'),'schedule add dialog must block horizontal overflow');
 console.log('PASS v145 schedule date fit structure');
+
+
+for(const id of ['attendanceAddDialog','attendanceAddClose','attendanceAddEvent','attendanceAddTodo']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert(html.includes("function openAttendanceAddDialog()"),'unified attendance add chooser missing');
+assert(html.includes("$('addItinerary').onclick=openAttendanceAddDialog"),'top-right plus must open chooser');
+assert(html.includes("attendanceAddEvent').onclick"),'chooser event action missing');
+assert(html.includes("attendanceAddTodo').onclick"),'chooser todo action missing');
+assert(!html.includes('<div class="empty-plus">＋</div>'),'empty-state decorative plus should be removed');
+console.log('PASS v146 attendance add chooser structure');
