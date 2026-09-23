@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v144-dialog-close-corrected">
+<meta name="meow-ui-build" content="v145-schedule-date-fit">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -895,6 +895,42 @@ html.dark .settings-pro-v129{
   .attendance-v142-tabs{margin-top:8px}
   .todo-card-v142{grid-template-columns:38px minmax(0,1fr);padding:9px 10px}
   .todo-check-v142{width:34px;height:34px}
+}
+
+/* ===== v145 schedule add dialog mobile fit ===== */
+#scheduleAddDialog,
+#scheduleAddDialog form,
+#scheduleAddDialog .dialog-body,
+#scheduleAddDialog .field{
+  min-width:0;
+  max-width:100%;
+  box-sizing:border-box;
+}
+#scheduleAddDialog form{
+  width:100%;
+  overflow:hidden;
+}
+#scheduleAddDialog .dialog-body{
+  overflow-x:hidden;
+}
+#scheduleAddDate,
+#scheduleAddShift{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  inline-size:100%;
+  max-inline-size:100%;
+  min-inline-size:0;
+  box-sizing:border-box;
+}
+#scheduleAddDate{
+  font-size:16px;
+}
+@media(max-width:760px){
+  #scheduleAddDialog .dialog-body{padding-left:14px;padding-right:14px}
+  #scheduleAddDialog .field{width:100%}
+  #scheduleAddDate,#scheduleAddShift{width:100%;max-width:100%;min-width:0}
 }
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v115-180.png">
