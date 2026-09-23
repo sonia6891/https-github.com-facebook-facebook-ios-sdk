@@ -24,6 +24,10 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>只有在你主動拍攝班表或薪資單圖片時，才會使用相機。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>只有在你主動選擇班表、薪資單或頭像圖片時，才會讀取你選取的照片。</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>

@@ -54,8 +54,14 @@ jobs:
           rm -rf ios
           npx cap add ios
           node scripts/patch-ios-bridge.mjs
+          APP_ICON="ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png"
+          sips -z 1024 1024 ../app-icon-v115-512.png --out "$APP_ICON" >/dev/null
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription '只有在你主動拍攝班表或薪資單圖片時，才會使用相機。'" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string '只有在你主動拍攝班表或薪資單圖片時，才會使用相機。'" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryUsageDescription '只有在你主動選擇班表、薪資單或頭像圖片時，才會讀取你選取的照片。'" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string '只有在你主動選擇班表、薪資單或頭像圖片時，才會讀取你選取的照片。'" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations array" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait" ios/App/App/Info.plist
@@ -94,6 +100,19 @@ jobs:
           grep -q 'NSPrivacyCollectedDataTypePhotosorVideos' ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'NSPrivacyCollectedDataTypeOtherUserContent' ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'PrivacyInfo.xcprivacy in Resources' ios/App/App.xcodeproj/project.pbxproj
+          grep -q 'TARGETED_DEVICE_FAMILY = 1;' ios/App/App.xcodeproj/project.pbxproj
+          test -s ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
+          test "$(sips -g pixelWidth ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png 2>/dev/null | awk '/pixelWidth/{print $2}')" = "1024"
+          test "$(sips -g pixelHeight ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png 2>/dev/null | awk '/pixelHeight/{print $2}')" = "1024"
+          grep -q 'red="1" green="0.9764705882" blue="0.9450980392"' ios/App/App/Base.lproj/LaunchScreen.storyboard
+          if grep -q 'image="Splash"' ios/App/App/Base.lproj/LaunchScreen.storyboard; then
+            echo "Capacitor default splash image must not return."
+            exit 1
+          fi
+          if grep -q 'TARGETED_DEVICE_FAMILY = "1,2";' ios/App/App.xcodeproj/project.pbxproj; then
+            echo "v1 must remain iPhone-only until iPad UI is separately validated."
+            exit 1
+          fi
           if grep -q 'ViewController.swift in Sources' ios/App/App.xcodeproj/project.pbxproj; then
             echo "Unexpected duplicate ViewController source reference"
             exit 1
@@ -178,6 +197,8 @@ jobs:
           test -f "$APP_DIR/public/terms.html"
           test -f "$APP_DIR/public/support.html"
           /usr/libexec/PlistBuddy -c "Print :ITSAppUsesNonExemptEncryption" "$APP_DIR/Info.plist" | grep -q false
+          /usr/libexec/PlistBuddy -c "Print :NSCameraUsageDescription" "$APP_DIR/Info.plist" | grep -q '主動拍攝'
+          /usr/libexec/PlistBuddy -c "Print :NSPhotoLibraryUsageDescription" "$APP_DIR/Info.plist" | grep -q '主動選擇'
           IPHONE_ORIENTATIONS="$(/usr/libexec/PlistBuddy -c "Print :UISupportedInterfaceOrientations" "$APP_DIR/Info.plist")"
           echo "$IPHONE_ORIENTATIONS" | grep -q UIInterfaceOrientationPortrait
           if echo "$IPHONE_ORIENTATIONS" | grep -q UIInterfaceOrientationLandscape; then

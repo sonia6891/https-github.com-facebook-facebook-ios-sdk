@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { copyFileSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(process.cwd());
@@ -7,6 +7,8 @@ const scenePath = resolve(root, 'ios/App/App/SceneDelegate.swift');
 const projectPath = resolve(root, 'ios/App/App.xcodeproj/project.pbxproj');
 const privacySourcePath = resolve(root, 'ios-sources/PrivacyInfo.xcprivacy');
 const privacyTargetPath = resolve(root, 'ios/App/App/PrivacyInfo.xcprivacy');
+const launchSourcePath = resolve(root, 'ios-sources/LaunchScreen.storyboard');
+const launchTargetPath = resolve(root, 'ios/App/App/Base.lproj/LaunchScreen.storyboard');
 
 const bridgeSource = readFileSync(bridgeSourcePath, 'utf8');
 const sceneSource = readFileSync(scenePath, 'utf8');
@@ -42,6 +44,7 @@ writeFileSync(scenePath, output);
 
 const privacyManifest = readFileSync(privacySourcePath, 'utf8');
 writeFileSync(privacyTargetPath, privacyManifest);
+copyFileSync(launchSourcePath, launchTargetPath);
 
 let project = readFileSync(projectPath, 'utf8');
 const privacyBuildId = 'A15100000000000000000001';
@@ -74,6 +77,13 @@ if (!project.includes('PrivacyInfo.xcprivacy in Resources')) {
   );
   project = project.slice(0, resourcesStart) + resourcesBlock + project.slice(resourcesEnd);
 }
+
+// v1 is intentionally iPhone-only. The current UI/regression matrix is phone portrait;
+// do not silently re-enable iPad during Capacitor regeneration.
+project = project.replace(/TARGETED_DEVICE_FAMILY = "1,2";/g, 'TARGETED_DEVICE_FAMILY = 1;');
+if (!project.includes('TARGETED_DEVICE_FAMILY = 1;') || project.includes('TARGETED_DEVICE_FAMILY = "1,2";')) {
+  throw new Error('Unable to lock generated Xcode target to iPhone-only.');
+}
 writeFileSync(projectPath, project);
 
-console.log('Patched generated SceneDelegate, native bridges, and app PrivacyInfo.xcprivacy.');
+console.log('Patched generated SceneDelegate, native bridges, privacy manifest, branded launch screen, and iPhone-only target.');

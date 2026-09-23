@@ -20,7 +20,11 @@ Bundle ID：`com.lumilab.meowwork`
 - [x] 恢復購買
 - [x] 管理／取消訂閱
 - [x] App Store Server Notifications V2 endpoint 已部署
+- [x] 免費基本功能可不登入使用；帳號只在雲端／Pro 等帳號型功能需要（對齊 App Review 5.1.1(v)）
 - [x] App 內永久刪除帳號
+- [x] App 內永久刪除帳號後清除本機 safety snapshot
+- [x] 正式 Supabase 使用者資料表外鍵已核對：工作資料／方案／訂單／AI 用量為 CASCADE；商店事件保留為 orphan 以支援有效訂閱恢復
+- [x] App Store 事件 raw payload 最小化；刪帳號前先 scrub 舊識別 payload，避免殘留 appAccountToken UUID
 - [x] 刪除帳號後，孤立的既有 App Store 訂閱可安全重新綁定新帳號
 - [x] 隱私權政策公開頁
 - [x] 服務條款公開頁
@@ -38,12 +42,14 @@ Bundle ID：`com.lumilab.meowwork`
 
 ### P0 — 送審前一定要完成
 
-- [ ] **Sign in with Apple**
-  - Apple Developer 開啟 Sign in with Apple capability
-  - 建立需要的 Services ID／Key
-  - Supabase Auth 啟用 Apple provider
-  - App 登入頁加入 Apple 同等登入選項
-  - 目前自動檢查：Google=true、LINE=true、Apple=false
+- [ ] **Sign in with Apple（外部設定待 Apple 恢復）**
+  - [x] App 登入頁與 Apple OAuth 程式端已備妥（目前以 feature gate 隱藏，避免 provider 未設定時出現壞按鈕）
+  - [x] 前端 OAuth provider／回呼錯誤／登入方式顯示與 regression test
+  - [ ] Apple provider 驗證成功後將 `APPLE_LOGIN_ENABLED` 切為 `true`
+  - [ ] Apple Developer 開啟 Sign in with Apple capability
+  - [ ] 建立需要的 Services ID／Key
+  - [ ] Supabase Auth 啟用 Apple provider
+  - Apple 後台完成後，再做 Sandbox／真機登入驗收
 
 - [ ] **正式 App Store numeric App ID**
   - App Store Connect 建立 App 後取得數字 App ID
@@ -103,14 +109,14 @@ App Store Connect 選「會收集資料」，依目前 App 功能至少檢查以
 Tracking：否。  
 本 App 不使用 ATT 追蹤，也沒有廣告追蹤用途。
 
-## 裝置支援待決定
+## 裝置支援（v1 已鎖定）
 
-目前 Targeted Device Family 是 iPhone + iPad（1,2）。
+第一版採 **iPhone-only**：
 
-第一版有兩種選擇：
-
-1. 保留 iPad：送審前必須額外完成 iPad UI smoke test 與相應 App Store 素材。
-2. 改 iPhone-only：可縮小第一版測試面積；需產品決策後再改，不能直接偷偷移除 iPad 支援。
+- Targeted Device Family = iPhone（1）
+- iPhone v1 鎖定直向
+- CI 會阻擋 Capacitor 再生專案時意外回到 iPhone + iPad（1,2）
+- iPad 延後到完成獨立 UI／旋轉／素材與實機 smoke test 後再開放
 
 ## 每次送審前自動 Gate
 

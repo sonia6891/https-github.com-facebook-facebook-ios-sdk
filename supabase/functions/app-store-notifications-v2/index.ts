@@ -139,7 +139,7 @@ Deno.serve(async(req)=>{
       environment:String(data?.environment||tx?.environment||""),
       signed_at:iso(notification.signedDate),
       expires_at:iso(tx?.expiresDate),
-      raw:{notification,transaction:tx}
+      raw:{verified:true,source:"app_store_server",notification_uuid:String(notification.notificationUUID||""),has_linked_account:!!userId}
     },{onConflict:"event_id"});
     if(eventError)throw eventError;
 

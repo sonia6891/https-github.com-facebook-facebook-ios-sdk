@@ -34,6 +34,18 @@ Deno.serve(async (req: Request) => {
   const user = userResult.data?.user;
   if (!user || userResult.error) return json({ ok: false, code: "AUTH_INVALID" }, 401);
 
+  // App Store event rows are intentionally retained with user_id -> NULL so an
+  // active subscription can be restored to a newly created app account. Strip
+  // decoded payloads first because they can contain the old appAccountToken UUID.
+  const { error: scrubError } = await admin
+    .from("store_subscription_events")
+    .update({ raw: { redacted_after_account_deletion: true } })
+    .eq("user_id", user.id);
+  if (scrubError) {
+    console.error("delete-account event scrub failed", scrubError);
+    return json({ ok: false, code: "PRIVACY_SCRUB_FAILED" }, 500);
+  }
+
   const { error } = await admin.auth.admin.deleteUser(user.id, false);
   if (error) {
     console.error("delete-account failed", error);

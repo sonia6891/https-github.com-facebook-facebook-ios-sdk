@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v151-app-store-legal">
+<meta name="meow-ui-build" content="v152-app-store-hardening">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1866,6 +1866,8 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       <div class="welcome-actions">
         <button type="button" id="welcomeGoogle" class="welcome-button welcome-google"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.39-.18-2.05H12v3.88h5.38a4.61 4.61 0 0 1-2 3.03v2.52h3.24c1.9-1.75 2.98-4.33 2.98-7.38Z"/><path fill="#34A853" d="M12 22c2.7 0 4.96-.9 6.61-2.4l-3.23-2.52c-.9.6-2.06.97-3.38.97-2.6 0-4.81-1.76-5.6-4.13H3.06v2.59A10 10 0 0 0 12 22Z"/><path fill="#FBBC05" d="M6.4 13.92A6 6 0 0 1 6.09 12c0-.66.11-1.3.31-1.92V7.49H3.06A10 10 0 0 0 2 12c0 1.61.38 3.14 1.06 4.51l3.34-2.59Z"/><path fill="#EA4335" d="M12 5.95c1.47 0 2.79.5 3.82 1.49l2.87-2.87A9.63 9.63 0 0 0 12 2a10 10 0 0 0-8.94 5.49l3.34 2.59A6 6 0 0 1 12 5.95Z"/></svg><span>使用 Google 繼續</span><span aria-hidden="true">›</span></button>
         <button type="button" id="welcomeLine" class="welcome-button welcome-line"><span class="welcome-line-mark" aria-hidden="true">LINE</span><span>使用 LINE 繼續</span><span aria-hidden="true">›</span></button>
+        <button type="button" id="welcomeApple" class="welcome-button welcome-apple" hidden><span aria-hidden="true" style="font-size:24px;line-height:1"></span><span>使用 Apple 繼續</span><span aria-hidden="true">›</span></button>
+        <button type="button" id="welcomeGuest" class="welcome-button welcome-guest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg><span>先使用免費版</span><span aria-hidden="true">›</span></button>
       <p id="welcomeMessage" class="welcome-message" role="status" aria-live="polite"></p>
       <div class="welcome-benefits">
         <div><span class="welcome-benefit-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="17" rx="3"/><path d="M7 2v6m10-6v6M3 10h18m-14 5 3 3 7-6"/></svg></span><b>免費使用</b><p>班表・薪資・休假<br>行程都能記錄</p></div>
@@ -2072,6 +2074,8 @@ const WELCOME_KEY='meow-work-welcome-v1',OWNER_KEY='meow-work-local-owner-v1';
 const WELCOME_FRAME_KEY='meow-work-welcome-frame-v1';
 // Pending login choice survives a restart, without resetting any work data.
 const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1';
+// Flip to true only after Apple Developer + Supabase Apple provider are configured and verified.
+const APPLE_LOGIN_ENABLED=false;
 let localOwner=readSnapshotOwner()||readLocalString(OWNER_KEY)||'guest';
 let accessEpoch=0,accessCheckedUser='',accessServerMs=0,accessLocalMs=0;
 let cloudRevision=null,cloudPayload=null,cloudReady=false,cloudStatus='未啟用・Pro 專屬';
@@ -2271,7 +2275,7 @@ function clearOAuthCallbackError(){
   }catch(e){}
 }
 function authCallbackMessage(issue){
-  const label=issue&&issue.provider==='line'?'LINE':issue&&issue.provider==='google'?'Google':'帳號';
+  const label=issue&&issue.provider==='line'?'LINE':issue&&issue.provider==='google'?'Google':issue&&issue.provider==='apple'?'Apple':'帳號';
   const raw=(issue&&issue.description)||(issue&&issue.code)||(issue&&issue.error)||'登入回呼沒有建立有效工作階段';
   return label+' 登入未完成：'+raw;
 }
@@ -2288,14 +2292,16 @@ async function handleSignedIn(user,session=null){
   await loadEntitlement();
   if(authUser&&authUser.id===user.id){await loadBillingHistory();setAccountStatus('帳號已登入');renderSettings()}
 }
-async function handleSignedOut(){
+async function handleSignedOut(forceWelcome=false){
   const epoch=++accessEpoch;
   entitlementRequest++;authUser=null;resetEntitlement();billingHistory=[];clearTimeout(expiryTimer);
   await stopAccountRealtime();
   if(epoch!==accessEpoch||authUser)return;
   cloudReady=false;pendingCloud=null;switchWorkspace('guest');
-  setAccountStatus('請使用 Google 或 LINE 登入');setCloudStatus('未啟用・Pro 專屬');render();
-  openWelcome(false);
+  const welcomeDone=readLocalString(WELCOME_FRAME_KEY)==='done';
+  setAccountStatus(welcomeDone&&!forceWelcome?'免費版・資料保存在這台裝置':'請使用 Google、LINE 或 Apple 登入');
+  setCloudStatus('未啟用・Pro 專屬');render();
+  if(forceWelcome||!welcomeDone)openWelcome(false);
 }
 async function initAuth(){
   const callbackIssue=readOAuthCallbackError();
@@ -2307,10 +2313,11 @@ async function initAuth(){
       clearOAuthCallbackError();
       await handleSignedIn(data.session.user,data.session);
     }else{
-      await handleSignedOut();
+      await handleSignedOut(!!callbackIssue);
       if(callbackIssue){
         const message=authCallbackMessage(callbackIssue);
-        setAccountStatus((callbackIssue.provider==='line'?'LINE':'帳號')+' 登入未完成');
+        const providerLabel=callbackIssue.provider==='line'?'LINE':callbackIssue.provider==='google'?'Google':callbackIssue.provider==='apple'?'Apple':'帳號';
+        setAccountStatus(providerLabel+' 登入未完成');
         if($('welcomeMessage'))$('welcomeMessage').textContent=message;
         clearOAuthCallbackError();
         try{localStorage.removeItem(WELCOME_REAUTH_KEY)}catch(e){}
@@ -2322,12 +2329,13 @@ async function initAuth(){
       if(event==='SIGNED_OUT'){accessEpoch++;accessCheckedUser='';clearTimeout(authTimer)}
       authEventTimer=setTimeout(()=>{
         if(session&&session.user)void handleSignedIn(session.user,session);
-        else if(event==='SIGNED_OUT')void handleSignedOut();
+        else if(event==='SIGNED_OUT')void handleSignedOut(true);
       },0);
     });
   }catch(e){
-    setAccountStatus('登入服務暫時無法連線');
-    openWelcome(false);
+    const welcomeDone=readLocalString(WELCOME_FRAME_KEY)==='done';
+    setAccountStatus(welcomeDone?'登入服務暫時無法連線・免費版仍可使用':'登入服務暫時無法連線');
+    if(!welcomeDone)openWelcome(false);
   }finally{
     document.documentElement.classList.remove('auth-booting');
   }
@@ -2380,8 +2388,11 @@ function openWelcome(manual=false){
   $('welcomeTitle').focus({preventScroll:true});$('welcomeDialog').scrollTop=0;
 }
 async function initWelcome(){
+  $('welcomeApple').hidden=!APPLE_LOGIN_ENABLED;
   $('welcomeGoogle').onclick=async()=>{const b=$('welcomeGoogle');b.disabled=true;try{await signInWithGoogle()}finally{b.disabled=false}};
   $('welcomeLine').onclick=async()=>{const b=$('welcomeLine');b.disabled=true;try{await signInWithLine()}finally{b.disabled=false}};
+  $('welcomeApple').onclick=async()=>{const b=$('welcomeApple');b.disabled=true;try{await signInWithApple()}finally{b.disabled=false}};
+  $('welcomeGuest').onclick=()=>{setAccountStatus('免費版・資料保存在這台裝置');finishWelcome()};
   $('welcomeDialog').addEventListener('cancel',event=>{event.preventDefault();if(welcomeManual)finishWelcome()});
   $('welcomeDialog').addEventListener('close',()=>document.documentElement.classList.remove('meow-welcome-open'));
   if($('showWelcome'))$('showWelcome').onclick=()=>openWelcome(true);
@@ -2429,6 +2440,24 @@ async function signInWithLine(){
   }
 }
 
+async function signInWithApple(){
+  try{
+    const client=await getAuthClient();
+    setAccountStatus('正在前往 Apple 登入…');
+    rememberAuthAttempt('apple');
+    const redirectTo=location.origin+location.pathname;
+    const {error}=await client.auth.signInWithOAuth({
+      provider:'apple',
+      options:{redirectTo}
+    });
+    if(error)throw error;
+  }catch(e){
+    try{localStorage.removeItem(WELCOME_REAUTH_KEY)}catch(err){}
+    setAccountStatus('Apple 登入失敗');
+    alert('Apple 登入失敗：'+(e&&e.message?e.message:'請稍後再試。'));
+  }
+}
+
 async function signOutAccount(){
   const button=$('accountLogout');if(button.disabled)return;button.disabled=true;
   try{
@@ -2438,7 +2467,7 @@ async function signOutAccount(){
     if(error)throw error;
     clearTimeout(authEventTimer);authEventTimer=null;
     // Also handle clients which do not emit a local SIGNED_OUT callback.
-    await handleSignedOut();
+    await handleSignedOut(true);
   }catch(e){
     setAccountStatus('登出未完成，請稍後重試。本機資料未清除。');
     alert('登出未完成，請稍後重試。本機資料未清除。');
@@ -2460,6 +2489,7 @@ async function deleteAccountPermanently(){
       [
         'meow-work-cloud-consent:'+deletingOwner,
         workspaceKey(deletingOwner),
+        'meow-work-before-replace:'+deletingOwner,
         SAVE_KEY,AVATAR_KEY,SCHEDULE_KEY,
         'meow-work-sync-meta:'+deletingOwner
       ].forEach(key=>localStorage.removeItem(key));
@@ -2470,7 +2500,7 @@ async function deleteAccountPermanently(){
       const client=await getAuthClient();
       await client.auth.signOut({scope:'local'});
     }catch(e){}
-    await handleSignedOut();
+    await handleSignedOut(true);
     alert('帳號與雲端資料已永久刪除。');
   }catch(e){
     setAccountStatus('帳號刪除失敗，資料沒有被刪除。');
@@ -4958,12 +4988,13 @@ function renderAccountPlan(){
   }
 }
 function accountProviderText(user){
-  if(!user)return'登入方式：Google／LINE';
+  if(!user)return'登入方式：Google／LINE／Apple';
   const app=user.app_metadata||{};
   const raw=[app.provider].concat(Array.isArray(app.providers)?app.providers:[]).filter(Boolean).join(' ').toLowerCase();
+  if(raw.includes('apple'))return'登入方式：Apple';
   if(raw.includes('line'))return'登入方式：LINE';
   if(raw.includes('google'))return'登入方式：Google';
-  return'登入方式：Google／LINE';
+  return'登入方式：Google／LINE／Apple';
 }
 function openProSettings(){
   setTab('settings');

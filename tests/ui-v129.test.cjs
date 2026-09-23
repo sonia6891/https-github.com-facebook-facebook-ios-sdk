@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v151-app-store-legal'),'expected v151 App Store legal build');
+assert(html.includes('v152-app-store-hardening'),'expected v152 App Store hardening build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -136,11 +136,18 @@ assert(html.includes("time=/^\\d{2}:\\d{2}$/.test(String(item.time||''))?item.ti
 console.log('PASS v149 todo free time structure');
 
 
-for(const id of ['deleteAccount','accountDeleteZone']){
+for(const id of ['deleteAccount','accountDeleteZone','welcomeApple','welcomeGuest']){
   assert.equal(ids[id],1,'missing or duplicated #'+id);
 }
 assert(html.includes("async function deleteAccountPermanently()"),'in-app account deletion flow missing');
 assert(html.includes("invokeUserFunction('delete-account'"),'account deletion must call authenticated backend');
+const deleteFlow=html.slice(html.indexOf('async function deleteAccountPermanently()'),html.indexOf('function saveSchedulePrefs'));
+assert(deleteFlow.includes("'meow-work-before-replace:'+deletingOwner"),'account deletion must remove local pre-replace safety snapshot');
+assert(html.includes('async function signInWithApple()'),'Apple sign-in flow missing');
+assert(html.includes("provider:'apple'"),'Apple OAuth provider missing');
+assert(html.includes('const APPLE_LOGIN_ENABLED=false;'),'Apple login must remain gated until external provider setup is verified');
+assert(html.includes("$('welcomeGuest').onclick"),'free local mode must be usable without account sign-in');
+assert(html.includes("readLocalString(WELCOME_FRAME_KEY)==='done'"),'free local mode acknowledgement must survive restart');
 assert(html.includes('href="./privacy.html"'),'privacy policy link missing');
 assert(html.includes('href="./terms.html"'),'terms link missing');
 assert(html.includes('href="./support.html"'),'support link missing');

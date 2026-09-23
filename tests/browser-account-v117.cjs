@@ -126,14 +126,24 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('舊版取回只下載 JSON 而不套用遠端狀態', html.includes("'meow-legacy-backup.json'") && !/exportLegacyCloud[\s\S]*?applyRemoteRow\(/.test(html.slice(html.indexOf('async function exportLegacyCloud'), html.indexOf('function renderSyncStatus'))));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV119.openWelcome()));
-    check('登入頁只保留兩個登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine').count() === 2);
-    check('沒有訪客登入入口', await guest.locator('#welcomeGuest').count() === 0);
+    check('登入頁已具備 Google、LINE、Apple 三個登入入口結構', await guest.locator('#welcomeGoogle, #welcomeLine, #welcomeApple').count() === 3);
+    check('Apple provider 尚未完成外部設定前不公開失敗入口', await guest.locator('#welcomeApple').isHidden());
+    check('免費基本功能可不登入直接使用', await guest.locator('#welcomeGuest').count() === 1 && await guest.locator('#welcomeGuest').isVisible());
     check('沒有公開 Email 或 OTP 入口', await guest.locator('#welcomeEmail, #emailLoginInput, #emailOtpInput, #sendEmailOtp, #verifyEmailOtp').count() === 0);
     await guest.locator('#welcomeGoogle').click();
     check('Google 按鈕使用 google provider', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'google'));
     await guest.locator('#welcomeLine').click();
     check('LINE 按鈕使用 custom:line', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line'));
     check('LINE 要求 openid profile', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.scopes === 'openid profile'));
+    check('Apple OAuth 程式端已鎖定 apple provider', html.includes("provider:'apple'"));
+    await guest.locator('#welcomeGuest').click();
+    check('先使用免費版會關閉強制登入頁', !(await guest.evaluate(() => window.__accountV119.openWelcome())));
+    check('未登入免費版不會取得雲端同步', await guest.evaluate(() => !window.__accountV119.canCloudSync()));
+    check('未登入免費版不會誤開 Pro 功能', await guest.evaluate(() => !window.__accountV119.canUse('payslip_scan')));
+    await guest.reload({ waitUntil: 'domcontentloaded' });
+    await guest.waitForFunction(() => window.__accountV119 !== undefined);
+    await guest.waitForTimeout(120);
+    check('選過免費版後重開 App 不會再次強制登入', !(await guest.evaluate(() => window.__accountV119.openWelcome())));
     await guestContext.close();
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
@@ -372,12 +382,25 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     const user = { id: 'acct-logout', email: 'member@example.test', app_metadata: { provider: 'google' } };
     const { context, page } = await openPage(browser, base, 390, user);
     await page.evaluate(() => window.__accountV119.settings());
+    await page.locator('.settings-account-details > summary').click();
+    await page.locator('#accountUsername').fill('重新登入保留資料');
+    await page.locator('#saveAccountUsername').click();
+    check('登出前帳號工作區已保存本機資料', await page.locator('#profileName').innerText() === '重新登入保留資料');
     await page.locator('#accountLogout').click();
     await page.waitForFunction(() => document.getElementById('welcomeDialog').open === true);
     check('主動登出後重新顯示登入頁', await page.evaluate(() => window.__accountV119.openWelcome()));
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => window.__accountV119 !== undefined);
     check('登出後重開仍顯示登入頁', await page.evaluate(() => window.__accountV119.openWelcome()));
+    await page.evaluate(user => {
+      localStorage.removeItem('__account_test_signed_out');
+      const session={user};
+      localStorage.setItem('__mock_auth_session',JSON.stringify(session));
+      window.__accountTest.user=user;
+      window.__authCallback?.('SIGNED_IN',session);
+    }, user);
+    await page.waitForFunction(() => document.getElementById('welcomeDialog').open === false && document.getElementById('profileName').textContent === '重新登入保留資料');
+    check('同帳號重新登入會回到原本本機工作區', await page.locator('#profileName').innerText() === '重新登入保留資料');
     await context.close();
   } finally {
     await browser.close();
