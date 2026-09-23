@@ -87,7 +87,12 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
   page.on('pageerror', error => pageErrors.push(String(error)));
   page.on('dialog', dialog => dialog.accept());
   await page.goto(base, { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => window.__accountV119 !== undefined);
+  try {
+    await page.waitForFunction(() => window.__accountV119 !== undefined);
+  } catch (error) {
+    console.error('PAGE STARTUP ERRORS:', pageErrors.length ? pageErrors.join(' | ') : '(none captured)');
+    throw error;
+  }
   await page.waitForTimeout(700);
   check(`${width}px 沒有瀏覽器執行錯誤`, pageErrors.length === 0);
   return { context, page };
