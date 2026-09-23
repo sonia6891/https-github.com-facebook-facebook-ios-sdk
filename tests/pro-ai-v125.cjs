@@ -18,6 +18,10 @@ for (const mode of ['schedule_scan','payslip_scan','reconcile_explain','salary_f
 }
 assert(edge.includes('meow_account_access'));
 assert(edge.includes('OPENAI_API_KEY'));
+assert(edge.includes('gpt-6-luna'));
+assert(edge.includes('store: false'));
+assert(edge.includes('safety_identifier: safetyId'));
+assert(edge.includes('reasoning: { effort: reasoningEffort(mode) }'));
 assert(edge.includes('json_schema'));
 assert(edge.includes('meow_claim_ai_usage'));
 assert(edge.includes('AI_QUOTA_EXCEEDED'));
