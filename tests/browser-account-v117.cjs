@@ -19,6 +19,7 @@ const bridge = `window.__accountV119={
   canUse,
   owner:()=>localOwner,
   settings:()=>setTab('settings'),
+  calendar:()=>setTab('calendar'),
   openWelcome:()=>document.getElementById('welcomeDialog').open
 };`;
 const bridgeAt = html.lastIndexOf('})();');
@@ -215,6 +216,43 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         await page.locator('#accountUpgrade').click();
         check('升級入口會在 Pro 卡內展開方案', await page.locator('#proPlanSettings').isVisible());
         await page.screenshot({ path: path.join(out, 'account-v119-pro-390.png'), fullPage: true });
+
+        await page.evaluate(() => window.__accountV119.calendar());
+        await page.waitForTimeout(180);
+        const aiCrop = await page.evaluate(async () => {
+          const banner=document.querySelector('.schedule-ai-v129-banner');
+          const img=banner&&banner.querySelector('img');
+          if(!banner||!img)return null;
+          if(!img.complete)await new Promise(resolve=>img.addEventListener('load',resolve,{once:true}));
+          try{await img.decode()}catch(e){}
+          const canvas=document.createElement('canvas');
+          canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
+          const ctx=canvas.getContext('2d',{willReadFrequently:true});
+          ctx.drawImage(img,0,0);
+          const y0=Math.floor(canvas.height*.2),y1=Math.ceil(canvas.height*.8);
+          const pixels=ctx.getImageData(0,y0,canvas.width,y1-y0).data;
+          let blank=0;
+          for(let x=0;x<canvas.width;x++){
+            let pale=0,total=0;
+            for(let y=0;y<(y1-y0);y++){
+              const i=(y*canvas.width+x)*4,r=pixels[i],g=pixels[i+1],b=pixels[i+2],a=pixels[i+3];
+              total++;
+              if(a<20||(r>232&&g>229&&b>220&&Math.max(r,g,b)-Math.min(r,g,b)<30))pale++;
+            }
+            if(pale/total>.92)blank++; else break;
+          }
+          const ir=img.getBoundingClientRect(),br=banner.getBoundingClientRect(),style=getComputedStyle(img);
+          const scale=Math.max(ir.width/img.naturalWidth,ir.height/img.naturalHeight);
+          const renderedWidth=img.naturalWidth*scale;
+          const pos=parseFloat(style.objectPosition)||50;
+          const objectOffset=(ir.width-renderedWidth)*(pos/100);
+          const sourceStartFromObject=Math.max(0,-objectOffset/scale);
+          const clippedElementPx=Math.max(0,br.left-ir.left);
+          const sourceStart=sourceStartFromObject+clippedElementPx/scale;
+          return {blank,naturalWidth:img.naturalWidth,sourceStart,irLeft:ir.left,brLeft:br.left,objectPosition:style.objectPosition};
+        });
+        check('AI 圖卡實際裁切已越過原圖左側白邊', aiCrop && aiCrop.sourceStart >= aiCrop.blank + 1);
+        await page.locator('#aiScheduleCard').screenshot({ path: path.join(out, 'schedule-ai-card-v141-390.png') });
       }
       await context.close();
     }
