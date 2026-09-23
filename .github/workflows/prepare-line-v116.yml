@@ -1,0 +1,41 @@
+name: Prepare and verify LINE login v116
+on:
+  push:
+    branches: [feat/line-login-v116]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout feature branch
+        uses: actions/checkout@v6
+        with:
+          ref: feat/line-login-v116
+      - name: Apply guarded LINE login source migration
+        run: python3 tools/apply-line-login-v116.py
+      - name: Theme regression checks
+        run: node tests/theme-persistence.test.cjs
+      - name: Install browser tests
+        run: |
+          python3 -m pip install playwright==1.57.0
+          python3 -m playwright install --with-deps chromium
+      - name: Google and LINE login regression tests
+        run: python3 tests/browser-line-v116.py
+      - name: Commit verified application changes
+        run: |
+          git add index.html sw.js
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Prepare Google and LINE account login (v116)'
+            git push origin HEAD:feat/line-login-v116
+          fi
+      - name: Save preflight evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: line-login-v116-preflight
+          path: test-results/
+          retention-days: 3
