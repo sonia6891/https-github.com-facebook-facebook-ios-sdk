@@ -55,6 +55,8 @@ jobs:
           grep -q 'showManageSubscriptions' ios/App/App/ViewController.swift
           grep -q 'meowwork.pro.monthly' ios/App/App/ViewController.swift
           grep -q 'meowwork.pro.yearly' ios/App/App/ViewController.swift
+          grep -q 'appAccountToken' ios/App/App/ViewController.swift
+          grep -q 'jwsRepresentation' ios/App/App/ViewController.swift
 
       - name: Build iOS simulator app
         working-directory: native
