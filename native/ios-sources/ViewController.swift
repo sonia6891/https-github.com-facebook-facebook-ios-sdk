@@ -2,6 +2,7 @@ import UIKit
 import Foundation
 import Capacitor
 import StoreKit
+import UserNotifications
 
 @objc(MeowStoreBillingPlugin)
 public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -236,8 +237,149 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
 }
 
 
+@objc(MeowReminderPlugin)
+public class MeowReminderPlugin: CAPPlugin, CAPBridgedPlugin, UNUserNotificationCenterDelegate {
+    public let identifier = "MeowReminderPlugin"
+    public let jsName = "MeowReminder"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "getPermissionStatus", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "requestPermission", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "schedule", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "cancel", returnType: CAPPluginReturnPromise)
+    ]
+
+    override public func load() {
+        super.load()
+        UNUserNotificationCenter.current().delegate = self
+    }
+
+    @objc func getPermissionStatus(_ call: CAPPluginCall) {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            let granted = settings.authorizationStatus == .authorized ||
+                settings.authorizationStatus == .provisional ||
+                settings.authorizationStatus == .ephemeral
+            call.resolve([
+                "granted": granted,
+                "status": self.authorizationStatusName(settings.authorizationStatus)
+            ])
+        }
+    }
+
+    @objc func requestPermission(_ call: CAPPluginCall) {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error {
+                call.reject("Unable to request notification permission", nil, error)
+                return
+            }
+            UNUserNotificationCenter.current().getNotificationSettings { settings in
+                call.resolve([
+                    "granted": granted,
+                    "status": self.authorizationStatusName(settings.authorizationStatus)
+                ])
+            }
+        }
+    }
+
+    @objc func schedule(_ call: CAPPluginCall) {
+        guard let id = call.getString("id"), !id.isEmpty else {
+            call.reject("Missing reminder id")
+            return
+        }
+        guard let title = call.getString("title"), !title.isEmpty else {
+            call.reject("Missing reminder title")
+            return
+        }
+        guard let fireAt = call.getString("fireAt"),
+              let fireDate = parseISODate(fireAt) else {
+            call.reject("Missing or invalid reminder fireAt")
+            return
+        }
+
+        let center = UNUserNotificationCenter.current()
+        if fireDate <= Date() {
+            center.removePendingNotificationRequests(withIdentifiers: [id])
+            call.resolve([
+                "scheduled": false,
+                "past": true,
+                "id": id
+            ])
+            return
+        }
+
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = call.getString("body") ?? ""
+        content.sound = .default
+        content.threadIdentifier = "meow-work-reminders"
+        var userInfo: [AnyHashable: Any] = [:]
+        if let kind = call.getString("kind") { userInfo["kind"] = kind }
+        if let itemId = call.getString("itemId") { userInfo["itemId"] = itemId }
+        content.userInfo = userInfo
+
+        let interval = max(1, fireDate.timeIntervalSinceNow)
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
+        let request = UNNotificationRequest(identifier: id, content: content, trigger: trigger)
+
+        center.removePendingNotificationRequests(withIdentifiers: [id])
+        center.add(request) { error in
+            if let error {
+                call.reject("Unable to schedule local reminder", nil, error)
+                return
+            }
+            call.resolve([
+                "scheduled": true,
+                "id": id,
+                "fireAt": fireAt
+            ])
+        }
+    }
+
+    @objc func cancel(_ call: CAPPluginCall) {
+        guard let id = call.getString("id"), !id.isEmpty else {
+            call.reject("Missing reminder id")
+            return
+        }
+        let center = UNUserNotificationCenter.current()
+        center.removePendingNotificationRequests(withIdentifiers: [id])
+        center.removeDeliveredNotifications(withIdentifiers: [id])
+        call.resolve([
+            "cancelled": true,
+            "id": id
+        ])
+    }
+
+    public func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        completionHandler([.banner, .list, .sound])
+    }
+
+    private func parseISODate(_ value: String) -> Date? {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = formatter.date(from: value) { return date }
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter.date(from: value)
+    }
+
+    private func authorizationStatusName(_ status: UNAuthorizationStatus) -> String {
+        switch status {
+        case .notDetermined: return "notDetermined"
+        case .denied: return "denied"
+        case .authorized: return "authorized"
+        case .provisional: return "provisional"
+        case .ephemeral: return "ephemeral"
+        @unknown default: return "unknown"
+        }
+    }
+}
+
+
 final class ViewController: CAPBridgeViewController {
     override open func capacitorDidLoad() {
         bridge?.registerPluginInstance(MeowStoreBillingPlugin())
+        bridge?.registerPluginInstance(MeowReminderPlugin())
     }
 }
