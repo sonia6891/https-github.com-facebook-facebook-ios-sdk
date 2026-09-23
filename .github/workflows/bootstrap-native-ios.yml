@@ -56,6 +56,10 @@ jobs:
           node scripts/patch-ios-bridge.mjs
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription '只有在你主動拍攝班表或薪資單圖片時，才會使用相機。'" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string '只有在你主動拍攝班表或薪資單圖片時，才會使用相機。'" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryUsageDescription '只有在你主動選擇班表、薪資單或頭像圖片時，才會讀取你選取的照片。'" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string '只有在你主動選擇班表、薪資單或頭像圖片時，才會讀取你選取的照片。'" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations array" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait" ios/App/App/Info.plist
@@ -183,6 +187,8 @@ jobs:
           test -f "$APP_DIR/public/terms.html"
           test -f "$APP_DIR/public/support.html"
           /usr/libexec/PlistBuddy -c "Print :ITSAppUsesNonExemptEncryption" "$APP_DIR/Info.plist" | grep -q false
+          /usr/libexec/PlistBuddy -c "Print :NSCameraUsageDescription" "$APP_DIR/Info.plist" | grep -q '主動拍攝'
+          /usr/libexec/PlistBuddy -c "Print :NSPhotoLibraryUsageDescription" "$APP_DIR/Info.plist" | grep -q '主動選擇'
           IPHONE_ORIENTATIONS="$(/usr/libexec/PlistBuddy -c "Print :UISupportedInterfaceOrientations" "$APP_DIR/Info.plist")"
           echo "$IPHONE_ORIENTATIONS" | grep -q UIInterfaceOrientationPortrait
           if echo "$IPHONE_ORIENTATIONS" | grep -q UIInterfaceOrientationLandscape; then
