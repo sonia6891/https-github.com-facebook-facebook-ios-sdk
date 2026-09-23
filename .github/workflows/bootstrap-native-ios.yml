@@ -7,6 +7,9 @@ on:
       - index.html
       - sw.js
       - manifest.webmanifest
+      - support.html
+      - terms.html
+      - privacy.html
       - assets/**
       - workcat-home-v12.png
       - app-icon-v115-180.png
@@ -51,6 +54,8 @@ jobs:
           rm -rf ios
           npx cap add ios
           node scripts/patch-ios-bridge.mjs
+          /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
           cp ios-sources/MeowWork.storekit ios/App/MeowWork.storekit
           mkdir -p ios/App/App.xcodeproj/xcshareddata/xcschemes
           cp ios-sources/App.xcscheme ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
@@ -131,6 +136,20 @@ jobs:
               CODE_SIGNING_ALLOWED=NO \
               build
           fi
+
+      - name: Verify App Store submission bundle
+        working-directory: native
+        run: |
+          set -euo pipefail
+          APP_DIR="$(find "$HOME/Library/Developer/Xcode/DerivedData" -type d -path '*/Build/Products/Debug-iphonesimulator/App.app' -print -quit)"
+          test -n "$APP_DIR"
+          test -f "$APP_DIR/public/privacy.html"
+          test -f "$APP_DIR/public/terms.html"
+          test -f "$APP_DIR/public/support.html"
+          /usr/libexec/PlistBuddy -c "Print :ITSAppUsesNonExemptEncryption" "$APP_DIR/Info.plist" | grep -q false
+          PRIVACY_MANIFEST_COUNT="$(find "$APP_DIR" -name PrivacyInfo.xcprivacy -type f | wc -l | tr -d ' ')"
+          test "$PRIVACY_MANIFEST_COUNT" -ge 1
+          echo "App bundle legal pages, export compliance flag, and privacy manifest verified."
 
       - name: Commit generated iOS project
         run: |
