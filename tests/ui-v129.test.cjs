@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v148-local-reminders'),'expected v148 local reminders build');
+assert(html.includes('v149-todo-free-time'),'expected v149 todo free-time build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -126,3 +126,11 @@ assert(html.includes("void scheduleItemReminder(saved)"),'todo save must schedul
 assert(html.includes("void cancelItemReminder('event',editingEventId)"),'event delete must cancel reminder');
 assert(html.includes("void cancelItemReminder('todo',editingTodoId)"),'todo delete must cancel reminder');
 console.log('PASS v148 itinerary/todo reminders structure');
+
+
+assert.equal(ids.todoTime,1,'missing or duplicated #todoTime');
+assert(html.includes('id="todoTime" type="time"'),'todo must expose a free-choice time input');
+assert(html.includes('<option value="1d">前 1 天</option>'),'todo reminder should be relative to selected time');
+assert(html.includes("todoDateLabel(t.date,t.time)"),'todo list must show selected time');
+assert(html.includes("time=/^\\d{2}:\\d{2}$/.test(String(item.time||''))?item.time:'09:00'"),'todo reminder must use selected time');
+console.log('PASS v149 todo free time structure');
