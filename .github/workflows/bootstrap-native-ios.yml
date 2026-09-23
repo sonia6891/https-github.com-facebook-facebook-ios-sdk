@@ -87,6 +87,9 @@ jobs:
           grep -q 'getPermissionStatus' ios/App/App/SceneDelegate.swift
           grep -q 'UNTimeIntervalNotificationTrigger' ios/App/App/SceneDelegate.swift
           grep -q 'registerPluginInstance(MeowReminderPlugin())' ios/App/App/SceneDelegate.swift
+          grep -q 'MeowAppleAuthPlugin' ios/App/App/SceneDelegate.swift
+          grep -q 'AuthenticationServices' ios/App/App/SceneDelegate.swift
+          grep -q 'registerPluginInstance(MeowAppleAuthPlugin())' ios/App/App/SceneDelegate.swift
           grep -q 'window?.rootViewController = ViewController()' ios/App/App/SceneDelegate.swift
           test -f ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'NSPrivacyCollectedDataTypeOtherFinancialInfo' ios/App/App/PrivacyInfo.xcprivacy
