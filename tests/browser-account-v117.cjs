@@ -159,6 +159,8 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       check(`${width}px 帳號狀態登入方式與登出集中在帳號卡`, await page.evaluate(() => ['accountTitle','accountLoginMethod','accountLogout'].every(id => document.querySelector('.settings-account-v129').contains(document.getElementById(id)))));
       check(`${width}px 帳號區不顯示 Email`, await page.evaluate(() => !document.getElementById('accountEmail') && !document.querySelector('.settings-account-v129').innerText.includes('member@example.test')));
       check(`${width}px 登入方式正確顯示 Google`, (await page.locator('#accountLoginMethod').innerText()).includes('Google'));
+      await page.locator('.settings-account-details > summary').click();
+      check(`${width}px 帳號詳細資料可展開`, await page.locator('#accountUsername').isVisible());
       await page.locator('#accountUsername').fill('輪班喵'+width);
       await page.locator('#saveAccountUsername').click();
       check(`${width}px 使用者名稱可自訂修改`, await page.locator('#profileName').innerText() === '輪班喵'+width);
