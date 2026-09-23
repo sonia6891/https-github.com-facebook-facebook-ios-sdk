@@ -4475,7 +4475,8 @@ function aiErrorMessage(error){
     AI_EMPTY_RESPONSE:'AI 沒有回傳可用結果，請換一張較清楚的圖片。',
     AI_INVALID_RESPONSE:'AI 回傳格式不完整，沒有套用任何資料。',
     AI_USAGE_CHECK_FAILED:'AI 額度確認暫時失敗，請稍後再試。',
-    AI_QUOTA_EXCEEDED:'本月這類 Pro AI 額度已用完；下個月會自動重置。'
+    AI_QUOTA_EXCEEDED:'喵助理本月 20 次額度已用完；下個月會自動重置。',
+    AI_GLOBAL_BUDGET_EXCEEDED:'本月喵助理服務已達全 App 安全上限；本機排班與薪資工具仍可正常使用。'
   };
   return map[code]||'AI 暫時無法完成這次分析；原本班表與薪資資料沒有被修改。';
 }
