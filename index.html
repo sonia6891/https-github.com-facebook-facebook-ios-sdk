@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v148-local-reminders">
+<meta name="meow-ui-build" content="v149-todo-free-time">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1789,10 +1789,15 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       </div>
       <div class="itinerary-form-row">
         <span class="itinerary-form-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
+        <label for="todoTime">時間</label>
+        <input id="todoTime" type="time" aria-label="待辦時間">
+      </div>
+      <div class="itinerary-form-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
         <label for="todoReminder">提醒</label>
         <select id="todoReminder">
           <option value="none">不提醒</option>
-          <option value="1d">前 1 天・上午 9:00</option>
+          <option value="1d">前 1 天</option>
         </select>
       </div>
       <div class="itinerary-form-row itinerary-note-row">
@@ -2924,10 +2929,10 @@ function itineraryDateMeta(date){
   else label='週'+weekday;
   return{label,sub:(d.getMonth()+1)+'/'+d.getDate()+'（'+weekday+'）'};
 }
-function todoDateLabel(date){
-  if(!date)return'未指定日期';
+function todoDateLabel(date,time){
+  if(!date)return time?('未指定日期・'+time):'未指定日期';
   const meta=itineraryDateMeta(date);
-  return meta.label+'・'+meta.sub;
+  return meta.label+'・'+meta.sub+(time?'・'+time:'');
 }
 function reminderBridge(){
   const bridge=window.MeowReminder||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.MeowReminder);
@@ -2939,7 +2944,7 @@ function reminderId(kind,id){
 function reminderLabel(item){
   const value=item&&item.reminder||'none';
   if(value==='3d')return'前 3 天提醒';
-  if(value==='1d')return item&&item.kind==='todo'?'前一天上午 9:00 提醒':'前 1 天提醒';
+  if(value==='1d')return item&&item.kind==='todo'?'前一天 '+(item.time||'09:00')+' 提醒':'前 1 天提醒';
   if(value==='1h')return'前 1 小時提醒';
   return'';
 }
@@ -2947,7 +2952,8 @@ function reminderFireDate(item){
   if(!item||!item.date||!item.reminder||item.reminder==='none')return null;
   if(item.kind==='todo'){
     if(item.reminder!=='1d')return null;
-    const due=new Date(item.date+'T09:00:00');
+    const time=/^\d{2}:\d{2}$/.test(String(item.time||''))?item.time:'09:00';
+    const due=new Date(item.date+'T'+time+':00');
     if(Number.isNaN(due.getTime()))return null;
     due.setDate(due.getDate()-1);
     return due;
@@ -3063,7 +3069,7 @@ function renderAttendance(){
     const note=String(t.note||'').trim();
     return '<div class="todo-card-v142 '+(t.completed?'completed':'')+'">'+
       '<button type="button" class="todo-check-v142" data-todo-toggle="'+escapeHtml(t.id)+'" aria-label="'+(t.completed?'標記為未完成':'標記為完成')+'">'+(t.completed?'✓':'')+'</button>'+
-      '<button type="button" class="todo-main-v142" data-todo-edit="'+escapeHtml(t.id)+'"><b>'+escapeHtml(t.title||'未命名待辦')+'</b><small>'+escapeHtml(todoDateLabel(t.date))+'</small>'+
+      '<button type="button" class="todo-main-v142" data-todo-edit="'+escapeHtml(t.id)+'"><b>'+escapeHtml(t.title||'未命名待辦')+'</b><small>'+escapeHtml(todoDateLabel(t.date,t.time))+'</small>'+
       (reminderLabel(t)?'<span class="todo-reminder-label-v148">'+escapeHtml(reminderLabel(t))+'</span>':'')+
       (note?'<span class="todo-note-v142">'+escapeHtml(note)+'</span>':'')+'</button></div>';
   }).join('');
@@ -3123,19 +3129,20 @@ function openTodo(id){
   $('todoDialogTitle').textContent=todo?'編輯待辦事項':'新增待辦事項';
   $('todoTitle').value=todo&&todo.title?todo.title:'';
   $('todoDate').value=todo&&todo.date?todo.date:'';
+  $('todoTime').value=todo&&todo.time?todo.time:'09:00';
   $('todoNote').value=todo&&todo.note?todo.note:'';
   $('todoReminder').value=todo?(todo.reminder||'none'):'1d';
   $('deleteTodo').classList.toggle('hidden',!todo);
   $('todoDialog').showModal();
 }
 function saveTodo(){
-  const title=$('todoTitle').value.trim(),date=$('todoDate').value,note=$('todoNote').value.trim();
+  const title=$('todoTitle').value.trim(),date=$('todoDate').value,time=$('todoTime').value,note=$('todoNote').value.trim();
   if(!title){alert('請輸入待辦事項。');$('todoTitle').focus();return}
   const id=editingTodoId||('todo-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6));
   const prev=(state.personalEvents||{})[id]||{};
   state.personalEvents=state.personalEvents||{};
   state.personalEvents[id]={
-    id,kind:'todo',title,note,date,reminder:$('todoReminder').value||'none',
+    id,kind:'todo',title,note,date,time,reminder:$('todoReminder').value||'none',
     completed:!!prev.completed,
     completedAt:prev.completedAt||null,
     createdAt:prev.createdAt||new Date().toISOString(),
