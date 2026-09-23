@@ -409,11 +409,12 @@ public class MeowScheduleVisionPlugin: CAPPlugin, CAPBridgedPlugin {
         let orientation = cgImageOrientation(from: image.imageOrientation)
 
         DispatchQueue.global(qos: .userInitiated).async {
+            let purpose = call.getString("purpose") ?? "schedule"
             let request = VNRecognizeTextRequest()
             request.recognitionLevel = .accurate
-            request.usesLanguageCorrection = false
+            request.usesLanguageCorrection = purpose == "payslip"
             request.recognitionLanguages = ["zh-Hant", "en-US"]
-            request.minimumTextHeight = 0.008
+            request.minimumTextHeight = purpose == "payslip" ? 0.004 : 0.008
 
             do {
                 let handler = VNImageRequestHandler(cgImage: cgImage, orientation: orientation, options: [:])
