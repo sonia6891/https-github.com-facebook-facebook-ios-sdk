@@ -72,7 +72,7 @@ async function addRoutes(context, base, billingConfigured = true) {
     const url = route.request().url();
     if (url.startsWith(base)) return route.continue();
     if (url.includes('esm.sh/')) return route.fulfill({ status: 200, contentType: 'application/javascript', body: mockSupabase });
-    if (url.includes('/functions/v1/billing-config')) return route.fulfill({ status: 200, contentType: 'application/json', body: billingConfigured ? '{"configured":true,"monthly":199,"yearly":1990}' : '{"configured":false}' });
+    if (url.includes('/functions/v1/billing-config')) return route.fulfill({ status: 200, contentType: 'application/json', body: billingConfigured ? '{"configured":true,"provider":"app_store_play","store_managed":true,"monthly":99,"yearly":790,"trial_days":3}' : '{"configured":false}' });
     if (url.includes('tesseract')) return route.fulfill({ status: 200, contentType: 'application/javascript', body: 'window.Tesseract={};' });
     return route.abort();
   });
@@ -160,9 +160,9 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       const accountScroll = await page.evaluate(() => scrollY);
       await page.locator('#accountUpgrade').click();
       check(`${width}px Pro 方案在帳號卡內就地展開`, await page.locator('#proPlanSettings').isVisible() && await page.evaluate(() => document.getElementById('accountPlanCard').contains(document.getElementById('proPlanSettings'))));
-      check(`${width}px 展開後顯示目前 Free 與 7 天免費試用`, await page.locator('#settingsPlanBadge').innerText() === 'Free' && (await page.locator('#startProTrial').innerText()).includes('7 天免費試用'));
+      check(`${width}px 展開後顯示目前 Free 與 3 天免費試用`, await page.locator('#settingsPlanBadge').innerText() === 'Free' && (await page.locator('#proPlanSettings').innerText()).includes('3 天免費試用'));
       check(`${width}px 展開 Pro 不跳往其他區塊`, Math.abs((await page.evaluate(() => scrollY)) - accountScroll) <= 2);
-      check(`${width}px 已設定金流時直接顯示訂閱付費`, await page.locator('#liveBillingActions').isVisible() && (await page.locator('#liveMonthlyCheckout').innerText()).includes('直接訂閱'));
+      check(`${width}px 顯示商店月繳與年繳價格`, await page.locator('#liveBillingActions').isVisible() && (await page.locator('#liveMonthlyCheckout').innerText()).includes('NT$99') && (await page.locator('#liveYearlyCheckout').innerText()).includes('NT$790'));
       await page.locator('#accountUpgrade').click();
       await page.locator('#toggleWorkSettings').scrollIntoViewIfNeeded();
       await page.locator('#toggleWorkSettings').click();
@@ -216,8 +216,8 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     const { context: billingOffContext, page: billingOffPage } = await openPage(browser, base, 390, billingUser, false);
     await billingOffPage.evaluate(() => window.__accountV119.settings());
     await billingOffPage.locator('#accountUpgrade').click();
-    check('正式金流未設定時不顯示可付款按鈕', !(await billingOffPage.locator('#liveBillingActions').isVisible()));
-    check('正式金流未設定時清楚顯示尚未開放', await billingOffPage.locator('#billingUnavailable').isVisible());
+    check('網頁預覽仍顯示商店方案價格', await billingOffPage.locator('#liveBillingActions').isVisible());
+    check('網頁預覽清楚標示不會進行付款', await billingOffPage.locator('#billingUnavailable').isVisible() && (await billingOffPage.locator('#billingUnavailable').innerText()).includes('App Store／Google Play'));
     await billingOffPage.screenshot({ path: path.join(out, 'account-v119-billing-off-390.png'), fullPage: true });
     await billingOffContext.close();
 
