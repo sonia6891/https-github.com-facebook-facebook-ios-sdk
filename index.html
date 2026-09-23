@@ -2284,7 +2284,7 @@ const ITEMIZED_FIELDS=[
   {key:'dedHealthExtra',label:'健保補扣',kind:'deduction'},
   {key:'dedOther',label:'其他扣款',kind:'deduction'}
 ];
-let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salaryExportOpen=false,proAiOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),aiPayslipPending=null,aiSchedulePending=null,payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0},payslipManualFieldKey='';
+let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salaryExportOpen=false,proAiOpen=false,proAiBackendReady=null,proAiBackendModel='',proAiBackendCheckedAt=0,salarySubTab='calc',historyYear=current.getFullYear(),aiPayslipPending=null,aiSchedulePending=null,payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0},payslipManualFieldKey='';
 const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v2';
 const PAYSLIP_OCR_FIELDS=[
   {key:'actualNet',label:'實發金額',kind:'net',priority:30,terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
@@ -3542,12 +3542,44 @@ function buildProAiContext(){
 function aiSetStatus(text){
   if($('proAiStatus'))$('proAiStatus').textContent=text;
 }
+function setProAiControlsEnabled(enabled){
+  ['aiPayslipPick','aiExplainReconcile','aiForecastSalary','aiScanAnomalies','aiAskAssistant'].forEach(id=>{
+    const el=$(id);if(el)el.disabled=!enabled;
+  });
+}
+async function checkProAiReadiness(force=false){
+  if(!canUse('ai_pro_suite')||!authUser)return false;
+  const now=Date.now();
+  if(!force&&proAiBackendReady!==null&&now-proAiBackendCheckedAt<60000){
+    setProAiControlsEnabled(proAiBackendReady);
+    return proAiBackendReady;
+  }
+  proAiBackendCheckedAt=now;setProAiControlsEnabled(false);
+  aiSetStatus('正在確認 Pro AI 服務…');
+  try{
+    const data=await invokeUserFunction('pro-ai',{mode:'status'});
+    proAiBackendReady=!!data.configured;
+    proAiBackendModel=String(data.model||'');
+    setProAiControlsEnabled(proAiBackendReady);
+    if(proAiBackendReady){
+      aiSetStatus('✓ Pro AI 已就緒'+(proAiBackendModel?'・'+proAiBackendModel:'')+'｜圖片每月 12 次・分析／問答每月 100 次');
+    }else{
+      aiSetStatus('Pro AI 後端已部署，但尚未完成 API 金鑰設定；原本排班、薪資與本地 OCR 都可正常使用。');
+    }
+    return proAiBackendReady;
+  }catch(e){
+    proAiBackendReady=null;setProAiControlsEnabled(false);
+    aiSetStatus('AI 服務狀態確認失敗；原本 App 功能不受影響。');
+    return false;
+  }
+}
 function renderProAiPanel(){
   const panel=$('proAiPanel');if(!panel)return;
   placeProPanel('ai_pro_suite','proAiPanel');
   const unlocked=canUse('ai_pro_suite');
-  if(!unlocked)proAiOpen=false;
+  if(!unlocked){proAiOpen=false;proAiBackendReady=null}
   panel.classList.toggle('hidden',!unlocked||!proAiOpen);
+  if(unlocked&&proAiOpen)void checkProAiReadiness();
 }
 function renderAiGeneric(mode,result){
   const box=$('proAiOutput');if(!box)return;
