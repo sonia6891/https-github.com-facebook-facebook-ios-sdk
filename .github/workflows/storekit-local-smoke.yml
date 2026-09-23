@@ -28,6 +28,10 @@ on:
       - .github/workflows/storekit-local-smoke.yml
   workflow_dispatch:
 
+concurrency:
+  group: storekit-local-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
