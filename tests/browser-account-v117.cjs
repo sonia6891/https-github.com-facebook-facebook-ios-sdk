@@ -50,7 +50,7 @@ const mockSupabase = `export function createClient(){const t=window.__accountTes
   auth:{
     getSession:async()=>({data:{session:localStorage.getItem('__account_test_signed_out')==='1'?null:(t.user?{user:t.user}:null)}}),
     onAuthStateChange(fn){window.__authCallback=fn;return{data:{subscription:{unsubscribe(){}}}}},
-    signInWithOAuth:async input=>{t.oauth.push(input);return{error:null}},
+    signInWithOAuth:async input=>{t.oauth.push(input);return{data:{url:'https://auth.example.test/start'},error:null}},
     signOut:async()=>{t.user=null;localStorage.setItem('__account_test_signed_out','1');window.__authCallback?.('SIGNED_OUT',null);return{error:null}}
   },
   rpc:async name=>{t.calls.push(name);if(name==='meow_account_access')return{data:{server_now:new Date().toISOString(),entitlement:null},error:null};return{data:null,error:null}},
@@ -119,6 +119,23 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('LINE 按鈕使用 custom:line', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line'));
     check('LINE 要求 openid profile', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.scopes === 'openid profile'));
     await guestContext.close();
+
+    const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
+    await standaloneContext.addInitScript(() => {
+      window.__accountTest = { oauth: [], calls: [], user: null };
+      Object.defineProperty(navigator, 'standalone', { value: true, configurable: true });
+      window.__authWindow = { closed:false, document:{ title:'', body:{ innerHTML:'' } }, location:{ href:'' }, close(){ this.closed=true; } };
+      window.open = (url, name) => { window.__authOpenArgs = [url, name]; return window.__authWindow; };
+    });
+    await addRoutes(standaloneContext, base, true);
+    const standalonePage = await standaloneContext.newPage();
+    await standalonePage.goto(base, { waitUntil: 'domcontentloaded' });
+    await standalonePage.waitForFunction(() => window.__accountV119 !== undefined);
+    await standalonePage.locator('#welcomeLine').click();
+    await standalonePage.waitForTimeout(80);
+    check('主畫面 App 的 LINE 登入不再整頁跳出 App', await standalonePage.evaluate(() => window.__accountTest.oauth.at(-1).options.skipBrowserRedirect === true));
+    check('主畫面 App 使用獨立 OAuth 視窗承接 LINE', await standalonePage.evaluate(() => window.__authOpenArgs?.[0] === 'about:blank' && window.__authWindow.location.href === 'https://auth.example.test/start'));
+    await standaloneContext.close();
 
     for (const width of [320, 390, 430]) {
       const user = { id: `acct-${width}`, email: 'member@example.test', app_metadata: { provider: 'google' } };
