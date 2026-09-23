@@ -3,6 +3,8 @@ import Foundation
 import Capacitor
 import StoreKit
 import UserNotifications
+import AuthenticationServices
+import CryptoKit
 
 @objc(MeowStoreBillingPlugin)
 public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -243,6 +245,142 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
 }
 
 
+@objc(MeowAppleAuthPlugin)
+public class MeowAppleAuthPlugin: CAPPlugin, CAPBridgedPlugin, ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding {
+    public let identifier = "MeowAppleAuthPlugin"
+    public let jsName = "MeowAppleAuth"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "signIn", returnType: CAPPluginReturnPromise)
+    ]
+
+    private var pendingCall: CAPPluginCall?
+    private var currentNonce: String?
+
+    @objc func signIn(_ call: CAPPluginCall) {
+        guard pendingCall == nil else {
+            call.reject("An Apple sign-in request is already in progress")
+            return
+        }
+
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        pendingCall = call
+
+        let request = ASAuthorizationAppleIDProvider().createRequest()
+        request.requestedScopes = [.fullName, .email]
+        request.nonce = sha256(nonce)
+
+        let controller = ASAuthorizationController(authorizationRequests: [request])
+        controller.delegate = self
+        controller.presentationContextProvider = self
+        controller.performRequests()
+    }
+
+    public func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        if let window = bridge?.viewController?.view.window {
+            return window
+        }
+        for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
+            if let window = scene.windows.first(where: { $0.isKeyWindow }) ?? scene.windows.first {
+                return window
+            }
+        }
+        return ASPresentationAnchor()
+    }
+
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        guard let call = pendingCall else { return }
+        defer { resetRequest() }
+
+        guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else {
+            call.reject("Apple did not return an Apple ID credential")
+            return
+        }
+        guard let tokenData = credential.identityToken,
+              let idToken = String(data: tokenData, encoding: .utf8),
+              !idToken.isEmpty else {
+            call.reject("Apple did not return an identity token")
+            return
+        }
+
+        var payload: [String: Any] = [
+            "platform": "ios",
+            "cancelled": false,
+            "idToken": idToken,
+            "nonce": currentNonce ?? ""
+        ]
+
+        if let email = credential.email, !email.isEmpty {
+            payload["email"] = email
+        }
+        if let givenName = credential.fullName?.givenName, !givenName.isEmpty {
+            payload["givenName"] = givenName
+        }
+        if let familyName = credential.fullName?.familyName, !familyName.isEmpty {
+            payload["familyName"] = familyName
+        }
+
+        let fullName = [
+            credential.fullName?.givenName,
+            credential.fullName?.middleName,
+            credential.fullName?.familyName
+        ].compactMap { value -> String? in
+            guard let value, !value.isEmpty else { return nil }
+            return value
+        }.joined(separator: " ")
+        if !fullName.isEmpty {
+            payload["fullName"] = fullName
+        }
+
+        call.resolve(payload)
+    }
+
+    public func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        guard let call = pendingCall else { return }
+        defer { resetRequest() }
+
+        if let authError = error as? ASAuthorizationError, authError.code == .canceled {
+            call.resolve([
+                "platform": "ios",
+                "cancelled": true
+            ])
+            return
+        }
+        call.reject("Apple sign in failed", nil, error)
+    }
+
+    private func resetRequest() {
+        pendingCall = nil
+        currentNonce = nil
+    }
+
+    private func sha256(_ value: String) -> String {
+        let digest = SHA256.hash(data: Data(value.utf8))
+        return digest.map { String(format: "%02x", $0) }.joined()
+    }
+
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        let charset = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        var result = ""
+        var remaining = length
+
+        while remaining > 0 {
+            var random: UInt8 = 0
+            let status = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
+            if status != errSecSuccess {
+                random = UInt8.random(in: 0...255)
+            }
+            if random < charset.count * (256 / charset.count) {
+                result.append(charset[Int(random) % charset.count])
+                remaining -= 1
+            }
+        }
+        return result
+    }
+}
+
+
 @objc(MeowReminderPlugin)
 public class MeowReminderPlugin: CAPPlugin, CAPBridgedPlugin, UNUserNotificationCenterDelegate {
     public let identifier = "MeowReminderPlugin"
@@ -387,6 +525,7 @@ final class ViewController: CAPBridgeViewController {
     override public func capacitorDidLoad() {
         bridge?.registerPluginInstance(MeowStoreBillingPlugin())
         bridge?.registerPluginInstance(MeowReminderPlugin())
+        bridge?.registerPluginInstance(MeowAppleAuthPlugin())
     }
 }
 
