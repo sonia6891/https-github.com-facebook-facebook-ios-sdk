@@ -8,7 +8,6 @@ const corsHeaders = {
 };
 
 const MODES = new Set([
-  "schedule_scan",
   "payslip_scan",
   "reconcile_explain",
   "salary_forecast_explain",
@@ -176,7 +175,6 @@ const assistantSchema = {
 };
 
 function schemaFor(mode: string) {
-  if (mode === "schedule_scan") return scheduleSchema;
   if (mode === "payslip_scan") return payslipSchema;
   if (mode === "reconcile_explain") return reconcileSchema;
   if (mode === "salary_forecast_explain") return forecastSchema;
@@ -227,14 +225,11 @@ async function safetyIdentifier(userId: string) {
 }
 
 function reasoningEffort(mode: string) {
-  if (mode === "assistant" || mode === "anomaly_scan" || mode === "schedule_scan" || mode === "payslip_scan") return "low";
+  if (mode === "assistant" || mode === "anomaly_scan" || mode === "payslip_scan") return "low";
   return "none";
 }
 
 function modeInstruction(mode: string) {
-  if (mode === "schedule_scan") {
-    return "Read only the shift/calendar information visible in the image. Extract every clearly visible dated shift. Use YYYY-MM-DD when the year/month/day can be established; otherwise use an empty date and explain in warnings. Never invent missing days or shift codes.";
-  }
   if (mode === "payslip_scan") {
     return "Read salary/pay-slip money fields only. Ignore and never return names, employee numbers, national IDs, bank accounts, addresses, signatures, barcodes, QR codes, or other personal identifiers. Map synonymous Chinese payroll labels to the allowed keys. Do not treat hours, rates, percentages, multipliers, days, or employer contribution amounts as employee pay/deduction money. When unsure, omit the field and add a warning.";
   }
@@ -319,7 +314,7 @@ Deno.serve(async (req: Request) => {
     }
     if (imageDataUrl.length > 12000000) return json({ ok: false, code: "IMAGE_TOO_LARGE" }, 413);
   }
-  if ((mode === "schedule_scan" || mode === "payslip_scan") && !imageDataUrl) {
+  if (mode === "payslip_scan" && !imageDataUrl) {
     return json({ ok: false, code: "IMAGE_REQUIRED" }, 400);
   }
 
@@ -386,7 +381,7 @@ Deno.serve(async (req: Request) => {
             schema: schemaFor(mode)
           }
         },
-        max_output_tokens: mode === "schedule_scan" ? 5000 : 3000
+        max_output_tokens: 3000
       })
     });
   } catch {
