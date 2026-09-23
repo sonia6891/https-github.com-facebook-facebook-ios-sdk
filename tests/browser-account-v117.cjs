@@ -258,8 +258,20 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         await page.evaluate(() => window.__accountV119.attendance());
         await page.waitForTimeout(120);
         check('第三頁標題改為行程與待辦事項', (await page.locator('#page-attendance .itinerary-title').innerText()).includes('行程與待辦事項'));
+        await page.locator('#addItinerary').click();
+        check('新增行程視窗可開啟', await page.locator('#eventDialog').evaluate(x=>x.open));
+        await page.locator('#eventDialogClose').click();
+        check('新增行程未填資料也能用叉叉關閉', !(await page.locator('#eventDialog').evaluate(x=>x.open)));
+        await page.locator('#addItinerary').click();
+        await page.locator('#eventDialogCancel').click();
+        check('新增行程未填資料也能用取消關閉', !(await page.locator('#eventDialog').evaluate(x=>x.open)));
+
         await page.locator('#attendanceTabTodos').click();
         check('待辦事項分頁可切換', await page.locator('#attendanceTabTodos').getAttribute('aria-selected') === 'true');
+        await page.locator('#addItinerary').click();
+        check('新增待辦視窗可開啟', await page.locator('#todoDialog').evaluate(x=>x.open));
+        await page.locator('#todoDialogClose').click();
+        check('新增待辦未填資料也能用叉叉關閉', !(await page.locator('#todoDialog').evaluate(x=>x.open)));
         await page.locator('#addItinerary').click();
         await page.locator('#todoTitle').fill('測試繳費');
         await page.locator('#todoDate').fill('2026-10-01');
