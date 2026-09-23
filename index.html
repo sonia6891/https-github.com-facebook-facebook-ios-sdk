@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v145-schedule-date-fit">
+<meta name="meow-ui-build" content="v146-attendance-add-chooser">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -932,6 +932,58 @@ html.dark .settings-pro-v129{
   #scheduleAddDialog .field{width:100%}
   #scheduleAddDate,#scheduleAddShift{width:100%;max-width:100%;min-width:0}
 }
+
+/* ===== v146 attendance unified add chooser ===== */
+.itinerary-empty-list .empty-plus{display:none!important}
+.itinerary-add-choice{
+  width:min(430px,calc(100vw - 28px));
+  border:0;
+  padding:0;
+  border-radius:22px;
+  background:transparent;
+  color:var(--ink);
+  box-shadow:none;
+}
+.itinerary-add-choice::backdrop{background:rgba(20,15,12,.48)}
+.attendance-add-choice-card{
+  overflow:hidden;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:var(--card);
+  box-shadow:0 24px 60px rgba(30,20,16,.26);
+}
+.attendance-add-choice-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:15px 16px 10px;
+}
+.attendance-add-choice-head b{font-size:20px}
+.attendance-add-choice-head .dialog-close{font-size:28px}
+.attendance-add-choice-list{display:grid;gap:8px;padding:4px 12px 14px}
+.attendance-add-choice-list>button{
+  border:1px solid var(--line);
+  border-radius:16px;
+  background:var(--paper);
+  color:var(--ink);
+  min-height:72px;
+  padding:11px 12px;
+  display:grid;
+  grid-template-columns:44px minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px;
+  text-align:left;
+}
+.attendance-add-choice-list>button>span:nth-child(2){min-width:0}
+.attendance-add-choice-list b{display:block;font-size:15px}
+.attendance-add-choice-list small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
+.attendance-add-choice-icon{
+  width:42px;height:42px;border-radius:13px;
+  display:grid;place-items:center;
+  background:var(--v129-accent-soft,#fff5e9);
+  color:var(--v129-accent-strong,#8f5a35);
+}
+.attendance-add-choice-icon .icon{font-size:21px}
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v115-180.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./app-icon-v115-180.png">
@@ -1220,7 +1272,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       </div>
       <div class="itinerary-head-actions">
         <button type="button" class="itinerary-all-btn" id="itineraryAllBtn">全部行程 <span>›</span></button>
-        <button type="button" class="itinerary-add-fab" id="addItinerary" aria-label="新增行程">＋</button>
+        <button type="button" class="itinerary-add-fab" id="addItinerary" aria-label="新增行程或待辦事項">＋</button>
       </div>
     </div>
     <div class="attendance-v142-tabs" role="tablist" aria-label="行程與待辦事項">
@@ -1621,6 +1673,27 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 </dialog>
 
 <dialog class="dialog" id="dayDialog"><form method="dialog" id="dayForm"><div class="dialog-head"><div><b id="dialogDate">編輯出勤</b><div class="hint" id="dialogBase"></div></div><button class="dialog-close" value="cancel">×</button></div><div class="dialog-body"><div class="field"><label>狀態</label><select id="dialogStatus"><option value="none">正常班表</option><option value="overtime">加班</option><option value="sick">病假</option><option value="menstrual">生理假</option><option value="personal">事假</option><option value="annual">特休</option><option value="custom">自訂假別</option></select></div><div class="field hidden" id="customLabelWrap"><label>自訂假別名稱</label><input id="dialogCustomLabel" placeholder="例如：公假、補休"></div><div class="field hidden" id="overtimeKindWrap"><label>加班日別</label><select id="dialogOvertimeKind"><option value="regular">平日延長工時</option><option value="rest">休息日出勤</option><option value="holiday">國定假日／特別休假出勤</option></select><div class="hint">輪班制依公司實際排定日別選擇，不以星期六、日判定。</div></div><div class="field" id="hoursWrap"><label>時數</label><input id="dialogHours" type="number" min="0" step="0.5" placeholder="例如 8"></div><div class="field"><label>備註</label><textarea id="dialogNote" placeholder="可留空"></textarea></div></div><div class="dialog-foot"><button class="btn" value="cancel">取消</button><button type="button" class="btn danger" id="clearDay">清除標記</button><button type="button" class="btn primary" id="saveDay">儲存</button></div></form></dialog>
+
+<dialog class="dialog itinerary-add-choice" id="attendanceAddDialog">
+  <div class="attendance-add-choice-card">
+    <div class="attendance-add-choice-head">
+      <b>新增</b>
+      <button type="button" class="dialog-close" id="attendanceAddClose" aria-label="關閉">×</button>
+    </div>
+    <div class="attendance-add-choice-list">
+      <button type="button" id="attendanceAddEvent">
+        <span class="attendance-add-choice-icon"><svg class="icon"><use href="#i-calendar"/></svg></span>
+        <span><b>新增行程</b><small>設定日期、時間與備註</small></span>
+        <span aria-hidden="true">›</span>
+      </button>
+      <button type="button" id="attendanceAddTodo">
+        <span class="attendance-add-choice-icon"><svg class="icon"><use href="#i-doc"/></svg></span>
+        <span><b>新增待辦事項</b><small>記下要完成的事情</small></span>
+        <span aria-hidden="true">›</span>
+      </button>
+    </div>
+  </div>
+</dialog>
 
 <dialog class="dialog itinerary-sheet" id="eventDialog">
   <form method="dialog" id="eventForm">
@@ -2819,7 +2892,7 @@ function renderAttendance(){
   $('attendanceTabTodos').setAttribute('aria-selected',String(!eventsActive));
   const openTodos=todoItems().filter(t=>!t.completed).length;
   $('todoOpenCount').textContent=String(openTodos);
-  $('addItinerary').setAttribute('aria-label',eventsActive?'新增行程':'新增待辦事項');
+  $('addItinerary').setAttribute('aria-label','新增行程或待辦事項');
   $('itineraryAllBtn').innerHTML=eventsActive
     ?(itineraryShowAll?'近期行程':'全部行程')+' <span>›</span>'
     :(todoShowCompleted?'隱藏已完成':'顯示已完成')+' <span>›</span>';
@@ -2832,7 +2905,7 @@ function renderAttendance(){
     const rows=itineraryShowAll?all:all.filter(e=>String(e.date||'')>=today);
     box.className='itinerary-upcoming-list';
     if(!rows.length){
-      box.innerHTML='<div class="itinerary-empty-list"><div class="empty-plus">＋</div><b>'+(itineraryShowAll?'目前還沒有行程':'近期沒有新增行程')+'</b><span>按右上角「＋」新增日期、時間與備註。</span></div>';
+      box.innerHTML='<div class="itinerary-empty-list"><b>'+(itineraryShowAll?'目前還沒有行程':'近期沒有新增行程')+'</b><span>使用右上角「＋」新增行程或待辦事項。</span></div>';
       return;
     }
     box.innerHTML=rows.map(e=>{
@@ -2856,7 +2929,7 @@ function renderAttendance(){
   const rows=todoShowCompleted?todos:todos.filter(t=>!t.completed);
   box.className='itinerary-upcoming-list todo-list-v142';
   if(!rows.length){
-    box.innerHTML='<div class="todo-empty-v142"><b>'+(todoShowCompleted?'目前還沒有待辦事項':'目前沒有未完成待辦')+'</b><span>按右上角「＋」新增一件要記得完成的事。</span></div>';
+    box.innerHTML='<div class="todo-empty-v142"><b>'+(todoShowCompleted?'目前還沒有待辦事項':'目前沒有未完成待辦')+'</b><span>使用右上角「＋」新增行程或待辦事項。</span></div>';
     return;
   }
   box.innerHTML=rows.map(t=>{
@@ -4762,7 +4835,17 @@ function setTab(tab){
 }
 qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
 function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}if($('dashPrev'))$('dashPrev').onclick=()=>changeMonth(-1);if($('dashNext'))$('dashNext').onclick=()=>changeMonth(1);$('calPrev').onclick=()=>changeMonth(-1);$('calNext').onclick=()=>changeMonth(1);$('calToday').onclick=()=>{current=new Date();current.setDate(1);render()};
-$('addItinerary').onclick=()=>attendanceMode==='events'?openEvent(iso(new Date())):openTodo();
+function openAttendanceAddDialog(){
+  const dialog=$('attendanceAddDialog');if(!dialog||dialog.open)return;
+  dialog.showModal();
+}
+function closeAttendanceAddDialog(){
+  const dialog=$('attendanceAddDialog');if(dialog&&dialog.open)dialog.close('cancel');
+}
+$('addItinerary').onclick=openAttendanceAddDialog;
+$('attendanceAddClose').onclick=closeAttendanceAddDialog;
+$('attendanceAddEvent').onclick=()=>{closeAttendanceAddDialog();openEvent(iso(new Date()))};
+$('attendanceAddTodo').onclick=()=>{closeAttendanceAddDialog();openTodo()};
 $('itineraryAllBtn').onclick=()=>{if(attendanceMode==='events')itineraryShowAll=!itineraryShowAll;else todoShowCompleted=!todoShowCompleted;renderAttendance()};
 $('attendanceTabEvents').onclick=()=>{attendanceMode='events';renderAttendance()};
 $('attendanceTabTodos').onclick=()=>{attendanceMode='todos';renderAttendance()};
