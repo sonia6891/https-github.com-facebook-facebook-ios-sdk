@@ -146,7 +146,7 @@ Deno.serve(async(req)=>{
       environment:String(tx.environment||""),
       signed_at:iso(tx.signedDate),
       expires_at:iso(tx.expiresDate),
-      raw:tx
+      raw:{verified:true,source:"client_transaction",token_matched_current_account:tokenMatches}
     },{onConflict:"event_id"});
     if(eventError)throw eventError;
 
