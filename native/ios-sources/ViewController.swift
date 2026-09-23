@@ -6,6 +6,7 @@ import UserNotifications
 import AuthenticationServices
 import CryptoKit
 import Security
+import Vision
 
 @objc(MeowStoreBillingPlugin)
 public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -382,6 +383,126 @@ public class MeowAppleAuthPlugin: CAPPlugin, CAPBridgedPlugin, ASAuthorizationCo
 }
 
 
+@objc(MeowScheduleVisionPlugin)
+public class MeowScheduleVisionPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "MeowScheduleVisionPlugin"
+    public let jsName = "MeowScheduleVision"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "recognize", returnType: CAPPluginReturnPromise)
+    ]
+
+    @objc func recognize(_ call: CAPPluginCall) {
+        guard let dataURL = call.getString("imageDataUrl"),
+              let comma = dataURL.firstIndex(of: ",") else {
+            call.reject("Missing imageDataUrl")
+            return
+        }
+
+        let base64 = String(dataURL[dataURL.index(after: comma)...])
+        guard let data = Data(base64Encoded: base64),
+              let image = UIImage(data: data),
+              let cgImage = image.cgImage else {
+            call.reject("Unable to decode schedule image")
+            return
+        }
+
+        let orientation = cgImageOrientation(from: image.imageOrientation)
+
+        DispatchQueue.global(qos: .userInitiated).async {
+            let request = VNRecognizeTextRequest()
+            request.recognitionLevel = .accurate
+            request.usesLanguageCorrection = false
+            request.recognitionLanguages = ["zh-Hant", "en-US"]
+            request.minimumTextHeight = 0.008
+
+            do {
+                let handler = VNImageRequestHandler(cgImage: cgImage, orientation: orientation, options: [:])
+                try handler.perform([request])
+
+                var words: [[String: Any]] = []
+                for observation in request.results ?? [] {
+                    guard let candidate = observation.topCandidates(1).first else { continue }
+                    let text = candidate.string.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard !text.isEmpty else { continue }
+
+                    let regex = try? NSRegularExpression(pattern: #"[^\s\t,，;；|｜]+"#)
+                    let matches = regex?.matches(
+                        in: text,
+                        range: NSRange(text.startIndex..<text.endIndex, in: text)
+                    ) ?? []
+
+                    var addedWord = false
+                    for match in matches {
+                        guard let stringRange = Range(match.range, in: text) else { continue }
+                        let token = String(text[stringRange]).trimmingCharacters(in: .whitespacesAndNewlines)
+                        guard !token.isEmpty else { continue }
+                        guard let box = try? candidate.boundingBox(for: stringRange) else { continue }
+
+                        words.append([
+                            "text": token,
+                            "confidence": Double(candidate.confidence),
+                            "x": Double(box.boundingBox.origin.x),
+                            "y": Double(box.boundingBox.origin.y),
+                            "width": Double(box.boundingBox.size.width),
+                            "height": Double(box.boundingBox.size.height)
+                        ])
+                        addedWord = true
+                    }
+
+                    if !addedWord {
+                        let box = observation.boundingBox
+                        words.append([
+                            "text": text,
+                            "confidence": Double(candidate.confidence),
+                            "x": Double(box.origin.x),
+                            "y": Double(box.origin.y),
+                            "width": Double(box.size.width),
+                            "height": Double(box.size.height)
+                        ])
+                    }
+                }
+
+                words.sort {
+                    let ay = ($0["y"] as? Double ?? 0) + ($0["height"] as? Double ?? 0) / 2
+                    let by = ($1["y"] as? Double ?? 0) + ($1["height"] as? Double ?? 0) / 2
+                    if abs(ay - by) > 0.015 { return ay > by }
+                    return ($0["x"] as? Double ?? 0) < ($1["x"] as? Double ?? 0)
+                }
+
+                DispatchQueue.main.async {
+                    call.resolve([
+                        "platform": "ios",
+                        "engine": "apple_vision",
+                        "localOnly": true,
+                        "imageWidth": image.size.width,
+                        "imageHeight": image.size.height,
+                        "words": words
+                    ])
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    call.reject("Apple Vision could not recognize the schedule image", nil, error)
+                }
+            }
+        }
+    }
+
+    private func cgImageOrientation(from orientation: UIImage.Orientation) -> CGImagePropertyOrientation {
+        switch orientation {
+        case .up: return .up
+        case .upMirrored: return .upMirrored
+        case .down: return .down
+        case .downMirrored: return .downMirrored
+        case .left: return .left
+        case .leftMirrored: return .leftMirrored
+        case .right: return .right
+        case .rightMirrored: return .rightMirrored
+        @unknown default: return .up
+        }
+    }
+}
+
+
 @objc(MeowReminderPlugin)
 public class MeowReminderPlugin: CAPPlugin, CAPBridgedPlugin, UNUserNotificationCenterDelegate {
     public let identifier = "MeowReminderPlugin"
@@ -527,5 +648,6 @@ final class ViewController: CAPBridgeViewController {
         bridge?.registerPluginInstance(MeowStoreBillingPlugin())
         bridge?.registerPluginInstance(MeowReminderPlugin())
         bridge?.registerPluginInstance(MeowAppleAuthPlugin())
+        bridge?.registerPluginInstance(MeowScheduleVisionPlugin())
     }
 }
