@@ -64,6 +64,7 @@ jobs:
           grep -q 'getUnfinishedTransactions' ios/App/App/ViewController.swift
           grep -q 'transactionUpdated' ios/App/App/ViewController.swift
           grep -q 'Transaction.updates' ios/App/App/ViewController.swift
+          grep -q 'eligibleForIntroOffer' ios/App/App/ViewController.swift
           grep -q 'meowwork.pro.monthly' ios/App/MeowWork.storekit
           grep -q 'meowwork.pro.yearly' ios/App/MeowWork.storekit
           grep -q '"subscriptionPeriod" : "P3D"' ios/App/MeowWork.storekit
