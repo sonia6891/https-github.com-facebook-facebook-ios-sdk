@@ -101,8 +101,9 @@ async function openPage(browser, base, width, user = null) {
     'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe'
   ].filter(Boolean);
   const executablePath = browserCandidates.find(candidate => fs.existsSync(candidate));
-  assert.ok(executablePath, 'Chrome or Edge is available for browser QA');
-  const browser = await chromium.launch({ executablePath, headless: true, args: ['--no-sandbox'] });
+  const launchOptions = { headless: true, args: ['--no-sandbox'] };
+  if (executablePath) launchOptions.executablePath = executablePath;
+  const browser = await chromium.launch(launchOptions);
   try {
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV117.openWelcome()));
