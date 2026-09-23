@@ -220,6 +220,38 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
 
         await page.evaluate(() => window.__accountV119.calendar());
         await page.waitForTimeout(180);
+
+        for (const dialogWidth of [320,390,430]) {
+          await page.setViewportSize({width:dialogWidth,height:844});
+          await page.waitForTimeout(60);
+          await page.locator('#scheduleAddDay').click();
+          const scheduleDialogFit=await page.evaluate(()=>{
+            const dialog=document.getElementById('scheduleAddDialog');
+            const body=dialog.querySelector('.dialog-body');
+            const field=document.getElementById('scheduleAddDate').closest('.field');
+            const date=document.getElementById('scheduleAddDate');
+            const dr=dialog.getBoundingClientRect(),br=body.getBoundingClientRect(),fr=field.getBoundingClientRect(),ir=date.getBoundingClientRect();
+            return{
+              dialog:{left:dr.left,right:dr.right,clientWidth:dialog.clientWidth,scrollWidth:dialog.scrollWidth},
+              body:{left:br.left,right:br.right,clientWidth:body.clientWidth,scrollWidth:body.scrollWidth},
+              field:{left:fr.left,right:fr.right},
+              input:{left:ir.left,right:ir.right,width:ir.width}
+            };
+          });
+          check(`${dialogWidth}px 新增日期班表的日期欄位不超出彈窗`,
+            scheduleDialogFit.input.left>=scheduleDialogFit.body.left-1 &&
+            scheduleDialogFit.input.right<=scheduleDialogFit.body.right+1 &&
+            scheduleDialogFit.field.left>=scheduleDialogFit.body.left-1 &&
+            scheduleDialogFit.field.right<=scheduleDialogFit.body.right+1 &&
+            scheduleDialogFit.body.scrollWidth<=scheduleDialogFit.body.clientWidth+1 &&
+            scheduleDialogFit.dialog.scrollWidth<=scheduleDialogFit.dialog.clientWidth+1
+          );
+          await page.locator('#scheduleAddDialogClose').click();
+          check(`${dialogWidth}px 新增日期班表可正常關閉`,!(await page.locator('#scheduleAddDialog').evaluate(x=>x.open)));
+        }
+        await page.setViewportSize({width:390,height:844});
+        await page.waitForTimeout(80);
+
         const aiCrop = await page.evaluate(async () => {
           const banner=document.querySelector('.schedule-ai-v129-banner');
           const img=banner&&banner.querySelector('img');
