@@ -288,7 +288,7 @@ Deno.serve(async (req: Request) => {
 
   if (mode === "status") {
     const apiKeyConfigured = !!Deno.env.get("OPENAI_API_KEY");
-    const configuredModel = Deno.env.get("OPENAI_MODEL") || "gpt-5.6-luna";
+    const configuredModel = "gpt-5.6-luna";
     return json({
       ok: true,
       mode,
@@ -342,7 +342,7 @@ Deno.serve(async (req: Request) => {
     if (error) console.error("AI usage finalize failed", error.message);
   };
 
-  const model = Deno.env.get("OPENAI_MODEL") || "gpt-5.6-luna";
+  const model = "gpt-5.6-luna";
   const systemPrompt = [
     "You are the Pro AI engine for the Taiwan shift-worker app '喵的，又要上班了'.",
     "Return only data matching the requested JSON schema.",
@@ -408,7 +408,22 @@ Deno.serve(async (req: Request) => {
     if (aiResponse.ok) break;
 
     if (retryableStatuses.has(aiResponse.status) && attempt < 2) {
-      await sleep(attempt === 0 ? 500 : 1500);
+      const retryAfterRaw = aiResponse.headers.get("retry-after");
+      const retryAfterSeconds = retryAfterRaw ? Number(retryAfterRaw) : NaN;
+      if (aiResponse.status === 429 && Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 5) {
+        await finalizeUsage(false, payload);
+        return json({
+          ok: false,
+          code: "AI_PROVIDER_BUSY",
+          retry_after_seconds: retryAfterSeconds
+        }, 503);
+      }
+      const baseDelay = attempt === 0 ? 500 : 1500;
+      const headerDelay = Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0
+        ? retryAfterSeconds * 1000
+        : 0;
+      const jitter = Math.floor(Math.random() * 250);
+      await sleep(Math.max(baseDelay, headerDelay) + jitter);
       continue;
     }
 
