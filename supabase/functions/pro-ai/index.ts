@@ -218,6 +218,18 @@ function outputText(payload: any) {
   return "";
 }
 
+async function safetyIdentifier(userId: string) {
+  const raw = new TextEncoder().encode("meow-work:" + userId);
+  const digest = await crypto.subtle.digest("SHA-256", raw);
+  return "mw_" + Array.from(new Uint8Array(digest)).slice(0, 16)
+    .map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function reasoningEffort(mode: string) {
+  if (mode === "assistant" || mode === "anomaly_scan" || mode === "schedule_scan" || mode === "payslip_scan") return "low";
+  return "none";
+}
+
 function modeInstruction(mode: string) {
   if (mode === "schedule_scan") {
     return "Read only the shift/calendar information visible in the image. Extract every clearly visible dated shift. Use YYYY-MM-DD when the year/month/day can be established; otherwise use an empty date and explain in warnings. Never invent missing days or shift codes.";
@@ -315,7 +327,7 @@ Deno.serve(async (req: Request) => {
   }
   const usage = usageClaim.data;
 
-  const model = Deno.env.get("OPENAI_MODEL") || "gpt-5.6-luna";
+  const model = Deno.env.get("OPENAI_MODEL") || "gpt-6-luna";
   const systemPrompt = [
     "You are the Pro AI engine for the Taiwan shift-worker app '喵的，又要上班了'.",
     "Return only data matching the requested JSON schema.",
@@ -334,6 +346,7 @@ Deno.serve(async (req: Request) => {
   }];
   if (imageDataUrl) userContent.push({ type: "input_image", image_url: imageDataUrl, detail: "high" });
 
+  const safetyId = await safetyIdentifier(user.id);
   let aiResponse: Response;
   try {
     aiResponse = await fetch("https://api.openai.com/v1/responses", {
@@ -344,6 +357,9 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         model,
+        store: false,
+        safety_identifier: safetyId,
+        reasoning: { effort: reasoningEffort(mode) },
         input: [
           { role: "system", content: [{ type: "input_text", text: systemPrompt }] },
           { role: "user", content: userContent }
