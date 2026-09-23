@@ -49,6 +49,12 @@ const entitlements = readFileSync(entitlementsSourcePath, 'utf8');
 writeFileSync(entitlementsTargetPath, entitlements);
 
 let project = readFileSync(projectPath, 'utf8');
+let deviceFamilyMatches = project.match(/TARGETED_DEVICE_FAMILY = "1,2";/g) || [];
+if (deviceFamilyMatches.length < 2) {
+  throw new Error('Unable to locate iPhone+iPad target settings before narrowing v1 to iPhone.');
+}
+project = project.replace(/TARGETED_DEVICE_FAMILY = "1,2";/g, 'TARGETED_DEVICE_FAMILY = 1;');
+
 const privacyBuildId = 'A15100000000000000000001';
 const privacyFileId = 'A15100000000000000000002';
 
