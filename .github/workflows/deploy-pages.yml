@@ -120,8 +120,8 @@ jobs:
           assert "client.auth.setSession({" not in html
           assert 'id="welcomeGuest"' not in html
           assert 'id="welcomeEmail"' not in html
-          assert html.index('id="profilePreview"') < html.index('id="accountPlanCard"') < html.index('id="workSettingsCard"') < html.index('id="dataSyncCard"') < html.index('id="installCard"') < html.index('id="aboutCard"') < html.index('id="settingsFooterBanner"')
-          assert html.index('id="accountPlanCard"') < html.index('id="proPlanSettings"') < html.index('id="workSettingsCard"')
+          assert html.index('id="profilePreview"') < html.index('id="workSettingsCard"') < html.index('id="accountPlanCard"') < html.index('id="dataSyncCard"') < html.index('id="installCard"') < html.index('id="aboutCard"')
+          assert html.index('id="workSettingsCard"') < html.index('id="accountPlanCard"') < html.index('id="proPlanSettings"') < html.index('id="dataSyncCard"')
           assert 'id="toggleWorkSettings"' in html and 'id="workSettingsBody"' in html
           assert 'id="toggleDataSync"' in html and 'id="dataSyncBody"' in html
           assert 'id="accountEmail"' not in html

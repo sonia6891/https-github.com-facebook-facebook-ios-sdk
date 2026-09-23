@@ -44,7 +44,8 @@ final class StoreKitSmokeTests: XCTestCase {
             XCTAssertEqual(offer.paymentMode, .freeTrial)
             XCTAssertEqual(offer.period.value, 3)
             XCTAssertEqual(offer.period.unit, .day)
-            XCTAssertTrue(subscription.isEligibleForIntroOffer)
+            let eligibleForIntroOffer = await subscription.isEligibleForIntroOffer
+            XCTAssertTrue(eligibleForIntroOffer)
         }
     }
 
@@ -79,11 +80,13 @@ final class StoreKitSmokeTests: XCTestCase {
         XCTAssertEqual(transaction.productID, MeowStoreKitSmokeSupport.yearlyProductID)
         XCTAssertEqual(transaction.appAccountToken, accountToken)
 
-        let unfinished = try XCTUnwrap(await unfinishedTransaction(id: transaction.id))
+        let unfinishedValue = await unfinishedTransaction(id: transaction.id)
+        let unfinished = try XCTUnwrap(unfinishedValue)
         XCTAssertFalse(unfinished.jwsRepresentation.isEmpty)
 
         await transaction.finish()
-        XCTAssertNil(await unfinishedTransaction(id: transaction.id))
+        let afterFinish = await unfinishedTransaction(id: transaction.id)
+        XCTAssertNil(afterFinish)
     }
 
     private func unfinishedTransaction(
