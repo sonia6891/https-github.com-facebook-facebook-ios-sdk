@@ -4008,7 +4008,7 @@ function visionWordsToOcrData(result){
         x1:(x+ww)*width,
         y1:(1-y)*height
       },
-      lineKey:'vision-'+index
+      lineKey:''
     };
   }).filter(w=>w.text);
   const lines=groupOcrWordsIntoLines(words).map(line=>line.words.map(w=>w.text).join(' '));
@@ -4039,7 +4039,7 @@ async function runPayslipOcr(file){
         status.childNodes[0].nodeValue='Apple Vision 第 '+(currentPass+1)+' / '+variants.length+' 次（'+variant.name+'）本機辨識中… ';
         bar.style.width=Math.round((currentPass/variants.length)*100)+'%';
         const imageDataUrl=await blobDataUrl(variant.image);
-        const vision=await nativeVision.recognize({imageDataUrl});
+        const vision=await nativeVision.recognize({imageDataUrl,purpose:'payslip'});
         const data=visionWordsToOcrData(vision);
         runs.push(parseSingleOcrRun(data,variant));
       }
@@ -4881,7 +4881,7 @@ async function runAiSchedule(file){
   if($('aiScheduleResult')){$('aiScheduleResult').classList.add('hidden');$('aiScheduleResult').innerHTML=''}
   try{
     const imageDataUrl=await aiImageDataUrl(file);
-    const vision=await bridge.recognize({imageDataUrl});
+    const vision=await bridge.recognize({imageDataUrl,purpose:'schedule'});
     const result=parseLocalScheduleVision(vision&&vision.words);
     if($('aiScheduleStatus'))$('aiScheduleStatus').textContent='本機辨識完成。圖片沒有上傳雲端；請先核對日期與班別，再決定是否套用。';
     renderAiScheduleResult(result);
