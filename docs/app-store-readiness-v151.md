@@ -20,6 +20,7 @@ Bundle ID：`com.lumilab.meowwork`
 - [x] 恢復購買
 - [x] 管理／取消訂閱
 - [x] App Store Server Notifications V2 endpoint 已部署
+- [x] 免費基本功能可不登入使用；帳號只在雲端／Pro 等帳號型功能需要（對齊 App Review 5.1.1(v)）
 - [x] App 內永久刪除帳號
 - [x] App 內永久刪除帳號後清除本機 safety snapshot
 - [x] 正式 Supabase 使用者資料表外鍵已核對：工作資料／方案／訂單／AI 用量為 CASCADE；商店事件保留為 orphan 以支援有效訂閱恢復
