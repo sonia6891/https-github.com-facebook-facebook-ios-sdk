@@ -102,9 +102,8 @@ final class StoreKitSmokeTests: XCTestCase {
             options: [.appAccountToken(accountToken)]
         )
 
-        let beforeRestart = try XCTUnwrap(
-            await unfinishedTransaction(id: transaction.id)
-        )
+        let beforeRestartValue = await unfinishedTransaction(id: transaction.id)
+        let beforeRestart = try XCTUnwrap(beforeRestartValue)
         XCTAssertEqual(beforeRestart.transaction.appAccountToken, accountToken)
 
         // SKTestSession instances share the same StoreKit test environment.
@@ -112,14 +111,14 @@ final class StoreKitSmokeTests: XCTestCase {
         session = try SKTestSession(contentsOf: configurationURL)
         session.disableDialogs = true
 
-        let afterRestart = try XCTUnwrap(
-            await unfinishedTransaction(id: transaction.id)
-        )
+        let afterRestartValue = await unfinishedTransaction(id: transaction.id)
+        let afterRestart = try XCTUnwrap(afterRestartValue)
         XCTAssertEqual(afterRestart.transaction.productID, Self.monthlyProductID)
         XCTAssertEqual(afterRestart.transaction.appAccountToken, accountToken)
 
         await afterRestart.transaction.finish()
-        XCTAssertNil(await unfinishedTransaction(id: transaction.id))
+        let afterFinish = await unfinishedTransaction(id: transaction.id)
+        XCTAssertNil(afterFinish)
     }
 
     func testRestoreSyncKeepsActiveEntitlement() async throws {
@@ -132,9 +131,8 @@ final class StoreKitSmokeTests: XCTestCase {
 
         try await AppStore.sync()
 
-        let restored = try XCTUnwrap(
-            await currentEntitlement(productID: Self.monthlyProductID)
-        )
+        let restoredValue = await currentEntitlement(productID: Self.monthlyProductID)
+        let restored = try XCTUnwrap(restoredValue)
         XCTAssertEqual(restored.productID, Self.monthlyProductID)
         XCTAssertEqual(restored.appAccountToken, accountToken)
     }
@@ -146,7 +144,7 @@ final class StoreKitSmokeTests: XCTestCase {
         )
         await transaction.finish()
 
-        try session.disableAutoRenewForTransaction(identifier: Int(transaction.id))
+        try session.disableAutoRenewForTransaction(identifier: UInt(transaction.id))
 
         let stillActive = await currentEntitlement(productID: Self.monthlyProductID)
         XCTAssertNotNil(stillActive)
@@ -171,8 +169,11 @@ final class StoreKitSmokeTests: XCTestCase {
             // Expected: forced transaction failure must not grant entitlement.
         }
 
-        XCTAssertNil(await unfinishedTransaction(productID: Self.monthlyProductID))
-        XCTAssertNil(await currentEntitlement(productID: Self.monthlyProductID))
+        let unfinished = await unfinishedTransaction(productID: Self.monthlyProductID)
+        XCTAssertNil(unfinished)
+
+        let active = await currentEntitlement(productID: Self.monthlyProductID)
+        XCTAssertNil(active)
     }
 
     private func unfinishedTransaction(
