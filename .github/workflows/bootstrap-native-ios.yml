@@ -50,7 +50,7 @@ jobs:
         run: |
           rm -rf ios
           npx cap add ios
-          cp ios-sources/ViewController.swift ios/App/App/ViewController.swift
+          node scripts/patch-ios-bridge.mjs
           cp ios-sources/MeowWork.storekit ios/App/MeowWork.storekit
           mkdir -p ios/App/App.xcodeproj/xcshareddata/xcschemes
           cp ios-sources/App.xcscheme ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
@@ -59,26 +59,31 @@ jobs:
       - name: Verify StoreKit and reminder bridge source
         working-directory: native
         run: |
-          grep -q 'MeowStoreBillingPlugin' ios/App/App/ViewController.swift
-          grep -q 'registerPluginInstance' ios/App/App/ViewController.swift
-          grep -q 'Product.products' ios/App/App/ViewController.swift
-          grep -q 'Transaction.currentEntitlements' ios/App/App/ViewController.swift
-          grep -q 'showManageSubscriptions' ios/App/App/ViewController.swift
-          grep -q 'meowwork.pro.monthly' ios/App/App/ViewController.swift
-          grep -q 'meowwork.pro.yearly' ios/App/App/ViewController.swift
-          grep -q 'appAccountToken' ios/App/App/ViewController.swift
-          grep -q 'jwsRepresentation' ios/App/App/ViewController.swift
-          grep -q 'finishTransaction' ios/App/App/ViewController.swift
-          grep -q 'getUnfinishedTransactions' ios/App/App/ViewController.swift
-          grep -q 'transactionUpdated' ios/App/App/ViewController.swift
-          grep -q 'Transaction.updates' ios/App/App/ViewController.swift
-          grep -q 'eligibleForIntroOffer' ios/App/App/ViewController.swift
-          grep -q 'MeowReminderPlugin' ios/App/App/ViewController.swift
-          grep -q 'UNUserNotificationCenter' ios/App/App/ViewController.swift
-          grep -q 'requestPermission' ios/App/App/ViewController.swift
-          grep -q 'getPermissionStatus' ios/App/App/ViewController.swift
-          grep -q 'UNTimeIntervalNotificationTrigger' ios/App/App/ViewController.swift
-          grep -q 'registerPluginInstance(MeowReminderPlugin())' ios/App/App/ViewController.swift
+          grep -q 'MeowStoreBillingPlugin' ios/App/App/SceneDelegate.swift
+          grep -q 'registerPluginInstance' ios/App/App/SceneDelegate.swift
+          grep -q 'Product.products' ios/App/App/SceneDelegate.swift
+          grep -q 'Transaction.currentEntitlements' ios/App/App/SceneDelegate.swift
+          grep -q 'showManageSubscriptions' ios/App/App/SceneDelegate.swift
+          grep -q 'meowwork.pro.monthly' ios/App/App/SceneDelegate.swift
+          grep -q 'meowwork.pro.yearly' ios/App/App/SceneDelegate.swift
+          grep -q 'appAccountToken' ios/App/App/SceneDelegate.swift
+          grep -q 'jwsRepresentation' ios/App/App/SceneDelegate.swift
+          grep -q 'finishTransaction' ios/App/App/SceneDelegate.swift
+          grep -q 'getUnfinishedTransactions' ios/App/App/SceneDelegate.swift
+          grep -q 'transactionUpdated' ios/App/App/SceneDelegate.swift
+          grep -q 'Transaction.updates' ios/App/App/SceneDelegate.swift
+          grep -q 'eligibleForIntroOffer' ios/App/App/SceneDelegate.swift
+          grep -q 'MeowReminderPlugin' ios/App/App/SceneDelegate.swift
+          grep -q 'UNUserNotificationCenter' ios/App/App/SceneDelegate.swift
+          grep -q 'requestPermission' ios/App/App/SceneDelegate.swift
+          grep -q 'getPermissionStatus' ios/App/App/SceneDelegate.swift
+          grep -q 'UNTimeIntervalNotificationTrigger' ios/App/App/SceneDelegate.swift
+          grep -q 'registerPluginInstance(MeowReminderPlugin())' ios/App/App/SceneDelegate.swift
+          grep -q 'window?.rootViewController = ViewController()' ios/App/App/SceneDelegate.swift
+          if grep -q 'ViewController.swift in Sources' ios/App/App.xcodeproj/project.pbxproj; then
+            echo "Unexpected duplicate ViewController source reference"
+            exit 1
+          fi
           grep -q 'meowwork.pro.monthly' ios/App/MeowWork.storekit
           grep -q 'meowwork.pro.yearly' ios/App/MeowWork.storekit
           grep -q '"subscriptionPeriod" : "P3D"' ios/App/MeowWork.storekit
@@ -137,6 +142,6 @@ jobs:
             echo "No generated changes to commit."
             exit 0
           fi
-          git commit -m "Generate Capacitor iOS project with StoreKit bridge [skip ci]"
+          git commit -m "Generate Capacitor iOS project with native bridges [skip ci]"
           git pull --rebase origin main
           git push origin HEAD:main
