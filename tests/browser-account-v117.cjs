@@ -134,9 +134,9 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       check(`${width}px 帳號狀態登入方式登出與 Pro 集中同區`, await page.evaluate(() => ['accountTitle','accountLoginMethod','accountLogout','accountUpgrade'].every(id => document.getElementById('accountPlanCard').contains(document.getElementById(id)))));
       check(`${width}px 帳號區不顯示 Email`, await page.evaluate(() => !document.getElementById('accountEmail') && !document.getElementById('accountPlanCard').innerText.includes('member@example.test')));
       check(`${width}px 登入方式正確顯示 Google`, (await page.locator('#accountLoginMethod').innerText()).includes('Google'));
-      await page.locator('#accountUsername').fill('輪班喵'+${width});
+      await page.locator('#accountUsername').fill('輪班喵'+width);
       await page.locator('#saveAccountUsername').click();
-      check(`${width}px 使用者名稱可自訂修改`, await page.locator('#profileName').innerText() === '輪班喵'+${width});
+      check(`${width}px 使用者名稱可自訂修改`, await page.locator('#profileName').innerText() === '輪班喵'+width);
       const accountScroll = await page.evaluate(() => scrollY);
       await page.locator('#accountUpgrade').click();
       check(`${width}px Pro 方案在帳號卡內就地展開`, await page.locator('#proPlanSettings').isVisible() && await page.evaluate(() => document.getElementById('accountPlanCard').contains(document.getElementById('proPlanSettings'))));
