@@ -48,9 +48,10 @@ const server = http.createServer((req, res) => {
 
 const mockSupabase = `export function createClient(){const t=window.__accountTest;return {
   auth:{
-    getSession:async()=>({data:{session:localStorage.getItem('__account_test_signed_out')==='1'?null:(t.user?{user:t.user}:null)}}),
+    getSession:async()=>{const saved=JSON.parse(localStorage.getItem('__mock_auth_session')||'null');const user=saved?.user||t.user;return{data:{session:localStorage.getItem('__account_test_signed_out')==='1'?null:(user?Object.assign({user},saved||{}):null)},error:null}},
     onAuthStateChange(fn){window.__authCallback=fn;return{data:{subscription:{unsubscribe(){}}}}},
     signInWithOAuth:async input=>{t.oauth.push(input);return{data:{url:'https://auth.example.test/start'},error:null}},
+    setSession:async tokens=>{t.setSessionCalls.push(tokens);const user={id:'handoff-user',app_metadata:{provider:'custom:line'}};const session={user,access_token:tokens.access_token,refresh_token:tokens.refresh_token};localStorage.removeItem('__account_test_signed_out');localStorage.setItem('__mock_auth_session',JSON.stringify(session));t.user=user;return{data:{session},error:null}},
     signOut:async()=>{t.user=null;localStorage.setItem('__account_test_signed_out','1');window.__authCallback?.('SIGNED_OUT',null);return{error:null}}
   },
   rpc:async name=>{t.calls.push(name);if(name==='meow_account_access')return{data:{server_now:new Date().toISOString(),entitlement:null},error:null};return{data:null,error:null}},
@@ -79,7 +80,7 @@ async function addRoutes(context, base, billingConfigured = true) {
 
 async function openPage(browser, base, width, user = null, billingConfigured = true) {
   const context = await browser.newContext({ viewport: { width, height: 844 }, serviceWorkers: 'block' });
-  await context.addInitScript(({ user }) => { window.__accountTest = { oauth: [], calls: [], user }; }, { user });
+  await context.addInitScript(({ user }) => { window.__accountTest = { oauth: [], calls: [], setSessionCalls: [], user }; }, { user });
   await addRoutes(context, base, billingConfigured);
   const page = await context.newPage();
   const pageErrors = [];
@@ -122,7 +123,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
     await standaloneContext.addInitScript(() => {
-      window.__accountTest = { oauth: [], calls: [], user: null };
+      window.__accountTest = { oauth: [], calls: [], setSessionCalls: [], user: null };
       Object.defineProperty(navigator, 'standalone', { value: true, configurable: true });
       window.__authWindow = { closed:false, document:{ title:'', body:{ innerHTML:'' } }, location:{ href:'' }, close(){ this.closed=true; } };
       window.open = (url, name) => { window.__authOpenArgs = [url, name]; return window.__authWindow; };
@@ -135,6 +136,17 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     await standalonePage.waitForTimeout(80);
     check('主畫面 App 的 LINE 登入不再整頁跳出 App', await standalonePage.evaluate(() => window.__accountTest.oauth.at(-1).options.skipBrowserRedirect === true));
     check('主畫面 App 使用獨立 OAuth 視窗承接 LINE', await standalonePage.evaluate(() => window.__authOpenArgs?.[0] === 'about:blank' && window.__authWindow.location.href === 'https://auth.example.test/start'));
+    await standalonePage.evaluate(() => {
+      window.postMessage({type:'meow-auth-session',access_token:'access-1',refresh_token:'refresh-1'}, location.origin);
+    });
+    await standalonePage.waitForFunction(() => window.__accountTest.setSessionCalls.length === 1);
+    check('主 App 會用 setSession 寫入 OAuth handoff', await standalonePage.evaluate(() => window.__accountTest.setSessionCalls[0].access_token === 'access-1' && window.__accountTest.setSessionCalls[0].refresh_token === 'refresh-1'));
+    await standalonePage.waitForTimeout(80);
+    check('handoff 後主 App 已登入', !(await standalonePage.evaluate(() => window.__accountV119.openWelcome())));
+    await standalonePage.reload({ waitUntil: 'domcontentloaded' });
+    await standalonePage.waitForFunction(() => window.__accountV119 !== undefined);
+    await standalonePage.waitForTimeout(100);
+    check('主 App 關閉重開的等價 reload 後仍保持登入', !(await standalonePage.evaluate(() => window.__accountV119.openWelcome())));
     await standaloneContext.close();
 
     for (const width of [320, 390, 430]) {
