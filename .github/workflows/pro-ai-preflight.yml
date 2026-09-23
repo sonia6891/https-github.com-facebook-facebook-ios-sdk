@@ -1,4 +1,4 @@
-name: Pro AI preflight
+name: Pro payroll intelligence preflight
 on:
   push:
     branches: [main]
@@ -26,17 +26,17 @@ jobs:
           html=Path('index.html').read_text()
           scripts=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',html,re.I)
           for i,src in enumerate(scripts):
-              p=Path(tempfile.gettempdir())/f'meow-ai-inline-{i}.js'
+              p=Path(tempfile.gettempdir())/f'meow-payroll-inline-{i}.js'
               p.write_text(src)
               subprocess.run(['node','--check',str(p)],check=True)
           print(f'{len(scripts)} inline scripts parsed')
           PY
-      - name: Pro AI static regression checks
+      - name: Local payroll intelligence regression checks
         run: node tests/pro-ai-v125.cjs
       - name: Secret leak guard
         run: |
           if grep -R --line-number --exclude-dir=.git -E 'sk-[A-Za-z0-9_-]{20,}' index.html supabase docs tests; then
-            echo "Possible OpenAI API key committed to repository"
+            echo "Possible API secret committed to repository"
             exit 1
           fi
-          echo "No OpenAI API key literal detected"
+          echo "No API key literal detected"
