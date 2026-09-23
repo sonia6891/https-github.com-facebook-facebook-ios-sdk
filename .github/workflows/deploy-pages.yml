@@ -46,7 +46,9 @@ jobs:
           scopes=' '.join(parse_qs(parsed.query).get('scope',[]))
           assert 'openid' in scopes.split() and 'profile' in scopes.split(), scopes
           assert '、' not in scopes, scopes
-          print('LINE provider redirect verified:',parsed.netloc,scopes)
+          disable_auto=' '.join(parse_qs(parsed.query).get('disable_auto_login',[]))
+          assert disable_auto=='true', disable_auto
+          print('LINE provider redirect verified:',parsed.netloc,scopes,'disable_auto_login='+disable_auto)
           PY
       - name: Stage public application files only
         run: |
@@ -87,15 +89,13 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v122-auth-session-handoff' in html
+          assert 'v123-line-single-window' in html
           assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           assert "const LINE_PROVIDER_ID='custom:line'" in html
           assert "scopes:'openid profile'" in html
-          assert "skipBrowserRedirect=true" in html
-          assert "window.open('about:blank','meow-auth-window')" in html
-          assert "client.auth.setSession({" in html
-          assert "type:'meow-auth-session'" in html
-          assert "authSessionHandoffSent=true" in html
+          assert 'class="auth-booting"' in html
+          assert "window.open('about:blank','meow-auth-window')" not in html
+          assert "client.auth.setSession({" not in html
           assert 'id="welcomeGuest"' not in html
           assert 'id="welcomeEmail"' not in html
           assert html.index('id="profilePreview"') < html.index('id="accountPlanCard"') < html.index('id="workSettingsCard"') < html.index('id="dataSyncCard"') < html.index('id="installCard"') < html.index('id="aboutCard"') < html.index('id="settingsFooterBanner"')
@@ -125,6 +125,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v122-auth-session-handoff-verification
+          name: meow-v123-line-single-window-verification
           path: test-results/
           retention-days: 3
