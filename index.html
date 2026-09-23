@@ -2292,14 +2292,16 @@ async function handleSignedIn(user,session=null){
   await loadEntitlement();
   if(authUser&&authUser.id===user.id){await loadBillingHistory();setAccountStatus('帳號已登入');renderSettings()}
 }
-async function handleSignedOut(){
+async function handleSignedOut(forceWelcome=false){
   const epoch=++accessEpoch;
   entitlementRequest++;authUser=null;resetEntitlement();billingHistory=[];clearTimeout(expiryTimer);
   await stopAccountRealtime();
   if(epoch!==accessEpoch||authUser)return;
   cloudReady=false;pendingCloud=null;switchWorkspace('guest');
-  setAccountStatus('請使用 Google、LINE 或 Apple 登入');setCloudStatus('未啟用・Pro 專屬');render();
-  openWelcome(false);
+  const welcomeDone=readLocalString(WELCOME_FRAME_KEY)==='done';
+  setAccountStatus(welcomeDone&&!forceWelcome?'免費版・資料保存在這台裝置':'請使用 Google、LINE 或 Apple 登入');
+  setCloudStatus('未啟用・Pro 專屬');render();
+  if(forceWelcome||!welcomeDone)openWelcome(false);
 }
 async function initAuth(){
   const callbackIssue=readOAuthCallbackError();
@@ -2311,7 +2313,7 @@ async function initAuth(){
       clearOAuthCallbackError();
       await handleSignedIn(data.session.user,data.session);
     }else{
-      await handleSignedOut();
+      await handleSignedOut(!!callbackIssue);
       if(callbackIssue){
         const message=authCallbackMessage(callbackIssue);
         const providerLabel=callbackIssue.provider==='line'?'LINE':callbackIssue.provider==='google'?'Google':callbackIssue.provider==='apple'?'Apple':'帳號';
@@ -2327,12 +2329,13 @@ async function initAuth(){
       if(event==='SIGNED_OUT'){accessEpoch++;accessCheckedUser='';clearTimeout(authTimer)}
       authEventTimer=setTimeout(()=>{
         if(session&&session.user)void handleSignedIn(session.user,session);
-        else if(event==='SIGNED_OUT')void handleSignedOut();
+        else if(event==='SIGNED_OUT')void handleSignedOut(true);
       },0);
     });
   }catch(e){
-    setAccountStatus('登入服務暫時無法連線');
-    openWelcome(false);
+    const welcomeDone=readLocalString(WELCOME_FRAME_KEY)==='done';
+    setAccountStatus(welcomeDone?'登入服務暫時無法連線・免費版仍可使用':'登入服務暫時無法連線');
+    if(!welcomeDone)openWelcome(false);
   }finally{
     document.documentElement.classList.remove('auth-booting');
   }
@@ -2464,7 +2467,7 @@ async function signOutAccount(){
     if(error)throw error;
     clearTimeout(authEventTimer);authEventTimer=null;
     // Also handle clients which do not emit a local SIGNED_OUT callback.
-    await handleSignedOut();
+    await handleSignedOut(true);
   }catch(e){
     setAccountStatus('登出未完成，請稍後重試。本機資料未清除。');
     alert('登出未完成，請稍後重試。本機資料未清除。');
@@ -2497,7 +2500,7 @@ async function deleteAccountPermanently(){
       const client=await getAuthClient();
       await client.auth.signOut({scope:'local'});
     }catch(e){}
-    await handleSignedOut();
+    await handleSignedOut(true);
     alert('帳號與雲端資料已永久刪除。');
   }catch(e){
     setAccountStatus('帳號刪除失敗，資料沒有被刪除。');
