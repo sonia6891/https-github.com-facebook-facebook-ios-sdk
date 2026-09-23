@@ -1,0 +1,93 @@
+name: Bootstrap native iOS project
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - native/package.json
+      - native/capacitor.config.json
+      - native/scripts/**
+      - native/ios-sources/**
+      - native/.gitignore
+      - .github/workflows/bootstrap-native-ios.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bootstrap:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Install pinned Capacitor
+        working-directory: native
+        run: npm install
+
+      - name: Sync web bundle
+        working-directory: native
+        run: npm run sync:web
+
+      - name: Recreate iOS shell
+        working-directory: native
+        run: |
+          rm -rf ios
+          npx cap add ios
+          cp ios-sources/ViewController.swift ios/App/App/ViewController.swift
+          npx cap sync ios
+
+      - name: Verify StoreKit bridge source
+        working-directory: native
+        run: |
+          grep -q 'MeowStoreBillingPlugin' ios/App/App/ViewController.swift
+          grep -q 'registerPluginInstance' ios/App/App/ViewController.swift
+          grep -q 'Product.products' ios/App/App/ViewController.swift
+          grep -q 'Transaction.currentEntitlements' ios/App/App/ViewController.swift
+          grep -q 'showManageSubscriptions' ios/App/App/ViewController.swift
+          grep -q 'meowwork.pro.monthly' ios/App/App/ViewController.swift
+          grep -q 'meowwork.pro.yearly' ios/App/App/ViewController.swift
+
+      - name: Build iOS simulator app
+        working-directory: native
+        run: |
+          set -euo pipefail
+          if [ -d ios/App/App.xcworkspace ]; then
+            xcodebuild \
+              -workspace ios/App/App.xcworkspace \
+              -scheme App \
+              -sdk iphonesimulator \
+              -configuration Debug \
+              CODE_SIGNING_ALLOWED=NO \
+              build
+          else
+            xcodebuild \
+              -project ios/App/App.xcodeproj \
+              -scheme App \
+              -sdk iphonesimulator \
+              -configuration Debug \
+              CODE_SIGNING_ALLOWED=NO \
+              build
+          fi
+
+      - name: Commit generated iOS project
+        run: |
+          set -euo pipefail
+          git config user.name "meow-native-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add native/ios native/package-lock.json
+          if git diff --cached --quiet; then
+            echo "No generated changes to commit."
+            exit 0
+          fi
+          git commit -m "Generate Capacitor iOS project with StoreKit bridge [skip ci]"
+          git pull --rebase origin main
+          git push origin HEAD:main
