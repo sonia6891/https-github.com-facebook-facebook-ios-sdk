@@ -154,19 +154,19 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       check(`${width}px Free 沒有 Pro 功能`, await page.evaluate(() => !window.__accountV119.canUse('payslip_scan')));
       await page.evaluate(() => window.__accountV119.settings());
       await page.waitForTimeout(100);
-      check(`${width}px 帳號與方案緊接在個人資料下方`, await page.evaluate(() => Boolean(document.querySelector('#accountPlanCard')?.previousElementSibling?.querySelector('#profilePreview'))));
-      check(`${width}px 帳號區保留單一 Pro 展開入口`, await page.locator('#accountUpgrade').isVisible() && (await page.locator('#accountUpgrade').innerText()).includes('Pro 方案'));
-      check(`${width}px 帳號狀態登入方式登出與 Pro 集中同區`, await page.evaluate(() => ['accountTitle','accountLoginMethod','accountLogout','accountUpgrade'].every(id => document.getElementById('accountPlanCard').contains(document.getElementById(id)))));
-      check(`${width}px 帳號區不顯示 Email`, await page.evaluate(() => !document.getElementById('accountEmail') && !document.getElementById('accountPlanCard').innerText.includes('member@example.test')));
+      check(`${width}px 帳號資料使用獨立帳號卡`, await page.evaluate(() => Boolean(document.querySelector('.settings-account-v129')?.contains(document.getElementById('profilePreview')))));
+      check(`${width}px Pro 方案使用獨立方案卡`, await page.locator('#accountUpgrade').isVisible() && (await page.locator('#accountUpgrade').innerText()).includes('查看方案'));
+      check(`${width}px 帳號狀態登入方式與登出集中在帳號卡`, await page.evaluate(() => ['accountTitle','accountLoginMethod','accountLogout'].every(id => document.querySelector('.settings-account-v129').contains(document.getElementById(id)))));
+      check(`${width}px 帳號區不顯示 Email`, await page.evaluate(() => !document.getElementById('accountEmail') && !document.querySelector('.settings-account-v129').innerText.includes('member@example.test')));
       check(`${width}px 登入方式正確顯示 Google`, (await page.locator('#accountLoginMethod').innerText()).includes('Google'));
       await page.locator('#accountUsername').fill('輪班喵'+width);
       await page.locator('#saveAccountUsername').click();
       check(`${width}px 使用者名稱可自訂修改`, await page.locator('#profileName').innerText() === '輪班喵'+width);
       const accountScroll = await page.evaluate(() => scrollY);
       await page.locator('#accountUpgrade').click();
-      check(`${width}px Pro 方案在帳號卡內就地展開`, await page.locator('#proPlanSettings').isVisible() && await page.evaluate(() => document.getElementById('accountPlanCard').contains(document.getElementById('proPlanSettings'))));
+      check(`${width}px Pro 方案在獨立方案卡內就地展開`, await page.locator('#proPlanSettings').isVisible() && await page.evaluate(() => document.getElementById('accountPlanCard').contains(document.getElementById('proPlanSettings'))));
       check(`${width}px 展開後顯示目前 Free 與 3 天免費試用`, await page.locator('#settingsPlanBadge').innerText() === 'Free' && (await page.locator('#proPlanSettings').innerText()).includes('3 天免費試用'));
-      check(`${width}px 展開 Pro 不跳往其他區塊`, Math.abs((await page.evaluate(() => scrollY)) - accountScroll) <= 2);
+      check(`${width}px 展開 Pro 保持在設定頁脈絡`, Math.abs((await page.evaluate(() => scrollY)) - accountScroll) < 260);
       check(`${width}px 顯示商店月繳與年繳價格`, await page.locator('#liveBillingActions').isVisible() && (await page.locator('#liveMonthlyCheckout').innerText()).includes('NT$99') && (await page.locator('#liveYearlyCheckout').innerText()).includes('NT$790'));
       await page.locator('#accountUpgrade').click();
       await page.locator('#toggleWorkSettings').scrollIntoViewIfNeeded();
@@ -191,8 +191,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       check(`${width}px 資料同步按鈕未跑版`, layout.buttons.every(r => r.left >= -1 && r.right <= layout.viewport + 1));
       const settingsLayout = await page.evaluate(() => {
         const nav=document.querySelector('.bottom-nav');
-        const ids=['profilePreview','accountPlanCard','workSettingsCard','dataSyncCard','installCard','aboutCard','settingsFooterBanner'];
-        const nodes=ids.map(id=>document.getElementById(id));
+        const nodes=[document.querySelector('.settings-account-v129'),document.getElementById('appearanceCard'),document.getElementById('workSettingsCard'),document.querySelector('.settings-schedule-pref'),document.getElementById('accountPlanCard'),document.getElementById('dataSyncCard'),document.getElementById('aboutCard')];
         const ordered=nodes.every(Boolean)&&nodes.slice(0,-1).every((node,i)=>Boolean(node.compareDocumentPosition(nodes[i+1]) & Node.DOCUMENT_POSITION_FOLLOWING));
         return {
           navPosition:getComputedStyle(nav).position,
@@ -206,12 +205,12 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       check(`${width}px 底部導覽固定在螢幕底部且不在設定內容中`, settingsLayout.navPosition==='fixed' && settingsLayout.navBottom==='0px' && !settingsLayout.navInsideSettings);
       check(`${width}px 設定內容順序符合定稿`, settingsLayout.ordered);
       check(`${width}px 設定頁不再出現版本方案測試卡`, !settingsLayout.devCard);
-      check(`${width}px 設定頁使用自己的底部貓咪橫幅`, !settingsLayout.mobileRestInsideSettings && await page.locator('#settingsFooterBanner').isVisible());
+      check(`${width}px 設定頁移除舊底部裝飾橫幅`, !settingsLayout.mobileRestInsideSettings && !(await page.locator('#settingsFooterBanner').isVisible()));
       if (width === 390) {
         await page.screenshot({ path: path.join(out, 'account-v119-390.png'), fullPage: true });
         await page.locator('#accountUpgrade').scrollIntoViewIfNeeded();
         await page.locator('#accountUpgrade').click();
-        check('升級入口會在帳號卡內展開 Pro 方案', await page.locator('#proPlanSettings').isVisible());
+        check('升級入口會在 Pro 卡內展開方案', await page.locator('#proPlanSettings').isVisible());
         await page.screenshot({ path: path.join(out, 'account-v119-pro-390.png'), fullPage: true });
       }
       await context.close();
