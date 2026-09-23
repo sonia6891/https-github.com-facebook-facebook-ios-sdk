@@ -45,7 +45,10 @@ function peekPayload(jws:string){
 function environmentFromJws(jws:string){
   const payload=peekPayload(jws);
   const raw=payload?.environment || payload?.data?.environment;
-  return raw==="Production"?Environment.PRODUCTION:Environment.SANDBOX;
+  if(raw==="Production")return Environment.PRODUCTION;
+  if(raw==="Xcode")return Environment.XCODE;
+  if(raw==="LocalTesting")return Environment.LOCAL_TESTING;
+  return Environment.SANDBOX;
 }
 async function verifierFor(jws:string){
   const env=environmentFromJws(jws);
