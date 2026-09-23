@@ -98,6 +98,10 @@ jobs:
           grep -q 'import Vision' ios/App/App/SceneDelegate.swift
           grep -q 'VNRecognizeTextRequest' ios/App/App/SceneDelegate.swift
           grep -q 'registerPluginInstance(MeowScheduleVisionPlugin())' ios/App/App/SceneDelegate.swift
+          grep -q 'purpose == "payslip"' ios/App/App/SceneDelegate.swift
+          grep -q 'request.usesLanguageCorrection = purpose == "payslip"' ios/App/App/SceneDelegate.swift
+          grep -q "purpose:'payslip'" ../index.html
+          grep -q "purpose:'schedule'" ../index.html
           grep -q 'MeowScheduleVision' ../index.html
           if grep -q "invokeUserFunction('pro-ai',{mode:'schedule_scan'" ../index.html; then
             echo "Schedule import must remain on-device and must not call OpenAI"
