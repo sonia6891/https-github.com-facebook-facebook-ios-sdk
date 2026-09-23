@@ -179,6 +179,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       {text:'實發金額',confidence:99,lineKey:'l9',bbox:{x0:50,y0:520,x1:180,y1:550}},
       {text:'37,490',confidence:99,lineKey:'l9',bbox:{x0:800,y0:520,x1:900,y1:550}}
     ]));
+    console.log('PAYROLL_FIXTURE_VALUES '+JSON.stringify(payrollParsed));
     check('薪資 OCR 可辨識底薪與輪班津貼', payrollParsed.base===36000 && payrollParsed.shiftAllowance===3000);
     check('薪資 OCR 不把加班時數或倍率當加班費', payrollParsed.otPay===2680);
     check('薪資 OCR 可辨識勞保健保福利金勞退', payrollParsed.dedLabor===1100 && payrollParsed.dedHealth===750 && payrollParsed.dedWelfare===180 && payrollParsed.dedPension===2160);
