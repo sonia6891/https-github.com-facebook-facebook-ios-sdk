@@ -4482,10 +4482,9 @@ function aiErrorMessage(error){
 function aiUsageSuffix(response){
   const usage=response&&response.usage;
   if(!usage)return '';
-  const image=Number.isFinite(Number(usage.image_remaining))?Number(usage.image_remaining):null;
-  const text=Number.isFinite(Number(usage.text_remaining))?Number(usage.text_remaining):null;
-  if(image===null||text===null)return '';
-  return '｜本月剩餘：薪資單 AI '+image+' 次、分析／問答 '+text+' 次';
+  const remaining=Number.isFinite(Number(usage.text_remaining))?Number(usage.text_remaining):Number.isFinite(Number(usage.assistant_remaining))?Number(usage.assistant_remaining):null;
+  if(remaining===null)return '';
+  return '｜喵助理本月剩餘 '+remaining+' 次';
 }
 function aiReadFile(file){
   return new Promise((resolve,reject)=>{
