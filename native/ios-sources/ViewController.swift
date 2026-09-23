@@ -5,6 +5,7 @@ import StoreKit
 import UserNotifications
 import AuthenticationServices
 import CryptoKit
+import Security
 
 @objc(MeowStoreBillingPlugin)
 public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -371,7 +372,7 @@ public class MeowAppleAuthPlugin: CAPPlugin, CAPBridgedPlugin, ASAuthorizationCo
             if status != errSecSuccess {
                 random = UInt8.random(in: 0...255)
             }
-            if random < charset.count * (256 / charset.count) {
+            if Int(random) < charset.count * (256 / charset.count) {
                 result.append(charset[Int(random) % charset.count])
                 remaining -= 1
             }
