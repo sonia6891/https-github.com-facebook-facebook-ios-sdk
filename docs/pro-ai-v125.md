@@ -127,9 +127,16 @@ AI 回傳欄位限制在：
 
 Edge Function 需要：
 - `OPENAI_API_KEY`：必填
-- `OPENAI_MODEL`：選填；未設定時目前預設 `gpt-5.6-luna`
+- `OPENAI_MODEL`：選填；未設定時目前預設 `gpt-6-luna`
 
 Secret 不得提交 GitHub。
+
+OpenAI Responses API 正式呼叫設定：
+- `store:false`，不建立可延續的儲存 response
+- 每位使用者以 SHA-256 產生匿名化 `safety_identifier`
+- 班表／薪資單／助理／異常掃描：`reasoning.effort=low`
+- 單純對帳與預測解讀：`reasoning.effort=none`
+- 圖片使用 `detail=high`，前端會先將超大圖片縮到合理尺寸
 
 ## 10. 第一版驗收
 
