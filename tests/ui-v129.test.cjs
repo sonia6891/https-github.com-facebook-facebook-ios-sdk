@@ -147,6 +147,7 @@ assert(html.includes('async function signInWithApple()'),'Apple sign-in flow mis
 assert(html.includes("provider:'apple'"),'Apple OAuth provider missing');
 assert(html.includes('const APPLE_LOGIN_ENABLED=false;'),'Apple login must remain gated until external provider setup is verified');
 assert(html.includes("$('welcomeGuest').onclick"),'free local mode must be usable without account sign-in');
+assert(html.includes("readLocalString(WELCOME_FRAME_KEY)==='done'"),'free local mode acknowledgement must survive restart');
 assert(html.includes('href="./privacy.html"'),'privacy policy link missing');
 assert(html.includes('href="./terms.html"'),'terms link missing');
 assert(html.includes('href="./support.html"'),'support link missing');
