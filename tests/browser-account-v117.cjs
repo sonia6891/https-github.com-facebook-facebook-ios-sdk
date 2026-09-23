@@ -125,28 +125,19 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     await standaloneContext.addInitScript(() => {
       window.__accountTest = { oauth: [], calls: [], setSessionCalls: [], user: null };
       Object.defineProperty(navigator, 'standalone', { value: true, configurable: true });
-      window.__authWindow = { closed:false, document:{ title:'', body:{ innerHTML:'' } }, location:{ href:'' }, close(){ this.closed=true; } };
-      window.open = (url, name) => { window.__authOpenArgs = [url, name]; return window.__authWindow; };
+      window.__openCalls = [];
+      window.open = (...args) => { window.__openCalls.push(args); return null; };
     });
     await addRoutes(standaloneContext, base, true);
     const standalonePage = await standaloneContext.newPage();
     await standalonePage.goto(base, { waitUntil: 'domcontentloaded' });
     await standalonePage.waitForFunction(() => window.__accountV119 !== undefined);
+    await standalonePage.waitForTimeout(120);
+    check('啟動登入判斷完成後解除畫面鎖', !(await standalonePage.evaluate(() => document.documentElement.classList.contains('auth-booting'))));
     await standalonePage.locator('#welcomeLine').click();
     await standalonePage.waitForTimeout(80);
-    check('主畫面 App 的 LINE 登入不再整頁跳出 App', await standalonePage.evaluate(() => window.__accountTest.oauth.at(-1).options.skipBrowserRedirect === true));
-    check('主畫面 App 使用獨立 OAuth 視窗承接 LINE', await standalonePage.evaluate(() => window.__authOpenArgs?.[0] === 'about:blank' && window.__authWindow.location.href === 'https://auth.example.test/start'));
-    await standalonePage.evaluate(() => {
-      window.postMessage({type:'meow-auth-session',access_token:'access-1',refresh_token:'refresh-1'}, location.origin);
-    });
-    await standalonePage.waitForFunction(() => window.__accountTest.setSessionCalls.length === 1);
-    check('主 App 會用 setSession 寫入 OAuth handoff', await standalonePage.evaluate(() => window.__accountTest.setSessionCalls[0].access_token === 'access-1' && window.__accountTest.setSessionCalls[0].refresh_token === 'refresh-1'));
-    await standalonePage.waitForTimeout(80);
-    check('handoff 後主 App 已登入', !(await standalonePage.evaluate(() => window.__accountV119.openWelcome())));
-    await standalonePage.reload({ waitUntil: 'domcontentloaded' });
-    await standalonePage.waitForFunction(() => window.__accountV119 !== undefined);
-    await standalonePage.waitForTimeout(100);
-    check('主 App 關閉重開的等價 reload 後仍保持登入', !(await standalonePage.evaluate(() => window.__accountV119.openWelcome())));
+    check('主畫面 App 的 LINE 登入不再建立第二視窗', await standalonePage.evaluate(() => window.__openCalls.length === 0));
+    check('主畫面 App 的 LINE 登入使用單一畫面 OAuth', await standalonePage.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line' && window.__accountTest.oauth.at(-1).options.skipBrowserRedirect !== true));
     await standaloneContext.close();
 
     for (const width of [320, 390, 430]) {
