@@ -378,7 +378,7 @@ public class MeowReminderPlugin: CAPPlugin, CAPBridgedPlugin, UNUserNotification
 
 
 final class ViewController: CAPBridgeViewController {
-    override open func capacitorDidLoad() {
+    override public func capacitorDidLoad() {
         bridge?.registerPluginInstance(MeowStoreBillingPlugin())
         bridge?.registerPluginInstance(MeowReminderPlugin())
     }
