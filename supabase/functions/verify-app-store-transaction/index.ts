@@ -103,8 +103,26 @@ Deno.serve(async(req)=>{
     if(tx.bundleId!==BUNDLE_ID)return new Response(JSON.stringify({error:"bundle_mismatch"}),{status:400,headers:cors});
     if(!tx.productId||!PRODUCTS.has(tx.productId))return new Response(JSON.stringify({error:"unknown_product"}),{status:400,headers:cors});
     if(!tx.transactionId||!tx.originalTransactionId)return new Response(JSON.stringify({error:"missing_transaction_ids"}),{status:400,headers:cors});
-    if(String(tx.appAccountToken||"").toLowerCase()!==String(user.id).toLowerCase()){
-      return new Response(JSON.stringify({error:"account_token_mismatch"}),{status:403,headers:cors});
+    const tokenMatches=String(tx.appAccountToken||"").toLowerCase()===String(user.id).toLowerCase();
+    if(!tokenMatches){
+      // Account deletion intentionally leaves App Store event history detached
+      // (user_id becomes NULL). Allow the same valid App Store subscription to
+      // be restored to a newly created app account only when the original
+      // transaction is orphaned and is not linked to any existing account.
+      const adminForRelink=createClient(url,sec,{auth:{persistSession:false}});
+      const originalId=String(tx.originalTransactionId||"");
+      const {data:linkedRows,error:linkedError}=await adminForRelink
+        .from("store_subscription_events")
+        .select("user_id")
+        .eq("platform","app_store")
+        .eq("original_transaction_id",originalId)
+        .limit(20);
+      if(linkedError)throw linkedError;
+      const linkedUsers=[...new Set((linkedRows||[]).map((row:any)=>row.user_id).filter(Boolean))];
+      const hasOrphan=(linkedRows||[]).some((row:any)=>!row.user_id);
+      if(linkedUsers.length>0||!hasOrphan){
+        return new Response(JSON.stringify({error:"account_token_mismatch"}),{status:403,headers:cors});
+      }
     }
 
     const now=Date.now();
