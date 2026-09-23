@@ -10,12 +10,7 @@ Supabase project ref：`ygrlvmyqrhyfkglomsbq`
 - Key：`OPENAI_API_KEY`
 - Value：OpenAI Platform 專案 API key
 
-選填：
-
-- Key：`OPENAI_MODEL`
-- Value：`gpt-5.6-luna`
-
-若沒有設定 `OPENAI_MODEL`，後端本身已預設使用 `gpt-5.6-luna`，所以通常只需要設定 `OPENAI_API_KEY`。
+目前正式版模型固定為 `gpt-5.6-luna`，不讀取 `OPENAI_MODEL` Secret，以避免舊設定覆寫成本模型。
 
 ## 安全規則
 
