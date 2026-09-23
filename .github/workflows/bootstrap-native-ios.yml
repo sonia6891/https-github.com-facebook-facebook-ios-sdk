@@ -43,6 +43,9 @@ jobs:
           rm -rf ios
           npx cap add ios
           cp ios-sources/ViewController.swift ios/App/App/ViewController.swift
+          cp ios-sources/MeowWork.storekit ios/App/MeowWork.storekit
+          mkdir -p ios/App/App.xcodeproj/xcshareddata/xcschemes
+          cp ios-sources/App.xcscheme ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
           npx cap sync ios
 
       - name: Verify StoreKit bridge source
@@ -57,6 +60,14 @@ jobs:
           grep -q 'meowwork.pro.yearly' ios/App/App/ViewController.swift
           grep -q 'appAccountToken' ios/App/App/ViewController.swift
           grep -q 'jwsRepresentation' ios/App/App/ViewController.swift
+          grep -q 'meowwork.pro.monthly' ios/App/MeowWork.storekit
+          grep -q 'meowwork.pro.yearly' ios/App/MeowWork.storekit
+          grep -q '"subscriptionPeriod" : "P3D"' ios/App/MeowWork.storekit
+          grep -q '"displayPrice" : "99"' ios/App/MeowWork.storekit
+          grep -q '"displayPrice" : "790"' ios/App/MeowWork.storekit
+          grep -q 'StoreKitConfigurationFileReference' ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
+          grep -q '../../MeowWork.storekit' ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
+          plutil -lint ios/App/MeowWork.storekit
 
       - name: Build iOS simulator app
         working-directory: native
