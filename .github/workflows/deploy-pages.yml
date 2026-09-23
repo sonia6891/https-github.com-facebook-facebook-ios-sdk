@@ -66,13 +66,16 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v117-account-plan-layout' in html
+          assert 'v118-inline-plan-data-sync' in html
           assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           assert "const LINE_PROVIDER_ID='custom:line'" in html
           assert "scopes:'openid profile'" in html
           assert 'id="welcomeGuest"' not in html
           assert 'id="welcomeEmail"' not in html
           assert html.index('id="profilePreview"') < html.index('id="accountPlanCard"') < html.index('id="workSettingsCard"')
+          assert html.index('id="accountPlanCard"') < html.index('id="proPlanSettings"') < html.index('id="workSettingsCard"')
+          assert 'id="toggleDataSync"' in html and 'id="dataSyncBody"' in html
+          assert "from('user_legacy_exports').select('payload,original_updated_at')" in html
           api=re.search(r"const SUPABASE_URL='([^']+)'",html).group(1)
           key=re.search(r"const SUPABASE_KEY='([^']+)'",html).group(1)
           try:
@@ -91,6 +94,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v117-account-release-verification
+          name: meow-v118-inline-settings-release-verification
           path: test-results/
           retention-days: 3

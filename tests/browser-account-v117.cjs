@@ -13,7 +13,7 @@ const inlineScripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script
   .map(match => match[1]).filter(source => source.trim());
 for (const source of inlineScripts) new Function(source);
 console.log(`PASS parsed ${inlineScripts.length} inline scripts`);
-const bridge = `window.__accountV117={
+const bridge = `window.__accountV118={
   currentPlan,
   canCloudSync,
   canUse,
@@ -66,27 +66,27 @@ function check(name, value) {
   assert.ok(passed, name);
 }
 
-async function addRoutes(context, base) {
+async function addRoutes(context, base, billingConfigured = true) {
   await context.route('**/*', async route => {
     const url = route.request().url();
     if (url.startsWith(base)) return route.continue();
     if (url.includes('esm.sh/')) return route.fulfill({ status: 200, contentType: 'application/javascript', body: mockSupabase });
-    if (url.includes('/functions/v1/billing-config')) return route.fulfill({ status: 200, contentType: 'application/json', body: '{"configured":false}' });
+    if (url.includes('/functions/v1/billing-config')) return route.fulfill({ status: 200, contentType: 'application/json', body: billingConfigured ? '{"configured":true,"monthly":199,"yearly":1990}' : '{"configured":false}' });
     if (url.includes('tesseract')) return route.fulfill({ status: 200, contentType: 'application/javascript', body: 'window.Tesseract={};' });
     return route.abort();
   });
 }
 
-async function openPage(browser, base, width, user = null) {
+async function openPage(browser, base, width, user = null, billingConfigured = true) {
   const context = await browser.newContext({ viewport: { width, height: 844 }, serviceWorkers: 'block' });
   await context.addInitScript(({ user }) => { window.__accountTest = { oauth: [], calls: [], user }; }, { user });
-  await addRoutes(context, base);
+  await addRoutes(context, base, billingConfigured);
   const page = await context.newPage();
   const pageErrors = [];
   page.on('pageerror', error => pageErrors.push(String(error)));
   page.on('dialog', dialog => dialog.accept());
   await page.goto(base, { waitUntil: 'domcontentloaded' });
-  await page.waitForFunction(() => window.__accountV117 !== undefined);
+  await page.waitForFunction(() => window.__accountV118 !== undefined);
   await page.waitForTimeout(700);
   check(`${width}px 沒有瀏覽器執行錯誤`, pageErrors.length === 0);
   return { context, page };
@@ -105,8 +105,11 @@ async function openPage(browser, base, width, user = null) {
   if (executablePath) launchOptions.executablePath = executablePath;
   const browser = await chromium.launch(launchOptions);
   try {
+    check('本機儲存使用 localStorage 與 IndexedDB 鏡像', html.includes("localStorage.setItem(SAVE_KEY") && html.includes("indexedDB.open(BACKUP_DB_NAME"));
+    check('舊版雲端備份使用獨立唯讀資料表', html.includes("from('user_legacy_exports').select('payload,original_updated_at')"));
+    check('舊版取回只下載 JSON 而不套用遠端狀態', html.includes("'meow-legacy-backup.json'") && !/exportLegacyCloud[\s\S]*?applyRemoteRow\(/.test(html.slice(html.indexOf('async function exportLegacyCloud'), html.indexOf('function renderSyncStatus'))));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
-    check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV117.openWelcome()));
+    check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV118.openWelcome()));
     check('登入頁只保留兩個登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine').count() === 2);
     check('沒有訪客登入入口', await guest.locator('#welcomeGuest').count() === 0);
     check('沒有公開 Email 或 OTP 入口', await guest.locator('#welcomeEmail, #emailLoginInput, #emailOtpInput, #sendEmailOtp, #verifyEmailOtp').count() === 0);
@@ -120,50 +123,72 @@ async function openPage(browser, base, width, user = null) {
     for (const width of [320, 390, 430]) {
       const user = { id: `acct-${width}`, email: 'member@example.test', app_metadata: { provider: 'google' } };
       const { context, page } = await openPage(browser, base, width, user);
-      check(`${width}px 保持登入時不顯示登入頁`, !(await page.evaluate(() => window.__accountV117.openWelcome())));
-      check(`${width}px 登入後預設 Free`, await page.evaluate(() => window.__accountV117.currentPlan() === 'free'));
-      check(`${width}px Free 沒有雲端同步`, await page.evaluate(() => !window.__accountV117.canCloudSync()));
-      check(`${width}px Free 沒有 Pro 功能`, await page.evaluate(() => !window.__accountV117.canUse('payslip_scan')));
-      await page.evaluate(() => window.__accountV117.settings());
+      check(`${width}px 保持登入時不顯示登入頁`, !(await page.evaluate(() => window.__accountV118.openWelcome())));
+      check(`${width}px 登入後預設 Free`, await page.evaluate(() => window.__accountV118.currentPlan() === 'free'));
+      check(`${width}px Free 沒有雲端同步`, await page.evaluate(() => !window.__accountV118.canCloudSync()));
+      check(`${width}px Free 沒有 Pro 功能`, await page.evaluate(() => !window.__accountV118.canUse('payslip_scan')));
+      await page.evaluate(() => window.__accountV118.settings());
       await page.waitForTimeout(100);
       check(`${width}px 帳號與方案緊接在個人資料下方`, await page.evaluate(() => Boolean(document.querySelector('#accountPlanCard')?.previousElementSibling?.querySelector('#profilePreview'))));
       check(`${width}px 帳號區顯示 Free 與升級入口`, await page.locator('#accountPlanLabel').innerText() === 'Free' && await page.locator('#accountUpgrade').isVisible());
       check(`${width}px 帳號狀態方案登出升級集中同區`, await page.evaluate(() => ['accountTitle','accountPlanLabel','accountLogout','accountUpgrade'].every(id => document.getElementById('accountPlanCard').contains(document.getElementById(id)))));
+      const accountScroll = await page.evaluate(() => scrollY);
+      await page.locator('#accountUpgrade').click();
+      check(`${width}px Pro 方案在帳號卡內就地展開`, await page.locator('#proPlanSettings').isVisible() && await page.evaluate(() => document.getElementById('accountPlanCard').contains(document.getElementById('proPlanSettings'))));
+      check(`${width}px 展開 Pro 不跳往其他區塊`, Math.abs((await page.evaluate(() => scrollY)) - accountScroll) <= 2);
+      check(`${width}px 已設定金流時直接顯示訂閱付費`, await page.locator('#liveBillingActions').isVisible() && (await page.locator('#liveMonthlyCheckout').innerText()).includes('直接訂閱'));
+      await page.locator('#accountUpgrade').click();
+      await page.locator('#toggleDataSync').scrollIntoViewIfNeeded();
+      await page.locator('#toggleDataSync').click();
+      check(`${width}px 資料與同步可就地展開`, await page.locator('#dataSyncBody').isVisible() && await page.locator('#toggleDataSync').getAttribute('aria-expanded') === 'true');
+      check(`${width}px 本機與舊版雲端差異有明確說明`, await page.evaluate(() => document.getElementById('dataSyncBody').innerText.includes('localStorage') === false && document.getElementById('dataSyncBody').innerText.includes('不會自動覆蓋本機')));
+      check(`${width}px 舊版雲端取回集中在資料同步區`, await page.evaluate(() => document.getElementById('dataSyncCard').contains(document.getElementById('legacyCloudExport'))));
       check(`${width}px Free 的雲端備份與還原保持鎖定`, await page.locator('#cloudBackupNow').isDisabled() && await page.locator('#cloudRestoreNow').isDisabled());
+      check(`${width}px 展開內容留在資料同步卡內`, await page.evaluate(() => document.getElementById('dataSyncCard').contains(document.getElementById('dataSyncBody'))));
       const layout = await page.evaluate(() => ({
         viewport: document.documentElement.clientWidth,
         pageWidth: document.documentElement.scrollWidth,
-        card: (() => { const r = document.getElementById('accountPlanCard').getBoundingClientRect(); return { left: r.left, right: r.right, width: r.width }; })(),
-        buttons: [...document.querySelectorAll('#accountPlanCard .btn')].filter(x => getComputedStyle(x).display !== 'none').map(x => { const r = x.getBoundingClientRect(); return { left: r.left, right: r.right }; })
+        card: (() => { const r = document.getElementById('dataSyncCard').getBoundingClientRect(); return { left: r.left, right: r.right, width: r.width }; })(),
+        buttons: [...document.querySelectorAll('#dataSyncCard button')].filter(x => getComputedStyle(x).display !== 'none').map(x => { const r = x.getBoundingClientRect(); return { left: r.left, right: r.right }; })
       }));
       check(`${width}px 設定頁無水平溢位`, layout.pageWidth <= layout.viewport + 1);
-      check(`${width}px 帳號卡未超出畫面`, layout.card.left >= -1 && layout.card.right <= layout.viewport + 1);
-      check(`${width}px 帳號按鈕未跑版`, layout.buttons.every(r => r.left >= -1 && r.right <= layout.viewport + 1));
+      check(`${width}px 資料同步卡未超出畫面`, layout.card.left >= -1 && layout.card.right <= layout.viewport + 1);
+      check(`${width}px 資料同步按鈕未跑版`, layout.buttons.every(r => r.left >= -1 && r.right <= layout.viewport + 1));
       if (width === 390) {
-        await page.screenshot({ path: path.join(out, 'account-v117-390.png'), fullPage: true });
+        await page.screenshot({ path: path.join(out, 'account-v118-390.png'), fullPage: true });
+        await page.locator('#accountUpgrade').scrollIntoViewIfNeeded();
         await page.locator('#accountUpgrade').click();
-        await page.waitForTimeout(400);
-        check('升級入口會前往設定內的 Pro 方案', await page.evaluate(() => { const r=document.getElementById('proPlanSettings').getBoundingClientRect(); return r.top>=-2&&r.top<innerHeight*.45; }));
+        check('升級入口會在帳號卡內展開 Pro 方案', await page.locator('#proPlanSettings').isVisible());
+        await page.screenshot({ path: path.join(out, 'account-v118-pro-390.png'), fullPage: true });
       }
       await context.close();
     }
 
+    const billingUser = { id: 'acct-billing-off', email: 'member@example.test', app_metadata: { provider: 'google' } };
+    const { context: billingOffContext, page: billingOffPage } = await openPage(browser, base, 390, billingUser, false);
+    await billingOffPage.evaluate(() => window.__accountV118.settings());
+    await billingOffPage.locator('#accountUpgrade').click();
+    check('正式金流未設定時不顯示可付款按鈕', !(await billingOffPage.locator('#liveBillingActions').isVisible()));
+    check('正式金流未設定時清楚顯示尚未開放', await billingOffPage.locator('#billingUnavailable').isVisible());
+    await billingOffPage.screenshot({ path: path.join(out, 'account-v118-billing-off-390.png'), fullPage: true });
+    await billingOffContext.close();
+
     const user = { id: 'acct-logout', email: 'member@example.test', app_metadata: { provider: 'google' } };
     const { context, page } = await openPage(browser, base, 390, user);
-    await page.evaluate(() => window.__accountV117.settings());
+    await page.evaluate(() => window.__accountV118.settings());
     await page.locator('#accountLogout').click();
     await page.waitForFunction(() => document.getElementById('welcomeDialog').open === true);
-    check('主動登出後重新顯示登入頁', await page.evaluate(() => window.__accountV117.openWelcome()));
+    check('主動登出後重新顯示登入頁', await page.evaluate(() => window.__accountV118.openWelcome()));
     await page.reload({ waitUntil: 'domcontentloaded' });
-    await page.waitForFunction(() => window.__accountV117 !== undefined);
-    check('登出後重開仍顯示登入頁', await page.evaluate(() => window.__accountV117.openWelcome()));
+    await page.waitForFunction(() => window.__accountV118 !== undefined);
+    check('登出後重開仍顯示登入頁', await page.evaluate(() => window.__accountV118.openWelcome()));
     await context.close();
   } finally {
     await browser.close();
     server.close();
-    fs.writeFileSync(path.join(out, 'account-v117.json'), JSON.stringify(results, null, 2));
+    fs.writeFileSync(path.join(out, 'account-v118.json'), JSON.stringify(results, null, 2));
   }
-  console.log(`${results.length}/${results.length} account v117 checks passed`);
+  console.log(`${results.length}/${results.length} account v118 checks passed`);
 })().catch(error => {
   console.error(error);
   server.close();
