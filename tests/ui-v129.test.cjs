@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v149-todo-free-time'),'expected v149 todo free-time build');
+assert(html.includes('v151-app-store-legal'),'expected v151 App Store legal build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -134,3 +134,16 @@ assert(html.includes('<option value="1d">前 1 天</option>'),'todo reminder sho
 assert(html.includes("todoDateLabel(t.date,t.time)"),'todo list must show selected time');
 assert(html.includes("time=/^\\d{2}:\\d{2}$/.test(String(item.time||''))?item.time:'09:00'"),'todo reminder must use selected time');
 console.log('PASS v149 todo free time structure');
+
+
+for(const id of ['deleteAccount','accountDeleteZone']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert(html.includes("async function deleteAccountPermanently()"),'in-app account deletion flow missing');
+assert(html.includes("invokeUserFunction('delete-account'"),'account deletion must call authenticated backend');
+assert(html.includes('href="./privacy.html"'),'privacy policy link missing');
+assert(html.includes('href="./terms.html"'),'terms link missing');
+assert(html.includes('href="./support.html"'),'support link missing');
+assert(html.includes('id="restoreStorePurchases"'),'restore purchases control missing');
+assert(html.includes('id="cancelProBilling"'),'manage subscription control missing');
+console.log('PASS v151 App Store readiness structure');
