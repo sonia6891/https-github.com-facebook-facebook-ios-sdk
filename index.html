@@ -3262,7 +3262,7 @@ const ITEMIZED_FIELDS=[
   {key:'dedHealthExtra',label:'健保補扣',kind:'deduction'},
   {key:'dedOther',label:'其他扣款',kind:'deduction'}
 ];
-let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salaryExportOpen=false,proAiOpen=false,proAiBackendReady=null,proAiBackendModel='',proAiBackendCheckedAt=0,salarySubTab='calc',historyYear=current.getFullYear(),aiPayslipPending=null,aiSchedulePending=null,payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0},payslipManualFieldKey='';
+let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salaryExportOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),aiSchedulePending=null,payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0},payslipManualFieldKey='';
 const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v2';
 const PAYSLIP_OCR_FIELDS=[
   {key:'actualNet',label:'實發金額',kind:'net',priority:30,terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
@@ -4486,33 +4486,6 @@ async function invokeUserFunction(name,body){
   return json;
 }
 
-function aiErrorMessage(error){
-  const code=error&&error.payload&&error.payload.code||error&&error.message||'';
-  const map={
-    AI_NOT_CONFIGURED:'AI 後端已完成，但尚未設定 AI API 金鑰。',
-    PRO_REQUIRED:'目前帳號沒有有效的 Pro／試用權限。',
-    AUTH_REQUIRED:'請先登入帳號。',
-    AUTH_INVALID:'登入狀態已失效，請重新登入。',
-    IMAGE_TOO_LARGE:'圖片太大，請換一張較小或較清楚的圖片。',
-    UNSUPPORTED_IMAGE:'目前 AI 辨識支援 JPG、PNG、WebP 圖片。',
-    AI_NETWORK_ERROR:'AI 服務目前連線失敗，原本 App 功能不受影響。',
-    AI_PROVIDER_ERROR:'AI 服務暫時無法完成分析，請稍後再試。',
-    AI_PROVIDER_BUSY:'喵助理目前使用量較高，這次不會扣你的月額度，請稍後再試。',
-    AI_EMPTY_RESPONSE:'AI 沒有回傳可用結果，請換一張較清楚的圖片。',
-    AI_INVALID_RESPONSE:'AI 回傳格式不完整，沒有套用任何資料。',
-    AI_USAGE_CHECK_FAILED:'AI 額度確認暫時失敗，請稍後再試。',
-    AI_QUOTA_EXCEEDED:'喵助理本月 20 次額度已用完；下個月會自動重置。',
-    AI_GLOBAL_BUDGET_EXCEEDED:'本月喵助理服務已達全 App 安全上限；本機排班與薪資工具仍可正常使用。'
-  };
-  return map[code]||'AI 暫時無法完成這次分析；原本班表與薪資資料沒有被修改。';
-}
-function aiUsageSuffix(response){
-  const usage=response&&response.usage;
-  if(!usage)return '';
-  const remaining=Number.isFinite(Number(usage.text_remaining))?Number(usage.text_remaining):Number.isFinite(Number(usage.assistant_remaining))?Number(usage.assistant_remaining):null;
-  if(remaining===null)return '';
-  return '｜喵助理本月剩餘 '+remaining+' 次';
-}
 function aiReadFile(file){
   return new Promise((resolve,reject)=>{
     const reader=new FileReader();
@@ -4536,176 +4509,6 @@ async function aiImageDataUrl(file){
   const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,canvas.width,canvas.height);
   return canvas.toDataURL('image/jpeg',.86);
 }
-function buildProAiContext(){
-  const mc=calcMonth(),mm=mb(),expected=itemizedExpectedMap(mc),actualItems=mm.actualItems||{};
-  const rows=ITEMIZED_FIELDS.map(field=>{
-    const has=Object.prototype.hasOwnProperty.call(actualItems,field.key);
-    const actual=has?num(actualItems[field.key]):null;
-    const exp=num(expected[field.key]);
-    return{key:field.key,label:field.label,kind:field.kind,expected:exp,actual,diff:actual===null?null:actual-exp};
-  });
-  const actualNet=Object.prototype.hasOwnProperty.call(mm,'actualNet')?num(mm.actualNet):null;
-  const history=salaryHistoryRows(mc.y).slice(-6).map(row=>({
-    month:row.key,expected:row.expected,actual:row.actual,diff:row.diff,itemCount:row.itemCount
-  }));
-  return{
-    month:monthKey(mc.y,mc.m),
-    attendanceDays:mc.attendance,
-    scheduledWorkDays:mc.expected,
-    leaveDays:mc.leaveDays,
-    leaveHours:mc.leaveHours,
-    overtimeHours:mc.overtimeHours,
-    overtimePay:mc.otPay,
-    gross:mc.gross,
-    expectedNet:mc.net,
-    actualNet,
-    netDiff:actualNet===null?null:actualNet-mc.net,
-    rows,
-    recentHistory:history
-  };
-}
-function aiSetStatus(text){
-  if($('proAiStatus'))$('proAiStatus').textContent=text;
-}
-function setProAiControlsEnabled(enabled){
-  const ask=$('aiAskAssistant');if(ask)ask.disabled=!enabled;
-  ['aiPayslipPick','aiExplainReconcile','aiForecastSalary','aiScanAnomalies'].forEach(id=>{const el=$(id);if(el)el.disabled=false});
-}
-async function checkProAiReadiness(force=false){
-  if(!canUse('smart_schedule_import')||!authUser)return false;
-  const now=Date.now();
-  if(!force&&proAiBackendReady!==null&&now-proAiBackendCheckedAt<60000){
-    setProAiControlsEnabled(proAiBackendReady);
-    return proAiBackendReady;
-  }
-  proAiBackendCheckedAt=now;
-  setProAiControlsEnabled(false);
-  aiSetStatus('本機工具已可使用；正在確認喵助理服務…');
-  try{
-    const data=await invokeUserFunction('pro-ai',{mode:'status'});
-    proAiBackendReady=!!data.configured;
-    proAiBackendModel=String(data.model||'');
-    setProAiControlsEnabled(proAiBackendReady);
-    if(proAiBackendReady){
-      aiSetStatus('✓ 本機工具可用・喵助理已就緒'+(proAiBackendModel?'・'+proAiBackendModel:'')+'｜雲端 AI 每月 20 次');
-    }else{
-      aiSetStatus('本機工具可正常使用；喵助理尚未啟用雲端 AI。');
-    }
-    return proAiBackendReady;
-  }catch(e){
-    proAiBackendReady=null;setProAiControlsEnabled(false);
-    aiSetStatus('本機工具可正常使用；喵助理服務狀態暫時無法確認。');
-    return false;
-  }
-}
-function renderProAiPanel(){
-  const panel=$('proAiPanel');if(!panel)return;
-  placeProPanel('ai_pro_suite','proAiPanel');
-  const unlocked=canUse('smart_schedule_import');
-  if(!unlocked){proAiOpen=false;proAiBackendReady=null}
-  panel.classList.toggle('hidden',!unlocked||!proAiOpen);
-  if(unlocked&&proAiOpen)void checkProAiReadiness();
-}
-function renderSmartOutput(title,summary,items=[],note=''){
-  const box=$('proAiOutput');if(!box)return;
-  let html='<div class="card"><b>'+escapeHtml(title)+'</b><p>'+escapeHtml(summary)+'</p></div>';
-  if(items.length)html+=items.map(x=>'<div class="card" style="margin-top:8px"><b>'+escapeHtml(x.title||'提醒')+'</b><p>'+escapeHtml(x.detail||'')+'</p>'+(x.meta?'<small>'+escapeHtml(x.meta)+'</small>':'')+'</div>').join('');
-  if(note)html+='<div class="hint" style="margin-top:8px">'+escapeHtml(note)+'</div>';
-  box.innerHTML=html;
-}
-function localReconcileExplain(){
-  if(!canUse('smart_schedule_import'))return;
-  const context=buildProAiContext();
-  const filled=context.rows.filter(x=>x.actual!==null);
-  if(!filled.length&&context.actualNet===null){alert('請先輸入公司實發，或先用本機薪資單 OCR 導入實際金額。');return}
-  const diffRows=filled.filter(x=>Math.round(x.diff)!==0).sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
-  const items=diffRows.slice(0,8).map(x=>{
-    let detail='';
-    if(x.kind==='income')detail=x.diff<0?'公司實際金額比 App 預估少 '+money(Math.abs(x.diff))+'。':'公司實際金額比 App 預估多 '+money(Math.abs(x.diff))+'。';
-    else detail=x.diff>0?'公司實際扣款比 App 預估多 '+money(Math.abs(x.diff))+'。':'公司實際扣款比 App 預估少 '+money(Math.abs(x.diff))+'。';
-    return{title:x.label,detail,meta:'App '+money(x.expected)+'・公司 '+money(x.actual)+'・差額 '+signedMoney(x.diff)};
-  });
-  const netLine=context.actualNet===null?'尚未輸入公司實發。':'公司實發與 App 預估淨差額 '+signedMoney(context.netDiff)+'。';
-  renderSmartOutput('本機差異說明',diffRows.length?'找到 '+diffRows.length+' 個已填項目與 App 預估不同。':'目前已填項目與 App 預估一致。',items,netLine+' 僅由數字無法判斷實際原因，仍請核對薪資單與公司計薪規則。');
-  aiSetStatus('差異說明已在本機完成，未呼叫雲端 AI。');
-}
-function localSalaryForecast(){
-  if(!canUse('smart_schedule_import'))return;
-  const x=buildProAiContext();
-  const items=[
-    {title:'預估實領',detail:money(x.expectedNet),meta:'依目前 App 內班表、薪資設定與扣款資料計算'},
-    {title:'出勤',detail:'預計上班 '+x.scheduledWorkDays+' 天・目前出勤 '+x.attendanceDays+' 天',meta:x.leaveHours?'請假 '+x.leaveHours+' 小時':'目前沒有記錄請假時數'},
-    {title:'加班',detail:x.overtimeHours+' 小時・'+money(x.overtimePay),meta:'依 App 目前設定的加班規則計算'}
-  ];
-  renderSmartOutput('本機薪資預測','目前 App 預估實領為 '+money(x.expectedNet)+'，預估應發為 '+money(x.gross)+'。',items,'若之後新增加班、請假、津貼或扣款，預估會跟著更新；此結果不是正式薪資單。');
-  aiSetStatus('本月預測已由 App 本機公式整理，未呼叫雲端 AI。');
-}
-function localSalaryChanges(){
-  if(!canUse('smart_schedule_import'))return;
-  const x=buildProAiContext();
-  const items=[];
-  x.rows.filter(r=>r.actual!==null&&Math.round(r.diff)!==0).sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff)).slice(0,5).forEach(r=>{
-    items.push({title:r.label+' 有差額',detail:'App '+money(r.expected)+'・公司 '+money(r.actual),meta:'差額 '+signedMoney(r.diff)});
-  });
-  const history=x.recentHistory.filter(r=>r.actual!==null).sort((a,b)=>a.month.localeCompare(b.month));
-  if(history.length>=2){
-    const prev=history[history.length-2],last=history[history.length-1];
-    const delta=last.actual-prev.actual;
-    if(Math.round(delta)!==0)items.push({title:'最近實發變動',detail:last.month+' 比 '+prev.month+' '+(delta>0?'增加 ':'減少 ')+money(Math.abs(delta)),meta:'只顯示數值變化，不判定是否異常或違規'});
-  }
-  renderSmartOutput('本機變動提醒',items.length?'從你已輸入的資料找到 '+items.length+' 個值得核對的變動。':'目前已輸入的資料沒有明顯數值差異可列出。',items,'本功能只做數值比較，不替公司制度或法律合規下結論。');
-  aiSetStatus('變動提醒已在本機完成，未呼叫雲端 AI。');
-}
-function renderAiGeneric(mode,result){
-  const box=$('proAiOutput');if(!box)return;
-  result=result||{};
-  let html='<div class="card"><b>喵助理</b><p>'+escapeHtml(result.answer||'目前沒有可回答的內容。')+'</p></div>';
-  const refs=Array.isArray(result.referenced_metrics)?result.referenced_metrics:[];
-  if(refs.length)html+='<div class="hint" style="margin-top:8px">'+refs.map(x=>escapeHtml(x.label)+': '+escapeHtml(x.value)).join('<br>')+'</div>';
-  const warnings=Array.isArray(result.warnings)?result.warnings:[];
-  if(warnings.length)html+='<div class="hint" style="margin-top:8px">注意：'+warnings.map(escapeHtml).join('；')+'</div>';
-  box.innerHTML=html;
-}
-
-function renderAiPayslipResult(result){
-  const box=$('proAiOutput');if(!box)return;
-  const best={};
-  (Array.isArray(result&&result.fields)?result.fields:[]).forEach(field=>{
-    if(!field||!PAYSLIP_OCR_FIELDS.some(def=>def.key===field.key))return;
-    if(!best[field.key]||num(field.confidence)>num(best[field.key].confidence))best[field.key]=field;
-  });
-  const fields=Object.values(best);aiPayslipPending=result||{};
-  if(!fields.length){box.innerHTML='<div class="hint">AI 沒有抓到可安全導入的薪資金額，沒有修改任何資料。</div>';return}
-  const rows=fields.map(field=>{
-    const def=PAYSLIP_OCR_FIELDS.find(x=>x.key===field.key)||{label:field.label||field.key};
-    return '<div class="salary-field"><label>'+escapeHtml(def.label)+(field.source_label?' <small>（'+escapeHtml(field.source_label)+'）</small>':'')+'</label><input type="number" min="0" step="1" data-ai-payslip-field="'+escapeHtml(field.key)+'" value="'+Math.round(num(field.value))+'"><div class="hint">AI 信心 '+Math.round(num(field.confidence)*100)+'%</div></div>';
-  }).join('');
-  const warnings=Array.isArray(result.warnings)?result.warnings:[];
-  box.innerHTML='<div class="salary-section-title" style="font-size:15px"><span class="paw">🐾</span>AI 辨識結果・請先確認</div><div class="scan-result-grid">'+rows+'</div>'+(warnings.length?'<div class="hint" style="margin-top:8px">注意：'+warnings.map(escapeHtml).join('；')+'</div>':'')+'<div class="settings-actions" style="margin-top:10px"><button type="button" class="btn primary" id="aiImportPayslip">確認並導入逐項對帳</button></div>';
-  if($('aiImportPayslip'))$('aiImportPayslip').onclick=importAiPayslipResult;
-}
-function importAiPayslipResult(){
-  const confirmed={};
-  qsa('[data-ai-payslip-field]').forEach(input=>{if(input.value!=='')confirmed[input.dataset.aiPayslipField]=num(input.value)});
-  if(!Object.keys(confirmed).length){alert('目前沒有可導入的 AI 辨識欄位。');return}
-  const mm=mb();mm.actualItems=mm.actualItems||{};
-  Object.entries(confirmed).forEach(([key,value])=>{if(key==='actualNet')mm.actualNet=value;else mm.actualItems[key]=value});
-  rememberPayslipFormat(confirmed);captureSalarySnapshot(calcMonth(),mm);changedAndSync();
-  proAiOpen=false;payslipScanOpen=false;salaryHistoryOpen=false;salaryExportOpen=false;itemizedOpen=true;salarySubTab='reconcile';
-  renderSalary();
-  if($('itemizedComparePanel'))$('itemizedComparePanel').scrollIntoView({behavior:'smooth',block:'start'});
-}
-async function runAiAssistant(){
-  const input=$('aiAssistantQuestion'),question=String(input&&input.value||'').trim();
-  if(!question){alert('先輸入你想問喵助理的問題。');return}
-  if(!proAiBackendReady){const ready=await checkProAiReadiness(true);if(!ready){alert('喵助理目前無法連線；本機薪資工具仍可正常使用。');return}}
-  aiSetStatus('喵助理正在讀取這個月的班表與薪資摘要…');if($('proAiOutput'))$('proAiOutput').innerHTML='';
-  try{
-    const response=await invokeUserFunction('pro-ai',{mode:'assistant',context:buildProAiContext(),question});
-    aiSetStatus('回答完成。'+aiUsageSuffix(response));renderAiGeneric('assistant',response.result);
-  }catch(e){aiSetStatus(aiErrorMessage(e))}
-}
-
 function scheduleVisionBridge(){
   const bridge=window.MeowScheduleVision||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.MeowScheduleVision);
   return bridge&&typeof bridge.recognize==='function'?bridge:null;
@@ -5726,37 +5529,30 @@ qsa('[data-pro-action]').forEach(btn=>btn.onclick=()=>{
     }
     return;
   }
-  if(feature==='ai_pro_suite'){
-    proAiOpen=!proAiOpen;
-    if(proAiOpen){itemizedOpen=false;payslipScanOpen=false;salaryHistoryOpen=false;salaryExportOpen=false;salarySubTab='reconcile'}
-    renderSalary();
-    if(proAiOpen&&$('proAiPanel'))$('proAiPanel').scrollIntoView({behavior:'smooth',block:'start'});
-    return;
-  }
   if(feature==='payslip_scan'){
     payslipScanOpen=!payslipScanOpen;
-    if(payslipScanOpen){itemizedOpen=false;salaryHistoryOpen=false;salaryExportOpen=false;proAiOpen=false;salarySubTab='reconcile'}
+    if(payslipScanOpen){itemizedOpen=false;salaryHistoryOpen=false;salaryExportOpen=false;salarySubTab='reconcile'}
     renderSalary();
     if(payslipScanOpen&&$('payslipScanPanel'))$('payslipScanPanel').scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
   if(feature==='itemized_salary_compare'){
     itemizedOpen=!itemizedOpen;
-    if(itemizedOpen){salaryHistoryOpen=false;payslipScanOpen=false;salaryExportOpen=false;proAiOpen=false;salarySubTab='reconcile'}
+    if(itemizedOpen){salaryHistoryOpen=false;payslipScanOpen=false;salaryExportOpen=false;salarySubTab='reconcile'}
     renderSalary();
     if(itemizedOpen&&$('itemizedComparePanel'))$('itemizedComparePanel').scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
   if(feature==='salary_history_unlimited'){
     salaryHistoryOpen=!salaryHistoryOpen;
-    if(salaryHistoryOpen){itemizedOpen=false;payslipScanOpen=false;salaryExportOpen=false;proAiOpen=false;salarySubTab='reconcile';historyYear=current.getFullYear()}
+    if(salaryHistoryOpen){itemizedOpen=false;payslipScanOpen=false;salaryExportOpen=false;salarySubTab='reconcile';historyYear=current.getFullYear()}
     renderSalary();
     if(salaryHistoryOpen&&$('salaryHistoryPanel'))$('salaryHistoryPanel').scrollIntoView({behavior:'smooth',block:'start'});
     return;
   }
   if(feature==='salary_export'){
     salaryExportOpen=!salaryExportOpen;
-    if(salaryExportOpen){itemizedOpen=false;payslipScanOpen=false;salaryHistoryOpen=false;proAiOpen=false;salarySubTab='reconcile'}
+    if(salaryExportOpen){itemizedOpen=false;payslipScanOpen=false;salaryHistoryOpen=false;salarySubTab='reconcile'}
     renderSalary();
     if(salaryExportOpen&&$('salaryExportPanel'))$('salaryExportPanel').scrollIntoView({behavior:'smooth',block:'start'});
     return;
@@ -5765,14 +5561,7 @@ qsa('[data-pro-action]').forEach(btn=>btn.onclick=()=>{
 if($('salaryTabCalc'))$('salaryTabCalc').onclick=()=>{setSalarySubTab('calc')};
 if($('salaryTabReconcile'))$('salaryTabReconcile').onclick=()=>{setSalarySubTab('reconcile')};
 if($('closePayslipScan'))$('closePayslipScan').onclick=()=>{payslipScanOpen=false;renderSalary()};
-if($('closeProAi'))$('closeProAi').onclick=()=>{proAiOpen=false;renderSalary()};
-if($('aiPayslipPick'))$('aiPayslipPick').onclick=()=>{proAiOpen=false;payslipScanOpen=true;renderSalary();setTimeout(()=>{if($('payslipScanPanel'))$('payslipScanPanel').scrollIntoView({behavior:'smooth',block:'start'})},30)};
 
-if($('aiExplainReconcile'))$('aiExplainReconcile').onclick=localReconcileExplain;
-if($('aiForecastSalary'))$('aiForecastSalary').onclick=localSalaryForecast;
-if($('aiScanAnomalies'))$('aiScanAnomalies').onclick=localSalaryChanges;
-if($('aiAskAssistant'))$('aiAskAssistant').onclick=runAiAssistant;
-if($('aiAssistantQuestion'))$('aiAssistantQuestion').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();runAiAssistant()}};
 if($('aiScheduleUpload'))$('aiScheduleUpload').onclick=()=>{if(!canUse('smart_schedule_import')){alert('智慧匯入班表是 Pro 功能。請到「設定 → Pro 方案」查看訂閱。');setTab('settings');return}$('aiScheduleFileInput').click()};
 if($('aiScheduleFileInput'))$('aiScheduleFileInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)runAiSchedule(file);e.target.value=''};
 if($('aiScheduleClearMonth'))$('aiScheduleClearMonth').onclick=clearCurrentAiSchedule;
