@@ -11,10 +11,10 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=129">
+<link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v129-settings-schedule-ui">
+<meta name="meow-ui-build" content="v130-soft-amber-ui">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -587,6 +587,115 @@ html.dark{
   .settings-modern-row{grid-template-columns:1fr;gap:7px}.settings-pro-banner{grid-template-columns:72px 1fr}.settings-pro-banner>img{width:70px;height:70px}.settings-pro-cta{grid-column:2;justify-self:start}.settings-pro-title .account-plan-badge{display:none}
 }
 
+
+/* ===== v130 approved visual lock: schedule card + settings page ===== */
+:root{
+  --v129-accent:#c58b58;
+  --v129-accent-strong:#8f5a35;
+  --v129-accent-soft:#fff5e9;
+  --v129-honey:#e9c48f;
+  --v129-honey-soft:#fff9f0;
+  --v129-brown:#6e4934;
+  --v129-text:#1f2a3c;
+  --v129-border:#e9dfd5;
+}
+html.dark{
+  --v129-accent:#d6a16d;
+  --v129-accent-strong:#efbd8d;
+  --v129-accent-soft:#3a2f28;
+  --v129-honey:#5a4432;
+  --v129-honey-soft:#302821;
+  --v129-brown:#edc7a9;
+  --v129-text:#fff4eb;
+  --v129-border:#5b4b40;
+}
+.schedule-card-v129{
+  border-color:var(--v129-border);
+  box-shadow:0 8px 24px rgba(83,56,39,.055);
+}
+.schedule-v129-head{padding-top:16px}
+.schedule-v129-gear{
+  background:var(--v129-accent-soft);
+  color:var(--v129-accent-strong);
+  box-shadow:inset 0 0 0 1px rgba(143,90,53,.07);
+}
+.schedule-v129-gear .icon{font-size:20px}
+.schedule-v129-summary{
+  background:var(--mobile-surface,#fffdfb);
+  border-color:var(--v129-border);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.45);
+}
+.schedule-v129-summary span{color:#81766f}
+html.dark .schedule-v129-summary span{color:var(--muted)}
+.schedule-ai-v129-banner{
+  background:
+    radial-gradient(circle at 93% 16%,rgba(255,255,255,.55) 0 32px,transparent 33px),
+    radial-gradient(circle at 74% 108%,rgba(197,139,88,.10) 0 76px,transparent 77px),
+    linear-gradient(105deg,#f2d5aa 0%,#fff4e2 56%,#f7e7d1 100%);
+  border-color:rgba(143,90,53,.14);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.55);
+}
+.schedule-ai-v129-banner::after{display:none}
+.schedule-ai-v129-banner img{
+  filter:saturate(.88) contrast(.98);
+}
+.schedule-ai-v129-copy{color:#69462f}
+.schedule-ai-v129-copy b{color:#6d452c}
+.schedule-ai-v129-copy small{color:#80644f}
+.schedule-ai-v129-meta .pro-badge{
+  background:#fff4df;
+  color:#8f5a35;
+  box-shadow:inset 0 0 0 1px rgba(143,90,53,.12);
+}
+html.dark .schedule-ai-v129-meta .pro-badge{background:#3b3027;color:#efbd8d}
+
+/* Settings: same warm-neutral family as the rest of the app, no loud orange blocks. */
+.settings-ui-v129>.card{
+  border-color:var(--v129-border);
+  box-shadow:0 7px 20px rgba(83,56,39,.05);
+}
+.settings-section-icon{
+  background:var(--v129-accent-soft);
+  color:var(--v129-accent-strong);
+}
+.settings-avatar-button>span{
+  background:var(--v129-accent-strong);
+}
+.settings-logout-v129{
+  border-color:#dfc1a4;
+  color:var(--v129-accent-strong);
+  background:#fffdf9;
+}
+html.dark .settings-logout-v129{background:transparent;border-color:#6b5444}
+.settings-inline-link{color:var(--v129-accent-strong)}
+.settings-segmented button.active{
+  background:#fff8ef;
+  color:var(--v129-accent-strong);
+  box-shadow:inset 0 0 0 1px rgba(143,90,53,.16);
+}
+html.dark .settings-segmented button.active{background:#3a3029}
+.settings-pro-v129{
+  border-color:#e6cba8!important;
+  background:linear-gradient(100deg,#fff8ee 0%,#fffdf9 60%,#fff 100%);
+}
+html.dark .settings-pro-v129{
+  border-color:#64503f!important;
+  background:linear-gradient(100deg,#332a23 0%,#302923 100%);
+}
+.settings-pro-title{color:var(--v129-accent-strong)}
+.settings-pro-copy>strong{color:var(--v129-brown)}
+.settings-pro-cta{
+  background:linear-gradient(135deg,#c99a69,#b87a48);
+  box-shadow:0 5px 12px rgba(120,78,43,.14);
+}
+.settings-pro-cta:hover{filter:brightness(.98)}
+.settings-modern-action:active,.settings-pro-cta:active,.schedule-v129-toggle:active{transform:translateY(1px)}
+@media(max-width:760px){
+  .schedule-v129-summary{border-radius:15px}
+  .schedule-ai-v129-banner{border-radius:16px}
+  .settings-ui-v129{gap:9px}
+}
+
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v115-180.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./app-icon-v115-180.png">
@@ -803,7 +912,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   <section class="page" id="page-calendar">
     <div class="card schedule-card schedule-card-v129">
       <div class="schedule-v129-head">
-        <div class="schedule-v129-title"><span class="schedule-v129-gear">⚙</span><b>排班設定</b></div>
+        <div class="schedule-v129-title"><span class="schedule-v129-gear"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg></span><b>排班設定</b></div>
         <button type="button" class="schedule-v129-toggle" id="toggleSchedule" aria-controls="scheduleSettings" aria-expanded="false" aria-label="展開排班設定">⌄</button>
       </div>
       <div class="schedule-v129-summary">
@@ -4723,7 +4832,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v129';
+    const reloadKey='meow-sw-reloaded-v130';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -4732,7 +4841,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=129',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=130',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
