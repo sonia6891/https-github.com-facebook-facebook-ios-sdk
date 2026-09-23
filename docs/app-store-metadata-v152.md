@@ -54,7 +54,7 @@
 
 - Privacy Policy URL：https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/privacy.html
 - Support URL：https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/support.html
-- Terms of Use URL：https://sonia6891.github.io/https-github.com/facebook/facebook-ios-sdk/terms.html
+- Terms of Use URL：https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/terms.html
 
 ## Category 建議
 
