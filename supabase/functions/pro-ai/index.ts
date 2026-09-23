@@ -8,10 +8,6 @@ const corsHeaders = {
 };
 
 const MODES = new Set([
-  "payslip_scan",
-  "reconcile_explain",
-  "salary_forecast_explain",
-  "anomaly_scan",
   "assistant",
   "status"
 ]);
@@ -175,10 +171,6 @@ const assistantSchema = {
 };
 
 function schemaFor(mode: string) {
-  if (mode === "payslip_scan") return payslipSchema;
-  if (mode === "reconcile_explain") return reconcileSchema;
-  if (mode === "salary_forecast_explain") return forecastSchema;
-  if (mode === "anomaly_scan") return anomalySchema;
   return assistantSchema;
 }
 
@@ -225,23 +217,10 @@ async function safetyIdentifier(userId: string) {
 }
 
 function reasoningEffort(mode: string) {
-  if (mode === "assistant" || mode === "anomaly_scan" || mode === "payslip_scan") return "low";
-  return "none";
+  return mode === "assistant" ? "low" : "none";
 }
 
 function modeInstruction(mode: string) {
-  if (mode === "payslip_scan") {
-    return "Read salary/pay-slip money fields only. Ignore and never return names, employee numbers, national IDs, bank accounts, addresses, signatures, barcodes, QR codes, or other personal identifiers. Map synonymous Chinese payroll labels to the allowed keys. Do not treat hours, rates, percentages, multipliers, days, or employer contribution amounts as employee pay/deduction money. When unsure, omit the field and add a warning.";
-  }
-  if (mode === "reconcile_explain") {
-    return "The context already contains deterministic expected, actual, and diff values calculated by the app. Do not recalculate or alter them. Explain mismatches in plain Traditional Chinese and clearly say when the cause cannot be determined from available data. Do not make a legal conclusion.";
-  }
-  if (mode === "salary_forecast_explain") {
-    return "The context contains the app's deterministic forecast. Do not calculate a new salary. Explain the forecast, key drivers, and uncertainty in plain Traditional Chinese.";
-  }
-  if (mode === "anomaly_scan") {
-    return "Inspect the supplied app-calculated history/context for unusual changes or mismatches. Base every anomaly on explicit evidence in the context. Do not invent thresholds, company rules, or legal violations.";
-  }
   return "Answer the user's question only from the supplied app context. If the answer is not in the context, say so. Never invent schedule, leave, overtime, pay, company policy, or legal facts.";
 }
 
@@ -300,23 +279,12 @@ Deno.serve(async (req: Request) => {
       configured: apiKeyConfigured,
       model: configuredModel,
       privacy: { store: false },
-      quota: { image_monthly: 12, text_monthly: 100 }
+      quota: { assistant_monthly: 20 }
     });
   }
 
   const contextString = JSON.stringify(body?.context ?? {});
   if (contextString.length > 120000) return json({ ok: false, code: "CONTEXT_TOO_LARGE" }, 413);
-
-  const imageDataUrl = typeof body?.imageDataUrl === "string" ? body.imageDataUrl : "";
-  if (imageDataUrl) {
-    if (!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(imageDataUrl)) {
-      return json({ ok: false, code: "UNSUPPORTED_IMAGE" }, 415);
-    }
-    if (imageDataUrl.length > 12000000) return json({ ok: false, code: "IMAGE_TOO_LARGE" }, 413);
-  }
-  if (mode === "payslip_scan" && !imageDataUrl) {
-    return json({ ok: false, code: "IMAGE_REQUIRED" }, 400);
-  }
 
   const apiKey = Deno.env.get("OPENAI_API_KEY") || "";
   if (!apiKey) return json({ ok: false, code: "AI_NOT_CONFIGURED" }, 503);
@@ -353,7 +321,6 @@ Deno.serve(async (req: Request) => {
     text: "MODE: " + mode + "\nAPP_CONTEXT_JSON:\n" + contextString +
       (body?.question ? "\nUSER_QUESTION:\n" + String(body.question).slice(0, 4000) : "")
   }];
-  if (imageDataUrl) userContent.push({ type: "input_image", image_url: imageDataUrl, detail: "high" });
 
   const safetyId = await safetyIdentifier(user.id);
   let aiResponse: Response;
@@ -381,7 +348,7 @@ Deno.serve(async (req: Request) => {
             schema: schemaFor(mode)
           }
         },
-        max_output_tokens: 3000
+        max_output_tokens: 1800
       })
     });
   } catch {
