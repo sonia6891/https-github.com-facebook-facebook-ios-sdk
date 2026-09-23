@@ -101,7 +101,7 @@ App Store Connect 選「會收集資料」，依目前 App 功能至少檢查以
 - Purchases：Purchase History
 - Financial Info：Other Financial Info（薪資／扣款）
 - Health & Fitness：Health（病假／生理假等健康相關假別資料，若啟用雲端）
-- User Content：Photos or Videos（AI 掃描）、Other User Content（班表／行程／待辦／備註）
+- User Content：Photos or Videos（僅使用者主動使用薪資單雲端 AI 辨識時；智慧班表圖片留在本機）、Other User Content（班表／行程／待辦／備註）
 
 目前用途：App Functionality。  
 與帳號連結：是（雲端／AI／訂閱流程）。  
@@ -149,6 +149,17 @@ CI 必須同時通過：
 - [x] App Store metadata v152 已準備並驗證欄位長度限制
 
 目前程式端已進入「可接 App Store Connect / TestFlight 前置」狀態。正式送審仍需完成 Apple Developer、App Store Connect、Supabase Apple provider 與真實公開聯絡資訊等外部設定。
+
+## 2026-09-24 本機智慧班表成本調整
+
+- [x] 班表圖片匯入已改用 Apple Vision 在 iPhone 本機辨識
+- [x] 前端不再呼叫 OpenAI `schedule_scan`
+- [x] Supabase `pro-ai` version 6 已移除 `schedule_scan`
+- [x] AI 用量 RPC 不再接受 `schedule_scan`
+- [x] 班表匯入 OpenAI API 邊際成本為 0
+- [x] 隱私政策已明確標示班表圖片不傳 Supabase／OpenAI
+- [x] Xcode Simulator／Release device build 均通過 Apple Vision bridge 編譯
+- [x] 瀏覽器 regression 已驗證本機解析器與無雲端 schedule scan
 
 ## 2026-09-24 v152 補強紀錄
 
