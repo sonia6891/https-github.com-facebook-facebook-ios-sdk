@@ -14,7 +14,8 @@ assert(html.includes('id="proAiPanel"'));
 assert(html.includes("invokeUserFunction('pro-ai'"));
 assert(html.includes('scheduleOverrides'));
 assert(html.includes('圖片只在你的瀏覽器本地處理，不上傳薪資單影像'));
-assert(html.includes('App 不會把原始薪資單圖片寫入自己的雲端資料庫'));
+assert(html.includes('本機薪資單 OCR'));
+assert(html.includes('不會因這些功能產生 OpenAI API 費用'));
 
 for (const mode of ['assistant','status']) {
   assert(edge.includes('"'+mode+'"'), 'missing cloud AI mode: '+mode);
