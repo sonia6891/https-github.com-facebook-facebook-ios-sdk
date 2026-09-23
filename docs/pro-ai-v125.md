@@ -108,7 +108,20 @@ AI 回傳欄位限制在：
 - AI 自己補不存在的班表
 - 直接斷言公司違反勞動法
 
-## 8. AI 模型與 Secret
+## 8. Pro AI 月額度
+
+第一版後端直接控管用量，避免只在前端做可繞過的假限制：
+
+- AI 圖片辨識：每月 12 次（班表 + 薪資單共用）
+- AI 文字分析／問答：每月 100 次
+- 月份依 Asia/Taipei 計算
+- 額度由 `public.ai_usage_monthly` 紀錄
+- `meow_claim_ai_usage(mode)` 原子遞增並回傳剩餘次數
+- 前端成功後顯示本月剩餘額度
+
+這是 v1 成本保護值；上架後應依真實 API 成本與使用率調整。
+
+## 9. AI 模型與 Secret
 
 Edge Function 需要：
 - `OPENAI_API_KEY`：必填
@@ -116,7 +129,7 @@ Edge Function 需要：
 
 Secret 不得提交 GitHub。
 
-## 9. 第一版驗收
+## 10. 第一版驗收
 
 - [x] Pro AI Edge Function 已部署
 - [x] JWT 驗證
@@ -129,6 +142,7 @@ Secret 不得提交 GitHub。
 - [x] AI 班表逐日 override 可清除
 - [x] 薪資數字仍由原規則引擎計算
 - [x] PWA v125 UI 已接入
+- [x] 後端 AI 月額度／RLS 用量表
 - [ ] Supabase 設定 `OPENAI_API_KEY`
 - [ ] 用真實班表做端到端 AI 測試
 - [ ] 用去識別薪資單做端到端 AI 測試
