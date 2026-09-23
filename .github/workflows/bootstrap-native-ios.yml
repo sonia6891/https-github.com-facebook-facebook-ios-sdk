@@ -4,6 +4,14 @@ on:
   push:
     branches: [main]
     paths:
+      - index.html
+      - sw.js
+      - manifest.webmanifest
+      - assets/**
+      - workcat-home-v12.png
+      - app-icon-v115-180.png
+      - app-icon-v115-192.png
+      - app-icon-v115-512.png
       - native/package.json
       - native/capacitor.config.json
       - native/scripts/**
