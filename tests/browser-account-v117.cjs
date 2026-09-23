@@ -374,12 +374,23 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     const user = { id: 'acct-logout', email: 'member@example.test', app_metadata: { provider: 'google' } };
     const { context, page } = await openPage(browser, base, 390, user);
     await page.evaluate(() => window.__accountV119.settings());
+    await page.locator('.settings-account-details > summary').click();
+    await page.locator('#accountUsername').fill('登出保留喵');
+    await page.locator('#saveAccountUsername').click();
+    check('登出前工作區資料已保存', await page.locator('#profileName').innerText() === '登出保留喵');
     await page.locator('#accountLogout').click();
     await page.waitForFunction(() => document.getElementById('welcomeDialog').open === true);
     check('主動登出後重新顯示登入頁', await page.evaluate(() => window.__accountV119.openWelcome()));
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.waitForFunction(() => window.__accountV119 !== undefined);
     check('登出後重開仍顯示登入頁', await page.evaluate(() => window.__accountV119.openWelcome()));
+    await page.evaluate(() => localStorage.removeItem('__account_test_signed_out'));
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.__accountV119 !== undefined);
+    await page.waitForTimeout(150);
+    check('同一帳號重新登入後回到原本工作區', !(await page.evaluate(() => window.__accountV119.openWelcome())));
+    await page.evaluate(() => window.__accountV119.settings());
+    check('登出不會刪除同一帳號的本機工作資料', await page.locator('#profileName').innerText() === '登出保留喵');
     await context.close();
   } finally {
     await browser.close();
