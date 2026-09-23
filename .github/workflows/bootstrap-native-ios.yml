@@ -56,7 +56,7 @@ jobs:
           cp ios-sources/App.xcscheme ios/App/App.xcodeproj/xcshareddata/xcschemes/App.xcscheme
           npx cap sync ios
 
-      - name: Verify StoreKit bridge source
+      - name: Verify StoreKit and reminder bridge source
         working-directory: native
         run: |
           grep -q 'MeowStoreBillingPlugin' ios/App/App/ViewController.swift
@@ -73,6 +73,12 @@ jobs:
           grep -q 'transactionUpdated' ios/App/App/ViewController.swift
           grep -q 'Transaction.updates' ios/App/App/ViewController.swift
           grep -q 'eligibleForIntroOffer' ios/App/App/ViewController.swift
+          grep -q 'MeowReminderPlugin' ios/App/App/ViewController.swift
+          grep -q 'UNUserNotificationCenter' ios/App/App/ViewController.swift
+          grep -q 'requestPermission' ios/App/App/ViewController.swift
+          grep -q 'getPermissionStatus' ios/App/App/ViewController.swift
+          grep -q 'UNTimeIntervalNotificationTrigger' ios/App/App/ViewController.swift
+          grep -q 'registerPluginInstance(MeowReminderPlugin())' ios/App/App/ViewController.swift
           grep -q 'meowwork.pro.monthly' ios/App/MeowWork.storekit
           grep -q 'meowwork.pro.yearly' ios/App/MeowWork.storekit
           grep -q '"subscriptionPeriod" : "P3D"' ios/App/MeowWork.storekit
