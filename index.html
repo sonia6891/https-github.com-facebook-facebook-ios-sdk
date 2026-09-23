@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v130-soft-amber-ui">
+<meta name="meow-ui-build" content="v137-schedule-ai-card">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -696,6 +696,120 @@ html.dark .settings-pro-v129{
   .settings-ui-v129{gap:9px}
 }
 
+
+/* ===== v137 schedule page: AI import replaces the old visible settings card ===== */
+.schedule-card-v136{
+  padding:0;
+  overflow:visible;
+  border:0;
+  background:transparent;
+  box-shadow:none;
+}
+.schedule-v136-tools{
+  position:relative;
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:9px;
+  margin:0 2px 9px;
+}
+.schedule-v136-action{
+  position:relative;
+  width:42px;
+  height:42px;
+  border:1px solid var(--v129-border,#e9dfd5);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  background:var(--mobile-surface,#fffdf9);
+  color:var(--v129-accent-strong,#8f5a35);
+  box-shadow:0 5px 16px rgba(83,56,39,.08);
+  font-weight:950;
+  cursor:pointer;
+}
+.schedule-v136-action .icon{font-size:20px}
+.schedule-v136-action.active{
+  background:var(--v129-accent-soft,#fff5e9);
+  box-shadow:inset 0 0 0 1px rgba(143,90,53,.13),0 5px 16px rgba(83,56,39,.08);
+}
+.schedule-v136-plus{
+  position:absolute;
+  right:7px;
+  bottom:5px;
+  width:14px;
+  height:14px;
+  display:grid;
+  place-items:center;
+  border-radius:50%;
+  background:var(--v129-accent-strong,#8f5a35);
+  color:#fff;
+  font-size:11px;
+  line-height:1;
+  font-weight:950;
+}
+.schedule-v136-more-toggle{
+  font-size:17px;
+  letter-spacing:1px;
+  padding:0 0 7px;
+}
+.schedule-v136-menu{
+  position:absolute;
+  z-index:30;
+  top:48px;
+  right:0;
+  width:min(220px,78vw);
+  padding:7px;
+  border:1px solid var(--v129-border,#e9dfd5);
+  border-radius:16px;
+  background:var(--mobile-surface,#fffdf9);
+  box-shadow:0 14px 34px rgba(64,42,29,.18);
+}
+.schedule-v136-menu button{
+  width:100%;
+  min-height:42px;
+  border:0;
+  background:transparent;
+  color:var(--v129-text,#1f2a3c);
+  border-radius:11px;
+  padding:9px 10px;
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-align:left;
+  font-weight:850;
+}
+.schedule-v136-menu button:hover,.schedule-v136-menu button:focus-visible{
+  background:var(--v129-accent-soft,#fff5e9);
+}
+.schedule-v136-menu button:disabled{opacity:.42}
+.schedule-v136-menu .icon{font-size:17px;color:var(--v129-accent-strong,#8f5a35)}
+.schedule-card-v136 .schedule-v129-summary{margin:0 0 9px}
+.schedule-card-v136>.schedule-settings{margin:0 0 9px}
+.schedule-card-v136:not(.schedule-settings-open) .rotation-active-info{display:none!important}
+.schedule-card-v136 .schedule-plan-value{display:none!important}
+.schedule-card-v136 .schedule-ai-v129{margin:0}
+.schedule-card-v136 .schedule-ai-v129-meta{
+  margin:7px 0 0;
+  min-height:42px;
+  padding:7px 10px;
+  border:1px solid var(--v129-border,#e9dfd5);
+  border-radius:15px;
+  background:var(--mobile-surface,#fffdf9);
+}
+.schedule-card-v136 .schedule-ai-v129-meta .pro-badge{
+  padding:6px 10px;
+  border-radius:999px;
+  font-size:10px;
+}
+@media(max-width:760px){
+  .schedule-v136-tools{margin:0 1px 8px;gap:8px}
+  .schedule-v136-action{width:39px;height:39px}
+  .schedule-card-v136 .schedule-v129-summary{margin:0 0 8px;padding:10px}
+  .schedule-card-v136>.schedule-settings{margin:0 0 8px}
+  .schedule-card-v136 .schedule-ai-v129{margin:0}
+  .schedule-card-v136 .schedule-ai-v129-banner{min-height:104px}
+  .schedule-card-v136 .schedule-ai-v129-meta{margin-top:6px}
+}
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v115-180.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./app-icon-v115-180.png">
@@ -910,12 +1024,21 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 </section>
 
   <section class="page" id="page-calendar">
-    <div class="card schedule-card schedule-card-v129">
-      <div class="schedule-v129-head">
-        <div class="schedule-v129-title"><span class="schedule-v129-gear"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg></span><b>排班設定</b></div>
-        <button type="button" class="schedule-v129-toggle" id="toggleSchedule" aria-controls="scheduleSettings" aria-expanded="false" aria-label="展開排班設定">⌄</button>
+    <div class="card schedule-card schedule-card-v129 schedule-card-v136">
+      <div class="schedule-v136-tools" aria-label="班表工具">
+        <button type="button" class="schedule-v136-action" id="toggleSchedule" aria-controls="scheduleSettings" aria-expanded="false" aria-label="開啟排班設定" title="排班設定">
+          <svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>
+          <span class="schedule-v136-plus" aria-hidden="true">＋</span>
+        </button>
+        <button type="button" class="schedule-v136-action schedule-v136-more-toggle" id="scheduleMoreToggle" aria-expanded="false" aria-controls="scheduleMoreMenu" aria-label="更多班表操作" title="更多">•••</button>
+        <div class="schedule-v136-menu hidden" id="scheduleMoreMenu">
+          <button type="button" id="scheduleMenuSettings"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg><span>排班設定</span></button>
+          <button type="button" id="scheduleMenuEvent"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span>新增行程</span></button>
+          <button type="button" id="scheduleMenuClearAi"><span aria-hidden="true">✦</span><span>清除本月 AI 班表</span></button>
+        </div>
       </div>
-      <div class="schedule-v129-summary">
+
+      <div class="schedule-v129-summary hidden">
         <div><span>排班方案</span><strong id="scheduleUiPlan">四班二輪</strong></div>
         <div><span>班別名稱</span><strong id="scheduleUiShift">A班</strong></div>
         <div><span>週期</span><strong id="scheduleUiCycle">做二休二</strong></div>
@@ -2034,16 +2157,19 @@ function syncScheduleChoices(){
   syncScheduleEditing();
 }
 function syncScheduleEditing(){
-  const open=!!scheduleOpen;
+  const open=!!scheduleOpen,card=document.querySelector('.schedule-card-v136'),summary=document.querySelector('.schedule-v129-summary');
   $('patternPreset').disabled=!open;
   $('patternPreset').classList.toggle('hidden',!open);
-  $('schedulePlanValue').classList.toggle('hidden',open);
+  $('schedulePlanValue').classList.add('hidden');
   $('scheduleSettings').classList.toggle('hidden',!open);
+  if(summary)summary.classList.toggle('hidden',!open);
+  if(card)card.classList.toggle('schedule-settings-open',open);
   $('editRotation').disabled=!open;
   $('editRotation').classList.toggle('hidden',!open);
+  $('toggleSchedule').classList.toggle('active',open);
   $('toggleSchedule').setAttribute('aria-expanded',String(open));
-  $('toggleSchedule').setAttribute('aria-label',open?'收起排班設定':'展開排班設定');
-  $('toggleSchedule').textContent=open?'⌃':'⌄';
+  $('toggleSchedule').setAttribute('aria-label',open?'收起排班設定':'開啟排班設定');
+  $('toggleSchedule').title=open?'收起排班設定':'排班設定';
 }
 function selectSchedulePlan(value){
   if(!scheduleOpen){syncScheduleChoices();return}
@@ -3974,6 +4100,7 @@ function renderScheduleAiState(){
   if($('aiScheduleUpload'))$('aiScheduleUpload').textContent=unlocked?'✨ AI 辨識班表':'Pro 解鎖';
   if($('aiScheduleOverrideNote'))$('aiScheduleOverrideNote').textContent=count?'本月已套用 '+count+' 天 AI 班表':'拍照後先預覽，不會直接改班表';
   if($('aiScheduleClearMonth'))$('aiScheduleClearMonth').classList.toggle('hidden',count===0);
+  if($('scheduleMenuClearAi'))$('scheduleMenuClearAi').disabled=count===0;
 }
 function renderAiScheduleResult(result){
   const box=$('aiScheduleResult');if(!box)return;
@@ -4395,6 +4522,26 @@ $('deleteEvent').onclick=()=>{
 $('conflictKeep').onclick=()=>commitItineraryEvent(pendingItinerarySave);
 $('conflictDialog').addEventListener('close',()=>{if($('conflictDialog').returnValue==='cancel')pendingItinerarySave=null});
 $('toggleSchedule').onclick=()=>{scheduleOpen=!scheduleOpen;render()};
+function closeScheduleMoreMenu(){
+  const menu=$('scheduleMoreMenu'),toggle=$('scheduleMoreToggle');
+  if(menu)menu.classList.add('hidden');
+  if(toggle)toggle.setAttribute('aria-expanded','false');
+}
+if($('scheduleMoreToggle'))$('scheduleMoreToggle').onclick=e=>{
+  e.stopPropagation();
+  const menu=$('scheduleMoreMenu'),open=menu&&menu.classList.contains('hidden');
+  if(menu)menu.classList.toggle('hidden',!open);
+  $('scheduleMoreToggle').setAttribute('aria-expanded',String(!!open));
+};
+if($('scheduleMenuSettings'))$('scheduleMenuSettings').onclick=()=>{closeScheduleMoreMenu();scheduleOpen=true;render()};
+if($('scheduleMenuEvent'))$('scheduleMenuEvent').onclick=()=>{closeScheduleMoreMenu();setTab('attendance');setTimeout(()=>openEvent(iso(new Date())),0)};
+if($('scheduleMenuClearAi'))$('scheduleMenuClearAi').onclick=()=>{closeScheduleMoreMenu();clearCurrentAiSchedule()};
+document.addEventListener('click',e=>{
+  const menu=$('scheduleMoreMenu'),toggle=$('scheduleMoreToggle');
+  if(!menu||menu.classList.contains('hidden'))return;
+  if(menu.contains(e.target)||toggle&&toggle.contains(e.target))return;
+  closeScheduleMoreMenu();
+});
 $('toggleWorkSettings').onclick=()=>{workSettingsOpen=!workSettingsOpen;renderSettings()};
 if($('toggleDataSync'))$('toggleDataSync').onclick=()=>{dataSyncOpen=!dataSyncOpen;renderSettings()};
 $('patternPreset').onchange=e=>selectSchedulePlan(e.target.value);
