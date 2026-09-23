@@ -6,6 +6,7 @@ on:
       - index.html
       - tests/pro-ai-v125.cjs
       - supabase/functions/pro-ai/index.ts
+      - supabase/functions/payslip-verify/index.ts
       - supabase/migrations/**
       - docs/pro-ai-**
       - .github/workflows/pro-ai-preflight.yml
