@@ -8,7 +8,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: pages-production-v128
+  group: pages-production-v129
   cancel-in-progress: true
 jobs:
   deploy:
@@ -89,7 +89,9 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v128-storekit-localized' in html
+          import re
+          m=re.search(r'<meta name="meow-ui-build" content="v(\d+)[^"]*">',html)
+          assert m and int(m.group(1))>=129, 'expected app build v129 or newer'
           assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           assert "const LINE_PROVIDER_ID='custom:line'" in html
           assert "scopes:'openid profile'" in html
@@ -162,6 +164,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v128-storekit-localized-verification
+          name: meow-v129-settings-schedule-ui-verification
           path: test-results/
           retention-days: 3
