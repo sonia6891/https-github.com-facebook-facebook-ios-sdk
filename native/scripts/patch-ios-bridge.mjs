@@ -7,6 +7,8 @@ const scenePath = resolve(root, 'ios/App/App/SceneDelegate.swift');
 const projectPath = resolve(root, 'ios/App/App.xcodeproj/project.pbxproj');
 const privacySourcePath = resolve(root, 'ios-sources/PrivacyInfo.xcprivacy');
 const privacyTargetPath = resolve(root, 'ios/App/App/PrivacyInfo.xcprivacy');
+const entitlementsSourcePath = resolve(root, 'ios-sources/App.entitlements');
+const entitlementsTargetPath = resolve(root, 'ios/App/App/App.entitlements');
 
 const bridgeSource = readFileSync(bridgeSourcePath, 'utf8');
 const sceneSource = readFileSync(scenePath, 'utf8');
@@ -43,9 +45,24 @@ writeFileSync(scenePath, output);
 const privacyManifest = readFileSync(privacySourcePath, 'utf8');
 writeFileSync(privacyTargetPath, privacyManifest);
 
+const entitlements = readFileSync(entitlementsSourcePath, 'utf8');
+writeFileSync(entitlementsTargetPath, entitlements);
+
 let project = readFileSync(projectPath, 'utf8');
 const privacyBuildId = 'A15100000000000000000001';
 const privacyFileId = 'A15100000000000000000002';
+
+if (!project.includes('CODE_SIGN_ENTITLEMENTS = App/App.entitlements;')) {
+  const signStylePattern = /\t\t\t\tCODE_SIGN_STYLE = Automatic;/g;
+  const matches = project.match(signStylePattern) || [];
+  if (matches.length < 2) {
+    throw new Error('Unable to locate target signing build settings for App.entitlements.');
+  }
+  project = project.replace(
+    signStylePattern,
+    '\t\t\t\tCODE_SIGN_ENTITLEMENTS = App/App.entitlements;\n\t\t\t\tCODE_SIGN_STYLE = Automatic;'
+  );
+}
 
 if (!project.includes('PrivacyInfo.xcprivacy in Resources')) {
   project = project.replace(
@@ -76,4 +93,4 @@ if (!project.includes('PrivacyInfo.xcprivacy in Resources')) {
 }
 writeFileSync(projectPath, project);
 
-console.log('Patched generated SceneDelegate, native bridges, and app PrivacyInfo.xcprivacy.');
+console.log('Patched generated SceneDelegate, native bridges, app PrivacyInfo.xcprivacy, and Sign in with Apple entitlements.');
