@@ -1374,7 +1374,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           <div class="pro-card" data-pro-feature="itemized_salary_compare"><div class="pro-head"><b>🧾 逐項薪資對帳</b><span class="pro-badge">🔒 Pro</span></div><p>逐項比較 App 應發與公司實發，找出差額來源。</p><button type="button" data-pro-action="itemized_salary_compare">即將推出</button></div>
           <div class="pro-card" data-pro-feature="salary_history_unlimited"><div class="pro-head"><b>📚 歷史薪資對帳</b><span class="pro-badge">🔒 Pro</span></div><p>保存每月預估、實發與差額紀錄。</p><button type="button" data-pro-action="salary_history_unlimited">即將推出</button></div>
           <div class="pro-card" data-pro-feature="salary_export"><div class="pro-head"><b>📄 PDF／Excel 對帳報告</b><span class="pro-badge">🔒 Pro</span></div><p>匯出薪資與差額報告，方便保存核對。</p><button type="button" data-pro-action="salary_export">即將推出</button></div>
-          <div class="pro-card" data-pro-feature="ai_pro_suite"><div class="pro-head"><b>✨ Pro AI 工作助理</b><span class="pro-badge">🔒 Pro</span></div><p>AI 薪資單強化辨識、差異解釋、薪資預測、異常提醒與問答；圖片辨識每月 12 次、分析／問答每月 100 次。</p><button type="button" data-pro-action="ai_pro_suite">Pro 解鎖</button></div>
+          <div class="pro-card" data-pro-feature="ai_pro_suite"><div class="pro-head"><b>✨ Pro 智慧工作助理</b><span class="pro-badge">🔒 Pro</span></div><p>薪資單本機 OCR、差異說明、薪資預測與變動提醒都在裝置端處理；只有「喵助理」會使用雲端 AI，每月 20 次。</p><button type="button" data-pro-action="ai_pro_suite">Pro 解鎖</button></div>
         </div>
         <div class="payslip-scan-panel hidden" id="payslipScanPanel">
           <div class="scan-head">
@@ -1407,23 +1407,22 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         </div>
         <div class="itemized-panel hidden" id="proAiPanel">
           <div class="itemized-head">
-            <div><b>✨ Pro AI 工作助理 <span style="font-size:10px;color:var(--mobile-gold-ink, #9a7a67);font-weight:800">AI v1</span></b><div class="hint">AI 負責看懂與解釋；金額仍由 App 的薪資公式計算，不讓 AI 自己亂算。</div></div>
+            <div><b>✨ Pro 智慧工作助理</b><div class="hint">高頻功能都在本機處理；只有你主動問「喵助理」時才會使用雲端 AI。</div></div>
             <button type="button" class="btn" id="closeProAi">收起</button>
           </div>
           <div class="settings-actions" style="margin:10px 0;flex-wrap:wrap">
-            <button type="button" class="btn primary" id="aiPayslipPick">📷 AI 薪資單</button>
-            <button type="button" class="btn" id="aiExplainReconcile">🧾 解釋差異</button>
-            <button type="button" class="btn" id="aiForecastSalary">💰 本月預測</button>
-            <button type="button" class="btn" id="aiScanAnomalies">⚠️ 異常提醒</button>
-            <input class="hidden" id="aiPayslipFileInput" type="file" accept="image/*">
+            <button type="button" class="btn primary" id="aiPayslipPick">📷 本機薪資單 OCR</button>
+            <button type="button" class="btn" id="aiExplainReconcile">🧾 本機差異說明</button>
+            <button type="button" class="btn" id="aiForecastSalary">💰 本機薪資預測</button>
+            <button type="button" class="btn" id="aiScanAnomalies">⚠️ 本機變動提醒</button>
           </div>
-          <div class="scan-privacy">🔐 本地 OCR v4 仍維持「不上傳圖片」。只有你主動點 AI 薪資單時，所選圖片才會送至 AI 服務做本次分析；App 不會把原始薪資單圖片寫入自己的雲端資料庫。</div>
+          <div class="scan-privacy">🔐 薪資單 OCR、差異說明、薪資預測與變動提醒都在裝置端完成，不會因這些功能產生 OpenAI API 費用。</div>
           <div class="salary-field" style="margin-top:12px">
-            <label for="aiAssistantQuestion">問喵助理</label>
+            <label for="aiAssistantQuestion">問喵助理 <small>（雲端 AI・每月 20 次）</small></label>
             <input id="aiAssistantQuestion" type="text" maxlength="300" placeholder="例如：為什麼我這個月薪水比上個月少？">
-            <button type="button" class="btn" id="aiAskAssistant" style="margin-top:8px">問 AI</button>
+            <button type="button" class="btn" id="aiAskAssistant" style="margin-top:8px">問喵助理</button>
           </div>
-          <div class="hint" id="proAiStatus" role="status" aria-live="polite" style="margin-top:10px">選一個功能開始；AI 不會自動修改你的班表或薪資資料。</div>
+          <div class="hint" id="proAiStatus" role="status" aria-live="polite" style="margin-top:10px">本機工具不需連線；喵助理會在送出問題時使用雲端 AI。</div>
           <div id="proAiOutput" style="margin-top:10px"></div>
         </div>
         <div class="itemized-panel hidden" id="itemizedComparePanel">
@@ -4543,9 +4542,8 @@ function aiSetStatus(text){
   if($('proAiStatus'))$('proAiStatus').textContent=text;
 }
 function setProAiControlsEnabled(enabled){
-  ['aiPayslipPick','aiExplainReconcile','aiForecastSalary','aiScanAnomalies','aiAskAssistant'].forEach(id=>{
-    const el=$(id);if(el)el.disabled=!enabled;
-  });
+  const ask=$('aiAskAssistant');if(ask)ask.disabled=!enabled;
+  ['aiPayslipPick','aiExplainReconcile','aiForecastSalary','aiScanAnomalies'].forEach(id=>{const el=$(id);if(el)el.disabled=false});
 }
 async function checkProAiReadiness(force=false){
   if(!canUse('ai_pro_suite')||!authUser)return false;
@@ -4554,22 +4552,23 @@ async function checkProAiReadiness(force=false){
     setProAiControlsEnabled(proAiBackendReady);
     return proAiBackendReady;
   }
-  proAiBackendCheckedAt=now;setProAiControlsEnabled(false);
-  aiSetStatus('正在確認 Pro AI 服務…');
+  proAiBackendCheckedAt=now;
+  setProAiControlsEnabled(false);
+  aiSetStatus('本機工具已可使用；正在確認喵助理服務…');
   try{
     const data=await invokeUserFunction('pro-ai',{mode:'status'});
     proAiBackendReady=!!data.configured;
     proAiBackendModel=String(data.model||'');
     setProAiControlsEnabled(proAiBackendReady);
     if(proAiBackendReady){
-      aiSetStatus('✓ Pro AI 已就緒'+(proAiBackendModel?'・'+proAiBackendModel:'')+'｜薪資單 AI 每月 12 次・分析／問答每月 100 次；智慧班表本機辨識不計額度');
+      aiSetStatus('✓ 本機工具可用・喵助理已就緒'+(proAiBackendModel?'・'+proAiBackendModel:'')+'｜雲端 AI 每月 20 次');
     }else{
-      aiSetStatus('Pro AI 後端已部署，但尚未完成 API 金鑰設定；原本排班、薪資與本地 OCR 都可正常使用。');
+      aiSetStatus('本機工具可正常使用；喵助理尚未啟用雲端 AI。');
     }
     return proAiBackendReady;
   }catch(e){
     proAiBackendReady=null;setProAiControlsEnabled(false);
-    aiSetStatus('AI 服務狀態確認失敗；原本 App 功能不受影響。');
+    aiSetStatus('本機工具可正常使用；喵助理服務狀態暫時無法確認。');
     return false;
   }
 }
@@ -4581,32 +4580,67 @@ function renderProAiPanel(){
   panel.classList.toggle('hidden',!unlocked||!proAiOpen);
   if(unlocked&&proAiOpen)void checkProAiReadiness();
 }
+function renderSmartOutput(title,summary,items=[],note=''){
+  const box=$('proAiOutput');if(!box)return;
+  let html='<div class="card"><b>'+escapeHtml(title)+'</b><p>'+escapeHtml(summary)+'</p></div>';
+  if(items.length)html+=items.map(x=>'<div class="card" style="margin-top:8px"><b>'+escapeHtml(x.title||'提醒')+'</b><p>'+escapeHtml(x.detail||'')+'</p>'+(x.meta?'<small>'+escapeHtml(x.meta)+'</small>':'')+'</div>').join('');
+  if(note)html+='<div class="hint" style="margin-top:8px">'+escapeHtml(note)+'</div>';
+  box.innerHTML=html;
+}
+function localReconcileExplain(){
+  if(!canUse('ai_pro_suite'))return;
+  const context=buildProAiContext();
+  const filled=context.rows.filter(x=>x.actual!==null);
+  if(!filled.length&&context.actualNet===null){alert('請先輸入公司實發，或先用本機薪資單 OCR 導入實際金額。');return}
+  const diffRows=filled.filter(x=>Math.round(x.diff)!==0).sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff));
+  const items=diffRows.slice(0,8).map(x=>{
+    let detail='';
+    if(x.kind==='income')detail=x.diff<0?'公司實際金額比 App 預估少 '+money(Math.abs(x.diff))+'。':'公司實際金額比 App 預估多 '+money(Math.abs(x.diff))+'。';
+    else detail=x.diff>0?'公司實際扣款比 App 預估多 '+money(Math.abs(x.diff))+'。':'公司實際扣款比 App 預估少 '+money(Math.abs(x.diff))+'。';
+    return{title:x.label,detail,meta:'App '+money(x.expected)+'・公司 '+money(x.actual)+'・差額 '+signedMoney(x.diff)};
+  });
+  const netLine=context.actualNet===null?'尚未輸入公司實發。':'公司實發與 App 預估淨差額 '+signedMoney(context.netDiff)+'。';
+  renderSmartOutput('本機差異說明',diffRows.length?'找到 '+diffRows.length+' 個已填項目與 App 預估不同。':'目前已填項目與 App 預估一致。',items,netLine+' 僅由數字無法判斷實際原因，仍請核對薪資單與公司計薪規則。');
+  aiSetStatus('差異說明已在本機完成，未呼叫雲端 AI。');
+}
+function localSalaryForecast(){
+  if(!canUse('ai_pro_suite'))return;
+  const x=buildProAiContext();
+  const items=[
+    {title:'預估實領',detail:money(x.expectedNet),meta:'依目前 App 內班表、薪資設定與扣款資料計算'},
+    {title:'出勤',detail:'預計上班 '+x.scheduledWorkDays+' 天・目前出勤 '+x.attendanceDays+' 天',meta:x.leaveHours?'請假 '+x.leaveHours+' 小時':'目前沒有記錄請假時數'},
+    {title:'加班',detail:x.overtimeHours+' 小時・'+money(x.overtimePay),meta:'依 App 目前設定的加班規則計算'}
+  ];
+  renderSmartOutput('本機薪資預測','目前 App 預估實領為 '+money(x.expectedNet)+'，預估應發為 '+money(x.gross)+'。',items,'若之後新增加班、請假、津貼或扣款，預估會跟著更新；此結果不是正式薪資單。');
+  aiSetStatus('本月預測已由 App 本機公式整理，未呼叫雲端 AI。');
+}
+function localSalaryChanges(){
+  if(!canUse('ai_pro_suite'))return;
+  const x=buildProAiContext();
+  const items=[];
+  x.rows.filter(r=>r.actual!==null&&Math.round(r.diff)!==0).sort((a,b)=>Math.abs(b.diff)-Math.abs(a.diff)).slice(0,5).forEach(r=>{
+    items.push({title:r.label+' 有差額',detail:'App '+money(r.expected)+'・公司 '+money(r.actual),meta:'差額 '+signedMoney(r.diff)});
+  });
+  const history=x.recentHistory.filter(r=>r.actual!==null).sort((a,b)=>a.month.localeCompare(b.month));
+  if(history.length>=2){
+    const prev=history[history.length-2],last=history[history.length-1];
+    const delta=last.actual-prev.actual;
+    if(Math.round(delta)!==0)items.push({title:'最近實發變動',detail:last.month+' 比 '+prev.month+' '+(delta>0?'增加 ':'減少 ')+money(Math.abs(delta)),meta:'只顯示數值變化，不判定是否異常或違規'});
+  }
+  renderSmartOutput('本機變動提醒',items.length?'從你已輸入的資料找到 '+items.length+' 個值得核對的變動。':'目前已輸入的資料沒有明顯數值差異可列出。',items,'本功能只做數值比較，不替公司制度或法律合規下結論。');
+  aiSetStatus('變動提醒已在本機完成，未呼叫雲端 AI。');
+}
 function renderAiGeneric(mode,result){
   const box=$('proAiOutput');if(!box)return;
   result=result||{};
-  let html='';
-  if(mode==='reconcile_explain'){
-    const issues=Array.isArray(result.issues)?result.issues:[];
-    html='<div class="card"><b>AI 對帳摘要</b><p>'+escapeHtml(result.summary||'沒有摘要')+'</p></div>';
-    if(issues.length)html+=issues.map(x=>'<div class="card" style="margin-top:8px"><b>'+escapeHtml(x.label||x.key||'差異')+'</b><p>App '+escapeHtml(money(x.expected))+'・公司 '+escapeHtml(money(x.actual))+'・差額 '+escapeHtml(signedMoney(x.diff))+'</p><small>'+escapeHtml(x.explanation||'')+'</small></div>').join('');
-  }else if(mode==='salary_forecast_explain'){
-    html='<div class="card"><b>AI 本月薪資預測解讀</b><p>'+escapeHtml(result.summary||'')+'</p><small>'+escapeHtml(result.forecast_note||'')+'</small></div>';
-    const factors=Array.isArray(result.factors)?result.factors:[];
-    if(factors.length)html+='<div class="hint" style="margin-top:8px">'+factors.map(x=>'• '+escapeHtml(x)).join('<br>')+'</div>';
-  }else if(mode==='anomaly_scan'){
-    html='<div class="card"><b>AI 異常掃描</b><p>'+escapeHtml(result.summary||'')+'</p></div>';
-    const list=Array.isArray(result.anomalies)?result.anomalies:[];
-    if(list.length)html+=list.map(x=>'<div class="card" style="margin-top:8px"><b>'+escapeHtml(x.title||'提醒')+'</b><p>'+escapeHtml(x.detail||'')+'</p><small>'+escapeHtml(x.evidence||'')+'</small></div>').join('');
-    else html+='<div class="hint" style="margin-top:8px">目前沒有從現有資料找到明顯異常。</div>';
-  }else{
-    html='<div class="card"><b>喵助理</b><p>'+escapeHtml(result.answer||'目前沒有可回答的內容。')+'</p></div>';
-    const refs=Array.isArray(result.referenced_metrics)?result.referenced_metrics:[];
-    if(refs.length)html+='<div class="hint" style="margin-top:8px">'+refs.map(x=>escapeHtml(x.label)+': '+escapeHtml(x.value)).join('<br>')+'</div>';
-  }
+  let html='<div class="card"><b>喵助理</b><p>'+escapeHtml(result.answer||'目前沒有可回答的內容。')+'</p></div>';
+  const refs=Array.isArray(result.referenced_metrics)?result.referenced_metrics:[];
+  if(refs.length)html+='<div class="hint" style="margin-top:8px">'+refs.map(x=>escapeHtml(x.label)+': '+escapeHtml(x.value)).join('<br>')+'</div>';
   const warnings=Array.isArray(result.warnings)?result.warnings:[];
   if(warnings.length)html+='<div class="hint" style="margin-top:8px">注意：'+warnings.map(escapeHtml).join('；')+'</div>';
   box.innerHTML=html;
 }
+
 function renderAiPayslipResult(result){
   const box=$('proAiOutput');if(!box)return;
   const best={};
@@ -4635,37 +4669,17 @@ function importAiPayslipResult(){
   renderSalary();
   if($('itemizedComparePanel'))$('itemizedComparePanel').scrollIntoView({behavior:'smooth',block:'start'});
 }
-async function runAiPayslip(file){
-  if(!canUse('ai_pro_suite'))return;
-  if(!confirm('AI 強化辨識會把這張薪資單圖片傳送至 AI 服務做本次分析。\n\nApp 不會把原始圖片寫入自己的雲端資料庫；辨識結果仍要由你確認後才會導入。\n\n要繼續嗎？'))return;
-  aiSetStatus('AI 正在看薪資單，尚未修改任何資料…');if($('proAiOutput'))$('proAiOutput').innerHTML='';
-  try{
-    const imageDataUrl=await aiImageDataUrl(file);
-    const response=await invokeUserFunction('pro-ai',{mode:'payslip_scan',context:{month:monthKey(current.getFullYear(),current.getMonth())},imageDataUrl});
-    aiSetStatus('AI 辨識完成。請核對每個金額，確認後才會導入。'+aiUsageSuffix(response));renderAiPayslipResult(response.result);
-  }catch(e){aiSetStatus(aiErrorMessage(e))}
-}
-async function runAiInsight(mode){
-  if(!canUse('ai_pro_suite'))return;
-  const context=buildProAiContext();
-  if(mode==='reconcile_explain'&&!context.rows.some(x=>x.actual!==null)&&context.actualNet===null){alert('請先輸入公司實發，或先用本地 OCR／AI 薪資單導入實際金額。');return}
-  aiSetStatus(mode==='reconcile_explain'?'AI 正在整理差異…':mode==='salary_forecast_explain'?'AI 正在解讀 App 的本月預估…':'AI 正在掃描近期薪資與對帳資料…');
-  if($('proAiOutput'))$('proAiOutput').innerHTML='';
-  try{
-    const response=await invokeUserFunction('pro-ai',{mode,context});
-    aiSetStatus('分析完成。AI 只做解釋，金額仍以 App 計算與公司薪資單為準。'+aiUsageSuffix(response));
-    renderAiGeneric(mode,response.result);
-  }catch(e){aiSetStatus(aiErrorMessage(e))}
-}
 async function runAiAssistant(){
   const input=$('aiAssistantQuestion'),question=String(input&&input.value||'').trim();
   if(!question){alert('先輸入你想問喵助理的問題。');return}
+  if(!proAiBackendReady){const ready=await checkProAiReadiness(true);if(!ready){alert('喵助理目前無法連線；本機薪資工具仍可正常使用。');return}}
   aiSetStatus('喵助理正在讀取這個月的班表與薪資摘要…');if($('proAiOutput'))$('proAiOutput').innerHTML='';
   try{
     const response=await invokeUserFunction('pro-ai',{mode:'assistant',context:buildProAiContext(),question});
     aiSetStatus('回答完成。'+aiUsageSuffix(response));renderAiGeneric('assistant',response.result);
   }catch(e){aiSetStatus(aiErrorMessage(e))}
 }
+
 function scheduleVisionBridge(){
   const bridge=window.MeowScheduleVision||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.MeowScheduleVision);
   return bridge&&typeof bridge.recognize==='function'?bridge:null;
@@ -5726,11 +5740,11 @@ if($('salaryTabCalc'))$('salaryTabCalc').onclick=()=>{setSalarySubTab('calc')};
 if($('salaryTabReconcile'))$('salaryTabReconcile').onclick=()=>{setSalarySubTab('reconcile')};
 if($('closePayslipScan'))$('closePayslipScan').onclick=()=>{payslipScanOpen=false;renderSalary()};
 if($('closeProAi'))$('closeProAi').onclick=()=>{proAiOpen=false;renderSalary()};
-if($('aiPayslipPick'))$('aiPayslipPick').onclick=()=>$('aiPayslipFileInput').click();
-if($('aiPayslipFileInput'))$('aiPayslipFileInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)runAiPayslip(file);e.target.value=''};
-if($('aiExplainReconcile'))$('aiExplainReconcile').onclick=()=>runAiInsight('reconcile_explain');
-if($('aiForecastSalary'))$('aiForecastSalary').onclick=()=>runAiInsight('salary_forecast_explain');
-if($('aiScanAnomalies'))$('aiScanAnomalies').onclick=()=>runAiInsight('anomaly_scan');
+if($('aiPayslipPick'))$('aiPayslipPick').onclick=()=>{proAiOpen=false;payslipScanOpen=true;renderSalary();setTimeout(()=>{if($('payslipScanPanel'))$('payslipScanPanel').scrollIntoView({behavior:'smooth',block:'start'})},30)};
+
+if($('aiExplainReconcile'))$('aiExplainReconcile').onclick=localReconcileExplain;
+if($('aiForecastSalary'))$('aiForecastSalary').onclick=localSalaryForecast;
+if($('aiScanAnomalies'))$('aiScanAnomalies').onclick=localSalaryChanges;
 if($('aiAskAssistant'))$('aiAskAssistant').onclick=runAiAssistant;
 if($('aiAssistantQuestion'))$('aiAssistantQuestion').onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();runAiAssistant()}};
 if($('aiScheduleUpload'))$('aiScheduleUpload').onclick=()=>{if(!canUse('ai_pro_suite')){alert('AI 班表辨識是 Pro 功能。請到「設定 → Pro 方案」查看訂閱。');setTab('settings');return}$('aiScheduleFileInput').click()};
