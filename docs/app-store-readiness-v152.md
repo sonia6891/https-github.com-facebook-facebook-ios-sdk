@@ -134,6 +134,22 @@ CI 必須同時通過：
 - App + SDK Privacy Manifests
 
 
+## 2026-09-24 最終自動驗證狀態
+
+- [x] LINE login + UI preflight：PASS
+- [x] Pro AI preflight：PASS
+- [x] StoreKit local purchase smoke：PASS
+- [x] iOS Simulator build：PASS
+- [x] unsigned iPhoneOS Release build：PASS
+- [x] App Store submission bundle verification：PASS
+- [x] GitHub Pages regression：PASS
+- [x] 登出／重新登入工作區資料保留 regression：PASS
+- [x] 待辦完成／取消完成與提醒取消／重排 regression：PASS
+- [x] Support URL 已新增公開支援回報入口
+- [x] App Store metadata v152 已準備並驗證欄位長度限制
+
+目前程式端已進入「可接 App Store Connect / TestFlight 前置」狀態。正式送審仍需完成 Apple Developer、App Store Connect、Supabase Apple provider 與真實公開聯絡資訊等外部設定。
+
 ## 2026-09-24 v152 補強紀錄
 
 - [x] 修正舊 UI gate 因 build tag 從 v151 升到 v152 造成的假紅燈
