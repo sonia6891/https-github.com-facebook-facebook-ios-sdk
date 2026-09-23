@@ -13,6 +13,7 @@ on:
       - supabase/functions/app-store-notifications-v2/index.ts
       - tests/storekit-verification-gate-v130.test.cjs
       - tests/app-store-sandbox-preflight-v131.test.cjs
+      - tests/app-store-notifications-v2-gate-v135.test.cjs
       - .github/workflows/storekit-local-smoke.yml
   pull_request:
     paths:
@@ -25,6 +26,7 @@ on:
       - supabase/functions/app-store-notifications-v2/index.ts
       - tests/storekit-verification-gate-v130.test.cjs
       - tests/app-store-sandbox-preflight-v131.test.cjs
+      - tests/app-store-notifications-v2-gate-v135.test.cjs
       - .github/workflows/storekit-local-smoke.yml
   workflow_dispatch:
 
@@ -59,6 +61,9 @@ jobs:
 
       - name: Verify App Store Sandbox consistency
         run: node --test tests/app-store-sandbox-preflight-v131.test.cjs
+
+      - name: Verify App Store notification state mapping
+        run: node --test tests/app-store-notifications-v2-gate-v135.test.cjs
 
       - name: Install XcodeGen
         run: |
