@@ -13,9 +13,9 @@ Supabase project ref：`ygrlvmyqrhyfkglomsbq`
 選填：
 
 - Key：`OPENAI_MODEL`
-- Value：`gpt-6-luna`
+- Value：`gpt-5.6-luna`
 
-若沒有設定 `OPENAI_MODEL`，後端本身已預設使用 `gpt-6-luna`，所以通常只需要設定 `OPENAI_API_KEY`。
+若沒有設定 `OPENAI_MODEL`，後端本身已預設使用 `gpt-5.6-luna`，所以通常只需要設定 `OPENAI_API_KEY`。
 
 ## 安全規則
 
@@ -41,3 +41,13 @@ Supabase project ref：`ygrlvmyqrhyfkglomsbq`
 7. 喵助理問答
 
 若後端回 `AI_NOT_CONFIGURED`，代表 `OPENAI_API_KEY` 尚未設定或名稱有誤。
+
+
+## 成本保護（選填 Secret）
+
+後端目前已有預設保險絲：
+
+- `AI_GLOBAL_MONTHLY_CALL_LIMIT`：預設 10000
+- `AI_GLOBAL_MONTHLY_TOKEN_LIMIT`：預設 50000000
+
+如果沒有設定，會使用上述安全預設值。App 規模成長後，可依實際 Pro 訂閱收入與 OpenAI 使用成本調整；不要直接移除上限。
