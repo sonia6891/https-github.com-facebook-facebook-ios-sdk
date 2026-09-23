@@ -32,7 +32,7 @@ MOCK=r'''export function createClient(){const t=window.__lineTest;return {
  channel(){return{on(){return this},subscribe(){return this}}},removeChannel:async()=>{}
 }}'''
 
-results=[]
+results=[];errors=[]
 def check(name,value):
  passed=bool(value);results.append({'name':name,'passed':passed});print(('PASS ' if passed else 'FAIL ')+name)
  (OUT/'line-login-v116.json').write_text(json.dumps(results,ensure_ascii=False,indent=2))
@@ -53,7 +53,7 @@ with sync_playwright() as p:
    return r.abort()
   ctx.route('**/*',route);return ctx
  def page_for(ctx):
-  page=ctx.new_page();page.on('dialog',lambda d:d.accept());page.goto(URL);page.wait_for_function('window.__lineApi && window.__authCallback');page.wait_for_timeout(250);return page
+  page=ctx.new_page();page.on('dialog',lambda d:d.accept());page.on('pageerror',lambda e:errors.append(str(e)));page.goto(URL);page.wait_for_function('window.__lineApi');page.wait_for_timeout(1200);print('PAGE_ERRORS',errors);return page
 
  ctx=context();page=page_for(ctx)
  check('未登入時一定顯示登入框',opened(page))
