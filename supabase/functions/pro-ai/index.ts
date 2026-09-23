@@ -203,6 +203,10 @@ function readPublishableKey() {
   }
 }
 
+function readServiceRoleKey() {
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+}
+
 function outputText(payload: any) {
   if (typeof payload?.output_text === "string" && payload.output_text) return payload.output_text;
   for (const item of payload?.output || []) {
@@ -296,7 +300,15 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get("OPENAI_API_KEY") || "";
   if (!apiKey) return json({ ok: false, code: "AI_NOT_CONFIGURED" }, 503);
 
-  const usageClaim = await userClient.rpc("meow_claim_ai_usage", { p_mode: mode });
+  const serviceRoleKey = readServiceRoleKey();
+  if (!serviceRoleKey) return json({ ok: false, code: "SERVER_CONFIG_ERROR" }, 503);
+  const adminClient = createClient(supabaseUrl, serviceRoleKey, {
+    auth: { persistSession: false, autoRefreshToken: false }
+  });
+  const usageClaim = await adminClient.rpc("meow_claim_ai_usage", {
+    p_user_id: user.id,
+    p_mode: mode
+  });
   if (usageClaim.error) return json({ ok: false, code: "AI_USAGE_CHECK_FAILED" }, 503);
   if (!usageClaim.data?.allowed) {
     return json({ ok: false, code: "AI_QUOTA_EXCEEDED", usage: usageClaim.data }, 429);
