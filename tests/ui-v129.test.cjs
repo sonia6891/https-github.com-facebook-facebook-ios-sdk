@@ -145,6 +145,7 @@ const deleteFlow=html.slice(html.indexOf('async function deleteAccountPermanentl
 assert(deleteFlow.includes("'meow-work-before-replace:'+deletingOwner"),'account deletion must remove local pre-replace safety snapshot');
 assert(html.includes('async function signInWithApple()'),'Apple sign-in flow missing');
 assert(html.includes("provider:'apple'"),'Apple OAuth provider missing');
+assert(html.includes('const APPLE_LOGIN_ENABLED=false;'),'Apple login must remain gated until external provider setup is verified');
 assert(html.includes('href="./privacy.html"'),'privacy policy link missing');
 assert(html.includes('href="./terms.html"'),'terms link missing');
 assert(html.includes('href="./support.html"'),'support link missing');
