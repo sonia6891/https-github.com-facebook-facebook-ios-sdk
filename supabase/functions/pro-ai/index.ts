@@ -13,7 +13,8 @@ const MODES = new Set([
   "reconcile_explain",
   "salary_forecast_explain",
   "anomaly_scan",
-  "assistant"
+  "assistant",
+  "status"
 ]);
 
 const PAYROLL_KEYS = [
@@ -294,6 +295,19 @@ Deno.serve(async (req: Request) => {
 
   const mode = String(body?.mode || "");
   if (!MODES.has(mode)) return json({ ok: false, code: "INVALID_MODE" }, 400);
+
+  if (mode === "status") {
+    const apiKeyConfigured = !!Deno.env.get("OPENAI_API_KEY");
+    const configuredModel = Deno.env.get("OPENAI_MODEL") || "gpt-6-luna";
+    return json({
+      ok: true,
+      mode,
+      configured: apiKeyConfigured,
+      model: configuredModel,
+      privacy: { store: false },
+      quota: { image_monthly: 12, text_monthly: 100 }
+    });
+  }
 
   const contextString = JSON.stringify(body?.context ?? {});
   if (contextString.length > 120000) return json({ ok: false, code: "CONTEXT_TOO_LARGE" }, 413);
