@@ -3912,7 +3912,8 @@ function renderPayslipDetected(){
     return '<div class="scan-result-field'+(warn?' has-warning':'')+'"><label>'+escapeHtml(def.label)+'</label><input type="number" min="0" step="1" data-ocr-field="'+def.key+'" value="'+(value===''?'':escapeHtml(value))+'" placeholder="未辨識">'+
       '<div class="ocr-meta">'+(has?'<span class="ocr-confidence'+confClass+'">信心 '+conf+'%</span>':(labelSeen?'<span class="ocr-confidence mid">欄位已讀到</span>':'<span class="ocr-confidence low">未辨識</span>'))+'<span class="ocr-source">'+escapeHtml(source)+(hit&&hit.term?'・'+escapeHtml(hit.term):'')+'</span></div>'+
       (warn?'<span class="ocr-warning">⚠ '+escapeHtml(warn)+'</span>':'')+
-      (alt?'<button type="button" class="ocr-pick-btn" data-ocr-ai="'+def.key+'">採用 OpenAI：NT
+      (alt?'<button type="button" class="ocr-pick-btn" data-ocr-ai="'+def.key+'">採用 OpenAI：NT$'+Math.round(num(alt.value)).toLocaleString('zh-TW')+'</button>':'')+
+      '<button type="button" class="ocr-pick-btn" data-ocr-pick="'+def.key+'">從圖片指定金額</button></div>';
   }).join('');
   qsa('[data-ocr-field]').forEach(input=>input.onchange=e=>{
     const key=e.target.dataset.ocrField,raw=e.target.value;
@@ -3927,14 +3928,6 @@ function renderPayslipDetected(){
     renderPayslipDetected();
   });
   qsa('[data-ocr-ai]').forEach(btn=>btn.onclick=()=>applyOpenAiPayslipAmount(btn.dataset.ocrAi));
-  qsa('[data-ocr-pick]').forEach(btn=>btn.onclick=()=>showPayslipAmountPicker(btn.dataset.ocrPick));
-}
-+Math.round(num(alt.value)).toLocaleString('zh-TW')+'</button>':'')+
-      '<button type="button" class="ocr-pick-btn" data-ocr-pick="'+def.key+'">從圖片指定金額</button></div>';
-  }).join('');
-  qsa('[data-ocr-field]').forEach(input=>input.onchange=e=>{
-    const key=e.target.dataset.ocrField,raw=e.target.value;if(raw==='')delete payslipOcrResult[key];else payslipOcrResult[key]=num(raw);renderPayslipDetected();
-  });
   qsa('[data-ocr-pick]').forEach(btn=>btn.onclick=()=>showPayslipAmountPicker(btn.dataset.ocrPick));
 }
 function hidePayslipAmountPicker(){
