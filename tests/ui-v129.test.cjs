@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v142-itinerary-todos'),'expected v142 itinerary/todo build');
+assert(html.includes('v143-dialog-close-fix'),'expected v143 dialog close fix build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -74,3 +74,13 @@ assert(html.includes("e.kind!=='note'&&e.kind!=='todo'"),'itinerary list must ex
 assert(html.includes('>行程與待辦</button>'),'desktop navigation label missing');
 assert(html.includes('<span>行程待辦</span>'),'mobile navigation label missing');
 console.log('PASS v142 itinerary/todo structure');
+
+
+for(const id of ['eventDialogClose','eventDialogCancel','todoDialogClose','todoDialogCancel']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert(html.includes("function closeEventDialog()"),'event dialog explicit close helper missing');
+assert(html.includes("function closeTodoDialog()"),'todo dialog explicit close helper missing');
+assert(html.includes("eventDialog').close('cancel')"),'event dialog must close without form validation');
+assert(html.includes("todoDialog').close('cancel')"),'todo dialog must close without form validation');
+console.log('PASS v143 dialog close structure');
