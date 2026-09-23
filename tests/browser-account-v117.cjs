@@ -22,6 +22,13 @@ const bridge = `window.__accountV119={
   calendar:()=>setTab('calendar'),
   attendance:()=>setTab('attendance'),
   parseLocalScheduleVision,
+  parsePayrollFixture:(words)=>{
+    const groups=new Map();
+    (words||[]).forEach(w=>{const k=w.lineKey||'line';if(!groups.has(k))groups.set(k,[]);groups.get(k).push(w)});
+    const text=[...groups.values()].map(row=>row.sort((a,b)=>a.bbox.x0-b.bbox.x0).map(w=>w.text).join(' ')).join('\n');
+    const variant={name:'fixture',width:1000,height:1000};
+    return mergePayslipRuns([parseSingleOcrRun({text,words},variant)]);
+  },
   openWelcome:()=>document.getElementById('welcomeDialog').open
 };`;
 const bridgeAt = html.lastIndexOf('})();');
@@ -151,6 +158,31 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     ]));
     check('本機 Vision 班表解析器可把日期對到班別', localScheduleParsed.shifts.length===4 && localScheduleParsed.shifts.map(x=>x.code).join(',')==='A,B,休,N');
     check('本機 Vision 解析保留休假狀態', localScheduleParsed.shifts[2].is_workday===false && localScheduleParsed.shifts[3].name==='夜班');
+    const payrollParsed=await guest.evaluate(()=>window.__accountV119.parsePayrollFixture([
+      {text:'底薪',confidence:98,lineKey:'l1',bbox:{x0:50,y0:100,x1:150,y1:130}},
+      {text:'36,000',confidence:99,lineKey:'l1',bbox:{x0:800,y0:100,x1:900,y1:130}},
+      {text:'輪班津貼',confidence:97,lineKey:'l2',bbox:{x0:50,y0:150,x1:180,y1:180}},
+      {text:'3,000',confidence:99,lineKey:'l2',bbox:{x0:800,y0:150,x1:880,y1:180}},
+      {text:'加班時數',confidence:97,lineKey:'l3',bbox:{x0:50,y0:200,x1:180,y1:230}},
+      {text:'8',confidence:99,lineKey:'l3',bbox:{x0:500,y0:200,x1:520,y1:230}},
+      {text:'1.34',confidence:99,lineKey:'l3',bbox:{x0:600,y0:200,x1:650,y1:230}},
+      {text:'加班費',confidence:98,lineKey:'l4',bbox:{x0:50,y0:250,x1:150,y1:280}},
+      {text:'2,680',confidence:99,lineKey:'l4',bbox:{x0:800,y0:250,x1:880,y1:280}},
+      {text:'勞保費',confidence:98,lineKey:'l5',bbox:{x0:50,y0:300,x1:150,y1:330}},
+      {text:'1,100',confidence:99,lineKey:'l5',bbox:{x0:800,y0:300,x1:880,y1:330}},
+      {text:'健保費',confidence:98,lineKey:'l6',bbox:{x0:50,y0:350,x1:150,y1:380}},
+      {text:'750',confidence:99,lineKey:'l6',bbox:{x0:800,y0:350,x1:860,y1:380}},
+      {text:'福利金',confidence:98,lineKey:'l7',bbox:{x0:50,y0:400,x1:150,y1:430}},
+      {text:'180',confidence:99,lineKey:'l7',bbox:{x0:800,y0:400,x1:860,y1:430}},
+      {text:'勞退自提',confidence:98,lineKey:'l8',bbox:{x0:50,y0:450,x1:170,y1:480}},
+      {text:'2,160',confidence:99,lineKey:'l8',bbox:{x0:800,y0:450,x1:880,y1:480}},
+      {text:'實發金額',confidence:99,lineKey:'l9',bbox:{x0:50,y0:520,x1:180,y1:550}},
+      {text:'37,490',confidence:99,lineKey:'l9',bbox:{x0:800,y0:520,x1:900,y1:550}}
+    ]));
+    check('薪資 OCR 可辨識底薪與輪班津貼', payrollParsed.base===36000 && payrollParsed.shiftAllowance===3000);
+    check('薪資 OCR 不把加班時數或倍率當加班費', payrollParsed.otPay===2680);
+    check('薪資 OCR 可辨識勞保健保福利金勞退', payrollParsed.dedLabor===1100 && payrollParsed.dedHealth===750 && payrollParsed.dedWelfare===180 && payrollParsed.dedPension===2160);
+    check('薪資 OCR 可辨識公司實發金額', payrollParsed.actualNet===37490);
     await guestContext.close();
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
