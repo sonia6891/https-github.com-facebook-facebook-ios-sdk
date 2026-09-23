@@ -94,6 +94,15 @@ jobs:
           grep -q 'MeowAppleAuthPlugin' ios/App/App/SceneDelegate.swift
           grep -q 'AuthenticationServices' ios/App/App/SceneDelegate.swift
           grep -q 'registerPluginInstance(MeowAppleAuthPlugin())' ios/App/App/SceneDelegate.swift
+          grep -q 'MeowScheduleVisionPlugin' ios/App/App/SceneDelegate.swift
+          grep -q 'import Vision' ios/App/App/SceneDelegate.swift
+          grep -q 'VNRecognizeTextRequest' ios/App/App/SceneDelegate.swift
+          grep -q 'registerPluginInstance(MeowScheduleVisionPlugin())' ios/App/App/SceneDelegate.swift
+          grep -q 'MeowScheduleVision' ../index.html
+          if grep -q "invokeUserFunction('pro-ai',{mode:'schedule_scan'" ../index.html; then
+            echo "Schedule import must remain on-device and must not call OpenAI"
+            exit 1
+          fi
           grep -q 'window?.rootViewController = ViewController()' ios/App/App/SceneDelegate.swift
           test -f ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'NSPrivacyCollectedDataTypeOtherFinancialInfo' ios/App/App/PrivacyInfo.xcprivacy
