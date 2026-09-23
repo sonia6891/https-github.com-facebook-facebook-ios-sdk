@@ -1,48 +1,28 @@
-# Pro AI 金鑰設定（正式環境）
+# 雲端 Pro AI 已停用
 
 專案：meow-work  
-Supabase project ref：`ygrlvmyqrhyfkglomsbq`
+最後更新：2026-09-24
 
-## 必要 Secret
+目前正式版《喵的，又要上班了》**不使用 OpenAI API**。
 
-在 Supabase Dashboard → Edge Functions → Secrets 加入：
+## 現行架構
 
-- Key：`OPENAI_API_KEY`
-- Value：OpenAI Platform 專案 API key
+- 智慧匯入班表：iPhone Apple Vision 本機辨識。
+- 薪資單辨識：iPhone Apple Vision 本機辨識；非 iOS 環境使用本機 Tesseract fallback。
+- 逐項薪資對帳：App 本機薪資公式與數值比較。
+- 原「喵助理／Pro AI 工作助理」：已移除。
+- Supabase Edge Function `pro-ai`：保留相容端點，但 version 10 固定回傳 `FEATURE_REMOVED`，不會呼叫 OpenAI。
 
-目前正式版模型固定為 `gpt-5.6-luna`，不讀取 `OPENAI_MODEL` Secret，以避免舊設定覆寫成本模型。
+## Secret
 
-## 安全規則
+正式版不需要：
 
-- 不要把 API key 寫進 `index.html`
-- 不要放進 GitHub repository
-- 不要放進 iOS / Android bundle
-- 不要把 API key 傳到聊天紀錄
-- API key 只存在 Supabase Edge Function Secrets
-- App 只能呼叫 Supabase `pro-ai`，不能直接呼叫 OpenAI
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL`
+- AI 月度成本上限相關 Secret
 
-## 設定後
+若 Supabase 專案中仍留有舊 `OPENAI_API_KEY`，它不會被目前 App 或 `pro-ai` version 10 使用；可在確認沒有其他專案用途後自行移除。
 
-不需要重新部署 Edge Function；Supabase production secrets 設定後會直接提供給函式。
+## 成本
 
-接著測試順序：
-
-1. 登入有效 Pro／試用帳號
-2. AI 本月預測（純文字，最容易驗證）
-3. AI 薪資單辨識
-4. AI 班表辨識
-5. AI 差異解釋
-6. AI 異常提醒
-7. 喵助理問答
-
-若後端回 `AI_NOT_CONFIGURED`，代表 `OPENAI_API_KEY` 尚未設定或名稱有誤。
-
-
-## 成本保護（選填 Secret）
-
-後端目前已有預設保險絲：
-
-- `AI_GLOBAL_MONTHLY_CALL_LIMIT`：預設 10000
-- `AI_GLOBAL_MONTHLY_TOKEN_LIMIT`：預設 50000000
-
-如果沒有設定，會使用上述安全預設值。App 規模成長後，可依實際 Pro 訂閱收入與 OpenAI 使用成本調整；不要直接移除上限。
+目前班表辨識、薪資單辨識與逐項薪資對帳的 OpenAI API 邊際成本均為 0。
