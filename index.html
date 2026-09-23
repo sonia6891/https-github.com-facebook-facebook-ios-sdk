@@ -783,7 +783,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           <div class="pro-card" data-pro-feature="itemized_salary_compare"><div class="pro-head"><b>🧾 逐項薪資對帳</b><span class="pro-badge">🔒 Pro</span></div><p>逐項比較 App 應發與公司實發，找出差額來源。</p><button type="button" data-pro-action="itemized_salary_compare">即將推出</button></div>
           <div class="pro-card" data-pro-feature="salary_history_unlimited"><div class="pro-head"><b>📚 歷史薪資對帳</b><span class="pro-badge">🔒 Pro</span></div><p>保存每月預估、實發與差額紀錄。</p><button type="button" data-pro-action="salary_history_unlimited">即將推出</button></div>
           <div class="pro-card" data-pro-feature="salary_export"><div class="pro-head"><b>📄 PDF／Excel 對帳報告</b><span class="pro-badge">🔒 Pro</span></div><p>匯出薪資與差額報告，方便保存核對。</p><button type="button" data-pro-action="salary_export">即將推出</button></div>
-          <div class="pro-card" data-pro-feature="ai_pro_suite"><div class="pro-head"><b>✨ Pro AI 工作助理</b><span class="pro-badge">🔒 Pro</span></div><p>AI 薪資單強化辨識、差異解釋、薪資預測、異常提醒與問答。</p><button type="button" data-pro-action="ai_pro_suite">Pro 解鎖</button></div>
+          <div class="pro-card" data-pro-feature="ai_pro_suite"><div class="pro-head"><b>✨ Pro AI 工作助理</b><span class="pro-badge">🔒 Pro</span></div><p>AI 薪資單強化辨識、差異解釋、薪資預測、異常提醒與問答；圖片辨識每月 12 次、分析／問答每月 100 次。</p><button type="button" data-pro-action="ai_pro_suite">Pro 解鎖</button></div>
         </div>
         <div class="payslip-scan-panel hidden" id="payslipScanPanel">
           <div class="scan-head">
@@ -2175,7 +2175,7 @@ function eventConflictDetails(event,ignoreId){
   const details=[];
   const dt=new Date(event.date+'T00:00:00');
   if(!Number.isNaN(dt.getTime())&&scheduleForDate(dt)==='work'&&!isLeaveRecorded(event.date)){
-    details.push({type:'work',title:(threeShiftForDate(dt)?.label||state.schedule.shiftName||'A班')+' 上班日',detail:'這一天依目前班表需要上班'});
+    const override=state.scheduleOverrides&&state.scheduleOverrides[event.date];details.push({type:'work',title:(override&&override.shiftName||threeShiftForDate(dt)?.label||state.schedule.shiftName||'A班')+' 上班日',detail:'這一天依目前班表需要上班'});
   }
   itineraryEvents().forEach(other=>{
     if(other.id===ignoreId||other.id===event.id)return;
@@ -3469,9 +3469,19 @@ function aiErrorMessage(error){
     AI_NETWORK_ERROR:'AI 服務目前連線失敗，原本 App 功能不受影響。',
     AI_PROVIDER_ERROR:'AI 服務暫時無法完成分析，請稍後再試。',
     AI_EMPTY_RESPONSE:'AI 沒有回傳可用結果，請換一張較清楚的圖片。',
-    AI_INVALID_RESPONSE:'AI 回傳格式不完整，沒有套用任何資料。'
+    AI_INVALID_RESPONSE:'AI 回傳格式不完整，沒有套用任何資料。',
+    AI_USAGE_CHECK_FAILED:'AI 額度確認暫時失敗，請稍後再試。',
+    AI_QUOTA_EXCEEDED:'本月這類 Pro AI 額度已用完；下個月會自動重置。'
   };
   return map[code]||'AI 暫時無法完成這次分析；原本班表與薪資資料沒有被修改。';
+}
+function aiUsageSuffix(response){
+  const usage=response&&response.usage;
+  if(!usage)return '';
+  const image=Number.isFinite(Number(usage.image_remaining))?Number(usage.image_remaining):null;
+  const text=Number.isFinite(Number(usage.text_remaining))?Number(usage.text_remaining):null;
+  if(image===null||text===null)return '';
+  return '｜本月剩餘：圖片 '+image+' 次、分析／問答 '+text+' 次';
 }
 function aiReadFile(file){
   return new Promise((resolve,reject)=>{
@@ -3595,7 +3605,7 @@ async function runAiPayslip(file){
   try{
     const imageDataUrl=await aiImageDataUrl(file);
     const response=await invokeUserFunction('pro-ai',{mode:'payslip_scan',context:{month:monthKey(current.getFullYear(),current.getMonth())},imageDataUrl});
-    aiSetStatus('AI 辨識完成。請核對每個金額，確認後才會導入。');renderAiPayslipResult(response.result);
+    aiSetStatus('AI 辨識完成。請核對每個金額，確認後才會導入。'+aiUsageSuffix(response));renderAiPayslipResult(response.result);
   }catch(e){aiSetStatus(aiErrorMessage(e))}
 }
 async function runAiInsight(mode){
@@ -3606,7 +3616,7 @@ async function runAiInsight(mode){
   if($('proAiOutput'))$('proAiOutput').innerHTML='';
   try{
     const response=await invokeUserFunction('pro-ai',{mode,context});
-    aiSetStatus('分析完成。AI 只做解釋，金額仍以 App 計算與公司薪資單為準。');
+    aiSetStatus('分析完成。AI 只做解釋，金額仍以 App 計算與公司薪資單為準。'+aiUsageSuffix(response));
     renderAiGeneric(mode,response.result);
   }catch(e){aiSetStatus(aiErrorMessage(e))}
 }
@@ -3616,7 +3626,7 @@ async function runAiAssistant(){
   aiSetStatus('喵助理正在讀取這個月的班表與薪資摘要…');if($('proAiOutput'))$('proAiOutput').innerHTML='';
   try{
     const response=await invokeUserFunction('pro-ai',{mode:'assistant',context:buildProAiContext(),question});
-    aiSetStatus('回答完成。');renderAiGeneric('assistant',response.result);
+    aiSetStatus('回答完成。'+aiUsageSuffix(response));renderAiGeneric('assistant',response.result);
   }catch(e){aiSetStatus(aiErrorMessage(e))}
 }
 function renderScheduleAiState(){
@@ -3648,7 +3658,7 @@ async function runAiSchedule(file){
     const imageDataUrl=await aiImageDataUrl(file);
     const context={displayMonth:monthKey(current.getFullYear(),current.getMonth()),schedulePreset:state.schedule.preset,knownShiftName:state.schedule.shiftName};
     const response=await invokeUserFunction('pro-ai',{mode:'schedule_scan',context,imageDataUrl});
-    if($('aiScheduleStatus'))$('aiScheduleStatus').textContent='辨識完成。請先核對日期與班別，再決定是否套用。';
+    if($('aiScheduleStatus'))$('aiScheduleStatus').textContent='辨識完成。請先核對日期與班別，再決定是否套用。'+aiUsageSuffix(response);
     renderAiScheduleResult(response.result);
   }catch(e){if($('aiScheduleStatus'))$('aiScheduleStatus').textContent=aiErrorMessage(e)}
 }
