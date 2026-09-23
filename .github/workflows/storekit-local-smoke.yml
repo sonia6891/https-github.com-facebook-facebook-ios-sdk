@@ -66,5 +66,6 @@ jobs:
             -scheme MeowStoreKitSmokeHost \
             -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.2' \
             -derivedDataPath "${RUNNER_TEMP}/meow-storekit-derived" \
+            -parallel-testing-enabled NO \
             CODE_SIGNING_ALLOWED=NO \
             | tee "${RUNNER_TEMP}/meow-storekit-xcodebuild.log"
