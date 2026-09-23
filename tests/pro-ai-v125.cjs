@@ -4,7 +4,7 @@ const assert = require('assert');
 const html = fs.readFileSync('index.html', 'utf8');
 const edge = fs.readFileSync('supabase/functions/pro-ai/index.ts', 'utf8');
 
-assert(html.includes('v125-pro-ai-v1'));
+assert(/<meta name="meow-ui-build" content="v12[5-9][^"]*">/.test(html), 'expected current v125+ app build');
 assert(html.includes("ai_pro_suite"));
 assert(html.includes('id="aiScheduleCard"'));
 assert(html.includes('id="proAiPanel"'));
@@ -25,4 +25,4 @@ assert(edge.includes('SUPABASE_SERVICE_ROLE_KEY'));
 assert(edge.includes('p_user_id: user.id'));
 assert(!edge.includes('userClient.rpc("meow_claim_ai_usage"'));
 assert(edge.includes('adminClient.rpc("meow_claim_ai_usage"'));
-console.log('pro-ai-v125 static checks passed');
+console.log('Pro AI static checks passed on current app build');
