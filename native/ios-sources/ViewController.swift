@@ -46,6 +46,12 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
             return
         }
 
+        guard let accountTokenString = call.getString("appAccountToken"),
+              let accountToken = UUID(uuidString: accountTokenString) else {
+            call.reject("Missing or invalid appAccountToken")
+            return
+        }
+
         Task {
             do {
                 let products = try await Product.products(for: [productID])
@@ -54,7 +60,7 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
                     return
                 }
 
-                let result = try await product.purchase()
+                let result = try await product.purchase(options: [.appAccountToken(accountToken)])
                 switch result {
                 case .success(let verification):
                     guard case .verified(let transaction) = verification else {
@@ -63,11 +69,13 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
                     }
 
                     let response = transactionPayload(transaction)
+                    let signedTransaction = verification.jwsRepresentation
                     await transaction.finish()
                     call.resolve([
                         "cancelled": false,
                         "platform": "ios",
-                        "transaction": response
+                        "transaction": response,
+                        "signedTransaction": signedTransaction
                     ])
 
                 case .pending:
@@ -137,7 +145,9 @@ public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
                   productIDs.contains(transaction.productID) else { continue }
-            values.append(transactionPayload(transaction))
+            var payload = transactionPayload(transaction)
+            payload["signedTransaction"] = result.jwsRepresentation
+            values.append(payload)
         }
         return values
     }
