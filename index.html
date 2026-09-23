@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v146-attendance-add-chooser">
+<meta name="meow-ui-build" content="v147-todo-complete-visible">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -984,6 +984,17 @@ html.dark .settings-pro-v129{
   color:var(--v129-accent-strong,#8f5a35);
 }
 .attendance-add-choice-icon .icon{font-size:21px}
+
+/* ===== v147 completed todos remain visible ===== */
+.todo-card-v142.completed{
+  opacity:.78;
+  order:2;
+}
+.todo-card-v142:not(.completed){order:1}
+.todo-card-v142.completed .todo-main-v142 b{
+  text-decoration:line-through;
+  text-decoration-thickness:1.5px;
+}
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v115-180.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./app-icon-v115-180.png">
@@ -2883,7 +2894,7 @@ function todoDateLabel(date){
   const meta=itineraryDateMeta(date);
   return meta.label+'・'+meta.sub;
 }
-let itineraryShowAll=false,pendingItinerarySave=null,attendanceMode='events',todoShowCompleted=false,editingTodoId='';
+let itineraryShowAll=false,pendingItinerarySave=null,attendanceMode='events',todoShowCompleted=true,editingTodoId='';
 function renderAttendance(){
   const eventsActive=attendanceMode==='events';
   $('attendanceTabEvents').classList.toggle('active',eventsActive);
