@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v144-dialog-close-corrected'),'expected v144 dialog close fix build');
+assert(html.includes('v145-schedule-date-fit'),'expected v145 schedule date fit build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -86,3 +86,9 @@ assert(html.includes("todoDialog').close('cancel')"),'todo dialog must close wit
 console.log('PASS v143 dialog close structure');
 
 assert(html.includes("scheduleAddDialog').close('cancel')"),'schedule add dialog explicit close helper missing');
+
+
+assert(html.includes('#scheduleAddDate,\n#scheduleAddShift{'),'schedule add controls fit rule missing');
+assert(html.includes('min-inline-size:0'),'schedule date must be allowed to shrink on mobile');
+assert(html.includes('#scheduleAddDialog .dialog-body{\n  overflow-x:hidden;'),'schedule add dialog must block horizontal overflow');
+console.log('PASS v145 schedule date fit structure');
