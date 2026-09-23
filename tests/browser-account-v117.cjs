@@ -20,6 +20,7 @@ const bridge = `window.__accountV119={
   owner:()=>localOwner,
   settings:()=>setTab('settings'),
   calendar:()=>setTab('calendar'),
+  attendance:()=>setTab('attendance'),
   openWelcome:()=>document.getElementById('welcomeDialog').open
 };`;
 const bridgeAt = html.lastIndexOf('})();');
@@ -253,6 +254,26 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         });
         check('AI 圖卡實際裁切已越過原圖左側白邊', aiCrop && aiCrop.sourceStart >= aiCrop.blank + 1);
         await page.locator('#aiScheduleCard').screenshot({ path: path.join(out, 'schedule-ai-card-v141-390.png') });
+
+        await page.evaluate(() => window.__accountV119.attendance());
+        await page.waitForTimeout(120);
+        check('第三頁標題改為行程與待辦事項', (await page.locator('#page-attendance .itinerary-title').innerText()).includes('行程與待辦事項'));
+        await page.locator('#attendanceTabTodos').click();
+        check('待辦事項分頁可切換', await page.locator('#attendanceTabTodos').getAttribute('aria-selected') === 'true');
+        await page.locator('#addItinerary').click();
+        await page.locator('#todoTitle').fill('測試繳費');
+        await page.locator('#todoDate').fill('2026-10-01');
+        await page.locator('#todoNote').fill('瀏覽器自動測試');
+        await page.locator('#saveTodo').click();
+        check('可新增待辦事項', await page.locator('[data-todo-edit]').count() === 1 && (await page.locator('[data-todo-edit]').innerText()).includes('測試繳費'));
+        check('未完成待辦數量會更新', await page.locator('#todoOpenCount').innerText() === '1');
+        await page.locator('[data-todo-toggle]').click();
+        check('待辦可勾選完成', await page.locator('.todo-card-v142.completed').count() === 1 && await page.locator('#todoOpenCount').innerText() === '0');
+        await page.locator('#itineraryAllBtn').click();
+        check('完成待辦仍可顯示', await page.locator('.todo-card-v142.completed').count() === 1);
+        await page.locator('[data-todo-toggle]').click();
+        check('完成待辦可以取消完成', await page.locator('.todo-card-v142.completed').count() === 0 && await page.locator('#todoOpenCount').innerText() === '1');
+        await page.screenshot({ path: path.join(out, 'attendance-todos-v142-390.png'), fullPage: true });
       }
       await context.close();
     }
