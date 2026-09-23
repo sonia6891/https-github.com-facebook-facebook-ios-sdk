@@ -37,6 +37,10 @@ assert(html.includes('每月 20 次'), 'assistant quota copy must say 20 per mon
 assert(edge.includes('meow_account_access'));
 assert(edge.includes('OPENAI_API_KEY'));
 assert(edge.includes('gpt-5.6-luna'));
+assert(!edge.includes('Deno.env.get("OPENAI_MODEL")'), 'production model must be pinned');
+assert(edge.includes('AI_PROVIDER_BUSY'));
+assert(edge.includes('retry-after'));
+assert(edge.includes('Math.random() * 250'));
 assert(edge.includes('store: false'));
 assert(edge.includes('safety_identifier: safetyId'));
 assert(edge.includes('reasoning: { effort: reasoningEffort(mode) }'));
