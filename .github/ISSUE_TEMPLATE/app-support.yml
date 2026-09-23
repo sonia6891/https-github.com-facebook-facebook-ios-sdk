@@ -1,0 +1,50 @@
+name: App 支援回報
+description: 回報「喵的，又要上班了」使用問題或異常
+title: "[App 支援] "
+labels:
+  - support
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感謝回報。請勿上傳薪資單、身分證件、健康／病假資料、帳號憑證或其他敏感個資。
+  - type: dropdown
+    id: area
+    attributes:
+      label: 問題類型
+      options:
+        - 登入／帳號
+        - 排班／月曆
+        - 行程／待辦／通知
+        - 薪資試算
+        - Pro／訂閱／恢復購買
+        - 雲端同步／備份
+        - 顯示／介面
+        - 其他
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: App 版本
+      placeholder: 例如 1.0 (1)
+  - type: input
+    id: device
+    attributes:
+      label: iPhone 型號與 iOS 版本
+      placeholder: 例如 iPhone 13 / iOS 26
+  - type: textarea
+    id: steps
+    attributes:
+      label: 發生步驟
+      description: 請描述你做了什麼、原本預期什麼、實際發生什麼。
+      placeholder: |
+        1. 打開 App
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: 其他補充
+      description: 可附不含個資的截圖。請先遮蔽姓名、薪資、健康資訊、帳號識別資料。
