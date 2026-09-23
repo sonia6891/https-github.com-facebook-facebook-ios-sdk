@@ -126,7 +126,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('舊版取回只下載 JSON 而不套用遠端狀態', html.includes("'meow-legacy-backup.json'") && !/exportLegacyCloud[\s\S]*?applyRemoteRow\(/.test(html.slice(html.indexOf('async function exportLegacyCloud'), html.indexOf('function renderSyncStatus'))));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV119.openWelcome()));
-    check('登入頁只保留兩個登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine').count() === 2);
+    check('登入頁提供 Google、LINE、Apple 三個同等登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine, #welcomeApple').count() === 3);
     check('沒有訪客登入入口', await guest.locator('#welcomeGuest').count() === 0);
     check('沒有公開 Email 或 OTP 入口', await guest.locator('#welcomeEmail, #emailLoginInput, #emailOtpInput, #sendEmailOtp, #verifyEmailOtp').count() === 0);
     await guest.locator('#welcomeGoogle').click();
@@ -134,6 +134,9 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     await guest.locator('#welcomeLine').click();
     check('LINE 按鈕使用 custom:line', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line'));
     check('LINE 要求 openid profile', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.scopes === 'openid profile'));
+    await guest.locator('#welcomeApple').click();
+    check('Apple 按鈕使用 apple provider', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'apple'));
+    check('Apple 登入沿用同一個安全回呼網址', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.redirectTo === location.origin + location.pathname));
     await guestContext.close();
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
