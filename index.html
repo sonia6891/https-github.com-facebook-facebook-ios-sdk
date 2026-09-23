@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v142-itinerary-todos">
+<meta name="meow-ui-build" content="v143-dialog-close-fix">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1570,7 +1570,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   <form method="dialog" id="scheduleAddForm">
     <div class="dialog-head">
       <div><b>新增日期班表</b><div class="hint">只修改你選的這一天，不會改排班週期。</div></div>
-      <button class="dialog-close" value="cancel" aria-label="關閉">×</button>
+      <button type="button" class="dialog-close" id="eventDialogClose" aria-label="關閉">×</button>
     </div>
     <div class="dialog-body">
       <div class="field"><label for="scheduleAddDate">日期</label><input id="scheduleAddDate" type="date" required></div>
@@ -1616,7 +1616,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
     </div>
     <div class="itinerary-sheet-foot">
       <button type="button" class="itinerary-delete hidden" id="deleteEvent">刪除</button>
-      <button class="btn itinerary-cancel" value="cancel">取消</button>
+      <button type="button" class="btn itinerary-cancel" id="eventDialogCancel">取消</button>
       <button type="button" class="btn itinerary-save" id="saveEvent">儲存</button>
     </div>
   </form>
@@ -1627,7 +1627,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
     <div class="itinerary-sheet-handle" aria-hidden="true"></div>
     <div class="itinerary-sheet-head">
       <b id="todoDialogTitle">新增待辦事項</b>
-      <button class="dialog-close" value="cancel" aria-label="關閉">×</button>
+      <button type="button" class="dialog-close" id="todoDialogClose" aria-label="關閉">×</button>
     </div>
     <div class="itinerary-sheet-body">
       <div class="itinerary-form-row itinerary-note-row">
@@ -1648,7 +1648,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
     </div>
     <div class="itinerary-sheet-foot">
       <button type="button" class="itinerary-delete hidden" id="deleteTodo">刪除</button>
-      <button class="btn itinerary-cancel" value="cancel">取消</button>
+      <button type="button" class="btn itinerary-cancel" id="todoDialogCancel">取消</button>
       <button type="button" class="btn itinerary-save" id="saveTodo">儲存</button>
     </div>
   </form>
@@ -4731,6 +4731,19 @@ $('itineraryAllBtn').onclick=()=>{if(attendanceMode==='events')itineraryShowAll=
 $('attendanceTabEvents').onclick=()=>{attendanceMode='events';renderAttendance()};
 $('attendanceTabTodos').onclick=()=>{attendanceMode='todos';renderAttendance()};
 $('saveEvent').onclick=saveItineraryEvent;
+function closeEventDialog(){
+  if($('eventDialog').open)$('eventDialog').close('cancel');
+  editingEventId='';
+  pendingItinerarySave=null;
+}
+if($('eventDialogClose'))$('eventDialogClose').onclick=closeEventDialog;
+if($('eventDialogCancel'))$('eventDialogCancel').onclick=closeEventDialog;
+function closeTodoDialog(){
+  if($('todoDialog').open)$('todoDialog').close('cancel');
+  editingTodoId='';
+}
+if($('todoDialogClose'))$('todoDialogClose').onclick=closeTodoDialog;
+if($('todoDialogCancel'))$('todoDialogCancel').onclick=closeTodoDialog;
 $('deleteEvent').onclick=()=>{
   if(!editingEventId)return;
   delete state.personalEvents[editingEventId];
