@@ -64,7 +64,7 @@ final class StoreKitSmokeTests: XCTestCase {
         XCTAssertEqual(transaction.productID, Self.monthlyProductID)
         XCTAssertEqual(transaction.appAccountToken, accountToken)
 
-        let unfinishedValue = await unfinishedTransaction(id: transaction.id)
+        let unfinishedValue = await waitForUnfinishedTransaction(id: transaction.id)
         let unfinished = try XCTUnwrap(unfinishedValue)
         XCTAssertEqual(unfinished.transaction.appAccountToken, accountToken)
         XCTAssertFalse(unfinished.jwsRepresentation.isEmpty)
@@ -85,7 +85,7 @@ final class StoreKitSmokeTests: XCTestCase {
         XCTAssertEqual(transaction.productID, Self.yearlyProductID)
         XCTAssertEqual(transaction.appAccountToken, accountToken)
 
-        let unfinishedValue = await unfinishedTransaction(id: transaction.id)
+        let unfinishedValue = await waitForUnfinishedTransaction(id: transaction.id)
         let unfinished = try XCTUnwrap(unfinishedValue)
         XCTAssertFalse(unfinished.jwsRepresentation.isEmpty)
 
@@ -102,7 +102,7 @@ final class StoreKitSmokeTests: XCTestCase {
             options: [.appAccountToken(accountToken)]
         )
 
-        let beforeRestartValue = await unfinishedTransaction(id: transaction.id)
+        let beforeRestartValue = await waitForUnfinishedTransaction(id: transaction.id)
         let beforeRestart = try XCTUnwrap(beforeRestartValue)
         XCTAssertEqual(beforeRestart.transaction.appAccountToken, accountToken)
 
@@ -111,7 +111,7 @@ final class StoreKitSmokeTests: XCTestCase {
         session = try SKTestSession(contentsOf: configurationURL)
         session.disableDialogs = true
 
-        let afterRestartValue = await unfinishedTransaction(id: transaction.id)
+        let afterRestartValue = await waitForUnfinishedTransaction(id: transaction.id)
         let afterRestart = try XCTUnwrap(afterRestartValue)
         XCTAssertEqual(afterRestart.transaction.productID, Self.monthlyProductID)
         XCTAssertEqual(afterRestart.transaction.appAccountToken, accountToken)
@@ -166,6 +166,21 @@ final class StoreKitSmokeTests: XCTestCase {
         XCTAssertFalse(afterExpire.autoRenewingEnabled)
         let expirationDate = try XCTUnwrap(afterExpire.expirationDate)
         XCTAssertLessThanOrEqual(expirationDate, Date().addingTimeInterval(2))
+    }
+
+    private func waitForUnfinishedTransaction(
+        id: UInt64,
+        attempts: Int = 20
+    ) async -> (transaction: StoreKit.Transaction, jwsRepresentation: String)? {
+        for attempt in 0..<attempts {
+            if let value = await unfinishedTransaction(id: id) {
+                return value
+            }
+            if attempt < attempts - 1 {
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+        }
+        return nil
     }
 
     private func unfinishedTransaction(
