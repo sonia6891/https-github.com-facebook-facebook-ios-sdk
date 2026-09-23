@@ -20,16 +20,30 @@
 
 ## CI Gate
 
-`.github/workflows/storekit-local-smoke.yml` 會在 macOS runner 執行：
+`.github/workflows/storekit-local-smoke.yml` 會在 macOS runner 串行執行：
 
 1. Node 驗證 gate：後端驗證成功前不得 finish；驗證／網路失敗時不得 finish。
-2. StoreKitTest：兩個商品均可從本機設定載入。
-3. StoreKitTest：兩個商品均暴露 3 天 Free Trial。
-4. StoreKitTest：購買時 `appAccountToken` 會寫入交易。
-5. StoreKitTest：新交易在 explicit finish 前會出現在 `Transaction.unfinished`。
-6. StoreKitTest：explicit finish 後交易會離開 unfinished queue。
+2. Sandbox consistency gate：`com.lumilab.meowwork`、兩個 Product ID、NT$99／NT$790、P3D Free Trial 與兩支 App Store 後端白名單必須一致。
+3. StoreKitTest：兩個商品均可從本機設定載入，且均暴露 3 天 Free Trial。
+4. StoreKitTest：月繳／年繳購買時 `appAccountToken` 都會寫入交易。
+5. StoreKitTest：新交易在 explicit finish 前會出現在 `Transaction.unfinished`，finish 後會離開 unfinished queue。
+6. StoreKitTest：未 finish 的交易在新的 `SKTestSession` 中仍可重新取得，模擬 App 中斷後重接。
+7. StoreKitTest：已完成交易的 current entitlement 在新的 `SKTestSession` 中仍存在。
+8. StoreKitTest：關閉 auto-renew 後 entitlement 在到期前仍有效；模擬到期後不再是 current entitlement。
+9. Node wiring gate：Restore Purchases 必須保留 `AppStore.sync()` 與 `Transaction.currentEntitlements`。
+10. Workflow 對 StoreKit、Capacitor Bundle ID、Apple Edge Functions、兩組 gate 測試的變更都會自動重跑，且新提交會取消已被取代的同 workflow run。
 
 本機 StoreKit Testing 不需要先建立 App Store Connect 商品，也不會產生真實扣款。
+
+### 刻意留到 Sandbox／真機驗收的項目
+
+下列行為牽涉 Apple 帳號、商店 UI 或真正的 App Store Sandbox 伺服器，因此不把它們偽裝成本機 CI 通過：
+
+- `AppStore.sync()` 的實際 Restore Purchases UI／Apple 帳號流程。
+- 使用者在購買 sheet 取消購買。
+- 商店端購買失敗、付款失敗、Grace Period／Billing Retry。
+- App Store Server Notifications V2 的真實 Sandbox POST 與續訂事件。
+- 跨裝置／重裝後以同一商店帳號恢復 Pro。
 
 ## 進入 Apple Sandbox 前仍需人工完成
 
