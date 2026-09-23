@@ -7,16 +7,24 @@ on:
       - index.html
       - native/ios-sources/MeowWork.storekit
       - native/ios-sources/ViewController.swift
+      - native/capacitor.config.json
       - native/storekit-ios-smoke/**
+      - supabase/functions/verify-app-store-transaction/index.ts
+      - supabase/functions/app-store-notifications-v2/index.ts
       - tests/storekit-verification-gate-v130.test.cjs
+      - tests/app-store-sandbox-preflight-v131.test.cjs
       - .github/workflows/storekit-local-smoke.yml
   pull_request:
     paths:
       - index.html
       - native/ios-sources/MeowWork.storekit
       - native/ios-sources/ViewController.swift
+      - native/capacitor.config.json
       - native/storekit-ios-smoke/**
+      - supabase/functions/verify-app-store-transaction/index.ts
+      - supabase/functions/app-store-notifications-v2/index.ts
       - tests/storekit-verification-gate-v130.test.cjs
+      - tests/app-store-sandbox-preflight-v131.test.cjs
       - .github/workflows/storekit-local-smoke.yml
   workflow_dispatch:
 
