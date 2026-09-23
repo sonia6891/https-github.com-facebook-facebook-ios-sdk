@@ -25,7 +25,7 @@ const bridge = `window.__accountV119={
   parsePayrollFixture:(words)=>{
     const groups=new Map();
     (words||[]).forEach(w=>{const k=w.lineKey||'line';if(!groups.has(k))groups.set(k,[]);groups.get(k).push(w)});
-    const text=[...groups.values()].map(row=>row.sort((a,b)=>a.bbox.x0-b.bbox.x0).map(w=>w.text).join(' ')).join('\\\\n');
+    const text=[...groups.values()].map(row=>row.sort((a,b)=>a.bbox.x0-b.bbox.x0).map(w=>w.text).join(' ')).join('\\n');
     const variant={name:'fixture',width:1000,height:1000};
     return mergePayslipRuns([parseSingleOcrRun({text,words},variant)]);
   },
