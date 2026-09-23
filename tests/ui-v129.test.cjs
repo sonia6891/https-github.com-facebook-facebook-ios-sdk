@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v141-ai-card-source-crop'),'expected v141 AI card source crop build');
+assert(html.includes('v142-itinerary-todos'),'expected v142 itinerary/todo build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -59,3 +59,18 @@ console.log('PASS v138 schedule actions structure');
 assert(html.includes('.schedule-ai-v129-banner img{position:absolute;left:-6%;'),'AI mascot image must crop past left edge');
 assert(html.includes('.schedule-ai-v129-banner img{left:-8%;bottom:-6%;width:52%;height:112%;object-position:80% center}'),'mobile AI mascot crop must stay flush to left edge');
 console.log('PASS v141 AI mascot source crop');
+
+
+for(const id of [
+  'attendanceTabEvents','attendanceTabTodos','todoOpenCount',
+  'todoDialog','todoTitle','todoDate','todoNote','saveTodo','deleteTodo'
+]){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert(html.includes('行程與待辦事項'),'third page title must include itinerary and todos');
+assert(html.includes("kind:'todo'"),'todo data must be stored in personalEvents');
+assert(html.includes('function toggleTodoDone(id)'),'todo completion toggle missing');
+assert(html.includes("e.kind!=='note'&&e.kind!=='todo'"),'itinerary list must exclude todos');
+assert(html.includes('>行程與待辦</button>'),'desktop navigation label missing');
+assert(html.includes('<span>行程待辦</span>'),'mobile navigation label missing');
+console.log('PASS v142 itinerary/todo structure');
