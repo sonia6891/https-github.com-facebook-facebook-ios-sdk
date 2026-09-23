@@ -8,7 +8,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: pages-production-v127
+  group: pages-production-v128
   cancel-in-progress: true
 jobs:
   deploy:
@@ -89,7 +89,7 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v127-storekit-resilient' in html
+          assert 'v128-storekit-localized' in html
           assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           assert "const LINE_PROVIDER_ID='custom:line'" in html
           assert "scopes:'openid profile'" in html
@@ -107,6 +107,10 @@ jobs:
           assert "getUnfinishedTransactions" in html
           assert "transactionUpdated" in html
           assert "syncUnfinishedStoreTransactions" in html
+          assert "loadNativeStoreProducts" in html
+          assert "storeDisplayPrice" in html
+          assert "eligibleForIntroOffer" in html
+          assert 'id="proTrialOfferHint"' in html
           assert 'class="auth-booting"' in html
           assert "window.open('about:blank','meow-auth-window')" not in html
           assert "client.auth.setSession({" not in html
@@ -158,6 +162,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v127-storekit-resilient-verification
+          name: meow-v128-storekit-localized-verification
           path: test-results/
           retention-days: 3
