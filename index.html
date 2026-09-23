@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v149-todo-free-time">
+<meta name="meow-ui-build" content="v150-app-store-readiness">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1012,6 +1012,14 @@ html.dark .settings-pro-v129{
   font-size:10px;
   margin-top:4px;
 }
+
+/* ===== App Store account deletion ===== */
+.account-delete-zone{
+  margin-top:14px;
+  padding-top:14px;
+  border-top:1px solid var(--line);
+}
+.account-delete-zone .btn{width:100%}
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v115-180.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./app-icon-v115-180.png">
@@ -1515,6 +1523,10 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
               <button class="btn danger" id="removeAvatar">移除頭像</button>
             </div>
             <div class="hint" id="accountStatus">登入不會自動開始試用或收費。</div>
+            <div class="account-delete-zone hidden" id="accountDeleteZone">
+              <button type="button" class="btn danger" id="deleteAccount">永久刪除帳號</button>
+              <div class="hint">會永久刪除帳號與雲端工作資料；App Store 訂閱需另外到 Apple 的「訂閱」管理。</div>
+            </div>
           </div>
         </details>
       </div>
@@ -2412,6 +2424,41 @@ async function signOutAccount(){
     setAccountStatus('登出未完成，請稍後重試。本機資料未清除。');
     alert('登出未完成，請稍後重試。本機資料未清除。');
   }finally{button.disabled=false}
+}
+async function deleteAccountPermanently(){
+  if(!authUser)return;
+  const button=$('deleteAccount');if(button&&button.disabled)return;
+  const first=confirm('永久刪除帳號？\n\n這會刪除帳號、Pro 雲端工作資料、AI 使用紀錄與個人設定，且無法復原。\n\n若你有 App Store 自動續訂，刪除帳號不會自動取消 Apple 訂閱，請另外到「管理／取消訂閱」處理。');
+  if(!first)return;
+  const typed=prompt('為避免誤刪，請輸入「刪除」後繼續。');
+  if(typed!=='刪除'){if(typed!==null)alert('未輸入「刪除」，帳號沒有變更。');return}
+  if(button)button.disabled=true;
+  const deletingOwner=localOwner;
+  try{
+    await invokeUserFunction('delete-account',{});
+    cloudConsent=false;accessEpoch++;await stopAccountRealtime();cloudReady=false;pendingCloud=null;
+    try{
+      [
+        'meow-work-cloud-consent:'+deletingOwner,
+        workspaceKey(deletingOwner),
+        SAVE_KEY,AVATAR_KEY,SCHEDULE_KEY,
+        'meow-work-sync-meta:'+deletingOwner
+      ].forEach(key=>localStorage.removeItem(key));
+    }catch(e){}
+    await clearIndexedBackup();
+    state=defaultState();lastSavedAt=null;localDirty=false;localEditVersion++;
+    try{
+      const client=await getAuthClient();
+      await client.auth.signOut({scope:'local'});
+    }catch(e){}
+    await handleSignedOut();
+    alert('帳號與雲端資料已永久刪除。');
+  }catch(e){
+    setAccountStatus('帳號刪除失敗，資料沒有被刪除。');
+    alert('帳號刪除失敗，資料沒有被刪除。請稍後再試。');
+  }finally{
+    if(button)button.disabled=false;
+  }
 }
 function saveSchedulePrefs(){
   try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));}catch(e){}
@@ -4904,7 +4951,7 @@ function openProSettings(){
   accountProOpen=true;
   renderSettings();
 }
-function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){const mode=themeModePreference;$('themeLight').classList.toggle('active',mode==='light');$('themeDark').classList.toggle('active',mode==='dark');if($('themeSystem'))$('themeSystem').classList.toggle('active',mode==='system');$('themeLight').lastElementChild.textContent=mode==='light'?'●':'○';$('themeDark').lastElementChild.textContent=mode==='dark'?'●':'○';if($('themeSystem'))$('themeSystem').lastElementChild.textContent=mode==='system'?'●':'○';}$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'帳號已登入':'尚未登入';if($('accountLoginMethod'))$('accountLoginMethod').textContent=accountProviderText(authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);if($('accountLoggedOut'))$('accountLoggedOut').classList.toggle('hidden',!!authUser);if($('accountLogout'))$('accountLogout').classList.toggle('hidden',!authUser);
+function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){const mode=themeModePreference;$('themeLight').classList.toggle('active',mode==='light');$('themeDark').classList.toggle('active',mode==='dark');if($('themeSystem'))$('themeSystem').classList.toggle('active',mode==='system');$('themeLight').lastElementChild.textContent=mode==='light'?'●':'○';$('themeDark').lastElementChild.textContent=mode==='dark'?'●':'○';if($('themeSystem'))$('themeSystem').lastElementChild.textContent=mode==='system'?'●':'○';}$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'帳號已登入':'尚未登入';if($('accountLoginMethod'))$('accountLoginMethod').textContent=accountProviderText(authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);if($('accountLoggedOut'))$('accountLoggedOut').classList.toggle('hidden',!!authUser);if($('accountLogout'))$('accountLogout').classList.toggle('hidden',!authUser);if($('accountDeleteZone'))$('accountDeleteZone').classList.toggle('hidden',!authUser);
 if($('proPlanSettings'))$('proPlanSettings').classList.toggle('hidden',!accountProOpen||!authUser);
 if($('accountUpgrade')){$('accountUpgrade').setAttribute('aria-expanded',String(accountProOpen));$('accountUpgrade').setAttribute('aria-label',accountProOpen?'收起 Pro 方案':'展開 Pro 方案');if($('accountPlanChevron'))$('accountPlanChevron').textContent=accountProOpen?'⌃':'⌄'}
 if($('dataSyncBody'))$('dataSyncBody').classList.toggle('hidden',!dataSyncOpen);
@@ -5523,6 +5570,7 @@ if($('cloudBackupNow'))$('cloudBackupNow').onclick=()=>saveAccountState(true);
 if($('cloudRestoreNow'))$('cloudRestoreNow').onclick=()=>restoreFromCloud(true);
 if($('accountUpgrade'))$('accountUpgrade').onclick=()=>{const y=window.scrollY;accountProOpen=!accountProOpen;renderSettings();window.scrollTo({top:y,behavior:'auto'})};
 $('accountLogout').onclick=signOutAccount;
+if($('deleteAccount'))$('deleteAccount').onclick=deleteAccountPermanently;
 initWelcome();
 initAuth();
 loadBillingConfig();
