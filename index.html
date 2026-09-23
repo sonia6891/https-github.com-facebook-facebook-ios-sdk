@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v147-todo-complete-visible">
+<meta name="meow-ui-build" content="v148-local-reminders">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -995,6 +995,23 @@ html.dark .settings-pro-v129{
   text-decoration:line-through;
   text-decoration-thickness:1.5px;
 }
+
+/* ===== v148 itinerary/todo local reminder controls ===== */
+.itinerary-form-row select{
+  min-width:0;
+  width:100%;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:var(--ink);
+  font-size:16px;
+  padding:2px;
+}
+.todo-reminder-label-v148,.event-reminder-label-v148{
+  color:var(--muted);
+  font-size:10px;
+  margin-top:4px;
+}
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v115-180.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./app-icon-v115-180.png">
@@ -1728,6 +1745,16 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           <input id="eventEnd" type="time" required aria-label="結束時間">
         </div>
       </div>
+      <div class="itinerary-form-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
+        <label for="eventReminder">提醒</label>
+        <select id="eventReminder">
+          <option value="none">不提醒</option>
+          <option value="3d">前 3 天</option>
+          <option value="1d">前 1 天</option>
+          <option value="1h">前 1 小時</option>
+        </select>
+      </div>
       <div class="itinerary-form-row itinerary-note-row">
         <span class="itinerary-form-icon"><svg class="icon"><use href="#i-doc"/></svg></span>
         <label for="eventNote">備註</label>
@@ -1759,6 +1786,14 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         <span class="itinerary-form-icon"><svg class="icon"><use href="#i-calendar"/></svg></span>
         <label for="todoDate">日期</label>
         <input id="todoDate" type="date">
+      </div>
+      <div class="itinerary-form-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
+        <label for="todoReminder">提醒</label>
+        <select id="todoReminder">
+          <option value="none">不提醒</option>
+          <option value="1d">前 1 天・上午 9:00</option>
+        </select>
       </div>
       <div class="itinerary-form-row itinerary-note-row">
         <span class="itinerary-form-icon"><svg class="icon"><use href="#i-edit"/></svg></span>
@@ -2894,6 +2929,86 @@ function todoDateLabel(date){
   const meta=itineraryDateMeta(date);
   return meta.label+'・'+meta.sub;
 }
+function reminderBridge(){
+  const bridge=window.MeowReminder||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.MeowReminder);
+  return bridge&&typeof bridge.schedule==='function'?bridge:null;
+}
+function reminderId(kind,id){
+  return 'meow.'+(kind==='todo'?'todo':'event')+'.'+String(id||'').replace(/[^A-Za-z0-9._-]/g,'_');
+}
+function reminderLabel(item){
+  const value=item&&item.reminder||'none';
+  if(value==='3d')return'前 3 天提醒';
+  if(value==='1d')return item&&item.kind==='todo'?'前一天上午 9:00 提醒':'前 1 天提醒';
+  if(value==='1h')return'前 1 小時提醒';
+  return'';
+}
+function reminderFireDate(item){
+  if(!item||!item.date||!item.reminder||item.reminder==='none')return null;
+  if(item.kind==='todo'){
+    if(item.reminder!=='1d')return null;
+    const due=new Date(item.date+'T09:00:00');
+    if(Number.isNaN(due.getTime()))return null;
+    due.setDate(due.getDate()-1);
+    return due;
+  }
+  if(!item.start)return null;
+  const start=new Date(item.date+'T'+item.start+':00');
+  if(Number.isNaN(start.getTime()))return null;
+  const offsets={ '3d':3*24*60*60*1000, '1d':24*60*60*1000, '1h':60*60*1000 };
+  const offset=offsets[item.reminder];
+  if(!offset)return null;
+  return new Date(start.getTime()-offset);
+}
+async function cancelItemReminder(kind,id){
+  const bridge=reminderBridge();if(!bridge||typeof bridge.cancel!=='function'||!id)return;
+  try{await bridge.cancel({id:reminderId(kind,id)})}catch(e){}
+}
+let reminderPermissionWarned=false;
+async function scheduleItemReminder(item,{requestPermission=true}={}){
+  const bridge=reminderBridge();if(!bridge||!item||!item.id)return{native:false};
+  const id=reminderId(item.kind,item.id);
+  if(item.completed||!item.reminder||item.reminder==='none'){
+    try{await bridge.cancel({id})}catch(e){}
+    return{scheduled:false};
+  }
+  const fire=reminderFireDate(item);
+  if(!fire||fire.getTime()<=Date.now()){
+    try{await bridge.cancel({id})}catch(e){}
+    return{scheduled:false,past:true};
+  }
+  try{
+    let permission=typeof bridge.getPermissionStatus==='function'?await bridge.getPermissionStatus():{granted:true};
+    if(!permission.granted&&requestPermission&&typeof bridge.requestPermission==='function')permission=await bridge.requestPermission();
+    if(!permission.granted){
+      if(requestPermission&&!reminderPermissionWarned){
+        reminderPermissionWarned=true;
+        alert('已儲存，但 iPhone 通知權限尚未開啟。可到「設定 → 通知 → 喵的，又要上班了」開啟通知。');
+      }
+      return{scheduled:false,denied:true};
+    }
+    await bridge.schedule({
+      id,
+      title:item.kind==='todo'?'待辦提醒':'行程提醒',
+      body:item.title||item.note||(item.kind==='todo'?'有一件待辦事項要處理':'你有一個即將到來的行程'),
+      fireAt:fire.toISOString(),
+      kind:item.kind,
+      itemId:item.id
+    });
+    return{scheduled:true};
+  }catch(e){return{scheduled:false,error:String(e)}}
+}
+async function syncAllNativeReminders(){
+  const bridge=reminderBridge();if(!bridge||typeof bridge.getPermissionStatus!=='function')return;
+  try{
+    const permission=await bridge.getPermissionStatus();
+    if(!permission.granted)return;
+    for(const item of Object.values(state.personalEvents||{})){
+      if(!item||!['event','todo'].includes(item.kind))continue;
+      await scheduleItemReminder(item,{requestPermission:false});
+    }
+  }catch(e){}
+}
 let itineraryShowAll=false,pendingItinerarySave=null,attendanceMode='events',todoShowCompleted=true,editingTodoId='';
 function renderAttendance(){
   const eventsActive=attendanceMode==='events';
@@ -2925,6 +3040,7 @@ function renderAttendance(){
         '<span class="itinerary-date-badge"><b>'+escapeHtml(meta.label)+'</b><span>'+escapeHtml(meta.sub)+'</span></span>'+
         '<span class="itinerary-card-icon">'+icon('i-clock')+'</span>'+
         '<span class="itinerary-card-copy"><time>'+escapeHtml(eventTimeLabel(e))+'</time><b>'+escapeHtml(note)+'</b>'+
+        (reminderLabel(e)?'<small class="event-reminder-label-v148">'+escapeHtml(reminderLabel(e))+'</small>':'')+
         (conflicts.length?'<small class="itinerary-card-warning">! 與其他安排有衝突</small>':'')+
         '</span><span class="itinerary-card-more">•••</span></button>';
     }).join('');
@@ -2948,6 +3064,7 @@ function renderAttendance(){
     return '<div class="todo-card-v142 '+(t.completed?'completed':'')+'">'+
       '<button type="button" class="todo-check-v142" data-todo-toggle="'+escapeHtml(t.id)+'" aria-label="'+(t.completed?'標記為未完成':'標記為完成')+'">'+(t.completed?'✓':'')+'</button>'+
       '<button type="button" class="todo-main-v142" data-todo-edit="'+escapeHtml(t.id)+'"><b>'+escapeHtml(t.title||'未命名待辦')+'</b><small>'+escapeHtml(todoDateLabel(t.date))+'</small>'+
+      (reminderLabel(t)?'<span class="todo-reminder-label-v148">'+escapeHtml(reminderLabel(t))+'</span>':'')+
       (note?'<span class="todo-note-v142">'+escapeHtml(note)+'</span>':'')+'</button></div>';
   }).join('');
   qsa('[data-todo-toggle]').forEach(b=>b.onclick=()=>toggleTodoDone(b.dataset.todoToggle));
@@ -2961,6 +3078,7 @@ function openEvent(date,id){
   $('eventStart').value=e&&e.start?e.start:'';
   $('eventEnd').value=e&&e.end?e.end:'';
   $('eventNote').value=e?(e.title||e.note||''):'';
+  $('eventReminder').value=e?(e.reminder||'none'):'1h';
   $('deleteEvent').classList.toggle('hidden',!e);
   pendingItinerarySave=null;
   $('eventDialog').showModal();
@@ -2974,7 +3092,7 @@ function buildItineraryCandidate(){
   if(!note){alert('請填寫行程備註。');$('eventNote').focus();return null}
   const id=editingEventId||('ev-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6));
   const prev=(state.personalEvents||{})[id]||{};
-  return{id,date,start,end,title:note,note,kind:'event',occupiesTime:true,reminder:'none',createdAt:prev.createdAt||new Date().toISOString()};
+  return{id,date,start,end,title:note,note,kind:'event',occupiesTime:true,reminder:$('eventReminder').value||'none',createdAt:prev.createdAt||new Date().toISOString()};
 }
 function commitItineraryEvent(candidate){
   if(!candidate)return;
@@ -2985,6 +3103,7 @@ function commitItineraryEvent(candidate){
   if($('conflictDialog').open)$('conflictDialog').close();
   editingEventId='';pendingItinerarySave=null;
   renderAttendance();
+  void scheduleItemReminder(candidate);
 }
 function saveItineraryEvent(){
   const candidate=buildItineraryCandidate();
@@ -3005,6 +3124,7 @@ function openTodo(id){
   $('todoTitle').value=todo&&todo.title?todo.title:'';
   $('todoDate').value=todo&&todo.date?todo.date:'';
   $('todoNote').value=todo&&todo.note?todo.note:'';
+  $('todoReminder').value=todo?(todo.reminder||'none'):'1d';
   $('deleteTodo').classList.toggle('hidden',!todo);
   $('todoDialog').showModal();
 }
@@ -3015,13 +3135,15 @@ function saveTodo(){
   const prev=(state.personalEvents||{})[id]||{};
   state.personalEvents=state.personalEvents||{};
   state.personalEvents[id]={
-    id,kind:'todo',title,note,date,
+    id,kind:'todo',title,note,date,reminder:$('todoReminder').value||'none',
     completed:!!prev.completed,
     completedAt:prev.completedAt||null,
     createdAt:prev.createdAt||new Date().toISOString(),
     updatedAt:new Date().toISOString()
   };
+  const saved=state.personalEvents[id];
   changedAndSync();$('todoDialog').close();editingTodoId='';renderAttendance();
+  void scheduleItemReminder(saved);
 }
 function toggleTodoDone(id){
   const todo=(state.personalEvents||{})[id];if(!todo||todo.kind!=='todo')return;
@@ -3029,6 +3151,7 @@ function toggleTodoDone(id){
   todo.completedAt=todo.completed?new Date().toISOString():null;
   todo.updatedAt=new Date().toISOString();
   changedAndSync();renderAttendance();
+  if(todo.completed)void cancelItemReminder('todo',todo.id);else void scheduleItemReminder(todo);
 }
 
 const ITEMIZED_FIELDS=[
@@ -4876,6 +4999,7 @@ if($('todoDialogClose'))$('todoDialogClose').onclick=closeTodoDialog;
 if($('todoDialogCancel'))$('todoDialogCancel').onclick=closeTodoDialog;
 $('deleteEvent').onclick=()=>{
   if(!editingEventId)return;
+  void cancelItemReminder('event',editingEventId);
   delete state.personalEvents[editingEventId];
   changedAndSync();
   $('eventDialog').close();
@@ -4885,6 +5009,7 @@ $('deleteEvent').onclick=()=>{
 $('saveTodo').onclick=saveTodo;
 $('deleteTodo').onclick=()=>{
   if(!editingTodoId)return;
+  void cancelItemReminder('todo',editingTodoId);
   delete state.personalEvents[editingTodoId];
   changedAndSync();
   $('todoDialog').close();
@@ -5415,6 +5540,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
 }
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 applyTheme();render();
+setTimeout(()=>{void syncAllNativeReminders()},1200);
 restoreIndexedMirrorIfNewer();
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
 })();
