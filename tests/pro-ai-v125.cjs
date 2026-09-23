@@ -16,12 +16,23 @@ assert(html.includes('scheduleOverrides'));
 assert(html.includes('圖片只在你的瀏覽器本地處理，不上傳薪資單影像'));
 assert(html.includes('App 不會把原始薪資單圖片寫入自己的雲端資料庫'));
 
-for (const mode of ['payslip_scan','reconcile_explain','salary_forecast_explain','anomaly_scan','assistant','status']) {
-  assert(edge.includes('"'+mode+'"'), 'missing AI mode: '+mode);
+for (const mode of ['assistant','status']) {
+  assert(edge.includes('"'+mode+'"'), 'missing cloud AI mode: '+mode);
 }
-assert(!edge.includes('"schedule_scan"'), 'cloud schedule_scan must stay disabled');
+for (const mode of ['schedule_scan','payslip_scan','reconcile_explain','salary_forecast_explain','anomaly_scan']) {
+  assert(!edge.includes('"'+mode+'"'), 'retired cloud AI mode must stay disabled: '+mode);
+}
 assert(!html.includes("invokeUserFunction('pro-ai',{mode:'schedule_scan'"), 'schedule import must stay on device');
 assert(html.includes('MeowScheduleVision'), 'local Vision schedule bridge missing');
+assert(html.includes('📷 本機薪資單 OCR'), 'local payslip OCR shortcut missing');
+assert(html.includes('🧾 本機差異說明'), 'local reconcile explanation missing');
+assert(html.includes('💰 本機薪資預測'), 'local salary forecast missing');
+assert(html.includes('⚠️ 本機變動提醒'), 'local salary change alerts missing');
+for (const mode of ['payslip_scan','reconcile_explain','salary_forecast_explain','anomaly_scan']) {
+  assert(!html.includes("mode:'"+mode+"'"), 'app must not call retired cloud mode: '+mode);
+}
+assert(html.includes("mode:'assistant'"), 'assistant must remain the only cloud AI action');
+assert(html.includes('每月 20 次'), 'assistant quota copy must say 20 per month');
 assert(edge.includes('meow_account_access'));
 assert(edge.includes('OPENAI_API_KEY'));
 assert(edge.includes('gpt-6-luna'));
