@@ -44,3 +44,5 @@ jobs:
           grep -q "provider:'apple'" index.html
           grep -q 'APPLE_LOGIN_ENABLED=false' index.html
           grep -q 'TARGETED_DEVICE_FAMILY = 1;' native/ios/App/App.xcodeproj/project.pbxproj
+          grep -q 'NSCameraUsageDescription' native/ios/App/App/Info.plist
+          grep -q 'NSPhotoLibraryUsageDescription' native/ios/App/App/Info.plist
