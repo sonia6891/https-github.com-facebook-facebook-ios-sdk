@@ -77,7 +77,7 @@ with sync_playwright() as p:
  page.evaluate("window.__lineTest.user=null;window.__authCallback('SIGNED_OUT',null)")
  page.wait_for_timeout(300)
  check('主動登出後再次顯示登入框',opened(page))
- page.reload();page.wait_for_function('window.__lineApi && window.__authCallback');page.wait_for_timeout(250)
+ page.reload();page.wait_for_function('window.__lineApi');page.wait_for_timeout(1200)
  check('登出後重開仍要求登入',opened(page))
  ctx.close()
  browser.close()
