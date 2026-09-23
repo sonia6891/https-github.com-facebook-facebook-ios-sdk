@@ -1,5 +1,7 @@
 # 「喵的，又要上班了」Pro AI v1 規格
 
+> **2026-09-24 更新：**此文件的 `schedule_scan` 班表雲端 AI 設計已停用。班表圖片現改用 iPhone Apple Vision 本機辨識，不再呼叫 OpenAI。最新架構請看 `docs/pro-smart-schedule-v153.md`。
+
 版本：v125-pro-ai-v1  
 狀態：第一版已接入前端與 Supabase Edge Function  
 最後更新：2026-09-23
