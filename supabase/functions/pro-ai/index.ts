@@ -296,6 +296,13 @@ Deno.serve(async (req: Request) => {
   const apiKey = Deno.env.get("OPENAI_API_KEY") || "";
   if (!apiKey) return json({ ok: false, code: "AI_NOT_CONFIGURED" }, 503);
 
+  const usageClaim = await userClient.rpc("meow_claim_ai_usage", { p_mode: mode });
+  if (usageClaim.error) return json({ ok: false, code: "AI_USAGE_CHECK_FAILED" }, 503);
+  if (!usageClaim.data?.allowed) {
+    return json({ ok: false, code: "AI_QUOTA_EXCEEDED", usage: usageClaim.data }, 429);
+  }
+  const usage = usageClaim.data;
+
   const model = Deno.env.get("OPENAI_MODEL") || "gpt-5.6-luna";
   const systemPrompt = [
     "You are the Pro AI engine for the Taiwan shift-worker app '喵的，又要上班了'.",
@@ -337,7 +344,7 @@ Deno.serve(async (req: Request) => {
             schema: schemaFor(mode)
           }
         },
-        max_output_tokens: 2600
+        max_output_tokens: mode === "schedule_scan" ? 5000 : 3000
       })
     });
   } catch {
@@ -363,5 +370,5 @@ Deno.serve(async (req: Request) => {
     return json({ ok: false, code: "AI_INVALID_RESPONSE" }, 502);
   }
 
-  return json({ ok: true, mode, model, result });
+  return json({ ok: true, mode, model, usage, result });
 });
