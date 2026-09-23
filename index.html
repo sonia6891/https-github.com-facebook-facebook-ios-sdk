@@ -1411,10 +1411,11 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           </div>
           <div class="itemized-summary">
             <div class="card"><b>App 預估實領</b><strong id="itemizedExpectedNet">NT$0</strong></div>
-            <div class="card"><b>逐項算出的實領</b><strong id="itemizedActualNet">—</strong></div>
-            <div class="card"><b>逐項淨差額</b><strong id="itemizedNetDiff">—</strong></div>
+            <div class="card"><b>公司薪資單實發</b><strong id="itemizedActualNet">—</strong></div>
+            <div class="card"><b>本月總差額</b><strong id="itemizedNetDiff">—</strong></div>
           </div>
-          <div class="itemized-progress" id="itemizedProgress">已填 0 / 15 項；未填項目不會列入逐項實領。</div>
+          <div class="itemized-progress" id="itemizedProgress">尚未有可對帳資料。</div>
+          <div class="card" id="itemizedConclusion" style="margin:10px 0"><b>對帳結論</b><p class="hint" style="margin:6px 0 0">先使用薪資單辨識，或手動輸入公司實際金額。</p></div>
           <div class="itemized-table">
             <div class="itemized-table-head"><span>項目</span><span style="text-align:right">App 預估</span><span style="text-align:right">公司實際</span><span style="text-align:right">結果</span></div>
             <div class="itemized-group">收入</div>
@@ -4120,9 +4121,12 @@ function renderItemizedComparison(mc,mm){
   if(!unlocked)itemizedOpen=false;
   $('itemizedComparePanel').classList.toggle('hidden',!unlocked||!itemizedOpen);
   if(!unlocked||!itemizedOpen)return;
+
   mm.actualItems=mm.actualItems||{};
   const expected=itemizedExpectedMap(mc);
-  let filled=0,actualIncome=0,actualDeduction=0;
+  let filled=0,matched=0,issues=0,explainedNetDiff=0;
+  const differences=[];
+
   ITEMIZED_FIELDS.forEach(field=>{
     const exp=num(expected[field.key]);
     const expEl=document.querySelector('[data-exp="'+field.key+'"]');
@@ -4133,33 +4137,57 @@ function renderItemizedComparison(mc,mm){
     if(input&&document.activeElement!==input)input.value=has?mm.actualItems[field.key]:'';
     if(!status)return;
     status.classList.remove('ok','bad','warn');
-    if(!has){
-      status.textContent='未填';
-      return;
-    }
+    if(!has){status.textContent='未辨識';return}
+
     filled++;
     const actual=num(mm.actualItems[field.key]),diff=actual-exp;
-    if(field.kind==='income')actualIncome+=actual;else actualDeduction+=actual;
-    if(diff===0){
+    explainedNetDiff+=field.kind==='income'?diff:-diff;
+
+    if(Math.round(diff)===0){
+      matched++;
       status.textContent='一致';
       status.classList.add('ok');
-    }else if(field.kind==='income'){
-      status.textContent=(diff<0?'少發 ':'多發 ')+money(Math.abs(diff));
-      status.classList.add(diff<0?'bad':'warn');
-    }else{
-      status.textContent=(diff>0?'多扣 ':'少扣 ')+money(Math.abs(diff));
-      status.classList.add(diff>0?'bad':'warn');
+      return;
     }
+
+    issues++;
+    let label='';
+    if(field.kind==='income')label=(diff<0?'少發 ':'多發 ')+money(Math.abs(diff));
+    else label=(diff>0?'多扣 ':'少扣 ')+money(Math.abs(diff));
+    status.textContent=label;
+    status.classList.add((field.kind==='income'&&diff<0)||(field.kind==='deduction'&&diff>0)?'bad':'warn');
+    differences.push({field,diff,label,impact:field.kind==='income'?diff:-diff});
   });
+
+  const hasActualNet=Object.prototype.hasOwnProperty.call(mm,'actualNet')&&mm.actualNet!==null&&String(mm.actualNet)!=='';
+  const actualNet=hasActualNet?num(mm.actualNet):null;
+  const totalDiff=hasActualNet?actualNet-num(mc.net):null;
+
   $('itemizedExpectedNet').textContent=money(mc.net);
-  $('itemizedProgress').textContent='已填 '+filled+' / '+ITEMIZED_FIELDS.length+' 項；未填項目不會列入逐項實領。';
-  if(filled===0){
-    $('itemizedActualNet').textContent='—';
-    $('itemizedNetDiff').textContent='—';
-  }else{
-    const actualNet=Math.max(0,actualIncome-actualDeduction);
-    $('itemizedActualNet').textContent=money(actualNet);
-    $('itemizedNetDiff').textContent=signedMoney(actualNet-mc.net);
+  $('itemizedActualNet').textContent=hasActualNet?money(actualNet):'尚未辨識';
+  $('itemizedNetDiff').textContent=totalDiff===null?'—':signedMoney(totalDiff);
+  $('itemizedProgress').textContent='已辨識 '+filled+' / '+ITEMIZED_FIELDS.length+' 項・一致 '+matched+'・有差異 '+issues+'・未辨識 '+(ITEMIZED_FIELDS.length-filled);
+
+  const conclusion=$('itemizedConclusion');
+  if(conclusion){
+    differences.sort((a,b)=>Math.abs(b.impact)-Math.abs(a.impact));
+    let headline='',detail='';
+    if(!hasActualNet&&filled===0){
+      headline='尚未開始對帳';
+      detail='先使用薪資單辨識，或手動輸入公司實際金額。';
+    }else if(!hasActualNet){
+      headline='逐項資料已辨識，但缺少「實發金額」';
+      detail='目前已辨識 '+filled+' 項，仍無法判定整張薪資單的總差額。請確認薪資單上的實發／實領／入帳金額。';
+    }else if(Math.round(totalDiff)===0&&issues===0){
+      headline='目前對帳一致';
+      detail='公司實發與 App 預估一致，已辨識的逐項金額也沒有差異。';
+    }else{
+      headline=totalDiff<0?'公司實發比 App 預估少 '+money(Math.abs(totalDiff)):totalDiff>0?'公司實發比 App 預估多 '+money(Math.abs(totalDiff)):'總額一致，但逐項有差異';
+      const top=differences.slice(0,3).map(x=>x.field.label+'：'+x.label).join('；');
+      const unexplained=totalDiff-explainedNetDiff;
+      detail=(top?'主要差異：'+top+'。':'')+(Math.abs(unexplained)>=1?' 已辨識項目仍有 '+signedMoney(unexplained)+' 尚未解釋，請檢查未辨識項目或其他收入／扣款。':' 已辨識的逐項差額可解釋目前總差額。');
+    }
+    conclusion.innerHTML='<b>'+escapeHtml(headline)+'</b><p class="hint" style="margin:6px 0 0">'+escapeHtml(detail)+'</p>';
   }
 }
 function hasSalaryReconciliation(mm){
