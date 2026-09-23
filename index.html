@@ -3806,7 +3806,37 @@ function storeDisplayPrice(plan){
   const product=storeProductForPlan(plan);
   if(product&&product.displayPrice)return String(product.displayPrice);
   const fallback=plan==='yearly'?Number(billingYearly||790):Number(billingMonthly||99);
-  return 'NT
+  return 'NT\u0024'+fallback.toLocaleString('zh-TW');
+}
+function storeIntroEligible(plan){
+  const product=storeProductForPlan(plan);
+  if(!product)return null;
+  return product.eligibleForIntroOffer===true;
+}
+function anyStoreIntroEligible(){
+  const monthly=storeIntroEligible('monthly');
+  const yearly=storeIntroEligible('yearly');
+  if(monthly===true||yearly===true)return true;
+  if(monthly===false&&yearly===false)return false;
+  return null;
+}
+async function loadNativeStoreProducts(){
+  const bridge=storeBillingBridge();
+  if(!bridge||typeof bridge.getProducts!=='function')return;
+  try{
+    const result=await bridge.getProducts();
+    const products=Array.isArray(result&&result.products)?result.products:[];
+    const next={};
+    products.forEach(product=>{
+      if(product&&product.id)next[String(product.id)]=product;
+    });
+    storeProductsById=next;
+    storeProductsLoaded=true;
+    renderProPlanSettings();
+  }catch(e){
+    storeProductsLoaded=false;
+  }
+}
 async function startStoreSubscription(plan){
   if(!authUser){alert('請先登入帳號，再訂閱 Pro。');setTab('settings');return}
   const bridge=storeBillingBridge();
