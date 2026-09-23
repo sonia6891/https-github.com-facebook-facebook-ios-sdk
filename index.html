@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v137-schedule-ai-card">
+<meta name="meow-ui-build" content="v138-schedule-actions">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -708,11 +708,15 @@ html.dark .settings-pro-v129{
 .schedule-v136-tools{
   position:relative;
   display:flex;
-  justify-content:flex-end;
+  justify-content:space-between;
   align-items:center;
-  gap:9px;
+  gap:12px;
   margin:0 2px 9px;
 }
+.schedule-v138-heading{min-width:0;display:flex;flex-direction:column;gap:2px}
+.schedule-v138-heading b{font-size:24px;line-height:1.12;color:var(--v129-accent-strong,#8f5a35);font-weight:950;letter-spacing:.01em}
+.schedule-v138-heading small{font-size:10px;color:var(--muted);font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.schedule-v138-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto}
 .schedule-v136-action{
   position:relative;
   width:42px;
@@ -802,7 +806,9 @@ html.dark .settings-pro-v129{
   font-size:10px;
 }
 @media(max-width:760px){
-  .schedule-v136-tools{margin:0 1px 8px;gap:8px}
+  .schedule-v136-tools{margin:0 1px 8px;gap:9px}
+  .schedule-v138-heading b{font-size:22px}
+  .schedule-v138-heading small{font-size:9px}
   .schedule-v136-action{width:39px;height:39px}
   .schedule-card-v136 .schedule-v129-summary{margin:0 0 8px;padding:10px}
   .schedule-card-v136>.schedule-settings{margin:0 0 8px}
@@ -1026,14 +1032,19 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   <section class="page" id="page-calendar">
     <div class="card schedule-card schedule-card-v129 schedule-card-v136">
       <div class="schedule-v136-tools" aria-label="班表工具">
-        <button type="button" class="schedule-v136-action" id="toggleSchedule" aria-controls="scheduleSettings" aria-expanded="false" aria-label="開啟排班設定" title="排班設定">
-          <svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>
-          <span class="schedule-v136-plus" aria-hidden="true">＋</span>
-        </button>
-        <button type="button" class="schedule-v136-action schedule-v136-more-toggle" id="scheduleMoreToggle" aria-expanded="false" aria-controls="scheduleMoreMenu" aria-label="更多班表操作" title="更多">•••</button>
+        <div class="schedule-v138-heading">
+          <b>我的班表</b>
+          <small>規劃每一天，讓工作與生活更平衡！</small>
+        </div>
+        <div class="schedule-v138-actions">
+          <button type="button" class="schedule-v136-action" id="scheduleAddDay" aria-label="新增日期班表" title="新增日期班表">
+            <svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>
+            <span class="schedule-v136-plus" aria-hidden="true">＋</span>
+          </button>
+          <button type="button" class="schedule-v136-action schedule-v136-more-toggle" id="scheduleMoreToggle" aria-expanded="false" aria-controls="scheduleMoreMenu" aria-label="更多班表操作" title="更多">•••</button>
+        </div>
         <div class="schedule-v136-menu hidden" id="scheduleMoreMenu">
-          <button type="button" id="scheduleMenuSettings"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg><span>排班設定</span></button>
-          <button type="button" id="scheduleMenuEvent"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span>新增行程</span></button>
+          <button type="button" id="scheduleMenuSettings"><svg class="icon" aria-hidden="true"><use href="#i-gear"/></svg><span id="scheduleMenuSettingsLabel">排班設定</span></button>
           <button type="button" id="scheduleMenuClearAi"><span aria-hidden="true">✦</span><span>清除本月 AI 班表</span></button>
         </div>
       </div>
@@ -1468,6 +1479,24 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
     <p class="hint">不會變更每日工時、津貼或加班費設定。此功能只推算班表，不判定工時是否合法。</p>
     <p class="rotation-error" id="rotationError" role="alert"></p>
     <div class="rotation-actions"><button type="button" class="btn" id="rotationCancel">取消</button><button type="button" class="btn primary" id="rotationApply">套用班制</button></div>
+  </form>
+</dialog>
+
+<dialog class="dialog" id="scheduleAddDialog">
+  <form method="dialog" id="scheduleAddForm">
+    <div class="dialog-head">
+      <div><b>新增日期班表</b><div class="hint">只修改你選的這一天，不會改排班週期。</div></div>
+      <button class="dialog-close" value="cancel" aria-label="關閉">×</button>
+    </div>
+    <div class="dialog-body">
+      <div class="field"><label for="scheduleAddDate">日期</label><input id="scheduleAddDate" type="date" required></div>
+      <div class="field"><label for="scheduleAddShift">班別</label><select id="scheduleAddShift"></select></div>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn" value="cancel">取消</button>
+      <button type="button" class="btn danger" id="scheduleAddClear">恢復原班表</button>
+      <button type="button" class="btn primary" id="scheduleAddSave">儲存班表</button>
+    </div>
   </form>
 </dialog>
 
@@ -2166,10 +2195,7 @@ function syncScheduleEditing(){
   if(card)card.classList.toggle('schedule-settings-open',open);
   $('editRotation').disabled=!open;
   $('editRotation').classList.toggle('hidden',!open);
-  $('toggleSchedule').classList.toggle('active',open);
-  $('toggleSchedule').setAttribute('aria-expanded',String(open));
-  $('toggleSchedule').setAttribute('aria-label',open?'收起排班設定':'開啟排班設定');
-  $('toggleSchedule').title=open?'收起排班設定':'排班設定';
+  if($('scheduleMenuSettingsLabel'))$('scheduleMenuSettingsLabel').textContent=open?'收起排班設定':'排班設定';
 }
 function selectSchedulePlan(value){
   if(!scheduleOpen){syncScheduleChoices();return}
@@ -4521,20 +4547,66 @@ $('deleteEvent').onclick=()=>{
 };
 $('conflictKeep').onclick=()=>commitItineraryEvent(pendingItinerarySave);
 $('conflictDialog').addEventListener('close',()=>{if($('conflictDialog').returnValue==='cancel')pendingItinerarySave=null});
-$('toggleSchedule').onclick=()=>{scheduleOpen=!scheduleOpen;render()};
 function closeScheduleMoreMenu(){
   const menu=$('scheduleMoreMenu'),toggle=$('scheduleMoreToggle');
   if(menu)menu.classList.add('hidden');
   if(toggle)toggle.setAttribute('aria-expanded','false');
 }
+function scheduleQuickOptions(){
+  if(state.schedule.preset==='four-three')return[
+    {value:'work|早班',label:'早班'},
+    {value:'work|中班',label:'中班'},
+    {value:'work|夜班',label:'夜班'},
+    {value:'off|休',label:'休假'}
+  ];
+  const own=state.schedule.shiftName||'A班',other=otherShiftName(own);
+  return[
+    {value:'work|'+own,label:own},
+    {value:'work|'+other,label:other},
+    {value:'off|休',label:'休假'}
+  ];
+}
+function openScheduleAddDialog(date){
+  const dialog=$('scheduleAddDialog'),select=$('scheduleAddShift');
+  if(!dialog||dialog.open)return;
+  const initial=date||iso(new Date(current.getFullYear(),current.getMonth(),1));
+  $('scheduleAddDate').value=initial;
+  const options=scheduleQuickOptions();
+  select.innerHTML=options.map(x=>'<option value="'+escapeHtml(x.value)+'">'+escapeHtml(x.label)+'</option>').join('');
+  const existing=state.scheduleOverrides&&state.scheduleOverrides[initial];
+  if(existing){
+    const exact=(existing.kind||'work')+'|'+String(existing.shiftName||'');
+    if(Array.from(select.options).some(o=>o.value===exact))select.value=exact;
+  }
+  dialog.showModal();
+}
+if($('scheduleAddDay'))$('scheduleAddDay').onclick=()=>openScheduleAddDialog();
+if($('scheduleAddDate'))$('scheduleAddDate').onchange=e=>{
+  const select=$('scheduleAddShift'),date=e.target.value,existing=state.scheduleOverrides&&state.scheduleOverrides[date];
+  if(!existing)return;
+  const exact=(existing.kind||'work')+'|'+String(existing.shiftName||'');
+  if(Array.from(select.options).some(o=>o.value===exact))select.value=exact;
+};
+if($('scheduleAddSave'))$('scheduleAddSave').onclick=()=>{
+  const date=$('scheduleAddDate').value,value=$('scheduleAddShift').value;
+  if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert('請先選擇日期。');return}
+  const [kind,...parts]=value.split('|'),shiftName=parts.join('|');
+  state.scheduleOverrides=state.scheduleOverrides||{};
+  state.scheduleOverrides[date]={kind:kind==='off'?'off':'work',shiftName,source:'manual',updatedAt:new Date().toISOString()};
+  changedAndSync();$('scheduleAddDialog').close();render();
+};
+if($('scheduleAddClear'))$('scheduleAddClear').onclick=()=>{
+  const date=$('scheduleAddDate').value;
+  if(date&&state.scheduleOverrides){delete state.scheduleOverrides[date];changedAndSync()}
+  $('scheduleAddDialog').close();render();
+};
 if($('scheduleMoreToggle'))$('scheduleMoreToggle').onclick=e=>{
   e.stopPropagation();
   const menu=$('scheduleMoreMenu'),open=menu&&menu.classList.contains('hidden');
   if(menu)menu.classList.toggle('hidden',!open);
   $('scheduleMoreToggle').setAttribute('aria-expanded',String(!!open));
 };
-if($('scheduleMenuSettings'))$('scheduleMenuSettings').onclick=()=>{closeScheduleMoreMenu();scheduleOpen=true;render()};
-if($('scheduleMenuEvent'))$('scheduleMenuEvent').onclick=()=>{closeScheduleMoreMenu();setTab('attendance');setTimeout(()=>openEvent(iso(new Date())),0)};
+if($('scheduleMenuSettings'))$('scheduleMenuSettings').onclick=()=>{closeScheduleMoreMenu();scheduleOpen=!scheduleOpen;render()};
 if($('scheduleMenuClearAi'))$('scheduleMenuClearAi').onclick=()=>{closeScheduleMoreMenu();clearCurrentAiSchedule()};
 document.addEventListener('click',e=>{
   const menu=$('scheduleMoreMenu'),toggle=$('scheduleMoreToggle');
