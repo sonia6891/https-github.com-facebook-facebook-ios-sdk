@@ -129,7 +129,7 @@ AI 回傳欄位限制在：
 
 Edge Function 需要：
 - `OPENAI_API_KEY`：必填
-- `OPENAI_MODEL`：選填；未設定時目前預設 `gpt-6-luna`
+- `OPENAI_MODEL`：選填；未設定時目前預設 `gpt-5.6-luna`
 
 Secret 不得提交 GitHub。
 
