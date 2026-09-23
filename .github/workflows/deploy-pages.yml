@@ -8,7 +8,7 @@ permissions:
   pages: write
   id-token: write
 concurrency:
-  group: pages-production-v124
+  group: pages-production-v126
   cancel-in-progress: true
 jobs:
   deploy:
@@ -71,7 +71,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          import hashlib,json,os,re,time,urllib.request
+          import hashlib,json,os,re,time,urllib.request,urllib.error
           result={'commit':os.environ['GITHUB_SHA'],'files':{}}
           base=os.environ['PAGE_URL']
           for name in ['index.html','sw.js','manifest.webmanifest','app-icon-v115-180.png','app-icon-v115-192.png','app-icon-v115-512.png','assets/welcome-brand-v112.webp']:
@@ -89,7 +89,7 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v124-store-subscriptions' in html
+          assert 'v126-storekit-server-verified' in html
           assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           assert "const LINE_PROVIDER_ID='custom:line'" in html
           assert "scopes:'openid profile'" in html
@@ -99,6 +99,10 @@ jobs:
           assert "create-ecpay-checkout" not in html
           assert "start-pro-trial" not in html
           assert "window.MeowStoreBilling" in html
+          assert "verify-app-store-transaction" in html
+          assert "appAccountToken:authUser.id" in html
+          assert "restoreStorePurchases" in html
+          assert 'id="restoreStorePurchases"' in html
           assert 'class="auth-booting"' in html
           assert "window.open('about:blank','meow-auth-window')" not in html
           assert "client.auth.setSession({" not in html
@@ -121,6 +125,19 @@ jobs:
           assert billing.get('trial_days')==3, billing
           assert billing.get('monthly')==99 and billing.get('yearly')==790, billing
           result['billing_config']=billing
+          verify_req=urllib.request.Request(api+'/functions/v1/verify-app-store-transaction',data=b'{}',method='POST',headers={'Content-Type':'application/json'})
+          try:
+              urllib.request.urlopen(verify_req,timeout=15)
+              raise AssertionError('verify-app-store-transaction should reject anonymous request')
+          except urllib.error.HTTPError as error:
+              assert error.code==401, error.code
+          notify_req=urllib.request.Request(api+'/functions/v1/app-store-notifications-v2',data=b'{}',method='POST',headers={'Content-Type':'application/json'})
+          try:
+              urllib.request.urlopen(notify_req,timeout=15)
+              raise AssertionError('app-store-notifications-v2 should reject missing signedPayload')
+          except urllib.error.HTTPError as error:
+              assert error.code==400, error.code
+          result['apple_functions_online']=True
           try:
               req=urllib.request.Request(api+'/auth/v1/settings',headers={'apikey':key})
               with urllib.request.urlopen(req,timeout=15) as response:
@@ -137,6 +154,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v124-store-subscriptions-verification
+          name: meow-v126-storekit-server-verification
           path: test-results/
           retention-days: 3
