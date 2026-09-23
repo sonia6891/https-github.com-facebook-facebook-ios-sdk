@@ -25,8 +25,17 @@ permissions:
 
 jobs:
   storekit-smoke:
-    runs-on: macos-latest
+    # StoreKitTest SKTestSession is currently unreliable on the hosted Xcode
+    # 26.5/26.6 runtime (SKInternalErrorDomain Code=3). Xcode 26.2 on the
+    # macOS 26 image runs the same test APIs without that runner regression.
+    runs-on: macos-26
     steps:
+      - name: Select StoreKitTest-compatible Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode_26.2.app
+          xcodebuild -version
+          swift --version
+
       - name: Checkout
         uses: actions/checkout@v6
 
