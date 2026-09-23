@@ -1,0 +1,43 @@
+name: StoreKit local purchase smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - native/ios-sources/MeowWork.storekit
+      - native/ios-sources/ViewController.swift
+      - native/storekit-smoke/**
+      - tests/storekit-verification-gate-v130.test.cjs
+      - .github/workflows/storekit-local-smoke.yml
+  pull_request:
+    paths:
+      - index.html
+      - native/ios-sources/MeowWork.storekit
+      - native/ios-sources/ViewController.swift
+      - native/storekit-smoke/**
+      - tests/storekit-verification-gate-v130.test.cjs
+      - .github/workflows/storekit-local-smoke.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  storekit-smoke:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Verify backend-before-finish gate
+        run: node --test tests/storekit-verification-gate-v130.test.cjs
+
+      - name: Run StoreKitTest purchase smoke
+        working-directory: native/storekit-smoke
+        run: swift test
