@@ -1,4 +1,4 @@
-name: LINE login v126 preflight
+name: LINE login v127 preflight
 on:
   push:
     branches: [main]
@@ -22,14 +22,14 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           html=Path('index.html').read_text()
-          assert 'v126-storekit-server-verified' in html
+          assert 'v127-storekit-resilient' in html
           assert 'class="auth-booting"' in html
           assert "document.documentElement.classList.remove('auth-booting')" in html
           assert "window.open('about:blank','meow-auth-window')" not in html
           assert "client.auth.setSession({" not in html
           assert "provider:LINE_PROVIDER_ID" in html
           assert "scopes:'openid profile'" in html
-          print('static v126 checks passed')
+          print('static v127 checks passed')
           PY
       - name: Verify live Supabase to LINE authorize request
         run: |
