@@ -319,9 +319,12 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         check('可新增待辦事項', await page.locator('[data-todo-edit]').count() === 1 && (await page.locator('[data-todo-edit]').innerText()).includes('測試繳費'));
         check('未完成待辦數量會更新', await page.locator('#todoOpenCount').innerText() === '1');
         await page.locator('[data-todo-toggle]').click();
-        check('待辦可勾選完成並離開未完成列表', await page.locator('[data-todo-edit]').count() === 0 && await page.locator('#todoOpenCount').innerText() === '0');
+        check('待辦勾選完成後仍留在列表', await page.locator('.todo-card-v142.completed').count() === 1 && await page.locator('[data-todo-edit]').count() === 1 && await page.locator('#todoOpenCount').innerText() === '0');
+        check('完成待辦預設顯示且提供隱藏按鈕', (await page.locator('#itineraryAllBtn').innerText()).includes('隱藏已完成'));
         await page.locator('#itineraryAllBtn').click();
-        check('完成待辦可從顯示已完成重新查看', await page.locator('.todo-card-v142.completed').count() === 1);
+        check('可主動隱藏已完成待辦', await page.locator('[data-todo-edit]').count() === 0);
+        await page.locator('#itineraryAllBtn').click();
+        check('可重新顯示已完成待辦', await page.locator('.todo-card-v142.completed').count() === 1);
         await page.locator('[data-todo-toggle]').click();
         check('完成待辦可以取消完成', await page.locator('.todo-card-v142.completed').count() === 0 && await page.locator('#todoOpenCount').innerText() === '1');
         await page.screenshot({ path: path.join(out, 'attendance-todos-v142-390.png'), fullPage: true });
