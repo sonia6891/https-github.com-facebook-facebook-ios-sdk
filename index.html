@@ -14,7 +14,7 @@
 <link rel="manifest" href="./manifest.webmanifest?v=130">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v115-192.png">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v141-ai-card-source-crop">
+<meta name="meow-ui-build" content="v142-itinerary-todos">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -816,6 +816,86 @@ html.dark .settings-pro-v129{
   .schedule-card-v136 .schedule-ai-v129-banner{min-height:104px}
   .schedule-card-v136 .schedule-ai-v129-meta{margin-top:6px}
 }
+
+/* ===== v142 itinerary + todos ===== */
+.attendance-v142-head{align-items:flex-start}
+.attendance-v142-tabs{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  padding:5px;
+  margin:10px 0 12px;
+  border:1px solid var(--mobile-line,#eadfd5);
+  border-radius:16px;
+  background:var(--mobile-surface,#fffaf5);
+}
+.attendance-v142-tabs button{
+  min-height:42px;
+  border:0;
+  border-radius:12px;
+  background:transparent;
+  color:var(--muted);
+  font-weight:900;
+}
+.attendance-v142-tabs button.active{
+  background:var(--v129-accent-soft,#fff5e9);
+  color:var(--v129-accent-strong,#8f5a35);
+  box-shadow:0 3px 10px rgba(83,56,39,.08),inset 0 0 0 1px rgba(143,90,53,.10);
+}
+.attendance-v142-tabs button span{
+  display:inline-grid;
+  min-width:20px;
+  height:20px;
+  padding:0 5px;
+  margin-left:4px;
+  place-items:center;
+  border-radius:999px;
+  background:rgba(143,90,53,.09);
+  font-size:10px;
+}
+.todo-list-v142{display:grid;gap:9px}
+.todo-card-v142{
+  display:grid;
+  grid-template-columns:42px minmax(0,1fr);
+  gap:10px;
+  align-items:center;
+  padding:10px 11px;
+  border:1px solid var(--mobile-line,#eadfd5);
+  border-radius:16px;
+  background:var(--mobile-surface,#fffdf9);
+  box-shadow:0 5px 16px rgba(83,56,39,.05);
+}
+.todo-check-v142{
+  width:36px;height:36px;
+  border-radius:50%;
+  border:2px solid #d8c3b1;
+  background:#fff;
+  color:#fff;
+  font-weight:950;
+  display:grid;place-items:center;
+}
+.todo-card-v142.completed .todo-check-v142{
+  background:#80bd84;
+  border-color:#80bd84;
+}
+.todo-main-v142{
+  border:0;background:transparent;padding:0;text-align:left;min-width:0;color:var(--ink);
+}
+.todo-main-v142 b{display:block;font-size:14px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.todo-main-v142 small{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+.todo-main-v142 .todo-note-v142{margin-top:5px;font-size:11px;color:#806b5e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.todo-card-v142.completed .todo-main-v142 b{text-decoration:line-through;color:var(--muted)}
+.todo-card-v142.completed{opacity:.72}
+.todo-empty-v142{padding:34px 16px;text-align:center;border:1px dashed var(--mobile-line,#eadfd5);border-radius:18px;color:var(--muted)}
+.todo-empty-v142 b{display:block;color:var(--ink);margin-bottom:5px}
+.todo-sheet-v142 input[type="text"],.todo-sheet-v142 input:not([type]),.todo-sheet-v142 textarea{
+  width:100%;border:0;background:transparent;color:var(--ink);font:inherit;outline:0;
+}
+@media(max-width:760px){
+  .attendance-v142-tabs{margin-top:8px}
+  .todo-card-v142{grid-template-columns:38px minmax(0,1fr);padding:9px 10px}
+  .todo-check-v142{width:34px;height:34px}
+}
 </style>
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v115-180.png">
 <link rel="apple-touch-icon-precomposed" sizes="180x180" href="./app-icon-v115-180.png">
@@ -879,7 +959,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   <nav class="side-nav">
     <button class="nav-btn active" data-tab="dashboard"><svg class="icon"><use href="#i-home"/></svg>總覽</button>
     <button class="nav-btn" data-tab="calendar"><svg class="icon"><use href="#i-calendar"/></svg>排班月曆</button>
-    <button class="nav-btn" data-tab="attendance"><svg class="icon"><use href="#i-clock"/></svg>行程</button>
+    <button class="nav-btn" data-tab="attendance"><svg class="icon"><use href="#i-clock"/></svg>行程與待辦</button>
     <button class="nav-btn" data-tab="salary"><svg class="icon"><use href="#i-money"/></svg>薪資試算</button>
     <button class="nav-btn" data-tab="settings"><svg class="icon"><use href="#i-gear"/></svg>設定</button>
   </nav>
@@ -1097,15 +1177,19 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   </section>
 
   <section class="page" id="page-attendance">
-    <div class="itinerary-list-head">
+    <div class="itinerary-list-head attendance-v142-head">
       <div>
-        <div class="page-title itinerary-title"><span class="paw" aria-hidden="true">🐾</span>今日與近期行程</div>
-        <div class="itinerary-sub">記下重要的事，讓生活更有節奏～</div>
+        <div class="page-title itinerary-title"><span class="paw" aria-hidden="true">🐾</span>行程與待辦事項</div>
+        <div class="itinerary-sub">行程、提醒與待辦集中在一起，重要的事不漏掉。</div>
       </div>
       <div class="itinerary-head-actions">
         <button type="button" class="itinerary-all-btn" id="itineraryAllBtn">全部行程 <span>›</span></button>
         <button type="button" class="itinerary-add-fab" id="addItinerary" aria-label="新增行程">＋</button>
       </div>
+    </div>
+    <div class="attendance-v142-tabs" role="tablist" aria-label="行程與待辦事項">
+      <button type="button" class="active" id="attendanceTabEvents" role="tab" aria-selected="true">行程</button>
+      <button type="button" id="attendanceTabTodos" role="tab" aria-selected="false">待辦事項 <span id="todoOpenCount">0</span></button>
     </div>
     <div class="itinerary-upcoming-list" id="itineraryUpcomingList"></div>
   </section>
@@ -1445,7 +1529,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 <nav class="bottom-nav">
 <button class="active" data-tab="dashboard"><svg class="icon"><use href="#i-home"/></svg><span>總覽</span></button>
 <button data-tab="calendar"><svg class="icon"><use href="#i-calendar"/></svg><span>排班</span></button>
-<button data-tab="attendance"><svg class="icon"><use href="#i-clock"/></svg><span>行程</span></button>
+<button data-tab="attendance"><svg class="icon"><use href="#i-clock"/></svg><span>行程待辦</span></button>
 <button data-tab="salary"><svg class="icon"><use href="#i-money"/></svg><span>薪資</span></button>
 <button data-tab="settings"><svg class="icon"><use href="#i-gear"/></svg><span>設定</span></button>
 </nav>
@@ -1534,6 +1618,38 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       <button type="button" class="itinerary-delete hidden" id="deleteEvent">刪除</button>
       <button class="btn itinerary-cancel" value="cancel">取消</button>
       <button type="button" class="btn itinerary-save" id="saveEvent">儲存</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="dialog itinerary-sheet todo-sheet-v142" id="todoDialog">
+  <form method="dialog" id="todoForm">
+    <div class="itinerary-sheet-handle" aria-hidden="true"></div>
+    <div class="itinerary-sheet-head">
+      <b id="todoDialogTitle">新增待辦事項</b>
+      <button class="dialog-close" value="cancel" aria-label="關閉">×</button>
+    </div>
+    <div class="itinerary-sheet-body">
+      <div class="itinerary-form-row itinerary-note-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-doc"/></svg></span>
+        <label for="todoTitle">待辦事項</label>
+        <input id="todoTitle" maxlength="80" placeholder="例如：繳電話費" required>
+      </div>
+      <div class="itinerary-form-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-calendar"/></svg></span>
+        <label for="todoDate">日期</label>
+        <input id="todoDate" type="date">
+      </div>
+      <div class="itinerary-form-row itinerary-note-row">
+        <span class="itinerary-form-icon"><svg class="icon"><use href="#i-edit"/></svg></span>
+        <label for="todoNote">備註</label>
+        <textarea id="todoNote" maxlength="160" placeholder="可留空"></textarea>
+      </div>
+    </div>
+    <div class="itinerary-sheet-foot">
+      <button type="button" class="itinerary-delete hidden" id="deleteTodo">刪除</button>
+      <button class="btn itinerary-cancel" value="cancel">取消</button>
+      <button type="button" class="btn itinerary-save" id="saveTodo">儲存</button>
     </div>
   </form>
 </dialog>
@@ -2603,7 +2719,10 @@ renderCalendar=function(){
   });
 };
 function itineraryEvents(){
-  return Object.values(state.personalEvents||{}).filter(e=>e&&e.kind!=='note');
+  return Object.values(state.personalEvents||{}).filter(e=>e&&e.kind!=='note'&&e.kind!=='todo');
+}
+function todoItems(){
+  return Object.values(state.personalEvents||{}).filter(e=>e&&e.kind==='todo');
 }
 function eventMinutes(value){
   const parts=String(value||'').split(':');
@@ -2650,28 +2769,69 @@ function itineraryDateMeta(date){
   else label='週'+weekday;
   return{label,sub:(d.getMonth()+1)+'/'+d.getDate()+'（'+weekday+'）'};
 }
-let itineraryShowAll=false,pendingItinerarySave=null;
+function todoDateLabel(date){
+  if(!date)return'未指定日期';
+  const meta=itineraryDateMeta(date);
+  return meta.label+'・'+meta.sub;
+}
+let itineraryShowAll=false,pendingItinerarySave=null,attendanceMode='events',todoShowCompleted=false,editingTodoId='';
 function renderAttendance(){
-  const today=iso(new Date());
-  const all=itineraryEvents().slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.start||'').localeCompare(String(b.start||''))||String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
-  const rows=itineraryShowAll?all:all.filter(e=>String(e.date||'')>=today);
-  if($('itineraryAllBtn'))$('itineraryAllBtn').innerHTML=(itineraryShowAll?'近期行程':'全部行程')+' <span>›</span>';
+  const eventsActive=attendanceMode==='events';
+  $('attendanceTabEvents').classList.toggle('active',eventsActive);
+  $('attendanceTabTodos').classList.toggle('active',!eventsActive);
+  $('attendanceTabEvents').setAttribute('aria-selected',String(eventsActive));
+  $('attendanceTabTodos').setAttribute('aria-selected',String(!eventsActive));
+  const openTodos=todoItems().filter(t=>!t.completed).length;
+  $('todoOpenCount').textContent=String(openTodos);
+  $('addItinerary').setAttribute('aria-label',eventsActive?'新增行程':'新增待辦事項');
+  $('itineraryAllBtn').innerHTML=eventsActive
+    ?(itineraryShowAll?'近期行程':'全部行程')+' <span>›</span>'
+    :(todoShowCompleted?'隱藏已完成':'顯示已完成')+' <span>›</span>';
+
   const box=$('itineraryUpcomingList');
   if(!box)return;
-  if(!rows.length){
-    box.innerHTML='<div class="itinerary-empty-list"><div class="empty-plus">＋</div><b>'+(itineraryShowAll?'目前還沒有行程':'近期沒有新增行程')+'</b><span>按右上角「＋」新增日期、時間與備註。</span></div>';
+  if(eventsActive){
+    const today=iso(new Date());
+    const all=itineraryEvents().slice().sort((a,b)=>String(a.date||'').localeCompare(String(b.date||''))||String(a.start||'').localeCompare(String(b.start||''))||String(a.createdAt||'').localeCompare(String(b.createdAt||'')));
+    const rows=itineraryShowAll?all:all.filter(e=>String(e.date||'')>=today);
+    box.className='itinerary-upcoming-list';
+    if(!rows.length){
+      box.innerHTML='<div class="itinerary-empty-list"><div class="empty-plus">＋</div><b>'+(itineraryShowAll?'目前還沒有行程':'近期沒有新增行程')+'</b><span>按右上角「＋」新增日期、時間與備註。</span></div>';
+      return;
+    }
+    box.innerHTML=rows.map(e=>{
+      const meta=itineraryDateMeta(e.date),conflicts=eventConflictDetails(e,e.id),note=e.title||e.note||'未命名行程';
+      return '<button type="button" class="itinerary-list-card '+(conflicts.length?'conflict':'')+'" data-event-edit="'+escapeHtml(e.id)+'">'+
+        '<span class="itinerary-date-badge"><b>'+escapeHtml(meta.label)+'</b><span>'+escapeHtml(meta.sub)+'</span></span>'+
+        '<span class="itinerary-card-icon">'+icon('i-clock')+'</span>'+
+        '<span class="itinerary-card-copy"><time>'+escapeHtml(eventTimeLabel(e))+'</time><b>'+escapeHtml(note)+'</b>'+
+        (conflicts.length?'<small class="itinerary-card-warning">! 與其他安排有衝突</small>':'')+
+        '</span><span class="itinerary-card-more">•••</span></button>';
+    }).join('');
+    qsa('[data-event-edit]').forEach(b=>b.onclick=()=>openEvent('',b.dataset.eventEdit));
     return;
   }
-  box.innerHTML=rows.map(e=>{
-    const meta=itineraryDateMeta(e.date),conflicts=eventConflictDetails(e,e.id),note=e.title||e.note||'未命名行程';
-    return '<button type="button" class="itinerary-list-card '+(conflicts.length?'conflict':'')+'" data-event-edit="'+escapeHtml(e.id)+'">'+
-      '<span class="itinerary-date-badge"><b>'+escapeHtml(meta.label)+'</b><span>'+escapeHtml(meta.sub)+'</span></span>'+
-      '<span class="itinerary-card-icon">'+icon('i-clock')+'</span>'+
-      '<span class="itinerary-card-copy"><time>'+escapeHtml(eventTimeLabel(e))+'</time><b>'+escapeHtml(note)+'</b>'+
-      (conflicts.length?'<small class="itinerary-card-warning">! 與其他安排有衝突</small>':'')+
-      '</span><span class="itinerary-card-more">•••</span></button>';
+
+  const todos=todoItems().slice().sort((a,b)=>{
+    if(Boolean(a.completed)!==Boolean(b.completed))return a.completed?1:-1;
+    const ad=a.date||'9999-12-31',bd=b.date||'9999-12-31';
+    return ad.localeCompare(bd)||String(a.createdAt||'').localeCompare(String(b.createdAt||''));
+  });
+  const rows=todoShowCompleted?todos:todos.filter(t=>!t.completed);
+  box.className='itinerary-upcoming-list todo-list-v142';
+  if(!rows.length){
+    box.innerHTML='<div class="todo-empty-v142"><b>'+(todoShowCompleted?'目前還沒有待辦事項':'目前沒有未完成待辦')+'</b><span>按右上角「＋」新增一件要記得完成的事。</span></div>';
+    return;
+  }
+  box.innerHTML=rows.map(t=>{
+    const note=String(t.note||'').trim();
+    return '<div class="todo-card-v142 '+(t.completed?'completed':'')+'">'+
+      '<button type="button" class="todo-check-v142" data-todo-toggle="'+escapeHtml(t.id)+'" aria-label="'+(t.completed?'標記為未完成':'標記為完成')+'">'+(t.completed?'✓':'')+'</button>'+
+      '<button type="button" class="todo-main-v142" data-todo-edit="'+escapeHtml(t.id)+'"><b>'+escapeHtml(t.title||'未命名待辦')+'</b><small>'+escapeHtml(todoDateLabel(t.date))+'</small>'+
+      (note?'<span class="todo-note-v142">'+escapeHtml(note)+'</span>':'')+'</button></div>';
   }).join('');
-  qsa('[data-event-edit]').forEach(b=>b.onclick=()=>openEvent('',b.dataset.eventEdit));
+  qsa('[data-todo-toggle]').forEach(b=>b.onclick=()=>toggleTodoDone(b.dataset.todoToggle));
+  qsa('[data-todo-edit]').forEach(b=>b.onclick=()=>openTodo(b.dataset.todoEdit));
 }
 function openEvent(date,id){
   editingEventId=id||'';
@@ -2717,6 +2877,38 @@ function saveItineraryEvent(){
     return;
   }
   commitItineraryEvent(candidate);
+}
+function openTodo(id){
+  editingTodoId=id||'';
+  const todo=id?(state.personalEvents||{})[id]:null;
+  $('todoDialogTitle').textContent=todo?'編輯待辦事項':'新增待辦事項';
+  $('todoTitle').value=todo&&todo.title?todo.title:'';
+  $('todoDate').value=todo&&todo.date?todo.date:'';
+  $('todoNote').value=todo&&todo.note?todo.note:'';
+  $('deleteTodo').classList.toggle('hidden',!todo);
+  $('todoDialog').showModal();
+}
+function saveTodo(){
+  const title=$('todoTitle').value.trim(),date=$('todoDate').value,note=$('todoNote').value.trim();
+  if(!title){alert('請輸入待辦事項。');$('todoTitle').focus();return}
+  const id=editingTodoId||('todo-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,6));
+  const prev=(state.personalEvents||{})[id]||{};
+  state.personalEvents=state.personalEvents||{};
+  state.personalEvents[id]={
+    id,kind:'todo',title,note,date,
+    completed:!!prev.completed,
+    completedAt:prev.completedAt||null,
+    createdAt:prev.createdAt||new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+  changedAndSync();$('todoDialog').close();editingTodoId='';renderAttendance();
+}
+function toggleTodoDone(id){
+  const todo=(state.personalEvents||{})[id];if(!todo||todo.kind!=='todo')return;
+  todo.completed=!todo.completed;
+  todo.completedAt=todo.completed?new Date().toISOString():null;
+  todo.updatedAt=new Date().toISOString();
+  changedAndSync();renderAttendance();
 }
 
 const ITEMIZED_FIELDS=[
@@ -4534,8 +4726,10 @@ function setTab(tab){
 }
 qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
 function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}if($('dashPrev'))$('dashPrev').onclick=()=>changeMonth(-1);if($('dashNext'))$('dashNext').onclick=()=>changeMonth(1);$('calPrev').onclick=()=>changeMonth(-1);$('calNext').onclick=()=>changeMonth(1);$('calToday').onclick=()=>{current=new Date();current.setDate(1);render()};
-$('addItinerary').onclick=()=>openEvent(iso(new Date()));
-$('itineraryAllBtn').onclick=()=>{itineraryShowAll=!itineraryShowAll;renderAttendance()};
+$('addItinerary').onclick=()=>attendanceMode==='events'?openEvent(iso(new Date())):openTodo();
+$('itineraryAllBtn').onclick=()=>{if(attendanceMode==='events')itineraryShowAll=!itineraryShowAll;else todoShowCompleted=!todoShowCompleted;renderAttendance()};
+$('attendanceTabEvents').onclick=()=>{attendanceMode='events';renderAttendance()};
+$('attendanceTabTodos').onclick=()=>{attendanceMode='todos';renderAttendance()};
 $('saveEvent').onclick=saveItineraryEvent;
 $('deleteEvent').onclick=()=>{
   if(!editingEventId)return;
@@ -4543,6 +4737,15 @@ $('deleteEvent').onclick=()=>{
   changedAndSync();
   $('eventDialog').close();
   editingEventId='';
+  renderAttendance();
+};
+$('saveTodo').onclick=saveTodo;
+$('deleteTodo').onclick=()=>{
+  if(!editingTodoId)return;
+  delete state.personalEvents[editingTodoId];
+  changedAndSync();
+  $('todoDialog').close();
+  editingTodoId='';
   renderAttendance();
 };
 $('conflictKeep').onclick=()=>commitItineraryEvent(pendingItinerarySave);
