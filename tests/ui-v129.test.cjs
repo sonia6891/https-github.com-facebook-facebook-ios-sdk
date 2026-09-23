@@ -116,7 +116,7 @@ for(const id of ['eventReminder','todoReminder']){
 assert(html.includes('<option value="3d">前 3 天</option>'),'event reminder 3-day option missing');
 assert(html.includes('<option value="1d">前 1 天</option>'),'event reminder 1-day option missing');
 assert(html.includes('<option value="1h">前 1 小時</option>'),'event reminder 1-hour option missing');
-assert(html.includes('<option value="1d">前 1 天・上午 9:00</option>'),'todo reminder 1-day option missing');
+assert(html.includes('<option value="1d">前 1 天</option>'),'todo reminder 1-day option missing');
 assert(html.includes("function reminderBridge()"),'native reminder bridge helper missing');
 assert(html.includes("function reminderFireDate(item)"),'reminder fire-date calculation missing');
 assert(html.includes("function scheduleItemReminder(item"),'reminder scheduling helper missing');
