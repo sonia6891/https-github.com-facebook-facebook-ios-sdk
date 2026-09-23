@@ -82,7 +82,15 @@ async function addRoutes(context, base, billingConfigured = true) {
 
 async function openPage(browser, base, width, user = null, billingConfigured = true) {
   const context = await browser.newContext({ viewport: { width, height: 844 }, serviceWorkers: 'block' });
-  await context.addInitScript(({ user }) => { window.__accountTest = { oauth: [], calls: [], setSessionCalls: [], user }; }, { user });
+  await context.addInitScript(({ user }) => {
+    window.__accountTest = { oauth: [], calls: [], setSessionCalls: [], reminders: [], reminderCancels: [], reminderPermissionRequests: 0, user };
+    window.MeowReminder = {
+      getPermissionStatus: async()=>({granted:true,status:'authorized'}),
+      requestPermission: async()=>{window.__accountTest.reminderPermissionRequests++;return{granted:true,status:'authorized'}},
+      schedule: async payload=>{window.__accountTest.reminders.push(payload);return{scheduled:true,...payload}},
+      cancel: async payload=>{window.__accountTest.reminderCancels.push(payload);return{cancelled:true,...payload}}
+    };
+  }, { user });
   await addRoutes(context, base, billingConfigured);
   const page = await context.newPage();
   const pageErrors = [];
@@ -295,6 +303,8 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         check('新增選單同時提供行程與待辦事項', await page.locator('#attendanceAddEvent').isVisible() && await page.locator('#attendanceAddTodo').isVisible());
         await page.locator('#attendanceAddEvent').click();
         check('選擇新增行程後才開啟行程視窗', await page.locator('#eventDialog').evaluate(x=>x.open) && !(await page.locator('#attendanceAddDialog').evaluate(x=>x.open)));
+        check('新行程預設前 1 小時提醒', await page.locator('#eventReminder').inputValue() === '1h');
+        check('行程提醒提供前 3 天、前 1 天、前 1 小時', await page.locator('#eventReminder option').count() === 4);
         await page.locator('#eventDialogClose').click();
         check('新增行程未填資料也能用叉叉關閉', !(await page.locator('#eventDialog').evaluate(x=>x.open)));
         await page.locator('#addItinerary').click();
@@ -308,6 +318,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         check('待辦分頁按加號仍先開啟同一新增選單', await page.locator('#attendanceAddDialog').evaluate(x=>x.open));
         await page.locator('#attendanceAddTodo').click();
         check('選擇新增待辦後才開啟待辦視窗', await page.locator('#todoDialog').evaluate(x=>x.open) && !(await page.locator('#attendanceAddDialog').evaluate(x=>x.open)));
+        check('新待辦預設前一天上午 9 點提醒', await page.locator('#todoReminder').inputValue() === '1d');
         await page.locator('#todoDialogClose').click();
         check('新增待辦未填資料也能用叉叉關閉', !(await page.locator('#todoDialog').evaluate(x=>x.open)));
         await page.locator('#addItinerary').click();
@@ -318,7 +329,14 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         await page.locator('#saveTodo').click();
         check('可新增待辦事項', await page.locator('[data-todo-edit]').count() === 1 && (await page.locator('[data-todo-edit]').innerText()).includes('測試繳費'));
         check('未完成待辦數量會更新', await page.locator('#todoOpenCount').innerText() === '1');
+        await page.waitForFunction(()=>window.__accountTest.reminders.some(x=>x.kind==='todo'&&x.body==='測試繳費'));
+        const scheduledTodoReminder=await page.evaluate(()=>window.__accountTest.reminders.find(x=>x.kind==='todo'&&x.body==='測試繳費'));
+        check('新增待辦會呼叫原生通知排程', !!scheduledTodoReminder && scheduledTodoReminder.id.startsWith('meow.todo.') && !!scheduledTodoReminder.fireAt);
+        check('待辦清單顯示前一天提醒', (await page.locator('[data-todo-edit]').innerText()).includes('前一天上午 9:00 提醒'));
+        const reminderCountBeforeComplete=await page.evaluate(()=>window.__accountTest.reminders.length);
         await page.locator('[data-todo-toggle]').click();
+        await page.waitForFunction(()=>window.__accountTest.reminderCancels.some(x=>String(x.id||'').startsWith('meow.todo.')));
+        check('完成待辦會取消原生提醒', await page.evaluate(()=>window.__accountTest.reminderCancels.some(x=>String(x.id||'').startsWith('meow.todo.'))));
         check('待辦勾選完成後仍留在列表', await page.locator('.todo-card-v142.completed').count() === 1 && await page.locator('[data-todo-edit]').count() === 1 && await page.locator('#todoOpenCount').innerText() === '0');
         check('完成待辦預設顯示且提供隱藏按鈕', (await page.locator('#itineraryAllBtn').innerText()).includes('隱藏已完成'));
         await page.locator('#itineraryAllBtn').click();
@@ -327,6 +345,8 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         check('可重新顯示已完成待辦', await page.locator('.todo-card-v142.completed').count() === 1);
         await page.locator('[data-todo-toggle]').click();
         check('完成待辦可以取消完成', await page.locator('.todo-card-v142.completed').count() === 0 && await page.locator('#todoOpenCount').innerText() === '1');
+        await page.waitForFunction(count=>window.__accountTest.reminders.length>count,reminderCountBeforeComplete);
+        check('取消完成會重新排程提醒', await page.evaluate(count=>window.__accountTest.reminders.length>count,reminderCountBeforeComplete));
         await page.screenshot({ path: path.join(out, 'attendance-todos-v142-390.png'), fullPage: true });
       }
       await context.close();
