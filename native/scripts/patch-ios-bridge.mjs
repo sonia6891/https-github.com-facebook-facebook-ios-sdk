@@ -74,6 +74,13 @@ if (!project.includes('PrivacyInfo.xcprivacy in Resources')) {
   );
   project = project.slice(0, resourcesStart) + resourcesBlock + project.slice(resourcesEnd);
 }
+
+// v1 is intentionally iPhone-only. The current UI/regression matrix is phone portrait;
+// do not silently re-enable iPad during Capacitor regeneration.
+project = project.replace(/TARGETED_DEVICE_FAMILY = "1,2";/g, 'TARGETED_DEVICE_FAMILY = 1;');
+if (!project.includes('TARGETED_DEVICE_FAMILY = 1;') || project.includes('TARGETED_DEVICE_FAMILY = "1,2";')) {
+  throw new Error('Unable to lock generated Xcode target to iPhone-only.');
+}
 writeFileSync(projectPath, project);
 
-console.log('Patched generated SceneDelegate, native bridges, and app PrivacyInfo.xcprivacy.');
+console.log('Patched generated SceneDelegate, native bridges, app PrivacyInfo.xcprivacy, and iPhone-only target.');
