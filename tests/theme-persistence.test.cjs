@@ -14,15 +14,17 @@ const set=pick(/(function setTheme\(t\)\{[\s\S]*?\n\})/);
 const normalizers=Array.from(html.matchAll(/(function normalizeState\(v\)\{[\s\S]*?\n\})/g),m=>m[1]);
 const saveKey=pick(/const SAVE_KEY='([^']+)'/);
 const key='meow-work-theme-v1';
+const modeKey='meow-work-theme-mode-v1';
 let passed=0;
 function test(name,fn){fn();passed++;console.log(`PASS ${name}`)}
 function openApp(store=new Map(),options={}){
   const classes=new Set();
   const root={style:{},classList:{toggle(name,enabled){if(enabled)classes.add(name);else classes.delete(name)}}};
   const meta={content:'',setAttribute(name,value){this[name]=value}};
-  const context={window:{},console:{warn(){}},document:{documentElement:root,querySelector(){return meta}},
+  const media={matches:!!options.systemDark,addEventListener(){},addListener(){}};
+  const context={window:{matchMedia(){return media}},console:{warn(){}},document:{documentElement:root,querySelector(){return meta}},
     localStorage:{getItem(k){if(options.blockRead)throw Error('storage blocked');return store.has(k)?store.get(k):null},setItem(k,v){if(options.blockWrite)throw Error('quota');store.set(k,String(v))}},
-    matchMedia(){return {matches:!!options.systemDark}},iso:d=>d.toISOString().slice(0,10)};
+    matchMedia(){return media},iso:d=>d.toISOString().slice(0,10)};
   vm.createContext(context);
   vm.runInContext(boot,context);
   const firstPaint=classes.has('dark')?'dark':'light';
@@ -66,8 +68,13 @@ test('late IndexedDB restore cannot overwrite a just-selected mode',()=>{
 test('stale direct state assignment is corrected before rendering',()=>{
   const app=openApp();app.run("state.theme='dark';applyTheme()");assert.equal(app.theme(),'light');assert.equal(app.dark(),false);assert.equal(app.root.style.colorScheme,'light');
 });
+test('system theme is explicit, persists, and resolves against the OS',()=>{
+  const store=new Map();const app=openApp(store,{systemDark:true});app.run("setTheme('system')");
+  assert.equal(app.theme(),'dark');assert.equal(app.dark(),true);assert.equal(store.get(modeKey),'system');
+  const lightOs=openApp(store,{systemDark:false});assert.equal(lightOs.firstPaint,'light');assert.equal(lightOs.theme(),'light');
+});
 test('invalid theme values do not change state or trigger saves',()=>{
-  const app=openApp();app.run("setTheme('system');setTheme(null);setTheme('invalid')");assert.equal(app.theme(),'light');assert.equal(app.run('saveCalls'),0);
+  const app=openApp();app.run("setTheme(null);setTheme('invalid')");assert.equal(app.theme(),'light');assert.equal(app.run('saveCalls'),0);
 });
 test('blocked storage does not crash or override in-session selection',()=>{
   const app=openApp(new Map(),{blockRead:true,blockWrite:true});app.run("setTheme('dark');state=normalizeState({theme:'light'});applyTheme()");assert.equal(app.theme(),'dark');assert.equal(app.dark(),true);
