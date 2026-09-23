@@ -87,10 +87,12 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v120-line-login-callback' in html
+          assert 'v121-pwa-auth-persistence' in html
           assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           assert "const LINE_PROVIDER_ID='custom:line'" in html
           assert "scopes:'openid profile'" in html
+          assert "skipBrowserRedirect=true" in html
+          assert "window.open('about:blank','meow-auth-window')" in html
           assert 'id="welcomeGuest"' not in html
           assert 'id="welcomeEmail"' not in html
           assert html.index('id="profilePreview"') < html.index('id="accountPlanCard"') < html.index('id="workSettingsCard"') < html.index('id="dataSyncCard"') < html.index('id="installCard"') < html.index('id="aboutCard"') < html.index('id="settingsFooterBanner"')
@@ -120,6 +122,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v120-line-login-release-verification
+          name: meow-v121-pwa-auth-persistence-verification
           path: test-results/
           retention-days: 3
