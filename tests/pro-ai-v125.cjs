@@ -2,28 +2,34 @@ const fs = require('fs');
 const assert = require('assert');
 
 const html = fs.readFileSync('index.html', 'utf8');
-const edge = fs.readFileSync('supabase/functions/pro-ai/index.ts', 'utf8');
+const legacyEdge = fs.readFileSync('supabase/functions/pro-ai/index.ts', 'utf8');
+const payslipEdge = fs.readFileSync('supabase/functions/payslip-verify/index.ts', 'utf8');
 
 {
   const build = html.match(/<meta name="meow-ui-build" content="v(\d+)[^"]*">/);
   assert(build && Number(build[1]) >= 125, 'expected current app build v125 or newer');
 }
 
-// Cloud assistant is deliberately removed.
+// Generic cloud assistant stays removed.
 assert(!html.includes('ai_pro_suite'), 'removed Pro AI suite must not return');
 assert(!html.includes('id="proAiPanel"'), 'removed Pro AI panel must not return');
 assert(!html.includes('aiAssistantQuestion'), 'assistant input must not return');
 assert(!html.includes('喵助理'), 'assistant copy must not return');
-assert(!html.includes("invokeUserFunction('pro-ai'"), 'app must not call cloud Pro AI');
-assert(!edge.includes('OPENAI_API_KEY'), 'disabled backend must not require an OpenAI key');
-assert(!edge.includes('api.openai.com'), 'disabled backend must not call OpenAI');
-assert(edge.includes('FEATURE_REMOVED'), 'legacy pro-ai endpoint must be hard-disabled');
+assert(!html.includes("invokeUserFunction('pro-ai'"), 'app must not call legacy cloud Pro AI');
+assert(!legacyEdge.includes('OPENAI_API_KEY'), 'disabled legacy backend must not require an OpenAI key');
+assert(!legacyEdge.includes('api.openai.com'), 'disabled legacy backend must not call OpenAI');
+assert(legacyEdge.includes('FEATURE_REMOVED'), 'legacy pro-ai endpoint must remain hard-disabled');
 
-// The two paid payroll features must remain first-class.
+// Payslip is intentionally cross-validated: Apple Vision -> OpenAI -> local salary engine.
 assert(html.includes('data-pro-feature="payslip_scan"'), 'Pro payslip recognition card missing');
 assert(html.includes('data-pro-feature="itemized_salary_compare"'), 'Pro itemized reconciliation card missing');
-assert(html.includes('Apple Vision'), 'Apple Vision payslip recognition copy missing');
+assert(html.includes('Apple Vision × OpenAI'), 'cross-validation copy missing');
 assert(html.includes("purpose:'payslip'"), 'payslip recognition must use native Vision purpose');
+assert(html.includes("invokeUserFunction('payslip-verify'"), 'payslip must call dedicated verifier');
+assert(html.includes('mergePayslipAiVerification'), 'AI merge layer missing');
+assert(html.includes('Apple Vision／OpenAI 不一致'), 'disagreement state missing');
+assert(html.includes('兩邊不一致，請確認原圖'), 'disagreement must require human confirmation');
+assert(html.includes('data-ocr-ai'), 'user must explicitly choose the OpenAI alternative on conflict');
 assert(html.includes('公司薪資單實發'), 'reconciliation must use actual payslip net pay');
 assert(html.includes('id="itemizedConclusion"'), 'local reconciliation conclusion missing');
 assert(html.includes('少發 '), 'underpayment line-item status missing');
@@ -36,11 +42,22 @@ for (const label of ['勞退自提','福利金','勞保費','健保費','輪班�
 assert(html.includes('rateLike||quantityLike'), 'rates/hours must be excluded from payroll money candidates');
 assert(html.includes('3 種影像版本'), 'three-pass payroll image preprocessing missing');
 
-// Smart schedule remains Pro but independent from the removed assistant.
+// Dedicated verifier must be server-side, stateless and cost-protected.
+assert(payslipEdge.includes('OPENAI_API_KEY'), 'payslip verifier must load server-side OpenAI key');
+assert(payslipEdge.includes('https://api.openai.com/v1/responses'), 'payslip verifier must use Responses API');
+assert(payslipEdge.includes('model: "gpt-5.6"'), 'payslip verifier must use GPT-5.6');
+assert(payslipEdge.includes('store: false'), 'payslip verifier must disable Responses storage');
+assert(payslipEdge.includes('detail: "original"'), 'dense payslip image must use original detail');
+assert(payslipEdge.includes('type: "json_schema"'), 'payslip verifier must use Structured Outputs');
+assert(payslipEdge.includes('meow_claim_payslip_ai_usage'), 'payslip verifier must enforce protected monthly usage');
+assert(payslipEdge.includes('PRO_REQUIRED'), 'payslip verifier must enforce Pro entitlement');
+assert(!payslipEdge.includes('expectedSalary'), 'OpenAI verifier must not be biased by local expected salary');
+
+// Smart schedule stays fully on-device.
 assert(html.includes('smart_schedule_import'), 'smart schedule Pro entitlement missing');
 assert(html.includes('id="aiScheduleCard"'), 'smart schedule card missing');
 assert(html.includes('MeowScheduleVision'), 'local Vision schedule bridge missing');
 assert(html.includes("purpose:'schedule'"), 'schedule recognition must use native Vision purpose');
 assert(!html.includes("mode:'schedule_scan'"), 'schedule import must never call cloud AI');
 
-console.log('PASS local-only Pro payroll/schedule intelligence checks');
+console.log('PASS cross-validated Pro payroll and local schedule intelligence checks');
