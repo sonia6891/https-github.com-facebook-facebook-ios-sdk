@@ -22,8 +22,8 @@ for(const id of [
 }
 
 assert(html.includes('排班設定'));
-assert(html.includes('AI 匯入班表'));
-assert(html.includes('上傳班表圖片，讓貓助理幫你快速轉成班表！'));
+assert(html.includes('智慧匯入班表'));
+assert(html.includes('iPhone 本機辨識班表圖片，不上傳 AI 雲端。'));
 assert(html.includes('--v129-accent:#c77a35'));
 assert(html.includes('--v129-honey-soft:#fff6e8'));
 assert(html.includes('id="themeSystem"'));
@@ -58,7 +58,9 @@ console.log('PASS v138 schedule actions structure');
 
 assert(html.includes('.schedule-ai-v129-banner img{position:absolute;left:-6%;'),'AI mascot image must crop past left edge');
 assert(html.includes('.schedule-ai-v129-banner img{left:-8%;bottom:-6%;width:52%;height:112%;object-position:80% center}'),'mobile AI mascot crop must stay flush to left edge');
-console.log('PASS v141 AI mascot source crop');
+assert(html.includes('MeowScheduleVision'),'local Vision bridge missing from schedule import');
+assert(!html.includes("invokeUserFunction('pro-ai',{mode:'schedule_scan'"),'schedule import must not call OpenAI');
+console.log('PASS v141 local schedule import and mascot source crop');
 
 
 for(const id of [
