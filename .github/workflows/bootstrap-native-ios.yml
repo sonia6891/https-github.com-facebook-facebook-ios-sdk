@@ -85,6 +85,12 @@ jobs:
           grep -q 'UNTimeIntervalNotificationTrigger' ios/App/App/SceneDelegate.swift
           grep -q 'registerPluginInstance(MeowReminderPlugin())' ios/App/App/SceneDelegate.swift
           grep -q 'window?.rootViewController = ViewController()' ios/App/App/SceneDelegate.swift
+          test -f ios/App/App/PrivacyInfo.xcprivacy
+          grep -q 'NSPrivacyCollectedDataTypeOtherFinancialInfo' ios/App/App/PrivacyInfo.xcprivacy
+          grep -q 'NSPrivacyCollectedDataTypeHealth' ios/App/App/PrivacyInfo.xcprivacy
+          grep -q 'NSPrivacyCollectedDataTypePhotosorVideos' ios/App/App/PrivacyInfo.xcprivacy
+          grep -q 'NSPrivacyCollectedDataTypeOtherUserContent' ios/App/App/PrivacyInfo.xcprivacy
+          grep -q 'PrivacyInfo.xcprivacy in Resources' ios/App/App.xcodeproj/project.pbxproj
           if grep -q 'ViewController.swift in Sources' ios/App/App.xcodeproj/project.pbxproj; then
             echo "Unexpected duplicate ViewController source reference"
             exit 1
@@ -137,6 +143,28 @@ jobs:
               build
           fi
 
+      - name: Build unsigned iOS Release device app
+        working-directory: native
+        run: |
+          set -euo pipefail
+          if [ -d ios/App/App.xcworkspace ]; then
+            xcodebuild \
+              -workspace ios/App/App.xcworkspace \
+              -scheme App \
+              -sdk iphoneos \
+              -configuration Release \
+              CODE_SIGNING_ALLOWED=NO \
+              build
+          else
+            xcodebuild \
+              -project ios/App/App.xcodeproj \
+              -scheme App \
+              -sdk iphoneos \
+              -configuration Release \
+              CODE_SIGNING_ALLOWED=NO \
+              build
+          fi
+
       - name: Verify App Store submission bundle
         working-directory: native
         run: |
@@ -148,8 +176,11 @@ jobs:
           test -f "$APP_DIR/public/support.html"
           /usr/libexec/PlistBuddy -c "Print :ITSAppUsesNonExemptEncryption" "$APP_DIR/Info.plist" | grep -q false
           PRIVACY_MANIFEST_COUNT="$(find "$APP_DIR" -name PrivacyInfo.xcprivacy -type f | wc -l | tr -d ' ')"
-          test "$PRIVACY_MANIFEST_COUNT" -ge 1
-          echo "App bundle legal pages, export compliance flag, and privacy manifest verified."
+          test "$PRIVACY_MANIFEST_COUNT" -ge 2
+          test -f "$APP_DIR/PrivacyInfo.xcprivacy"
+          grep -q 'NSPrivacyCollectedDataTypeOtherFinancialInfo' "$APP_DIR/PrivacyInfo.xcprivacy"
+          grep -q 'NSPrivacyCollectedDataTypeHealth' "$APP_DIR/PrivacyInfo.xcprivacy"
+          echo "App bundle legal pages, export compliance flag, app privacy manifest, and SDK privacy manifests verified."
 
       - name: Commit generated iOS project
         run: |
