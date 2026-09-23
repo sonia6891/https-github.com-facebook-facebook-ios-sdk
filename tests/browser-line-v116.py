@@ -21,11 +21,11 @@ URL=f'http://127.0.0.1:{server.server_port}/'
 
 MOCK=r'''export function createClient(){const t=window.__lineTest;return {
  auth:{
-  getSession:async()=>({data:{session:t.user?{user:t.user}:null}}),
+  getSession:async()=>({data:{session:localStorage.getItem('__line_test_signed_out')==='1'?null:(t.user?{user:t.user}:null)}}),
   onAuthStateChange(fn){window.__authCallback=fn;return{data:{subscription:{unsubscribe(){}}}}},
   signInWithOAuth:async x=>{t.oauth.push(x);return{error:null}},
   signInWithOtp:async()=>({error:null}),verifyOtp:async()=>({error:{message:'disabled-in-public-ui'}}),
-  signOut:async()=>{t.user=null;window.__authCallback?.('SIGNED_OUT',null);return{error:null}}
+  signOut:async()=>{t.user=null;localStorage.setItem('__line_test_signed_out','1');window.__authCallback?.('SIGNED_OUT',null);return{error:null}}
  },
  rpc:async(name,args)=>{t.calls.push(name);if(name==='meow_account_access')return{data:{server_now:new Date().toISOString(),entitlement:null},error:null};return{data:null,error:null}},
  from(table){const q={select(){return q},eq(){return q},order(){return q},limit:async()=>({data:[],error:null}),maybeSingle:async()=>({data:null,error:null})};return q},
@@ -74,7 +74,7 @@ with sync_playwright() as p:
  check('免費帳號方案仍是 Free',page.evaluate("window.__lineApi.currentPlan()")=='free')
  check('免費帳號沒有雲端同步資格',not page.evaluate("window.__lineApi.canCloudSync()"))
  # Simulate explicit logout.
- page.evaluate("window.__lineTest.user=null;window.__authCallback('SIGNED_OUT',null)")
+ page.evaluate("window.__lineTest.user=null;localStorage.setItem('__line_test_signed_out','1');window.__authCallback('SIGNED_OUT',null)")
  page.wait_for_timeout(300)
  check('主動登出後再次顯示登入框',opened(page))
  page.reload();page.wait_for_function('window.__lineApi');page.wait_for_timeout(1200)
