@@ -4823,7 +4823,7 @@ if($('importBackup'))$('importBackup').onclick=()=>$('importBackupInput').click(
 if($('importBackupInput'))$('importBackupInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)importBackupFile(file);e.target.value=''};
 if($('cloudBackupNow'))$('cloudBackupNow').onclick=()=>saveAccountState(true);
 if($('cloudRestoreNow'))$('cloudRestoreNow').onclick=()=>restoreFromCloud(true);
-if($('accountUpgrade'))$('accountUpgrade').onclick=()=>{accountProOpen=!accountProOpen;setTab('settings');renderSettings()};
+if($('accountUpgrade'))$('accountUpgrade').onclick=()=>{accountProOpen=!accountProOpen;renderSettings()};
 $('accountLogout').onclick=signOutAccount;
 initWelcome();
 initAuth();
