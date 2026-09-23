@@ -1,0 +1,44 @@
+name: App Store PR preflight
+
+on:
+  pull_request:
+    paths:
+      - index.html
+      - tests/**
+      - native/**
+      - privacy.html
+      - terms.html
+      - support.html
+      - .github/workflows/appstore-preflight.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Parse and run static regressions
+        run: |
+          node tests/theme-persistence.test.cjs
+          node tests/ui-v129.test.cjs
+      - name: Install browser test runtime
+        run: |
+          npm install --no-save playwright@1.57.0
+          npx playwright install --with-deps chromium
+      - name: Run account, workspace, todo, reminder and mobile regressions
+        run: node tests/browser-account-v117.cjs
+      - name: App Store support/privacy source checks
+        run: |
+          test -f privacy.html
+          test -f terms.html
+          test -f support.html
+          grep -q '永久刪除帳號' index.html
+          grep -q 'restoreStorePurchases' index.html
+          grep -q 'cancelProBilling' index.html
+          grep -q "provider:'apple'" index.html
+          grep -q 'APPLE_LOGIN_ENABLED=false' index.html
+          grep -q 'TARGETED_DEVICE_FAMILY = 1;' native/ios/App/App.xcodeproj/project.pbxproj
