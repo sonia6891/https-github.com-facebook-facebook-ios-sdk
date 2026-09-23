@@ -27,6 +27,27 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Google, LINE, Free access, logout and mobile layout tests
         run: node tests/browser-account-v117.cjs
+      - name: Verify live LINE provider redirect and scopes
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --get --dump-header line-auth-headers.txt --output /dev/null \
+            --data-urlencode 'provider=custom:line' \
+            --data-urlencode 'redirect_to=https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/' \
+            'https://ygrlvmyqrhyfkglomsbq.supabase.co/auth/v1/authorize'
+          python3 - <<'PY'
+          from urllib.parse import urlparse,parse_qs
+          headers=open('line-auth-headers.txt',encoding='utf-8').read().splitlines()
+          status=headers[0] if headers else ''
+          locations=[line.split(':',1)[1].strip() for line in headers if line.lower().startswith('location:')]
+          assert '302' in status or '303' in status, status
+          assert locations, 'missing LINE redirect'
+          parsed=urlparse(locations[-1])
+          assert parsed.netloc=='access.line.me', locations[-1]
+          scopes=' '.join(parse_qs(parsed.query).get('scope',[]))
+          assert 'openid' in scopes.split() and 'profile' in scopes.split(), scopes
+          assert '、' not in scopes, scopes
+          print('LINE provider redirect verified:',parsed.netloc,scopes)
+          PY
       - name: Stage public application files only
         run: |
           mkdir -p _site
@@ -66,7 +87,7 @@ jobs:
                       if attempt==9: raise
                       time.sleep(3)
           html=Path('index.html').read_text()
-          assert 'v119-settings-account-folds' in html
+          assert 'v120-line-login-callback' in html
           assert "const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1'" in html
           assert "const LINE_PROVIDER_ID='custom:line'" in html
           assert "scopes:'openid profile'" in html
@@ -99,6 +120,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: meow-v119-settings-release-verification
+          name: meow-v120-line-login-release-verification
           path: test-results/
           retention-days: 3
