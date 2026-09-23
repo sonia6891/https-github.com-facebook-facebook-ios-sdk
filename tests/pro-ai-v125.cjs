@@ -28,6 +28,13 @@ assert(html.includes('公司薪資單實發'), 'reconciliation must use actual p
 assert(html.includes('id="itemizedConclusion"'), 'local reconciliation conclusion missing');
 assert(html.includes('少發 '), 'underpayment line-item status missing');
 assert(html.includes('多扣 '), 'over-deduction line-item status missing');
+assert(html.includes("num(payslipOcrResult.__confidence?.[key])<.72"), 'low-confidence OCR fields must require review');
+assert(html.includes("num(payslipOcrResult.__confidence?.[key])>=.85"), 'high-confidence OCR count missing');
+for (const label of ['勞退自提','福利金','勞保費','健保費','輪班／夜班津貼','加班費','實發金額']) {
+  assert(html.includes(label), 'payroll synonym/field coverage missing: '+label);
+}
+assert(html.includes('rateLike||quantityLike'), 'rates/hours must be excluded from payroll money candidates');
+assert(html.includes('3 種影像版本'), 'three-pass payroll image preprocessing missing');
 
 // Smart schedule remains Pro but independent from the removed assistant.
 assert(html.includes('smart_schedule_import'), 'smart schedule Pro entitlement missing');
