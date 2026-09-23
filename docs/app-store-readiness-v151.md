@@ -22,6 +22,8 @@ Bundle ID：`com.lumilab.meowwork`
 - [x] App Store Server Notifications V2 endpoint 已部署
 - [x] App 內永久刪除帳號
 - [x] App 內永久刪除帳號後清除本機 safety snapshot
+- [x] 正式 Supabase 使用者資料表外鍵已核對：工作資料／方案／訂單／AI 用量為 CASCADE；商店事件保留為 orphan 以支援有效訂閱恢復
+- [x] App Store 事件 raw payload 最小化；刪帳號前先 scrub 舊識別 payload，避免殘留 appAccountToken UUID
 - [x] 刪除帳號後，孤立的既有 App Store 訂閱可安全重新綁定新帳號
 - [x] 隱私權政策公開頁
 - [x] 服務條款公開頁
