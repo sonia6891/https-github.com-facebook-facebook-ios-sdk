@@ -6,6 +6,7 @@ on:
       - index.html
       - tests/**
       - native/**
+      - supabase/**
       - privacy.html
       - terms.html
       - support.html
@@ -25,6 +26,7 @@ jobs:
         run: |
           node tests/theme-persistence.test.cjs
           node tests/ui-v129.test.cjs
+          node --test tests/app-store-notifications-v2-gate-v135.test.cjs
       - name: Install browser test runtime
         run: |
           npm install --no-save playwright@1.57.0
