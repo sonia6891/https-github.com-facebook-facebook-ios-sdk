@@ -23,7 +23,7 @@ jobs:
           from pathlib import Path
           html=Path('index.html').read_text()
           import re
-          m=re.search(r'<meta name="meow-ui-build" content="v(\\d+)[^"]*">',html)
+          m=re.search(r'<meta name="meow-ui-build" content="v(\d+)[^"]*">',html)
           assert m and int(m.group(1))>=129, 'expected app build v129 or newer'
           assert 'class="auth-booting"' in html
           assert "document.documentElement.classList.remove('auth-booting')" in html
