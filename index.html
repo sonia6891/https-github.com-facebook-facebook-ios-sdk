@@ -1379,9 +1379,9 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         <div class="payslip-scan-panel hidden" id="payslipScanPanel">
           <div class="scan-head">
             <div>
-              <b>📷 Pro 本地薪資單辨識 <span style="font-size:10px;color:var(--mobile-gold-ink, #9a7a67);font-weight:800">OCR v4</span></b>
-              <div class="hint">點「拍照或上傳」後，可依裝置選擇拍照、相簿或檔案。辨識結果會留在這張卡正下方，確認後才導入逐項薪資對帳。</div>
-              <div class="scan-privacy">🔒 圖片只在你的瀏覽器本地處理，不上傳薪資單影像。</div>
+              <b>📷 Pro 本機薪資單辨識 <span style="font-size:10px;color:var(--mobile-gold-ink, #9a7a67);font-weight:800">Apple Vision</span></b>
+              <div class="hint">iPhone 會優先使用 Apple Vision 本機辨識，再交給既有欄位配對、同義詞與格式記憶做交叉核對；確認後才導入逐項薪資對帳。</div>
+              <div class="scan-privacy">🔒 iPhone 使用 Apple Vision 在裝置端辨識，不上傳薪資單影像；非 iOS 環境才使用本機 Tesseract fallback。</div>
             </div>
             <button type="button" class="btn" id="closePayslipScan">收起</button>
           </div>
@@ -1391,7 +1391,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           </div>
           <div class="scan-preview-wrap"><div class="scan-preview-stage"><img id="payslipPreview" class="scan-preview" alt="薪資單預覽"><div class="scan-amount-overlay hidden" id="payslipAmountOverlay"></div></div><div class="scan-picker-hint hidden" id="payslipPickerHint"></div></div>
           <div class="scan-status" id="payslipScanStatus">
-            請點「拍照或上傳」選擇薪資單。第一次使用會先下載中文字庫，可能需要一些時間。
+            請點「拍照或上傳」選擇薪資單。iPhone 會直接使用 Apple Vision 本機辨識。
             <div class="scan-progress"><i id="payslipScanProgress"></i></div>
           </div>
           <div class="hint hidden" id="payslipMissingFields" style="margin:-4px 12px 12px;padding:8px 10px;border-radius:10px;background:var(--mobile-gold-icon, #fff6e9);color:var(--mobile-gold-ink, #8b5b31)"></div>
@@ -3982,16 +3982,44 @@ function resetPayslipScan(clearPreview=true){
   if($('payslipRawText'))$('payslipRawText').textContent='';
   if($('payslipMissingFields')){$('payslipMissingFields').textContent='';$('payslipMissingFields').classList.add('hidden')}
   if($('payslipScanProgress'))$('payslipScanProgress').style.width='0%';
-  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始第四代本地辨識（3 次交叉比對）。 ';
+  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始本機辨識（Apple Vision 優先，3 次交叉比對）。 ';
   if($('payslipFileInput'))$('payslipFileInput').value='';
   if(clearPreview){
     if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}payslipPreviewUrl=''}
     if($('payslipPreview')){$('payslipPreview').removeAttribute('src');$('payslipPreview').classList.remove('show')}
   }
 }
+function localVisionTextBridge(){
+  return scheduleVisionBridge();
+}
+function visionWordsToOcrData(result){
+  const width=Math.max(1,Number(result&&result.imageWidth)||1),height=Math.max(1,Number(result&&result.imageHeight)||1);
+  const words=(Array.isArray(result&&result.words)?result.words:[]).map((w,index)=>{
+    const x=Math.max(0,Math.min(1,Number(w.x)||0));
+    const y=Math.max(0,Math.min(1,Number(w.y)||0));
+    const ww=Math.max(0,Math.min(1-x,Number(w.width)||0));
+    const hh=Math.max(0,Math.min(1-y,Number(w.height)||0));
+    return{
+      text:String(w.text||'').trim(),
+      confidence:Math.round(Math.max(0,Math.min(1,Number(w.confidence)||0))*100),
+      bbox:{
+        x0:x*width,
+        y0:(1-y-hh)*height,
+        x1:(x+ww)*width,
+        y1:(1-y)*height
+      },
+      lineKey:'vision-'+index
+    };
+  }).filter(w=>w.text);
+  const lines=groupOcrWordsIntoLines(words).map(line=>line.words.map(w=>w.text).join(' '));
+  return{text:lines.join('\n'),words};
+}
+async function blobDataUrl(blob){
+  return aiReadFile(blob);
+}
 async function runPayslipOcr(file){
   if(!canUse('payslip_scan'))return;
-  if(!file||!String(file.type||'').startsWith('image/')){alert('目前第四代本地辨識先支援圖片檔。');return}
+  if(!file||!String(file.type||'').startsWith('image/')){alert('目前本機辨識先支援圖片檔。');return}
   if(file.size>20*1024*1024){alert('圖片太大，請使用 20MB 以下的薪資單照片。');return}
   resetPayslipScan(false);
   if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}}
@@ -3999,39 +4027,60 @@ async function runPayslipOcr(file){
   const status=$('payslipScanStatus'),bar=$('payslipScanProgress');
   let worker=null,currentPass=0;
   try{
-    if(!window.Tesseract)throw new Error('OCR 元件尚未載入，請確認網路後重新整理。');
     status.childNodes[0].nodeValue='正在產生 3 種影像版本… ';
-    const variants=await preprocessPayslipVariants(file);payslipOcrDocument={width:variants[0].width,height:variants[0].height};
-    const logger=m=>{
-      const local=Math.max(0,Math.min(1,m.progress||0)),overall=Math.round(((currentPass+local)/variants.length)*100);
-      status.childNodes[0].nodeValue='第 '+(currentPass+1)+' / '+variants.length+' 次（'+variants[currentPass].name+'）：'+ocrStatusLabel(m.status)+(m.progress!==undefined?' '+Math.round(local*100)+'%':'')+' ';
-      bar.style.width=overall+'%';
-    };
-    if(window.Tesseract.createWorker){
-      worker=await window.Tesseract.createWorker('chi_tra+eng',window.Tesseract.OEM?.LSTM_ONLY||1,{logger});
-    }
+    const variants=await preprocessPayslipVariants(file);
+    payslipOcrDocument={width:variants[0].width,height:variants[0].height};
+    const nativeVision=localVisionTextBridge();
     const runs=[];
-    for(currentPass=0;currentPass<variants.length;currentPass++){
-      const variant=variants[currentPass];let data;
-      if(worker&&worker.setParameters){
-        const psm=currentPass===0?(window.Tesseract.PSM?.AUTO||3):currentPass===1?(window.Tesseract.PSM?.SPARSE_TEXT||11):(window.Tesseract.PSM?.SINGLE_BLOCK||6);
-        try{await worker.setParameters({tessedit_pageseg_mode:String(psm),preserve_interword_spaces:'1'})}catch(e){}
+
+    if(nativeVision){
+      for(currentPass=0;currentPass<variants.length;currentPass++){
+        const variant=variants[currentPass];
+        status.childNodes[0].nodeValue='Apple Vision 第 '+(currentPass+1)+' / '+variants.length+' 次（'+variant.name+'）本機辨識中… ';
+        bar.style.width=Math.round((currentPass/variants.length)*100)+'%';
+        const imageDataUrl=await blobDataUrl(variant.image);
+        const vision=await nativeVision.recognize({imageDataUrl});
+        const data=visionWordsToOcrData(vision);
+        runs.push(parseSingleOcrRun(data,variant));
       }
-      if(worker){
-        let res;
-        try{res=await worker.recognize(variant.image,{}, {text:true,blocks:true,tsv:true})}catch(e){res=await worker.recognize(variant.image)}
-        data=res.data;
-      }else{
-        const res=await window.Tesseract.recognize(variant.image,'chi_tra+eng',{logger}, {text:true,blocks:true,tsv:true});data=res.data;
+    }else{
+      if(!window.Tesseract)throw new Error('本機 OCR 元件尚未載入，請確認網路後重新整理。');
+      const logger=m=>{
+        const local=Math.max(0,Math.min(1,m.progress||0)),overall=Math.round(((currentPass+local)/variants.length)*100);
+        status.childNodes[0].nodeValue='Tesseract fallback 第 '+(currentPass+1)+' / '+variants.length+' 次（'+variants[currentPass].name+'）：'+ocrStatusLabel(m.status)+(m.progress!==undefined?' '+Math.round(local*100)+'%':'')+' ';
+        bar.style.width=overall+'%';
+      };
+      if(window.Tesseract.createWorker){
+        worker=await window.Tesseract.createWorker('chi_tra+eng',window.Tesseract.OEM?.LSTM_ONLY||1,{logger});
       }
-      runs.push(parseSingleOcrRun(data,variant));
+      for(currentPass=0;currentPass<variants.length;currentPass++){
+        const variant=variants[currentPass];let data;
+        if(worker&&worker.setParameters){
+          const psm=currentPass===0?(window.Tesseract.PSM?.AUTO||3):currentPass===1?(window.Tesseract.PSM?.SPARSE_TEXT||11):(window.Tesseract.PSM?.SINGLE_BLOCK||6);
+          try{await worker.setParameters({tessedit_pageseg_mode:String(psm),preserve_interword_spaces:'1'})}catch(e){}
+        }
+        if(worker){
+          let res;
+          try{res=await worker.recognize(variant.image,{}, {text:true,blocks:true,tsv:true})}catch(e){res=await worker.recognize(variant.image)}
+          data=res.data;
+        }else{
+          const res=await window.Tesseract.recognize(variant.image,'chi_tra+eng',{logger}, {text:true,blocks:true,tsv:true});data=res.data;
+        }
+        runs.push(parseSingleOcrRun(data,variant));
+      }
     }
+
     if(worker){await worker.terminate();worker=null}
-    payslipOcrRuns=runs;payslipRawText=runs.map(r=>'【'+r.variant+'】\n'+(r.text||'')).join('\n\n');
+    payslipOcrRuns=runs;
+    payslipRawText=runs.map(r=>'【'+r.variant+'】\n'+(r.text||'')).join('\n\n');
     payslipOcrResult=mergePayslipRuns(runs);
     renderPayslipDetected();$('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';$('payslipScanResult').classList.remove('hidden');
-    const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),labelOnlyDefs=missingDefs.filter(def=>payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[def.key]),reallyMissingDefs=missingDefs.filter(def=>!labelOnlyDefs.includes(def));
-    status.childNodes[0].nodeValue='第四代辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
+    const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),
+      missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),
+      labelOnlyDefs=missingDefs.filter(def=>payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[def.key]),
+      reallyMissingDefs=missingDefs.filter(def=>!labelOnlyDefs.includes(def));
+    const engine=nativeVision?'Apple Vision':'Tesseract fallback';
+    status.childNodes[0].nodeValue=engine+' 辨識完成：3 種影像交叉比對，找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位'+(payslipOcrResult.__usedMemory?'，已套用本機格式記憶':'')+'。 ';
     if($('payslipMissingFields')){
       const warningCount=Object.keys(validatePayslipValues(payslipOcrResult)).length+Object.keys(payslipOcrResult.__fieldWarnings||{}).length;
       $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0&&warningCount===0);
