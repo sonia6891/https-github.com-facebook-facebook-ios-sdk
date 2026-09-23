@@ -26,6 +26,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: bootstrap-native-ios-main
+  cancel-in-progress: true
+
 jobs:
   bootstrap:
     runs-on: macos-latest
@@ -212,6 +216,10 @@ jobs:
             echo "No generated changes to commit."
             exit 0
           fi
+          git fetch origin main
+          if [ "$(git rev-parse HEAD)" != "$(git rev-parse origin/main)" ]; then
+            echo "main advanced while this native build was running; verified generated output will be rebuilt by the newer run, so skip auto-commit to avoid a false rebase conflict."
+            exit 0
+          fi
           git commit -m "Generate Capacitor iOS project with native bridges [skip ci]"
-          git pull --rebase origin main
           git push origin HEAD:main
