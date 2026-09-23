@@ -37,7 +37,7 @@ const scheduleSection=html.slice(
   html.indexOf('<section class="page" id="page-calendar">'),
   html.indexOf('<section class="page" id="page-attendance">')
 );
-assert(html.includes('v138-schedule-actions'),'expected v138 schedule actions build');
+assert(html.includes('v139-ai-card-edge-crop'),'expected v139 AI card edge crop build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
   'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
@@ -55,3 +55,7 @@ assert(scheduleSection.includes('<use href="#i-calendar"/>'),'dated shift action
 assert(html.includes("scheduleOpen=!scheduleOpen;render()"),'three-dot schedule settings must toggle open/closed');
 assert(html.includes("source:'manual'"),'dated shift action must save a manual schedule override');
 console.log('PASS v138 schedule actions structure');
+
+assert(html.includes('.schedule-ai-v129-banner img{position:absolute;left:-18px;'),'AI mascot image must crop past left edge');
+assert(html.includes('.schedule-ai-v129-banner img{left:-16px;width:calc(42% + 16px);object-position:60% center}'),'mobile AI mascot crop must stay flush to left edge');
+console.log('PASS v139 AI mascot edge crop');
