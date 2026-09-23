@@ -1,0 +1,66 @@
+name: LINE login v123 preflight
+on:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - sw.js
+      - tests/browser-account-v117.cjs
+      - .github/workflows/line-login-v123-preflight.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Static LINE and auth boot checks
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('index.html').read_text()
+          assert 'v123-line-single-window' in html
+          assert 'class="auth-booting"' in html
+          assert "document.documentElement.classList.remove('auth-booting')" in html
+          assert "window.open('about:blank','meow-auth-window')" not in html
+          assert "client.auth.setSession({" not in html
+          assert "provider:LINE_PROVIDER_ID" in html
+          assert "scopes:'openid profile'" in html
+          print('static v123 checks passed')
+          PY
+      - name: Verify live Supabase to LINE authorize request
+        run: |
+          set -euo pipefail
+          curl --silent --show-error --get --dump-header headers.txt --output /dev/null \
+            --data-urlencode 'provider=custom:line' \
+            --data-urlencode 'redirect_to=https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/' \
+            'https://ygrlvmyqrhyfkglomsbq.supabase.co/auth/v1/authorize'
+          python3 - <<'PY'
+          from urllib.parse import urlparse,parse_qs
+          lines=open('headers.txt',encoding='utf-8').read().splitlines()
+          status=lines[0] if lines else ''
+          loc=[x.split(':',1)[1].strip() for x in lines if x.lower().startswith('location:')]
+          assert '302' in status or '303' in status, status
+          assert loc, 'missing redirect'
+          p=urlparse(loc[-1]); q=parse_qs(p.query)
+          assert p.netloc=='access.line.me', loc[-1]
+          assert q.get('redirect_uri')==['https://ygrlvmyqrhyfkglomsbq.supabase.co/auth/v1/callback']
+          assert set(' '.join(q.get('scope',[])).split()) >= {'openid','profile'}
+          assert q.get('disable_auto_login')==['true'], q.get('disable_auto_login')
+          assert q.get('code_challenge_method')==['S256']
+          print('live LINE redirect passed: disable_auto_login=true + PKCE S256')
+          PY
+      - name: Parse application JavaScript
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re, subprocess, tempfile
+          html=Path('index.html').read_text()
+          scripts=re.findall(r'<script(?:\s[^>]*)?>([\s\S]*?)</script>',html,re.I)
+          for i,src in enumerate(scripts):
+              p=Path(tempfile.gettempdir())/f'meow-inline-{i}.js'
+              p.write_text(src)
+              subprocess.run(['node','--check',str(p)],check=True)
+          print(f'{len(scripts)} inline scripts parsed')
+          PY
