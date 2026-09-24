@@ -1,4 +1,4 @@
-const CACHE_NAME='meow-work-pwa-v186';
+const CACHE_NAME='meow-work-pwa-v187';
 const STATIC_ASSETS=['./index.html','./privacy.html','./terms.html','./support.html','./manifest.webmanifest?v=183','./assets/welcome-brand-v112.webp','./assets/mobile-hero-clean-v75.png','./assets/mobile-rest-card-v75.webp','./assets/meow-assistant-pro-v169.webp?v=169','./workcat-home-v12.png','./app-icon-v178-180.png?v=183','./app-icon-v178-192.png?v=183','./app-icon-v178-512.png?v=183','./splash-v183.jpg?v=183'];
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting()});
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(STATIC_ASSETS)).then(()=>self.skipWaiting())));
