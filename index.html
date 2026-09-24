@@ -6033,6 +6033,7 @@ async function recordMeowAssistantAudio(token){
     try{
       ctx=new AudioCtx();
       meowAssistantAudioContext=ctx;
+      if(ctx.state==='suspended'){try{await ctx.resume()}catch(e){}}
       const source=ctx.createMediaStreamSource(stream);
       analyser=ctx.createAnalyser();
       analyser.fftSize=512;
@@ -6070,7 +6071,7 @@ async function recordMeowAssistantAudio(token){
       else finish(resolve,blob);
     };
 
-    try{recorder.start(200)}catch(e){finish(reject,e);return}
+    try{recorder.start()}catch(e){finish(reject,e);return}
 
     if(analyser&&levelData){
       interval=setInterval(()=>{
