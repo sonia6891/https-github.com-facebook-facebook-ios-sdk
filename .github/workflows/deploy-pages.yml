@@ -36,7 +36,7 @@ jobs:
           set -euo pipefail
           curl --silent --show-error --get --dump-header line-auth-headers.txt --output /dev/null \
             --data-urlencode 'provider=custom:line' \
-            --data-urlencode 'redirect_to=https://sonia6891.github.io/https-github.com-facebook-facebook-ios-sdk/' \
+            --data-urlencode 'redirect_to=https://sonia6891.github.io/meow-work-app/' \
             'https://ygrlvmyqrhyfkglomsbq.supabase.co/auth/v1/authorize'
           python3 - <<'PY'
           from urllib.parse import urlparse,parse_qs
