@@ -14,8 +14,9 @@ assert.deepEqual(duplicates,[],'duplicate DOM ids found');
 for(const id of [
   'scheduleUiPlan','scheduleUiShift','scheduleUiCycle','scheduleUiStart',
   'aiScheduleCard','aiScheduleUpload','aiScheduleFileInput','aiScheduleStatus','aiScheduleResult',
-  'settingsAvatarButton','themeLight','themeDark','themeSystem','settingsOpenSchedule','settingsAiImport',
-  'accountPlanCard','proPlanSettings','settingsPlanBadge','settingsPlanDetailBadge',
+  'settingsAvatarButton','themeLight','themeDark','themeSystem','settingsOpenSchedule',
+  'toggleAppearance','appearanceBody','toggleSchedulePrefs','schedulePrefsBody',
+  'accountPlanCard','proPlanDialog','proPlanSettings','settingsPlanBadge','settingsPlanDetailBadge',
   'workSettingsCard','workSettingsBody','dataSyncCard','dataSyncBody'
 ]){
   assert.equal(ids[id],1,'missing or duplicated #'+id);
@@ -30,7 +31,12 @@ assert(html.includes('id="themeSystem"'));
 assert(html.includes("meow-work-theme-mode-v1"));
 assert(html.includes("if($('accountLogout'))$('accountLogout').classList.toggle('hidden',!authUser)"));
 assert(html.includes('id="settingsScheduleSummary"'));
-console.log('PASS v129 schedule/settings UI structure');
+assert.equal(ids.settingsAiImport||0,0,'settings page must not advertise removed AI schedule import');
+assert(html.includes('Free／Pro 方案比較'),'Free/Pro comparison dialog missing');
+assert(html.includes('薪資單三層交叉檢查'),'Pro comparison must include three-layer payslip verification');
+assert(html.includes("appearanceOpen?'收起設定⌃':'展開設定⌄'"),'appearance fold state missing');
+assert(html.includes("schedulePrefsOpen?'收起設定⌃':'展開設定⌄'"),'schedule preference fold state missing');
+console.log('PASS v166 settings plan comparison and fold structure');
 
 
 const scheduleSection=html.slice(
