@@ -165,3 +165,17 @@ assert(html.includes("if($('salaryTabPro'))$('salaryTabPro').onclick=()=>{setSal
 assert(html.includes("if($('salaryProPane'))$('salaryProPane').classList.toggle('hidden',salarySubTab!=='pro')"),'Pro reconciliation pane switch missing');
 console.log('PASS v159 Free/Pro salary reconciliation tabs structure');
 
+const settingsSection=html.slice(
+  html.indexOf('<section class="page" id="page-settings">'),
+  html.indexOf('</main></div></div>')
+);
+assert(settingsSection.indexOf('id="profilePreview"') < settingsSection.indexOf('id="accountPlanCard"'),'Pro plan must follow the account identity card');
+assert(settingsSection.indexOf('id="accountPlanCard"') < settingsSection.indexOf('id="appearanceCard"'),'Pro plan must sit directly above appearance/settings cards');
+assert(settingsSection.includes('Free・本機保存'),'Free local-storage explanation missing');
+assert(settingsSection.includes('Pro・本機＋雲端'),'Pro cloud-storage explanation missing');
+assert(settingsSection.includes('立即儲存到本機'),'Free local save action missing');
+assert(settingsSection.includes('立即備份到雲端') && settingsSection.includes('從雲端還原'),'Pro cloud actions missing');
+assert(!settingsSection.includes('匯出備份檔') && !settingsSection.includes('匯入備份檔'),'manual JSON backup controls should not clutter the visible settings UI');
+console.log('PASS v160 Pro placement and simplified data-management structure');
+
+
