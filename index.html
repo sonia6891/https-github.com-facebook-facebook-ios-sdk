@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=180">
+<link rel="manifest" href="./manifest.webmanifest?v=181">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v180-lower-login-fullbleed">
+<meta name="meow-ui-build" content="v181-sky-extension-glass-login">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -116,10 +116,10 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 .meow-assistant-fab{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;will-change:left,top,transform;transition:box-shadow .16s ease,transform .12s ease}.meow-assistant-fab.is-dragging{cursor:grabbing;transform:scale(.98);box-shadow:0 16px 36px rgba(53,38,30,.26)}
 .meow-assistant-fab{background:transparent;color:var(--mobile-text,#5c3425);box-shadow:none;padding:8px 10px 7px;gap:1px;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:98px;min-height:118px;overflow:visible;z-index:110}
 .meow-assistant-fab img{display:block;width:86px;height:auto;max-height:92px;object-fit:contain;filter:drop-shadow(0 0 2px rgba(255,255,255,.96)) drop-shadow(0 8px 13px rgba(68,48,35,.24));pointer-events:none}
-.meow-assistant-fab b{display:block;margin:-1px 0 0;padding:5px 10px;border-radius:999px;background:rgba(255,250,244,.96);border:1px solid var(--mobile-line,#dfc7b3);box-shadow:0 5px 14px rgba(68,48,35,.16);font-size:12px;font-weight:950;line-height:1.15;white-space:nowrap;text-align:center;pointer-events:none}
+.meow-assistant-fab b{display:block;margin:-1px 0 0;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid var(--mobile-line,#dfc7b3);box-shadow:0 5px 14px rgba(68,48,35,.16);font-size:12px;font-weight:950;line-height:1.15;white-space:nowrap;text-align:center;pointer-events:none}
 .meow-assistant-fab.is-dragging{box-shadow:none;transform:scale(.97)}
 @media(max-width:760px){.meow-assistant-fab{min-width:92px;min-height:108px;padding:7px 9px 6px}.meow-assistant-fab img{width:78px;max-height:84px}.meow-assistant-fab b{font-size:11px;padding:5px 9px}}
-.meow-assistant-dialog{position:fixed;inset:auto 18px 88px auto;width:min(390px,calc(100vw - 20px));max-width:none;max-height:min(70dvh,610px);margin:0;padding:0;border:0;border-radius:20px;background:transparent;overflow:visible;z-index:120}
+.meow-assistant-dialog{position:fixed;inset:auto 18px 88px auto;width:min(390px,calc(100vw - 20px));max-width:none;max-height:min(70dvh,610px);margin:0;padding:0;border:0;border-radius:18px;background:transparent;overflow:visible;z-index:120}
 .meow-assistant-dialog::backdrop{display:none}
 .meow-assistant-sheet{background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eadfd6);border-radius:20px;padding:12px;box-shadow:0 18px 54px rgba(58,39,29,.22);max-height:min(70dvh,610px);overflow:auto}
 .meow-assistant-head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:grab;touch-action:none;user-select:none;padding:2px 2px 4px}
@@ -1128,26 +1128,26 @@ html.dark .settings-pro-v129{
 /* Signed-out launch: keep the approved splash visible and float a compact login card on top. */
 html.auth-needs-login #app-splash{opacity:1!important;pointer-events:none}
 .meow-welcome.welcome-auto-login{
-  width:min(324px,calc(100vw - 36px));
-  max-width:324px;
+  width:min(306px,calc(100vw - 44px));
+  max-width:306px;
   height:auto;
   max-height:none;
   padding:0;
-  border:1px solid rgba(255,255,255,.82);
+  border:1px solid rgba(255,255,255,.42);
   border-radius:20px;
   background:rgba(255,250,244,.96);
   color:#3c1c15;
-  box-shadow:0 18px 48px rgba(55,35,22,.24),0 0 0 1px rgba(125,89,62,.07);
+  box-shadow:0 14px 42px rgba(45,34,26,.18),0 0 0 1px rgba(255,255,255,.12);
   overflow:hidden;
   top:auto;
   right:auto;
-  bottom:calc(env(safe-area-inset-bottom,0px) + 72px);
+  bottom:calc(env(safe-area-inset-bottom,0px) + 44px);
   left:50%;
   margin:0;
   transform:translateX(-50%);
 }
 .meow-welcome.welcome-auto-login::backdrop{
-  background:rgba(35,24,18,.08);
+  background:transparent;
   backdrop-filter:none;
   -webkit-backdrop-filter:none;
 }
@@ -1155,28 +1155,27 @@ html.auth-needs-login #app-splash{opacity:1!important;pointer-events:none}
 .meow-welcome.welcome-auto-login .welcome-art,
 .meow-welcome.welcome-auto-login .welcome-benefits,
 .meow-welcome.welcome-auto-login .welcome-foot{display:none!important}
-.meow-welcome.welcome-auto-login .welcome-content{padding:15px 14px 14px}
-.meow-welcome.welcome-auto-login .welcome-login-mini-head{display:block;text-align:center;margin:0 0 10px}
-.meow-welcome.welcome-auto-login .welcome-login-mini-head b{display:block;font-size:16px;line-height:1.2;color:#3c1c15}
+.meow-welcome.welcome-auto-login .welcome-content{padding:13px 12px 12px;backdrop-filter:blur(16px) saturate(1.14);-webkit-backdrop-filter:blur(16px) saturate(1.14)}
+.meow-welcome.welcome-auto-login .welcome-login-mini-head{display:block;text-align:center;margin:0 0 8px}
+.meow-welcome.welcome-auto-login .welcome-login-mini-head b{display:block;font-size:15px;line-height:1.2;color:#4b352c;text-shadow:0 1px 8px rgba(255,255,255,.85)}
 .meow-welcome.welcome-auto-login .welcome-login-mini-head span{display:none}
 .meow-welcome.welcome-auto-login .welcome-actions{gap:8px}
-.meow-welcome.welcome-auto-login .welcome-button{min-height:46px;border-radius:14px;font-size:15px;padding:9px 14px}
+.meow-welcome.welcome-auto-login .welcome-button{min-height:44px;border-radius:13px;font-size:14px;padding:8px 13px}
 .meow-welcome.welcome-auto-login .welcome-message{margin:10px 2px 0;font-size:12px;text-align:center}
 .meow-welcome.welcome-auto-login #welcomeApple{display:none!important}
+.meow-welcome.welcome-auto-login .welcome-google{background:rgba(255,255,255,.78);border-color:rgba(255,255,255,.55);box-shadow:0 4px 16px rgba(50,40,32,.08)}
+.meow-welcome.welcome-auto-login .welcome-line{background:rgba(6,199,85,.78);border-color:rgba(255,255,255,.28);box-shadow:0 4px 16px rgba(6,120,60,.12)}
 .welcome-login-mini-head{display:none}
 @media(max-width:760px){
   #app-splash{
-    top:calc(0px - env(safe-area-inset-top,0px));
-    right:0;
-    bottom:auto;
-    left:0;
+    inset:0;
     width:100vw;
-    height:calc(100dvh + env(safe-area-inset-top,0px));
-    min-height:calc(100svh + env(safe-area-inset-top,0px));
-    background:#f6ede3;
+    height:100dvh;
+    min-height:100svh;
+    background:#c9e5f1;
   }
-  #app-splash img{width:100vw;height:100%;object-fit:cover;object-position:center top}
-  .meow-welcome.welcome-auto-login{bottom:calc(env(safe-area-inset-bottom,0px) + 64px)}
+  #app-splash img{width:100vw;height:100%;object-fit:contain;object-position:center top;background:#c9e5f1}
+  .meow-welcome.welcome-auto-login{bottom:calc(env(safe-area-inset-bottom,0px) + 44px)}
 }
 </style>
 <style id="meow-welcome-styles">
@@ -1207,7 +1206,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 </style>
 </head>
 <body>
-<div id="app-splash" aria-hidden="true"><img src="./splash-v178.jpg?v=178" alt=""></div>
+<div id="app-splash" aria-hidden="true"><img src="./splash-v181.jpg?v=181" alt=""></div>
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h5v-6h4v6h5v-9.5"/></symbol>
 <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 9h18M7 13h2M11 13h2M15 13h2M7 17h2M11 17h2M15 17h2"/></symbol>
@@ -6801,7 +6800,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v180';
+    const reloadKey='meow-sw-reloaded-v181';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -6810,7 +6809,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=180',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=181',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
