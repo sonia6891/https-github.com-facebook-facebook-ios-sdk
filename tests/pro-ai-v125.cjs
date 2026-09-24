@@ -75,7 +75,7 @@ assert(!html.includes('id="aiScheduleCard"'), 'removed smart schedule card must 
 assert(!html.includes('id="aiScheduleUpload"'), 'removed smart schedule upload action must stay absent');
 
 // Final Pro Meow Assistant branding + voice flow.
-assert(html.includes('./assets/meow-assistant-pro-v167.webp'), 'final Pro Meow Assistant mascot missing');
+assert(html.includes('./assets/meow-assistant-pro-v168.webp?v=168'), 'final Pro Meow Assistant mascot missing');
 assert(html.includes('<b>喵助理</b></button>'), 'floating assistant label missing');
 assert(html.includes("input.dispatchEvent(new Event('input',{bubbles:true}))"), 'voice transcript must be written into the input');
 assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"), 'voice transcript must auto-submit after recognition');
