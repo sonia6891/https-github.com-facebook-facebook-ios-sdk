@@ -26,6 +26,10 @@
 	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>使用相機拍攝班表、薪資單或頭像圖片。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>選取班表、薪資單或頭像圖片。</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
