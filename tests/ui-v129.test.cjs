@@ -45,7 +45,14 @@ assert(html.includes('<b>喵助理</b></button>'),'floating Meow Assistant label
 assert(!html.includes('<span aria-hidden="true">🐾</span><b>喵助理</b><small>Pro</small>'),'old paw/Pro floating button must be removed');
 assert(html.includes("renderMeowAssistantReply('已聽到：「'+text+'」\\n正在處理…')"),'voice transcript/submission status missing');
 assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"),'voice command must auto-submit after transcript');
-console.log('PASS v169 aligned settings folds, final Meow Assistant, and voice flow');
+assert(html.includes('flex-direction:column'),'Meow Assistant label must sit below mascot');
+assert(html.includes('min-width:98px;min-height:118px'),'Meow Assistant drag hit area must be enlarged');
+assert(html.includes('function resetMeowAssistantVoice()'),'repeat voice session reset helper missing');
+assert(html.includes('meowAssistantRecognitionToken++'),'voice session generation token missing');
+assert(html.includes("current.onresult=null;current.onerror=null;current.onend=null"),'stale speech handlers must be detached before restart');
+assert(html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToken===token'),'stale speech session guard missing');
+assert(html.includes('resetMeowAssistantVoice();\n  const d=$(\'meowAssistantDialog\')'),'closing assistant must reset voice recognition');
+console.log('PASS v170 Meow Assistant label, drag target, and repeat voice lifecycle');
 
 
 const scheduleSection=html.slice(
@@ -73,7 +80,7 @@ console.log('PASS v138 schedule actions structure');
 
 assert.equal(ids.scheduleMenuClearAi||0,0,'removed AI schedule clear action must stay absent');
 assert(!scheduleSection.includes('智慧匯入班表'),'calendar must not advertise removed AI schedule import');
-console.log('PASS v169 removed AI schedule import UI');
+console.log('PASS v170 removed AI schedule import UI');
 
 
 for(const id of [
