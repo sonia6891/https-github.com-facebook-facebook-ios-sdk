@@ -55,7 +55,7 @@ jobs:
       - name: Stage public application files only
         run: |
           mkdir -p _site
-          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v115-180.png app-icon-v115-192.png app-icon-v115-512.png _site/
+          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v153-180.png app-icon-v153-192.png app-icon-v153-512.png _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
       - name: Setup Pages
@@ -76,7 +76,7 @@ jobs:
           import hashlib,json,os,re,time,urllib.request,urllib.error
           result={'commit':os.environ['GITHUB_SHA'],'files':{}}
           base=os.environ['PAGE_URL']
-          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v115-180.png','app-icon-v115-192.png','app-icon-v115-512.png','assets/welcome-brand-v112.webp']:
+          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v153-180.png','app-icon-v153-192.png','app-icon-v153-512.png','assets/welcome-brand-v112.webp']:
               expected=hashlib.sha256(Path(name).read_bytes()).hexdigest()
               url=base+name+'?build-check='+os.environ['GITHUB_SHA']
               for attempt in range(10):
