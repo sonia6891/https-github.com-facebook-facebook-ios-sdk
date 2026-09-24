@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=155">
-<link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v155-180.png?v=155">
-<link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v155-192.png?v=155">
-<link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
-<link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
+<link rel="manifest" href="./manifest.webmanifest?v=174">
+<link rel="apple-touch-icon" href="./app-icon-v174-512.png?v=174">
+<link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v174-512.png?v=174">
+
+<link rel="shortcut icon" type="image/png" href="./app-icon-v174-512.png?v=174">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v173-pwa-audio-transcription">
+<meta name="meow-ui-build" content="v174-splash-icon">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -95,7 +95,9 @@ html.dark{
 }
 *{box-sizing:border-box;}html,body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","Microsoft JhengHei",sans-serif;}button,input,select,textarea{font:inherit;}button{cursor:pointer;}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid rgba(247,179,66,.28);outline-offset:2px;}
 html.auth-booting .app,html.auth-booting dialog{visibility:hidden!important}
-html.auth-booting body::before{content:'喵的，又要上班了';position:fixed;inset:0;display:grid;place-items:center;background:var(--bg);color:var(--brown);font-weight:900;font-size:18px;letter-spacing:.02em;z-index:99999}
+#app-splash{position:fixed;inset:0;z-index:99999;display:flex;align-items:stretch;justify-content:center;background:#f6ede3;opacity:1;transition:opacity .36s ease;overflow:hidden}
+#app-splash img{width:100%;height:100%;object-fit:cover;object-position:center}
+#app-splash.is-leaving{opacity:0;pointer-events:none}
 svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .app{min-height:100vh;}.shell{max-width:1440px;margin:auto;display:grid;grid-template-columns:220px minmax(0,1fr);min-height:100vh;}.sidebar{position:sticky;top:0;height:100vh;height:100dvh;padding:20px 14px 14px;background:rgba(255,253,249,.92);border-right:1px solid var(--line);backdrop-filter:blur(18px);z-index:30;display:flex;flex-direction:column;overflow:hidden}.side-brand{padding:4px 6px 18px;flex:0 0 auto}.side-brand-logo{display:block;width:184px;max-width:100%;height:auto;margin:0 auto}.side-user-name,.side-user-row,.side-user-message,.side-avatar-btn,.side-avatar,.side-name{display:none!important}.side-nav{position:relative;z-index:5;display:grid;gap:7px;flex:0 0 auto}.nav-btn{border:0;background:transparent;color:var(--mobile-text, #765346);padding:12px 14px;border-radius:14px;text-align:left;font-weight:800;display:flex;align-items:center;gap:12px;min-height:48px;}.nav-btn .icon{font-size:21px;flex:0 0 auto;}.nav-btn.active{background:var(--mobile-surface, linear-gradient(135deg,#fff0cc,#ffe6b6));color:var(--mobile-text, #b55f0b);}.side-foot{position:relative;left:auto;right:auto;bottom:auto;margin-top:auto;min-height:192px;overflow:hidden;padding:12px 10px 0;border:1px solid #ecdccc;border-radius:18px;background:#fff8ef;box-shadow:0 8px 20px rgba(105,67,42,.06);pointer-events:none;z-index:1;flex:0 0 auto}.side-foot::after{content:"";position:absolute;left:50%;bottom:8px;transform:translateX(-50%);width:122px;aspect-ratio:1;background:url("./workcat-home-v12.png") center/contain no-repeat}.side-foot-copy{position:relative;z-index:2;text-align:center;color:#9b6f5e;font-family:"Kaiti TC","DFKai-SB","BiauKai","STKaiti","KaiTi","Noto Serif TC",serif;font-size:11px;line-height:1.45;transform:rotate(-2deg)}.side-foot-copy strong{display:block;margin-top:2px;font-size:13px;color:#7a4935;font-weight:700}.side-foot-cat{display:none}.main{min-width:0;padding:18px 24px 72px;}.hero-wrap{position:relative;margin-bottom:16px;isolation:isolate}.hero-img{display:block;width:100%;border-radius:26px;box-shadow:var(--shadow);border:1px solid #f2e5d8;background:#fffaf3}.hero-mobile{display:none}.hero-hit{position:absolute;border:0;background:transparent;z-index:5}.hero-theme{display:none}.hero-avatar{display:none;position:absolute}.desktop-hero-clear{position:absolute;right:0;top:0;width:29%;height:100%;z-index:3;pointer-events:none;border-radius:0 26px 26px 0;background:linear-gradient(90deg,rgba(255,249,241,0),#fff9f1 18%,#fff9f1)}.desktop-theme-control{position:absolute;right:1.65%;top:50%;transform:translateY(-50%);z-index:6;display:flex;align-items:center;gap:10px;white-space:nowrap}.desktop-theme-control>button{display:flex;align-items:center;gap:9px;border:0;background:transparent;padding:0;color:inherit;min-width:0}.desktop-theme-sun,.desktop-theme-moon{width:22px;height:22px;display:block;flex:0 0 auto}.desktop-theme-sun{color:#f3aa2f}.desktop-theme-moon{color:#a87864}.desktop-theme-track{position:relative;width:56px;height:30px;border-radius:999px;background:linear-gradient(180deg,#ffc35e,#f4ad37);box-shadow:inset 0 0 0 1px rgba(190,120,38,.12);flex:0 0 auto}.desktop-theme-track::after{content:"";position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 5px rgba(98,61,33,.14);transition:transform .2s ease}.dark .desktop-theme-track::after{transform:translateX(26px)}.desktop-profile-divider{width:1px;height:31px;background:#e3d5c8;flex:0 0 auto}.desktop-profile-change{display:flex;align-items:center;gap:7px;border:0;background:transparent;padding:0;color:#5d3427;font-weight:900;cursor:pointer;min-width:0}.desktop-profile-avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #f1ddca;background:#f6e3d2;box-shadow:0 3px 9px rgba(73,44,28,.12);flex:0 0 auto}.desktop-profile-label{font-size:13px;white-space:nowrap}.desktop-profile-chevron{font-size:15px;line-height:1;color:#7e5948;transform:translateY(-1px)}.page{display:none;}.page.active{display:block;}.page-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 14px;}.page-title{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:950;}.paw{font-size:22px;color:var(--mobile-text, #9a6045);}.mini-note{color:var(--mobile-muted, #9c6244);font-size:13px;font-weight:700;transform:rotate(-2deg);}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);}.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}.metric{padding:16px;display:grid;grid-template-columns:54px minmax(0,1fr);align-items:center;gap:12px;}.metric .iconbox,.field-icon,.summary-icon{width:50px;height:50px;border-radius:15px;display:grid;place-items:center;font-size:26px;}.metric .iconbox .icon,.field-icon .icon,.summary-icon .icon{font-size:26px;}.metric b{font-size:14px;}.metric strong{display:block;font-size:28px;margin-top:4px;letter-spacing:-.5px;}.metric small{color:var(--muted);}.tone-orange{background:var(--mobile-gold-surface, linear-gradient(135deg,#fff9e9,#fff0cf));}.tone-orange .iconbox{background:var(--mobile-gold-icon, #ffe6aa);color:var(--mobile-gold-ink, #c96e0a);}.tone-blue{background:var(--mobile-blue-surface, linear-gradient(135deg,#f8fcff,#eaf5ff));}.tone-blue .iconbox{background:var(--mobile-blue-icon, #dceeff);color:var(--mobile-blue-ink, #1768b1);}.tone-pink{background:var(--mobile-pink-surface, linear-gradient(135deg,#fffafa,#ffecef));}.tone-pink .iconbox{background:var(--mobile-pink-icon, #ffd9de);color:var(--mobile-pink-ink, #db485b);}.tone-green{background:var(--mobile-green-surface, linear-gradient(135deg,#f8fff9,#e9f7eb));}.tone-green .iconbox{background:var(--mobile-green-icon, #d9f2df);color:var(--mobile-green-ink, #218a43);}
@@ -1150,6 +1152,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 </style>
 </head>
 <body>
+<div id="app-splash" aria-hidden="true"><img src="./splash-v174.webp?v=174" alt=""></div>
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h5v-6h4v6h5v-9.5"/></symbol>
 <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 9h18M7 13h2M11 13h2M15 13h2M7 17h2M11 17h2M15 17h2"/></symbol>
@@ -4681,7 +4684,30 @@ function buildSalaryPrintHtml(){
   if(scope==='year'){
     const year=current.getFullYear(),rows=exportYearRecords(year),actual=rows.reduce((s,r)=>s+(r.actual===null?0:r.actual),0),diff=rows.reduce((s,r)=>s+(r.diff===null?0:r.diff),0);
     const tr=rows.map(r=>'<tr><td>'+r.month+' 月</td><td>'+(r.expected===null?'—':money(r.expected))+'</td><td>'+(r.actual===null?'—':money(r.actual))+'</td><td>'+(r.diff===null?'—':signedMoney(r.diff))+'</td></tr>').join('');
-    return '<!doctype html><html><head><meta charset="utf-8"><title>'+year+' 年薪資對帳</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+year+' 年薪資對帳</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>對帳月份</b><strong>'+rows.length+'</strong></div><div class="card"><b>全年公司實發</b><strong>'+money(actual)+'</strong></div><div class="card"><b>全年差額</b><strong>'+signedMoney(diff)+'</strong></div></div><table><thead><tr><th>月份</th><th>App 預估實領</th><th>公司實發</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">此報告依 App 中已儲存的排班、薪資與對帳資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
+    return '<!doctype html><html><head><meta charset="utf-8"><title>'+year+' 年薪資對帳</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+year+' 年薪資對帳</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>對帳月份</b><strong>'+rows.length+'</strong></div><div class="card"><b>全年公司實發</b><strong>'+money(actual)+'</strong></div><div class="card"><b>全年差額</b><strong>'+signedMoney(diff)+'</strong></div></div><table><thead><tr><th>月份</th><th>App 預估實領</th><th>公司實發</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">此報告依 App 中已儲存的排班、薪資與對帳資料產生，實際薪資仍以公司薪資單為準。</div><script>
+(function(){
+  var meowSplashStarted=performance.now();
+  var splash=document.getElementById('app-splash');
+  if(!splash)return;
+  function finish(){
+    var elapsed=performance.now()-meowSplashStarted;
+    var wait=Math.max(0,1450-elapsed);
+    setTimeout(function(){
+      splash.classList.add('is-leaving');
+      setTimeout(function(){ if(splash&&splash.parentNode)splash.parentNode.removeChild(splash); },420);
+    },wait);
+  }
+  var guard=0;
+  var timer=setInterval(function(){
+    guard+=1;
+    if(!document.documentElement.classList.contains('auth-booting')||guard>160){
+      clearInterval(timer);
+      finish();
+    }
+  },50);
+})();
+</script>
+</body></html>';
   }
   const r=exportMonthRecord(),tr=r.rows.map(x=>'<tr><td>'+escapeHtml(x.label)+'</td><td>'+money(x.expected)+'</td><td>'+(x.actual===null?'—':money(x.actual))+'</td><td>'+(x.actual===null?'—':signedMoney(x.actual-x.expected))+'</td></tr>').join('');
   return '<!doctype html><html><head><meta charset="utf-8"><title>'+r.title+'</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+r.title+'</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>App 預估實領</b><strong>'+money(r.expectedNet)+'</strong></div><div class="card"><b>公司實發</b><strong>'+(r.actualNet===null?'—':money(r.actualNet))+'</strong></div><div class="card"><b>差額</b><strong>'+(r.diff===null?'—':signedMoney(r.diff))+'</strong></div></div><table><thead><tr><th>項目</th><th>App 預估</th><th>公司實際</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">本月實際出勤 '+r.attendance+' 天・加班 '+r.overtimeHours+' 小時・請假 '+r.leaveDays+' 天。此報告依 App 中已儲存資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
