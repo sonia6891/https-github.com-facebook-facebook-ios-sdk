@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v152-apple-auth">
+<meta name="meow-ui-build" content="v156-cloud-hardening">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -2092,7 +2092,7 @@ function switchWorkspace(owner){
 }
 function accountServerNow(){return accessServerMs?accessServerMs+(performance.now()-accessLocalMs):Date.now()}
 function entitlementIsActive(row){
-  if(!row||row.plan!=='pro'||!['active','trialing'].includes(row.status)||!row.pro_until)return false;
+  if(!row||row.plan!=='pro'||!['active','trialing','grace_period'].includes(row.status)||!row.pro_until)return false;
   const until=Date.parse(row.pro_until);return Number.isFinite(until)&&until>accountServerNow();
 }
 function hasCloudEntitlement(){return !!(authUser&&accessCheckedUser===authUser.id&&(developerAccess||entitlementIsActive({plan:serverPlan,status:entitlementStatus,pro_until:entitlementUntil})))}
@@ -5046,7 +5046,7 @@ function renderProPlanSettings(){
   }else if(pro){
     const until=entitlementUntil?new Date(entitlementUntil).toLocaleDateString('zh-TW'):'由商店訂閱狀態決定';
     const cancelText=cancelAtPeriodEnd?'・已取消續訂，到期後回到 Free':'';
-    box.innerHTML='<b>'+(entitlementStatus==='trialing'?'Pro 免費試用中':'Pro 已啟用')+'</b>有效至：'+escapeHtml(until)+(billingProvider?'・付款來源：'+escapeHtml(billingProvider):'')+cancelText;
+    box.innerHTML='<b>'+(entitlementStatus==='trialing'?'Pro 免費試用中':entitlementStatus==='grace_period'?'Pro 付款寬限期':'Pro 已啟用')+'</b>有效至：'+escapeHtml(until)+(billingProvider?'・付款來源：'+escapeHtml(billingProvider):'')+cancelText;
   }else if(trialStartedAt){
     box.innerHTML='<b>目前：Free</b>此帳號已使用過免費試用；可直接選擇月繳或年繳 Pro。';
   }else{
@@ -5091,7 +5091,7 @@ function renderAccountPlan(){
   if(DEV_TESTING_ENABLED){hint.textContent='開發測試模式，不代表正式訂閱狀態';return}
   if(entitlementStatus==='error'){hint.textContent='方案確認失敗，暫以 Free 使用';return}
   if(plan==='pro'){
-    hint.textContent=entitlementUntil?'Pro 已啟用・有效至 '+new Date(entitlementUntil).toLocaleDateString('zh-TW'):'Pro 已啟用';
+    hint.textContent=entitlementStatus==='grace_period'?(entitlementUntil?'Pro 付款寬限期・有效至 '+new Date(entitlementUntil).toLocaleDateString('zh-TW'):'Pro 付款寬限期'):(entitlementUntil?'Pro 已啟用・有效至 '+new Date(entitlementUntil).toLocaleDateString('zh-TW'):'Pro 已啟用');
   }else if(['past_due','canceled','expired'].includes(entitlementStatus)){
     hint.textContent='目前 Free・Pro 未啟用';
   }else{
