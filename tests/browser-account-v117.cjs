@@ -147,7 +147,11 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('LINE 按鈕使用 custom:line', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line'));
     check('LINE 要求 openid profile', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.scopes === 'openid profile'));
     check('Apple 原生流程使用 signInWithIdToken', html.includes("signInWithIdToken(payload)"));
-    await guest.evaluate(()=>window.__accountV119.calendar());
+    await guest.evaluate(()=>{
+      const welcome=document.getElementById('welcomeDialog');
+      if(welcome&&welcome.open)welcome.close();
+      window.__accountV119.calendar();
+    });
     await guest.locator('#scheduleAddDay').click();
     await guest.waitForTimeout(60);
     const scheduleAddFit=await guest.evaluate(()=>{
