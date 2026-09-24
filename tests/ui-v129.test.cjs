@@ -54,7 +54,11 @@ assert(html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToke
 assert(html.includes('void resetMeowAssistantVoice(true);\n  const d=$(\'meowAssistantDialog\')'),'closing assistant must reset native/browser voice recognition');
 assert(html.includes('function meowSpeechBridge()'),'native iOS speech bridge selector missing');
 assert(html.includes("nativeBridge.recognize({locale:'zh-TW'})"),'native iOS speech recognition call missing');
-console.log('PASS v171 native iOS speech bridge with browser fallback');
+assert(html.includes('async function recoverIOSWebSpeechSession()'),'iOS WebKit speech recovery helper missing');
+assert(html.includes('navigator.mediaDevices.getUserMedia({audio:true})'),'iOS WebKit microphone priming missing');
+assert(html.includes('setTimeout(resolve,3800)'),'iOS WebKit recovery delay missing');
+assert(html.includes('meowAssistantWebSpeechNeedsRecovery=true'),'repeat Web Speech recovery state missing');
+console.log('PASS v172 native iOS speech plus WebKit repeat-session recovery');
 
 
 const scheduleSection=html.slice(
