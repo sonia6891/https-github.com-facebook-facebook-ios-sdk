@@ -183,6 +183,17 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('薪資 OCR 不把加班時數或倍率當加班費', payrollParsed.otPay===2680);
     check('薪資 OCR 可辨識勞保健保福利金勞退', payrollParsed.dedLabor===1100 && payrollParsed.dedHealth===750 && payrollParsed.dedWelfare===180 && payrollParsed.dedPension===2160);
     check('薪資 OCR 可辨識公司實發金額', payrollParsed.actualNet===37490);
+    const deductionRowParsed=await guest.evaluate(()=>window.__accountV119.parsePayrollFixture([
+      {text:'考前扣款',confidence:96,lineKey:'d1',bbox:{x0:40,y0:610,x1:180,y1:640}},
+      {text:'勞保費',confidence:99,lineKey:'d1',bbox:{x0:340,y0:610,x1:450,y1:640}},
+      {text:'建保費',confidence:95,lineKey:'d1',bbox:{x0:650,y0:610,x1:760,y1:640}},
+      {text:'673',confidence:99,lineKey:'d2',bbox:{x0:80,y0:655,x1:140,y1:685}},
+      {text:'1,145',confidence:99,lineKey:'d2',bbox:{x0:365,y0:655,x1:435,y1:685}},
+      {text:'826',confidence:99,lineKey:'d2',bbox:{x0:680,y0:655,x1:740,y1:685}}
+    ]));
+    check('薪資 OCR 可把考前誤字校正為考勤扣款 673', deductionRowParsed.dedAttendance===673);
+    check('薪資 OCR 不會把考勤 673 誤塞到勞保，勞保應維持 1,145', deductionRowParsed.dedLabor===1145);
+    check('薪資 OCR 可把建保誤字校正為健保並讀到金額', deductionRowParsed.dedHealth===826);
     await guestContext.close();
 
     const standaloneContext = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block' });
