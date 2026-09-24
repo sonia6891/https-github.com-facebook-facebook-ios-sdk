@@ -137,10 +137,13 @@ jobs:
           assert "client.auth.setSession({" not in html
           assert 'id="welcomeGuest"' not in html
           assert 'id="welcomeEmail"' not in html
-          assert html.index('id="profilePreview"') < html.index('id="workSettingsCard"') < html.index('id="accountPlanCard"') < html.index('id="dataSyncCard"') < html.index('id="installCard"') < html.index('id="aboutCard"')
-          assert html.index('id="workSettingsCard"') < html.index('id="accountPlanCard"') < html.index('id="proPlanSettings"') < html.index('id="dataSyncCard"')
+          assert html.index('id="profilePreview"') < html.index('id="accountPlanCard"') < html.index('id="appearanceCard"') < html.index('id="workSettingsCard"') < html.index('id="dataSyncCard"') < html.index('id="installCard"') < html.index('id="aboutCard"')
+          assert html.index('id="profilePreview"') < html.index('id="accountPlanCard"') < html.index('id="proPlanSettings"') < html.index('id="appearanceCard"')
           assert 'id="toggleWorkSettings"' in html and 'id="workSettingsBody"' in html
           assert 'id="toggleDataSync"' in html and 'id="dataSyncBody"' in html
+          assert 'Free・本機保存' in html and 'Pro・本機＋雲端' in html
+          assert "async function backupCloudNow(showAlert=true)" in html
+          assert "return await restoreLegacyCloud()" in html
           assert 'id="accountEmail"' not in html
           assert 'id="accountLoginMethod"' in html and 'id="accountUsername"' in html
           assert 'id="devPlanCard"' not in html
