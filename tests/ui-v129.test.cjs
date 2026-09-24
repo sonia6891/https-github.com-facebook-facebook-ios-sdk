@@ -47,12 +47,14 @@ assert(html.includes("renderMeowAssistantReply('已聽到：「'+text+'」\\n正
 assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"),'voice command must auto-submit after transcript');
 assert(html.includes('flex-direction:column'),'Meow Assistant label must sit below mascot');
 assert(html.includes('min-width:98px;min-height:118px'),'Meow Assistant drag hit area must be enlarged');
-assert(html.includes('function resetMeowAssistantVoice()'),'repeat voice session reset helper missing');
+assert(html.includes('async function resetMeowAssistantVoice(cancelNative=true)'),'repeat voice session reset helper missing');
 assert(html.includes('meowAssistantRecognitionToken++'),'voice session generation token missing');
 assert(html.includes("current.onresult=null;current.onerror=null;current.onend=null"),'stale speech handlers must be detached before restart');
 assert(html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToken===token'),'stale speech session guard missing');
-assert(html.includes('resetMeowAssistantVoice();\n  const d=$(\'meowAssistantDialog\')'),'closing assistant must reset voice recognition');
-console.log('PASS v170 Meow Assistant label, drag target, and repeat voice lifecycle');
+assert(html.includes('void resetMeowAssistantVoice(true);\n  const d=$(\'meowAssistantDialog\')'),'closing assistant must reset native/browser voice recognition');
+assert(html.includes('function meowSpeechBridge()'),'native iOS speech bridge selector missing');
+assert(html.includes("nativeBridge.recognize({locale:'zh-TW'})"),'native iOS speech recognition call missing');
+console.log('PASS v171 native iOS speech bridge with browser fallback');
 
 
 const scheduleSection=html.slice(
@@ -80,7 +82,7 @@ console.log('PASS v138 schedule actions structure');
 
 assert.equal(ids.scheduleMenuClearAi||0,0,'removed AI schedule clear action must stay absent');
 assert(!scheduleSection.includes('智慧匯入班表'),'calendar must not advertise removed AI schedule import');
-console.log('PASS v170 removed AI schedule import UI');
+console.log('PASS v171 removed AI schedule import UI');
 
 
 for(const id of [
