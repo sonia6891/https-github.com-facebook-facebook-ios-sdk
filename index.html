@@ -1630,7 +1630,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           </div>
           <div class="settings-list">
             <button class="settings-item" id="saveDevice"><div class="field-icon" style="background:var(--mobile-gold-icon, #e2f0ff);color:var(--mobile-gold-ink, #2072bf)"><svg class="icon"><use href="#i-cloud"/></svg></div><div><b>儲存到此裝置</b><small id="saveState">將目前設定與資料儲存到本機裝置</small></div><span>›</span></button>
-            <button type="button" class="settings-item hidden" id="legacyCloudExport"><div class="field-icon" style="background:var(--mobile-purple-surface, #f0e7ff);color:var(--mobile-purple-ink, #7547a5)">☁</div><div><b>取回舊版雲端備份</b><small>下載相容的 JSON；需要時再由你選擇匯入，不會直接覆蓋</small></div><span>⇩</span></button>
+            <button type="button" class="settings-item hidden" id="legacyCloudExport"><div class="field-icon" style="background:var(--mobile-purple-surface, #f0e7ff);color:var(--mobile-purple-ink, #7547a5)">☁</div><div><b>直接還原舊版備份</b><small>直接讀取舊版雲端資料並還原到這台裝置，不需要另外開啟 JSON 檔</small></div><span>↺</span></button>
             <button class="settings-item" id="exportBackup"><div class="field-icon" style="background:var(--mobile-gold-icon, #e9f7ec);color:var(--mobile-gold-ink, #31824a)">⇩</div><div><b>匯出備份檔</b><small>存到 iPhone「檔案」或其他安全位置，重裝後可還原</small></div><span>›</span></button>
             <button type="button" class="settings-item" id="importBackup" aria-controls="importBackupInput"><div class="field-icon" style="background:var(--mobile-gold-icon, #fff1dc);color:var(--mobile-gold-ink, #a96720)">⇧</div><div><b>匯入備份檔</b><small>從先前匯出的 JSON 備份還原資料</small></div><span>›</span></button>
             <input class="hidden" id="importBackupInput" type="file" accept=".json,application/json">
@@ -2315,18 +2315,39 @@ async function toggleCloud(){
   cloudConsent=true;try{localStorage.setItem('meow-work-cloud-consent:'+localOwner,'yes')}catch(e){}
   await loadAccountState();if(canCloudSync())await subscribeAccountRealtime();renderSyncStatus();
 }
-async function exportLegacyCloud(){
-  if(!authUser){alert('請先登入原本的帳號。');return}
-  const uid=authUser.id,epoch=accessEpoch;
+async function restoreLegacyCloud(){
+  if(!authUser){alert('請先登入原本的帳號。');return false}
+  const uid=authUser.id,epoch=accessEpoch,button=$('legacyCloudExport');
+  const oldText=button&&button.querySelector('b')?button.querySelector('b').textContent:'直接還原舊版備份';
+  if(button)button.disabled=true;
+  if(button&&button.querySelector('b'))button.querySelector('b').textContent='正在讀取舊版備份…';
   try{
     const client=await getAuthClient();
     const {data,error}=await client.from('user_legacy_exports').select('payload,original_updated_at').eq('user_id',uid).maybeSingle();
-    if(!sameAccess(uid,epoch))return;if(error)throw error;
-    if(!data){alert('此帳號沒有切換 Pro 規則前的舊版雲端備份。');return}
+    if(!sameAccess(uid,epoch))return false;
+    if(error)throw error;
+    if(!data){alert('這個帳號沒有舊版雲端備份。');return false}
     const payload=data.payload||{},snapshot=newestMeaningfulCloudSnapshot(payload)||(payload.state?payload:null);
-    if(!snapshot){alert('舊版備份沒有可取回的工作資料。');return}
-    downloadBlob(new Blob([JSON.stringify({app:'喵的，又要上班了',version:1,exportedAt:new Date().toISOString(),state:snapshot.state},null,2)],{type:'application/json'}),'meow-legacy-backup.json');
-  }catch(e){alert('舊版備份暫時無法取回；既有資料沒有被刪除。請稍後再試。')}
+    if(!snapshot||!snapshot.state){alert('舊版備份裡沒有可還原的工作資料。');return false}
+    const when=data.original_updated_at||snapshot.savedAt||'';
+    const label=when?new Date(when).toLocaleString('zh-TW'):'較早的版本';
+    if(!confirm('找到 '+label+' 的舊版雲端備份。\n\n要直接還原到這台裝置嗎？目前資料會先保留一份安全副本，不需要另外開啟 JSON 檔。'))return false;
+    if(!preserveBeforeReplace()){alert('本機空間不足，沒有覆蓋目前資料。請先匯出備份。');return false}
+    state=normalizeState(snapshot.state);
+    localEditVersion++;
+    localDirty=true;
+    if(!persistLocalSnapshot()){alert('舊版備份已讀取，但本機儲存失敗，沒有更新目前資料。');return false}
+    writeWorkspaceMeta();applyTheme();render();
+    setCloudStatus(canCloudSync()?'舊版備份已還原到本機・尚未覆蓋目前雲端':'舊版備份已還原到本機');
+    alert('舊版備份已直接還原。\n\n請先確認資料；如果內容正確，再按「立即備份到雲端」更新目前雲端版本。');
+    return true;
+  }catch(e){
+    alert('舊版備份暫時無法讀取；目前資料沒有被刪除。請稍後再試。');
+    return false;
+  }finally{
+    if(button)button.disabled=false;
+    if(button&&button.querySelector('b'))button.querySelector('b').textContent=oldText;
+  }
 }
 function renderSyncStatus(){
   if(!$('cloudProtection'))return;
@@ -2364,7 +2385,7 @@ async function initWelcome(){
   $('welcomeDialog').addEventListener('close',()=>document.documentElement.classList.remove('meow-welcome-open'));
   if($('showWelcome'))$('showWelcome').onclick=()=>openWelcome(true);
   $('toggleCloudSync').onclick=toggleCloud;
-  $('legacyCloudExport').onclick=exportLegacyCloud;
+  $('legacyCloudExport').onclick=restoreLegacyCloud;
   $('keepCloudVersion').onclick=()=>{if(pendingCloud&&canCloudSync()&&confirm('先保留本機安全副本，再使用雲端版本？'))applyRemoteRow(pendingCloud)};
   $('keepLocalVersion').onclick=()=>{if(pendingCloud&&canCloudSync()&&confirm('用本機版本更新雲端？原雲端版本會保留在備份歷史內。'))void saveAccountState(true,true)};
 }
@@ -5423,12 +5444,52 @@ async function importBackupFile(file){
 }
 async function restoreFromCloud(showAlert=true){
   if(!canCloudSync()){if(showAlert)alert('請先確認有效 Pro／試用資格並啟用雲端同步。');return false}
-  await loadAccountState();
-  if(pendingCloud&&canCloudSync()){
-    if(!confirm('本機與雲端有不同資料。先保留本機安全副本，再使用雲端版本？'))return false;
-    return applyRemoteRow(pendingCloud);
+  if(!navigator.onLine){setCloudStatus('離線・目前無法讀取雲端備份');if(showAlert)alert('目前沒有網路，無法從雲端還原。');return false}
+  const uid=authUser.id,epoch=accessEpoch,button=$('cloudRestoreNow');
+  if(button)button.disabled=true;
+  setCloudStatus('正在讀取雲端備份…');
+  try{
+    const client=await getAuthClient();
+    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+    if(!sameAccess(uid,epoch)||!canCloudSync())return false;
+    if(error)throw error;
+    if(!data){
+      setCloudStatus('雲端已啟用・尚無備份');
+      if(showAlert)alert('這個帳號目前沒有可還原的雲端備份。');
+      return false;
+    }
+    const payload=data.payload||{},snapshot=newestMeaningfulCloudSnapshot(payload)||(payload.state?payload:null);
+    if(!snapshot||!snapshot.state){
+      setCloudStatus('雲端備份沒有工作資料');
+      if(showAlert)alert('有找到雲端紀錄，但裡面沒有可還原的工作資料。');
+      return false;
+    }
+    const remote=normalizeState(snapshot.state);
+    const when=data.updated_at||snapshot.savedAt||'';
+    const label=when?new Date(when).toLocaleString('zh-TW'):'未知時間';
+    cloudReady=true;cloudRevision=data.updated_at||null;cloudPayload=payload;
+    if(workFingerprint(remote)===workFingerprint(state)){
+      localDirty=false;cloudLastSuccess=data.updated_at||cloudLastSuccess;pendingCloud=null;writeWorkspaceMeta();setCloudStatus('已同步');
+      if(showAlert)alert('目前這台裝置已經和雲端備份完全相同。\n\n雲端備份時間：'+label);
+      return true;
+    }
+    if(!confirm('找到 '+label+' 的雲端備份。\n\n要用雲端版本還原這台裝置嗎？目前本機資料會先保留安全副本。')) {
+      setCloudStatus('已取消還原・本機資料保留');
+      return false;
+    }
+    if(!preserveBeforeReplace()){setCloudStatus('本機空間不足・未覆蓋現有資料');if(showAlert)alert('本機空間不足，沒有覆蓋目前資料。請先匯出備份。');return false}
+    state=remote;localDirty=false;localEditVersion++;
+    cloudRevision=data.updated_at;cloudPayload=payload;pendingCloud=null;cloudLastSuccess=data.updated_at||'';
+    persistLocalSnapshot();writeWorkspaceMeta();applyTheme();render();setCloudStatus(localSaveError?'雲端已讀取，但本機儲存失敗':'已同步');
+    if(showAlert)alert(localSaveError?'雲端備份已讀取，但本機儲存失敗，請先檢查裝置空間。':'已從雲端還原。\n\n備份時間：'+label);
+    return !localSaveError;
+  }catch(e){
+    if(sameAccess(uid,epoch))setCloudStatus('雲端讀取失敗・本機資料仍可使用');
+    if(showAlert)alert('雲端備份讀取失敗，目前本機資料沒有被改動。請稍後再試。');
+    return false;
+  }finally{
+    if(button)button.disabled=!canCloudSync();
   }
-  return cloudStatus==='已同步';
 }
 function setDevPlan(plan){
   if(!DEV_TESTING_ENABLED)return;
