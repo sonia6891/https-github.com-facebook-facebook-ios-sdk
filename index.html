@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v162-meow-assistant">
+<meta name="meow-ui-build" content="v160-schedule-date-fit">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -901,10 +901,18 @@ html.dark .settings-pro-v129{
   .todo-check-v142{width:34px;height:34px}
 }
 
-/* ===== v145 schedule add dialog mobile fit ===== */
+/* ===== v160 schedule add dialog mobile fit ===== */
+#scheduleAddDialog{
+  width:min(420px,calc(100vw - 20px));
+  max-width:calc(100vw - 20px);
+  margin:auto;
+  overflow:hidden;
+}
 #scheduleAddDialog,
 #scheduleAddDialog form,
+#scheduleAddDialog .dialog-head,
 #scheduleAddDialog .dialog-body,
+#scheduleAddDialog .dialog-foot,
 #scheduleAddDialog .field{
   min-width:0;
   max-width:100%;
@@ -917,24 +925,60 @@ html.dark .settings-pro-v129{
 #scheduleAddDialog .dialog-body{
   overflow-x:hidden;
 }
+#scheduleAddDialog .field{
+  width:100%;
+  overflow:hidden;
+}
 #scheduleAddDate,
 #scheduleAddShift{
   display:block;
   width:100%;
   max-width:100%;
-  min-width:0;
+  min-width:0!important;
   inline-size:100%;
   max-inline-size:100%;
-  min-inline-size:0;
+  min-inline-size:0!important;
   box-sizing:border-box;
 }
 #scheduleAddDate{
   font-size:16px;
+  overflow:hidden;
+}
+#scheduleAddDate::-webkit-date-and-time-value{
+  min-width:0;
+  text-align:left;
+}
+#scheduleAddDate::-webkit-datetime-edit{
+  min-width:0;
+  overflow:hidden;
+}
+#scheduleAddDate::-webkit-calendar-picker-indicator{
+  flex:0 0 auto;
+  margin:0;
 }
 @media(max-width:760px){
-  #scheduleAddDialog .dialog-body{padding-left:14px;padding-right:14px}
-  #scheduleAddDialog .field{width:100%}
-  #scheduleAddDate,#scheduleAddShift{width:100%;max-width:100%;min-width:0}
+  #scheduleAddDialog{
+    width:calc(100vw - 16px);
+    max-width:calc(100vw - 16px);
+  }
+  #scheduleAddDialog .dialog-head{padding-left:14px;padding-right:14px}
+  #scheduleAddDialog .dialog-body{padding-left:12px;padding-right:12px}
+  #scheduleAddDialog .dialog-foot{padding-left:12px;padding-right:12px;flex-wrap:wrap}
+  #scheduleAddDialog .field{width:100%;max-width:100%}
+  #scheduleAddDate,#scheduleAddShift{
+    width:-webkit-fill-available!important;
+    inline-size:-webkit-fill-available!important;
+    max-width:-webkit-fill-available!important;
+    max-inline-size:-webkit-fill-available!important;
+  }
+}
+@media(max-width:360px){
+  #scheduleAddDialog .dialog-foot{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+  }
+  #scheduleAddDialog .dialog-foot .btn{width:100%;min-width:0}
+  #scheduleAddSave{grid-column:1/-1}
 }
 
 /* ===== v146 attendance unified add chooser ===== */
