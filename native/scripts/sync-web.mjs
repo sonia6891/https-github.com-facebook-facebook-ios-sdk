@@ -18,9 +18,9 @@ const files = [
   'terms.html',
   'support.html',
   'workcat-home-v12.png',
-  'app-icon-v153-180.png',
-  'app-icon-v153-192.png',
-  'app-icon-v153-512.png'
+  'app-icon-v154-180.png',
+  'app-icon-v154-192.png',
+  'app-icon-v154-512.png'
 ];
 
 for (const name of files) {
