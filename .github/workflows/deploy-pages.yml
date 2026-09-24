@@ -61,7 +61,8 @@ jobs:
           python3 -m venv "$ICON_VENV"
           "$ICON_VENV/bin/python" -m pip install --quiet pillow
           "$ICON_VENV/bin/python" native/scripts/generate-app-icons-v155.py
-          curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/55737aaf2c45506d5e29d823d614db2626d1ad79dd3ea82806858d64c267a2bc.png" -o icon-v178-source.png\n          curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/b8ccc9163e5d72861ccb895c9425ea26942dcbc01b1f112860ca39e8cc48795c.png" -o splash-v178-source.png
+          curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/55737aaf2c45506d5e29d823d614db2626d1ad79dd3ea82806858d64c267a2bc.png" -o icon-v178-source.png
+          curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/b8ccc9163e5d72861ccb895c9425ea26942dcbc01b1f112860ca39e8cc48795c.png" -o splash-v178-source.png
           "$ICON_VENV/bin/python" - <<'PY'
           from PIL import Image, ImageOps
           from pathlib import Path
