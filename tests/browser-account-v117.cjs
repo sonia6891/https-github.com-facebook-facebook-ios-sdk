@@ -336,8 +336,9 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         await page.screenshot({ path: path.join(out, 'account-v119-390.png'), fullPage: true });
         await page.locator('#accountUpgrade').scrollIntoViewIfNeeded();
         await page.locator('#accountUpgrade').click();
-        check('升級入口會在 Pro 卡內展開方案', await page.locator('#proPlanSettings').isVisible());
+        check('升級入口會跳出 Free／Pro 比較視窗', await page.locator('#proPlanDialog').isVisible() && await page.locator('#proPlanSettings').isVisible());
         await page.screenshot({ path: path.join(out, 'account-v119-pro-390.png'), fullPage: true });
+        await page.locator('#proPlanDialogClose').click();
 
         await page.evaluate(() => window.__accountV119.calendar());
         await page.waitForTimeout(180);
