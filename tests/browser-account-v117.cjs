@@ -377,7 +377,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         await page.waitForTimeout(80);
 
         check('月曆頁不再顯示 AI 班表匯入', await page.locator('#aiScheduleCard').count()===0 && await page.locator('#scheduleMenuClearAi').count()===0);
-        check('浮動喵助理顯示定稿圖與名稱', await page.locator('#meowAssistantFab img').getAttribute('src')==='./assets/meow-assistant-pro-v168.webp?v=168' && (await page.locator('#meowAssistantFab').innerText()).includes('喵助理'));
+        check('浮動喵助理顯示定稿圖與名稱', await page.locator('#meowAssistantFab img').getAttribute('src')==='./assets/meow-assistant-pro-v168.webp?v=168' && (await page.locator('#meowAssistantFab').innerText()).includes('喵助理') && await page.locator('#meowAssistantFab img').evaluate(img=>img.complete&&img.naturalWidth>0));
 
         await page.evaluate(() => window.__accountV119.attendance());
         await page.waitForTimeout(120);
