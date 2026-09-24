@@ -52,7 +52,7 @@ jobs:
         working-directory: native
         run: npm install
 
-      - name: Prepare v174 branded native icon and splash
+      - name: Prepare v175 branded native and web assets
         run: |
           set -euo pipefail
           ICON_VENV="$RUNNER_TEMP/meow-icon-venv"
@@ -92,6 +92,23 @@ jobs:
           echo "$SPLASH_INFO" | grep -q 'pixelWidth: 2732'
           echo "$SPLASH_INFO" | grep -q 'pixelHeight: 2732'
           echo "$SPLASH_INFO" | grep -q 'hasAlpha: no'
+
+          "$ICON_VENV/bin/python" - <<'PY'
+          from PIL import Image, ImageOps
+
+          icon=Image.open('native/ios-sources/app-icon-v174-source.png').convert('RGB')
+          for size in (180,192,512):
+              out=ImageOps.fit(icon,(size,size),method=Image.Resampling.LANCZOS)
+              out.save(f'app-icon-v175-{size}.png',format='PNG',optimize=True)
+
+          splash=Image.open('native/ios-sources/splash-v174-source.jpg').convert('RGB')
+          splash.thumbnail((1366,1366),Image.Resampling.LANCZOS)
+          splash.save('splash-v175.jpg',format='JPEG',quality=82,optimize=True,progressive=True)
+          PY
+          test -s app-icon-v175-180.png
+          test -s app-icon-v175-192.png
+          test -s app-icon-v175-512.png
+          test -s splash-v175.jpg
 
       - name: Sync web bundle
         working-directory: native
