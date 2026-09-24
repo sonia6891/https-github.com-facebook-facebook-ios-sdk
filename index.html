@@ -11,11 +11,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=175">
-<link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v176-180.png?v=175">
-<link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v176-192.png?v=175">
+<link rel="manifest" href="./manifest.webmanifest?v=176">
+<link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v176-180.png?v=176">
+<link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v176-192.png?v=176">
 
-<link rel="shortcut icon" type="image/png" href="./app-icon-v176-192.png?v=175">
+<link rel="shortcut icon" type="image/png" href="./app-icon-v176-192.png?v=176">
 <title>喵的，又要上班了</title>
 <meta name="meow-ui-build" content="v176-safari-icon-splash">
 <script id="meow-theme-boot">
@@ -1152,7 +1152,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 </style>
 </head>
 <body>
-<div id="app-splash" aria-hidden="true"><img src="./splash-v176.jpg?v=175" alt=""></div>
+<div id="app-splash" aria-hidden="true"><img src="./splash-v176.jpg?v=176" alt=""></div>
 <svg width="0" height="0" style="position:absolute;overflow:hidden" aria-hidden="true">
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10.5V20h5v-6h4v6h5v-9.5"/></symbol>
 <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 9h18M7 13h2M11 13h2M15 13h2M7 17h2M11 17h2M15 17h2"/></symbol>
@@ -6747,7 +6747,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=175',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=176',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
