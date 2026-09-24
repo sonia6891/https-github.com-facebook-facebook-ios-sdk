@@ -24,7 +24,7 @@ const files = [
   'app-icon-v178-180.png',
   'app-icon-v178-192.png',
   'app-icon-v178-512.png',
-  'splash-v182.jpg'
+  'splash-v183.jpg'
 ];
 
 for (const name of files) {
