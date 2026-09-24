@@ -64,7 +64,10 @@ final class StoreKitSmokeTests: XCTestCase {
         XCTAssertEqual(transaction.productID, Self.monthlyProductID)
         XCTAssertEqual(transaction.appAccountToken, accountToken)
 
-        let unfinishedValue = await waitForUnfinishedTransaction(id: transaction.id)
+        let unfinishedValue = await waitForUnfinishedTransaction(
+            id: transaction.id,
+            accountToken: accountToken
+        )
         let unfinished = try XCTUnwrap(unfinishedValue)
         XCTAssertEqual(unfinished.transaction.appAccountToken, accountToken)
         XCTAssertFalse(unfinished.jwsRepresentation.isEmpty)
@@ -85,7 +88,10 @@ final class StoreKitSmokeTests: XCTestCase {
         XCTAssertEqual(transaction.productID, Self.yearlyProductID)
         XCTAssertEqual(transaction.appAccountToken, accountToken)
 
-        let unfinishedValue = await waitForUnfinishedTransaction(id: transaction.id)
+        let unfinishedValue = await waitForUnfinishedTransaction(
+            id: transaction.id,
+            accountToken: accountToken
+        )
         let unfinished = try XCTUnwrap(unfinishedValue)
         XCTAssertFalse(unfinished.jwsRepresentation.isEmpty)
 
@@ -102,7 +108,10 @@ final class StoreKitSmokeTests: XCTestCase {
             options: [.appAccountToken(accountToken)]
         )
 
-        let beforeRestartValue = await waitForUnfinishedTransaction(id: transaction.id)
+        let beforeRestartValue = await waitForUnfinishedTransaction(
+            id: transaction.id,
+            accountToken: accountToken
+        )
         let beforeRestart = try XCTUnwrap(beforeRestartValue)
         XCTAssertEqual(beforeRestart.transaction.appAccountToken, accountToken)
 
@@ -111,7 +120,10 @@ final class StoreKitSmokeTests: XCTestCase {
         session = try SKTestSession(contentsOf: configurationURL)
         session.disableDialogs = true
 
-        let afterRestartValue = await waitForUnfinishedTransaction(id: transaction.id)
+        let afterRestartValue = await waitForUnfinishedTransaction(
+            id: transaction.id,
+            accountToken: accountToken
+        )
         let afterRestart = try XCTUnwrap(afterRestartValue)
         XCTAssertEqual(afterRestart.transaction.productID, Self.monthlyProductID)
         XCTAssertEqual(afterRestart.transaction.appAccountToken, accountToken)
@@ -170,13 +182,17 @@ final class StoreKitSmokeTests: XCTestCase {
 
     private func waitForUnfinishedTransaction(
         id: UInt64,
-        attempts: Int = 20
+        accountToken: UUID? = nil,
+        attempts: Int = 40
     ) async -> (transaction: StoreKit.Transaction, jwsRepresentation: String)? {
         for attempt in 0..<attempts {
-            if let value = await unfinishedTransaction(id: id) {
+            if let value = await unfinishedTransaction(id: id),
+               accountToken == nil || value.transaction.appAccountToken == accountToken {
                 return value
             }
             if attempt < attempts - 1 {
+                // StoreKitTest can briefly surface the previous cached representation
+                // for the same local transaction ID after clearTransactions().
                 try? await Task.sleep(for: .milliseconds(100))
             }
         }
