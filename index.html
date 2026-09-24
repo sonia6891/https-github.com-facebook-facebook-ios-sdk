@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v167-final-meow-assistant-voice-fix">
+<meta name="meow-ui-build" content="v168-settings-align-mascot-fix">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -559,8 +559,10 @@ html.dark{
 .settings-modern-head,.settings-modern-fold .work-settings-header{display:flex;align-items:center;gap:9px;padding:12px 14px;color:var(--v129-text)}
 .settings-modern-head>b,.settings-modern-fold .section-title{font-size:15px;font-weight:950;flex:1}
 .settings-modern-head>span:last-child{font-size:16px;font-weight:950}
-.settings-fold-toggle{width:100%;border:0;background:transparent;text-align:left;cursor:pointer}
-.settings-fold-state{font-size:10px!important;color:var(--muted);font-weight:900!important;white-space:nowrap}
+.settings-fold-toggle{width:100%;border:0;background:transparent;text-align:left;cursor:pointer;display:grid!important;grid-template-columns:26px minmax(0,1fr) 96px;align-items:center;gap:9px;padding:12px 14px!important;color:var(--v129-text)}
+.settings-fold-toggle>b{min-width:0;font-size:15px;font-weight:950;line-height:1.25}
+.settings-fold-state{justify-self:end;width:96px;text-align:right;font-size:10px!important;color:var(--muted);font-weight:900!important;white-space:nowrap}
+@media(max-width:390px){.settings-fold-toggle{grid-template-columns:26px minmax(0,1fr) 88px;gap:8px;padding:11px 12px!important}.settings-fold-state{width:88px;font-size:9px!important}}
 .plan-compare{margin-top:10px;border:1px solid var(--mobile-line,#eadfd5);border-radius:14px;overflow:hidden;background:var(--mobile-surface,#fff)}
 .plan-compare-head,.plan-compare-row{display:grid;grid-template-columns:minmax(0,1fr) 56px 56px;align-items:center;gap:8px;padding:9px 10px}
 .plan-compare-head{background:var(--mobile-soft,#f7f3ef);font-size:10px;color:var(--muted);font-weight:900}
@@ -1674,10 +1676,9 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       </div>
 
       <div class="card settings-card work-settings-card settings-fold-card settings-modern-fold" id="workSettingsCard">
-        <div class="work-settings-header">
-          <div class="section-title"><span class="settings-section-icon">💼</span>工作資料與假別額度</div>
-          <button type="button" class="expand-btn" id="toggleWorkSettings" aria-controls="workSettingsBody" aria-expanded="false">⚙ 展開設定⌄</button>
-        </div>
+        <button type="button" class="settings-modern-head settings-fold-toggle" id="toggleWorkSettings" aria-controls="workSettingsBody" aria-expanded="false">
+          <span class="settings-section-icon">💼</span><b>工作資料與假別額度</b><span class="settings-fold-state" id="workSettingsFoldState">⚙ 展開設定⌄</span>
+        </button>
         <div class="work-settings-brief" id="workSettingsBrief" aria-live="polite">到職日尚未設定・每日 8 小時・發薪日尚未設定</div>
         <div class="work-settings-body hidden" id="workSettingsBody">
         <div class="form-grid">
@@ -1710,10 +1711,9 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       </div>
 
       <div class="card settings-card work-settings-card settings-fold-card data-sync-card settings-modern-fold" id="dataSyncCard">
-        <div class="work-settings-header">
-          <div class="section-title"><span class="settings-section-icon">◉</span>資料管理</div>
-          <button type="button" class="expand-btn" id="toggleDataSync" aria-controls="dataSyncBody" aria-expanded="false">⚙ 展開設定⌄</button>
-        </div>
+        <button type="button" class="settings-modern-head settings-fold-toggle" id="toggleDataSync" aria-controls="dataSyncBody" aria-expanded="false">
+          <span class="settings-section-icon">◉</span><b>資料管理</b><span class="settings-fold-state" id="dataSyncFoldState">⚙ 展開設定⌄</span>
+        </button>
         <div class="data-sync-brief" id="dataSyncBrief">Free：本機自動保存・Pro：可再同步到雲端</div>
         <div class="data-sync-body hidden" id="dataSyncBody">
           <div class="sync-method-grid simple-sync-grid">
@@ -1830,7 +1830,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   </form>
 </dialog>
 
-<button type="button" class="meow-assistant-fab" id="meowAssistantFab" aria-label="喵助理，Pro 功能；輕點開啟，按住可拖曳"><img src="./assets/meow-assistant-pro-v167.webp" alt="" aria-hidden="true"><b>喵助理</b></button>
+<button type="button" class="meow-assistant-fab" id="meowAssistantFab" aria-label="喵助理，Pro 功能；輕點開啟，按住可拖曳"><img src="./assets/meow-assistant-pro-v168.webp?v=168" alt="" aria-hidden="true"><b>喵助理</b></button>
 
 <dialog class="dialog meow-assistant-dialog" id="meowAssistantDialog" aria-modal="false">
   <div class="meow-assistant-sheet">
@@ -5338,7 +5338,8 @@ if($('schedulePrefsBody'))$('schedulePrefsBody').classList.toggle('hidden',!sche
 if($('toggleSchedulePrefs'))$('toggleSchedulePrefs').setAttribute('aria-expanded',String(schedulePrefsOpen));
 if($('schedulePrefsFoldState'))$('schedulePrefsFoldState').textContent=schedulePrefsOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄';
 if($('dataSyncBody'))$('dataSyncBody').classList.toggle('hidden',!dataSyncOpen);
-if($('toggleDataSync')){$('toggleDataSync').setAttribute('aria-expanded',String(dataSyncOpen));$('toggleDataSync').textContent=dataSyncOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'}
+if($('toggleDataSync'))$('toggleDataSync').setAttribute('aria-expanded',String(dataSyncOpen));
+if($('dataSyncFoldState'))$('dataSyncFoldState').textContent=dataSyncOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄';
 const setWork=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=(v??'')};
 setWork('accountUsername',state.profile.name||'喵星人');
 setWork('settingPayday',state.settings.payday||'');
@@ -5352,10 +5353,8 @@ if($('annualCustomDateWrap'))$('annualCustomDateWrap').classList.toggle('hidden'
 setWork('settingSickUsedHours',state.settings.sickUsedHours||0);
 setWork('settingPersonalUsedHours',state.settings.personalUsedHours||0);
 if($('workSettingsBody'))$('workSettingsBody').classList.toggle('hidden',!workSettingsOpen);
-if($('toggleWorkSettings')){
-  $('toggleWorkSettings').setAttribute('aria-expanded',String(workSettingsOpen));
-  $('toggleWorkSettings').textContent=workSettingsOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄';
-}
+if($('toggleWorkSettings'))$('toggleWorkSettings').setAttribute('aria-expanded',String(workSettingsOpen));
+if($('workSettingsFoldState'))$('workSettingsFoldState').textContent=workSettingsOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄';
 if($('workSettingsBrief')){
   const hire=state.settings.hireDate?'到職日 '+state.settings.hireDate:'到職日尚未設定';
   const hours='每日 '+(num(state.settings.dailyWorkHours)||8)+' 小時';
@@ -6580,7 +6579,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v167';
+    const reloadKey='meow-sw-reloaded-v168';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -6589,7 +6588,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=167',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=168',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
