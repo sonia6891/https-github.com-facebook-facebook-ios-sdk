@@ -174,6 +174,20 @@ assert(html.includes("if($('salaryTabPro'))$('salaryTabPro').onclick=()=>{setSal
 assert(html.includes("if($('salaryProPane'))$('salaryProPane').classList.toggle('hidden',salarySubTab!=='pro')"),'Pro reconciliation pane switch missing');
 console.log('PASS v159 Free/Pro salary reconciliation tabs structure');
 
+for(const id of ['meowAssistantFab','meowAssistantDialog','meowAssistantDragHandle','meowAssistantMinimize','meowAssistantMonthDialog','meowAssistantMonthGrid']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert(html.includes('.meow-assistant-dialog.minimized'),'Meow Assistant minimized floating state missing');
+assert(html.includes('function bindMeowAssistantDrag()'),'Meow Assistant drag binding missing');
+assert(html.includes("setMeowAssistantMinimized(!d.classList.contains('minimized'))"),'Meow Assistant minimize/expand control missing');
+assert(html.includes("placeholder=\"直接輸入你要做的事\""),'Meow Assistant input should not show redundant example copy');
+assert(html.includes("renderMeowAssistantReply('已更新班表。','success')"),'Meow Assistant success copy must stay concise');
+assert(html.includes('async function meowAssistantCloudSnapshot(year,month)'),'Month-aware cloud schedule lookup missing');
+assert(html.includes('cloudHistoryEntries(payload)'),'Month lookup must consider cloud history snapshots');
+assert(html.includes('closeMeowAssistant();') && html.includes("$('meowAssistantMonthDialog')"),'Month schedule should open separately after assistant gets out of the way');
+console.log('PASS v160 movable concise cloud-month Meow Assistant structure');
+
+
 for(const id of ['meowAssistantFab','meowAssistantDialog','meowAssistantDragHandle','meowAssistantInput','meowAssistantSend','meowAssistantMonthDialog','meowAssistantMonthGrid']){
   assert.equal(ids[id],1,'missing or duplicated #'+id);
 }
