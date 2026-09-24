@@ -64,7 +64,7 @@ jobs:
           curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/55737aaf2c45506d5e29d823d614db2626d1ad79dd3ea82806858d64c267a2bc.png" -o icon-v178-source.png
           curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/b8ccc9163e5d72861ccb895c9425ea26942dcbc01b1f112860ca39e8cc48795c.png" -o splash-v178-source.png
           "$ICON_VENV/bin/python" - <<'PY'
-          from PIL import Image, ImageOps
+          from PIL import Image, ImageOps, ImageFilter
           from pathlib import Path
 
           icon=Image.open('icon-v178-source.png').convert('RGB')
@@ -73,24 +73,48 @@ jobs:
               out=ImageOps.fit(icon,(size,size),method=Image.Resampling.LANCZOS)
               out.save(f'app-icon-v178-{size}.png',format='PNG',optimize=True)
 
-          # Use the exact user-approved corrected launch artwork. Preserve the full portrait:
-          # no square crop and no object-fit: cover.
+          # Preserve the approved artwork exactly, then extend only the sky upward
+          # to a modern iPhone aspect ratio. Do not zoom/crop the cat or text.
           splash=Image.open('splash-v178-source.png').convert('RGB')
-          splash.thumbnail((1536,2732),Image.Resampling.LANCZOS)
-          splash.save('splash-v178.jpg',format='JPEG',quality=90,optimize=True,progressive=True)
+          w,h=splash.size
+          target_h=max(h,round(w*844/390))
+          extra=target_h-h
+          if extra>0:
+              sky_h=min(300,max(120,h//5))
+              sky=splash.crop((0,0,w,sky_h))
+              extension=ImageOps.flip(sky).resize((w,extra),Image.Resampling.LANCZOS)
+              extension=extension.filter(ImageFilter.GaussianBlur(1.2))
+              blend=min(72,extra)
+              if blend>0:
+                  tail=extension.crop((0,extra-blend,w,extra))
+                  row0=splash.crop((0,0,w,1)).resize((w,blend),Image.Resampling.BILINEAR)
+                  mask=Image.new('L',(w,blend))
+                  mp=mask.load()
+                  for yy in range(blend):
+                      a=round(255*(yy/(blend-1 if blend>1 else 1)))
+                      for xx in range(w):
+                          mp[xx,yy]=a
+                  tail=Image.composite(row0,tail,mask)
+                  extension.paste(tail,(0,extra-blend))
+              extended=Image.new('RGB',(w,target_h))
+              extended.paste(extension,(0,0))
+              extended.paste(splash,(0,extra))
+          else:
+              extended=splash
+          extended.save('splash-v181.jpg',format='JPEG',quality=92,optimize=True,progressive=True)
 
           for name,size in [('app-icon-v178-180.png',(180,180)),('app-icon-v178-192.png',(192,192)),('app-icon-v178-512.png',(512,512))]:
               im=Image.open(name)
               assert im.size==size, (name,im.size)
               assert im.mode in ('RGB','P'), (name,im.mode)
-          im=Image.open('splash-v178.jpg')
-          assert im.width>=900 and im.height>=1500
-          print('v178 brand assets valid:',[(p.name,p.stat().st_size) for p in map(Path,['app-icon-v178-180.png','app-icon-v178-192.png','app-icon-v178-512.png','splash-v178.jpg'])])
+          im=Image.open('splash-v181.jpg')
+          assert im.width>=900 and im.height>=1900
+          print('v181 brand assets valid:',[(p.name,p.stat().st_size) for p in map(Path,['app-icon-v178-180.png','app-icon-v178-192.png','app-icon-v178-512.png','splash-v181.jpg'])])
           PY
       - name: Stage public application files only
         run: |
           mkdir -p _site
-          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png app-icon-v178-180.png app-icon-v178-192.png app-icon-v178-512.png splash-v178.jpg _site/
+          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png app-icon-v178-180.png app-icon-v178-192.png app-icon-v178-512.png splash-v181.jpg _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
       - name: Setup Pages
@@ -111,7 +135,7 @@ jobs:
           import hashlib,json,os,re,time,urllib.request,urllib.error
           result={'commit':os.environ['GITHUB_SHA'],'files':{}}
           base=os.environ['PAGE_URL']
-          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v155-180.png','app-icon-v155-192.png','app-icon-v155-512.png','app-icon-v178-180.png','app-icon-v178-192.png','app-icon-v178-512.png','splash-v178.jpg','assets/welcome-brand-v112.webp','assets/meow-assistant-pro-v169.webp']:
+          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v155-180.png','app-icon-v155-192.png','app-icon-v155-512.png','app-icon-v178-180.png','app-icon-v178-192.png','app-icon-v178-512.png','splash-v181.jpg','assets/welcome-brand-v112.webp','assets/meow-assistant-pro-v169.webp']:
               expected=hashlib.sha256(Path(name).read_bytes()).hexdigest()
               url=base+name+'?build-check='+os.environ['GITHUB_SHA']
               for attempt in range(10):
@@ -132,7 +156,7 @@ jobs:
               return struct.unpack('>II',data[16:24])
           for name,size in [('app-icon-v178-180.png',(180,180)),('app-icon-v178-192.png',(192,192)),('app-icon-v178-512.png',(512,512))]:
               assert png_size(name)==size, (name,png_size(name))
-          jpg=Path('splash-v178.jpg').read_bytes()
+          jpg=Path('splash-v181.jpg').read_bytes()
           assert jpg[:2]==b'\xff\xd8' and jpg[-2:]==b'\xff\xd9', 'invalid splash jpeg'
           mascot=Path('assets/meow-assistant-pro-v169.webp').read_bytes()
           assert len(mascot)>9000, 'Meow Assistant asset unexpectedly small/truncated'
