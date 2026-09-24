@@ -1889,7 +1889,7 @@ const FEATURE_CATALOG={
   smart_schedule_import:{label:'智慧匯入班表',tier:'pro'}
 };
 const DEV_TESTING_ENABLED=false;
-let devMode=DEV_TESTING_ENABLED,devPlan='free',serverPlan='free',entitlementStatus='free',entitlementUntil=null,trialStartedAt=null,billingProvider=null,providerSubscriptionId=null,cancelAtPeriodEnd=false,canceledAt=null,billingConfigured=false,billingMonthly=99,billingYearly=790,billingTrialDays=3,billingStoreProvider='app_store_play',billingHistory=[],storeProductsById={},storeProductsLoaded=false;
+let devMode=DEV_TESTING_ENABLED,devPlan='free',serverPlan='free',developerAccess=false,serverAccessTier='free',entitlementStatus='free',entitlementUntil=null,trialStartedAt=null,billingProvider=null,providerSubscriptionId=null,cancelAtPeriodEnd=false,canceledAt=null,billingConfigured=false,billingMonthly=99,billingYearly=790,billingTrialDays=3,billingStoreProvider='app_store_play',billingHistory=[],storeProductsById={},storeProductsLoaded=false;
 if(DEV_TESTING_ENABLED){
   try{
     const stored=localStorage.getItem(DEV_PLAN_KEY);
@@ -1897,11 +1897,13 @@ if(DEV_TESTING_ENABLED){
   }catch(e){}
 }
 function currentPlan(){
-  if(DEV_TESTING_ENABLED)return devPlan==='free'?'free':'pro';
+  if(DEV_TESTING_ENABLED)return devPlan==='dev'?'developer':devPlan==='pro'?'pro':'free';
+  if(developerAccess)return'developer';
   return hasCloudEntitlement()?'pro':'free';
 }
 function isDeveloperTest(){return DEV_TESTING_ENABLED&&devPlan==='dev'}
-function canUse(feature){const meta=FEATURE_CATALOG[feature];return !!meta&&(meta.tier==='free'||currentPlan()==='pro')}
+function isDeveloperAccount(){return developerAccess||isDeveloperTest()}
+function canUse(feature){const meta=FEATURE_CATALOG[feature];return !!meta&&(isDeveloperAccount()||meta.tier==='free'||currentPlan()==='pro')}
 const statusMap={
  none:{label:'正常班表',cls:'',icon:''},overtime:{label:'加班',cls:'st-ot',icon:'i-clock'},sick:{label:'病假',cls:'st-sick',icon:'i-cross'},menstrual:{label:'生理假',cls:'st-menstrual',icon:'i-drop'},personal:{label:'事假',cls:'st-personal',icon:'i-doc'},annual:{label:'特休',cls:'st-annual',icon:'i-star'},custom:{label:'自訂假別',cls:'st-custom',icon:'i-star'}
 };
@@ -2093,12 +2095,12 @@ function entitlementIsActive(row){
   if(!row||row.plan!=='pro'||!['active','trialing'].includes(row.status)||!row.pro_until)return false;
   const until=Date.parse(row.pro_until);return Number.isFinite(until)&&until>accountServerNow();
 }
-function hasCloudEntitlement(){return !!(authUser&&accessCheckedUser===authUser.id&&entitlementIsActive({plan:serverPlan,status:entitlementStatus,pro_until:entitlementUntil}))}
+function hasCloudEntitlement(){return !!(authUser&&accessCheckedUser===authUser.id&&(developerAccess||entitlementIsActive({plan:serverPlan,status:entitlementStatus,pro_until:entitlementUntil})))}
 function canCloudSync(){return hasCloudEntitlement()&&localOwner===authUser.id&&cloudConsent}
 function sameAccess(uid,epoch){return !!(authUser&&authUser.id===uid&&localOwner===uid&&accessEpoch===epoch)}
 function setAccountStatus(msg){accountStatusText=msg;if($('accountStatus'))$('accountStatus').textContent=msg;if($('welcomeMessage')&&$('welcomeDialog').open)$('welcomeMessage').textContent=msg}
 function setCloudStatus(msg){cloudStatus=msg;renderSyncStatus()}
-function resetEntitlement(){serverPlan='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;accessCheckedUser=''}
+function resetEntitlement(){serverPlan='free';developerAccess=false;serverAccessTier='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;accessCheckedUser=''}
 async function stopAccountRealtime(){
   clearTimeout(authTimer);authTimer=null;
   const channel=authChannel;authChannel=null;
@@ -2125,10 +2127,11 @@ async function loadEntitlement(){
     const now=Date.parse(data&&data.server_now||'');
     if(!Number.isFinite(now))throw Error('access_time_unavailable');
     accessServerMs=now;accessLocalMs=performance.now();accessCheckedUser=uid;
+    developerAccess=!!(data&&data.developer);serverAccessTier=String(data&&data.access_tier||'free');
     entitlementStatus=row&&row.status||'free';entitlementUntil=row&&row.pro_until||null;
     trialStartedAt=row&&row.trial_started_at||null;billingProvider=row&&row.billing_provider||null;
     providerSubscriptionId=row&&row.provider_subscription_id||null;cancelAtPeriodEnd=!!(row&&row.cancel_at_period_end);canceledAt=row&&row.canceled_at||null;
-    serverPlan=entitlementIsActive(row)?'pro':'free';
+    serverPlan=developerAccess?'pro':(entitlementIsActive(row)?'pro':'free');
     scheduleExpiry();
     if(!canCloudSync()){
       await stopAccountRealtime();cloudReady=false;
@@ -4493,7 +4496,7 @@ function renderProEntitlements(){
     const badge=card.querySelector('.pro-badge');
     const btn=card.querySelector('[data-pro-action]');
     card.classList.toggle('unlocked',unlocked);
-    if(badge)badge.textContent=unlocked?(DEV_TESTING_ENABLED?'✓ Pro 測試已解鎖':'✓ Pro'):'🔒 Pro';
+    if(badge)badge.textContent=unlocked?(isDeveloperAccount()?'✓ 開發者全功能':'✓ Pro'):'🔒 Pro';
     if(btn){
       if(feature==='payslip_scan')btn.textContent=unlocked?(payslipScanOpen?'收起':'拍照／選照片'):'Pro 解鎖';
       else if(feature==='itemized_salary_compare')btn.textContent=unlocked?(itemizedOpen?'收起逐項對帳':'開啟逐項對帳'):'Pro 解鎖';
@@ -5031,13 +5034,15 @@ function renderProPlanSettings(){
   if(!badge||!box)return;
 
   const plan=currentPlan();
-  const pro=plan==='pro';
-  badge.textContent=pro?(DEV_TESTING_ENABLED?'Pro 測試':'Pro'):'Free';
+  const developer=plan==='developer',pro=developer||plan==='pro';
+  badge.textContent=developer?'開發者':pro?(DEV_TESTING_ENABLED?'Pro 測試':'Pro'):'Free';
   badge.classList.toggle('pro',pro);
   if(detailBadge){detailBadge.textContent=badge.textContent;detailBadge.classList.toggle('pro',pro)}
 
   if(!authUser){
     box.innerHTML='<b>目前：Free</b>登入後可選擇月繳 NT$99 或年繳 NT$790；首次符合資格可享 3 天免費試用。';
+  }else if(developer){
+    box.innerHTML='<b>開發者帳號・全部功能永久解鎖</b>不受 Pro 訂閱到期影響；商店訂閱狀態仍獨立保留，不會用開發者權限偽造付款紀錄。';
   }else if(pro){
     const until=entitlementUntil?new Date(entitlementUntil).toLocaleDateString('zh-TW'):'由商店訂閱狀態決定';
     const cancelText=cancelAtPeriodEnd?'・已取消續訂，到期後回到 Free':'';
@@ -5082,6 +5087,7 @@ function renderAccountPlan(){
   const hint=$('accountPlanHint');if(!hint)return;
   const plan=currentPlan();
   if(!authUser){hint.textContent='登入後可查看 Pro 功能與 3 天免費試用';return}
+  if(plan==='developer'){hint.textContent='開發者帳號・全部功能永久解鎖';return}
   if(DEV_TESTING_ENABLED){hint.textContent='開發測試模式，不代表正式訂閱狀態';return}
   if(entitlementStatus==='error'){hint.textContent='方案確認失敗，暫以 Free 使用';return}
   if(plan==='pro'){
