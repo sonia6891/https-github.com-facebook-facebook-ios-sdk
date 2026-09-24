@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v171-native-ios-speech">
+<meta name="meow-ui-build" content="v172-ios-webspeech-recovery">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -5536,7 +5536,7 @@ $('rotationCancel').onclick=()=>{$('rotationDialog').close()};
 $('rotationDialog').addEventListener('close',syncScheduleChoices);
 $('rotationForm').onsubmit=e=>{e.preventDefault();applyRotationSetup()};
 $('shiftName').oninput=e=>{state.schedule.shiftName=e.target.value||'A班';saveSchedulePrefs();render()};$('workDays').oninput=e=>{state.schedule.workDays=Math.max(1,parseInt(e.target.value)||1);saveSchedulePrefs();render()};$('offDays').oninput=e=>{state.schedule.offDays=Math.max(1,parseInt(e.target.value)||1);saveSchedulePrefs();render()};
-let meowAssistantPending=null,meowAssistantUndo=null,meowAssistantRecognition=null,meowAssistantRecognitionToken=0;
+let meowAssistantPending=null,meowAssistantUndo=null,meowAssistantRecognition=null,meowAssistantRecognitionToken=0,meowAssistantWebSpeechUsed=false,meowAssistantWebSpeechNeedsRecovery=false;
 function meowAssistantChineseNumber(raw){
   const s=String(raw||'').replace(/[兩两]/g,'二');
   if(/^\d+$/.test(s))return Number(s);
@@ -5989,8 +5989,24 @@ async function resetMeowAssistantVoice(cancelNative=true){
   }
 }
 function closeMeowAssistant(){
+  if(meowAssistantWebSpeechUsed&&!meowSpeechBridge())meowAssistantWebSpeechNeedsRecovery=true;
   void resetMeowAssistantVoice(true);
   const d=$('meowAssistantDialog');if(d&&d.open)d.close();
+}
+function isIOSWebSpeechEnvironment(){
+  const ua=navigator.userAgent||'';
+  return /iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);
+}
+async function recoverIOSWebSpeechSession(){
+  if(!isIOSWebSpeechEnvironment())return;
+  renderMeowAssistantReply('正在重新啟用 iPhone 麥克風…');
+  try{
+    if(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia){
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      stream.getTracks().forEach(track=>track.stop());
+    }
+  }catch(e){}
+  await new Promise(resolve=>setTimeout(resolve,3800));
 }
 async function startMeowAssistantVoice(){
   const input=$('meowAssistantInput'),mic=$('meowAssistantMic');
@@ -6037,6 +6053,12 @@ async function startMeowAssistantVoice(){
   if(!SR){renderMeowAssistantReply('這台裝置目前沒有提供網頁語音辨識。你可以直接打字，功能一樣。','error');return}
 
   await resetMeowAssistantVoice(false);
+
+  if(meowAssistantWebSpeechNeedsRecovery&&isIOSWebSpeechEnvironment()){
+    await recoverIOSWebSpeechSession();
+    meowAssistantWebSpeechNeedsRecovery=false;
+  }
+  meowAssistantWebSpeechUsed=true;
 
   const token=++meowAssistantRecognitionToken;
   const r=new SR();
@@ -6101,9 +6123,29 @@ async function startMeowAssistantVoice(){
     finishCurrent();
   };
 
-  try{r.start()}
+  let receivedSpeechEvent=false;
+  const markSpeechEvent=()=>{receivedSpeechEvent=true};
+  const priorOnStart=r.onstart,priorOnResult=r.onresult,priorOnError=r.onerror,priorOnEnd=r.onend;
+  r.onstart=e=>{markSpeechEvent();if(priorOnStart)priorOnStart(e)};
+  r.onresult=e=>{markSpeechEvent();if(priorOnResult)priorOnResult(e)};
+  r.onerror=e=>{markSpeechEvent();if(priorOnError)priorOnError(e)};
+  r.onend=e=>{markSpeechEvent();if(priorOnEnd)priorOnEnd(e)};
+
+  try{
+    r.start();
+    if(isIOSWebSpeechEnvironment()){
+      setTimeout(()=>{
+        if(!isCurrent()||receivedSpeechEvent)return;
+        meowAssistantWebSpeechNeedsRecovery=true;
+        try{r.abort()}catch(e){}
+        finishCurrent();
+        renderMeowAssistantReply('iPhone 語音辨識沒有回應。請再按一次麥克風，App 會自動重新啟用語音服務。','error');
+      },2600);
+    }
+  }
   catch(e){
     if(isCurrent())finishCurrent();
+    meowAssistantWebSpeechNeedsRecovery=isIOSWebSpeechEnvironment();
     renderMeowAssistantReply('語音功能暫時無法啟動，可以再按一次麥克風，或直接打字。','error');
   }
 }
@@ -6674,7 +6716,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v171';
+    const reloadKey='meow-sw-reloaded-v172';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -6683,7 +6725,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=171',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=172',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
