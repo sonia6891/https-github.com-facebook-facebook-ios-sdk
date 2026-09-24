@@ -19,6 +19,11 @@ assert(
   html.includes("s.scheduleOverrides=x.scheduleOverrides||{}"),
   'Schedule overrides must survive load/normalize/cloud restore.'
 );
+assert.equal(
+  (html.match(/function normalizeState\\(v\\)\\{/g)||[]).length,
+  1,
+  'normalizeState must have one authoritative definition; a stale duplicate can silently drop fields.'
+);
 assert(
   html.includes("s.personalEvents=x.personalEvents||{}"),
   'Events and todos must survive load/normalize/cloud restore.'
