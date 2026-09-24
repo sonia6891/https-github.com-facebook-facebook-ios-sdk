@@ -135,7 +135,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('單一雲端還原會自動檢查舊版備份，不再要求使用者另外開檔', html.includes('async function restoreLegacyCloud()') && html.includes("return await restoreLegacyCloud()") && html.includes('不需要另外開啟 JSON 檔'));
     check('AI 班表匯入已從產品入口移除', !html.includes('id="aiScheduleCard"') && !html.includes('id="aiScheduleUpload"') && !html.includes("smart_schedule_import:{label:'智慧匯入班表'"));
     check('浮動喵助理使用定稿厭世喵素材', html.includes('./assets/meow-assistant-pro-v169.webp?v=169') && html.includes('<b>喵助理</b></button>'));
-    check('喵助理語音會先寫入輸入框再自動送出', html.includes("input.value=text") && html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"));
+    check('喵助理語音會先寫入輸入框再自動送出', html.includes("input.value=text") && html.includes("setTimeout(()=>{if(token===meowAssistantRecognitionToken)void previewMeowAssistant()},120)"));
     check('喵助理文字位於貓咪下方且拖曳熱區加大', html.includes('flex-direction:column') && html.includes('min-width:98px;min-height:118px'));
     check('喵助理正式 iPhone 版使用原生語音辨識', html.includes('function meowSpeechBridge()') && html.includes("nativeBridge.recognize({locale:'zh-TW'})"));
     check('PWA 語音改用錄音後端轉文字，不再依賴 WebKit SpeechRecognition', html.includes('async function recordMeowAssistantAudio(token)') && html.includes('new MediaRecorder') && html.includes("invokeUserFunction('speech-transcribe'") && !html.includes('window.webkitSpeechRecognition'));
