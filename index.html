@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v160-floating-meow-assistant">
+<meta name="meow-ui-build" content="v160-meow-assistant-float-cloud-month">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -115,7 +115,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 .meow-assistant-dialog::backdrop{display:none}
 .meow-assistant-sheet{background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eadfd6);border-radius:20px;padding:12px;box-shadow:0 18px 54px rgba(58,39,29,.22);max-height:min(70dvh,610px);overflow:auto}
 .meow-assistant-head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:grab;touch-action:none;user-select:none;padding:2px 2px 4px}
-.meow-assistant-head:active{cursor:grabbing}.meow-assistant-title{display:flex;align-items:center;gap:8px}.meow-assistant-head b{font-size:17px}.meow-assistant-drag{font-size:16px;letter-spacing:-3px;color:var(--muted);opacity:.7}
+.meow-assistant-head:active{cursor:grabbing}.meow-assistant-title{display:flex;align-items:center;gap:8px}.meow-assistant-head b{font-size:17px}.meow-assistant-drag{font-size:16px;letter-spacing:-3px;color:var(--muted);opacity:.7}.meow-assistant-head-actions{display:flex;align-items:center;gap:4px}.meow-assistant-minimize{width:32px;height:32px;border:0;border-radius:10px;background:transparent;color:var(--mobile-muted,#7d675c);font-size:22px;line-height:1;display:grid;place-items:center}.meow-assistant-dialog.minimized{width:auto;max-width:calc(100vw - 20px)}.meow-assistant-dialog.minimized .meow-assistant-sheet{padding:8px 10px;overflow:hidden}.meow-assistant-dialog.minimized .meow-assistant-chat,.meow-assistant-dialog.minimized .meow-assistant-compose,.meow-assistant-dialog.minimized .meow-assistant-undo{display:none!important}.meow-assistant-dialog.minimized .meow-assistant-head{padding:0}.meow-assistant-dialog.minimized .meow-assistant-drag{opacity:1}
 .meow-assistant-chat{margin-top:8px;padding:9px 10px;border-radius:12px;background:var(--mobile-gold-surface,#fff9ee);color:var(--mobile-text,#674937);font-size:12px;line-height:1.5}.meow-assistant-chat[data-state="success"]{background:var(--mobile-green-surface,#f2fbf4)}.meow-assistant-chat[data-state="error"]{background:var(--mobile-pink-surface,#fff2f3)}
 .meow-assistant-compose{display:grid;grid-template-columns:minmax(0,1fr) 42px auto;gap:7px;align-items:end;margin-top:8px}.meow-assistant-compose textarea{min-height:44px;max-height:100px;resize:vertical;border:1px solid var(--mobile-line,#d8d0cb);border-radius:11px;padding:9px;background:var(--mobile-field,#fff);color:var(--mobile-text,FieldText);font:inherit}.meow-assistant-mic{width:42px;height:42px;border:1px solid var(--mobile-line,#e3d6cc);border-radius:11px;background:var(--mobile-surface,#fff);font-size:18px}.meow-assistant-mic.listening{animation:meowMicPulse 1s infinite;background:var(--mobile-pink-surface,#fff1f2)}@keyframes meowMicPulse{50%{transform:scale(.94);opacity:.72}}.meow-assistant-undo{margin-top:8px;border:0;background:transparent;color:var(--mobile-blue-ink,#3c73b7);font-weight:850;padding:5px 0}
 .meow-assistant-month-dialog{width:min(620px,calc(100vw - 24px));max-width:none;border:0;padding:0;border-radius:22px;background:transparent}.meow-assistant-month-dialog::backdrop{background:rgba(38,29,25,.32);backdrop-filter:blur(2px)}.meow-assistant-month-sheet{background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eadfd6);border-radius:22px;padding:14px;box-shadow:0 24px 70px rgba(58,39,29,.2)}.meow-month-weekdays,.meow-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.meow-month-weekdays{margin:8px 0 5px;color:var(--muted);font-size:10px;font-weight:900;text-align:center}.meow-month-cell{min-height:58px;border:1px solid var(--mobile-line,#eadfd6);border-radius:11px;padding:6px;background:var(--mobile-surface,#fffaf6);font-size:10px}.meow-month-cell.empty{visibility:hidden}.meow-month-cell>strong{display:block;font-size:12px}.meow-month-cell>span{display:block;margin-top:4px;font-weight:850;line-height:1.25}.meow-month-cell.work>span{color:var(--mobile-blue-ink,#3c73b7)}.meow-month-cell.off>span{color:var(--muted)}.meow-month-cell.overtime{border-color:var(--mobile-gold-ink,#d28b2a);background:var(--mobile-gold-surface,#fff7df)}.meow-month-cell.leave{border-color:var(--mobile-pink-ink,#d55e68);background:var(--mobile-pink-surface,#fff4f5)}
@@ -1806,11 +1806,14 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   <div class="meow-assistant-sheet">
     <div class="meow-assistant-head" id="meowAssistantDragHandle">
       <div class="meow-assistant-title"><b>🐾 喵助理</b><span class="meow-assistant-drag" aria-hidden="true">⋮⋮</span></div>
-      <button type="button" class="dialog-close" id="meowAssistantClose" aria-label="關閉">×</button>
+      <div class="meow-assistant-head-actions">
+        <button type="button" class="meow-assistant-minimize" id="meowAssistantMinimize" aria-label="縮小喵助理">—</button>
+        <button type="button" class="dialog-close" id="meowAssistantClose" aria-label="關閉">×</button>
+      </div>
     </div>
     <div class="meow-assistant-chat hidden" id="meowAssistantReply" aria-live="polite"></div>
     <div class="meow-assistant-compose">
-      <textarea id="meowAssistantInput" rows="2" maxlength="180" placeholder="直接說你要做什麼，例如：我要看 8 月份班表"></textarea>
+      <textarea id="meowAssistantInput" rows="2" maxlength="180" placeholder="直接輸入你要做的事"></textarea>
       <button type="button" class="meow-assistant-mic" id="meowAssistantMic" aria-label="語音輸入">🎙</button>
       <button type="button" class="btn primary" id="meowAssistantSend">送出</button>
     </div>
@@ -5548,7 +5551,7 @@ function meowAssistantParse(raw){
   const wantsSchedule=/(看|查看|顯示|打開|調出|找).{0,12}(班表|排班)|(班表|排班).{0,12}(看|查看|顯示|打開|調出|找)/.test(text);
   if(wantsSchedule){
     const explicit=text.match(/(?:(\d{4})年)?(\d{1,2})月(?:份)?/);
-    if(!explicit)return{ok:false,message:'請告訴我要看哪一個月份，例如「我要看 8 月份班表」。'};
+    if(!explicit)return{ok:false,message:'請告訴我要看哪一個月份。'};
     const now=new Date(),month=Number(explicit[2]);
     let year=explicit[1]?Number(explicit[1]):now.getFullYear();
     if(!explicit[1]&&month>now.getMonth()+1)year--;
@@ -5560,14 +5563,14 @@ function meowAssistantParse(raw){
   if(moveWord){
     const at=moveWord.index,left=text.slice(0,at),right=text.slice(at+moveWord[0].length);
     const fromDays=meowAssistantExtractDays(left),toDays=meowAssistantExtractDays(right);
-    if(fromDays.length!==1||toDays.length!==1)return{ok:false,message:'移動加班日期時，請各說一個日期，例如「把22號加班改到26號」。'};
+    if(fromDays.length!==1||toDays.length!==1)return{ok:false,message:'移動加班日期時，請各說一個日期。'};
     const fromMonth=meowAssistantContextDate(left,current),from=meowAssistantDate(fromMonth,fromDays[0]);
     const toMonth=meowAssistantContextDate(right,fromMonth),to=meowAssistantDate(toMonth,toDays[0]);
     if(!from||!to)return{ok:false,message:'我沒有讀懂其中一個日期，請再說一次完整日期。'};
     return{ok:true,type:'move',from,to,raw:text};
   }
   const days=meowAssistantExtractDays(text);
-  if(!days.length)return{ok:false,message:'我聽到要加班，但沒有抓到日期。可以說「下個月5號、12號、18號要加班」。'};
+  if(!days.length)return{ok:false,message:'我聽到要加班，但沒有抓到日期。'};
   const month=meowAssistantContextDate(text,current),dates=days.map(d=>meowAssistantDate(month,d)).filter(Boolean);
   if(!dates.length)return{ok:false,message:'日期超出那個月份，請再確認。'};
   const cancel=/(取消|不要|不用|刪除|刪掉|拿掉|撤銷).{0,10}加班|加班.{0,10}(取消|不要|不用|刪除|刪掉|拿掉|撤銷)/.test(text);
@@ -5612,15 +5615,41 @@ function scheduleForSnapshotDate(snapshot,dt){
   const phase=((diff%cycle)+cycle)%cycle,work=phase<w;
   return{kind:work?'work':'off',label:work?(schedule.shiftName||'上班'):'休'};
 }
-async function meowAssistantCloudSnapshot(){
+function meowAssistantMonthSnapshotScore(snapshot,year,month){
+  if(!snapshot||!snapshot.state)return-1;
+  const prefix=year+'-'+pad(month+1),s=snapshot.state||{};
+  let score=0;
+  if(s.months&&Object.prototype.hasOwnProperty.call(s.months,prefix))score+=20;
+  const dayKeys=Object.keys(s.dayStatus||{}).filter(k=>k.startsWith(prefix+'-')).length;
+  const overrideKeys=Object.keys(s.scheduleOverrides||{}).filter(k=>k.startsWith(prefix+'-')).length;
+  score+=Math.min(24,dayKeys*2)+Math.min(18,overrideKeys*2);
+  const saved=Date.parse(snapshot.savedAt||'');
+  if(Number.isFinite(saved)){
+    const start=Date.UTC(year,month,1),end=Date.UTC(year,month+1,1);
+    if(saved>=start&&saved<end)score+=12;
+    else if(saved>=end)score+=Math.max(0,5-Math.floor((saved-end)/(31*DAY)));
+  }
+  return score;
+}
+async function meowAssistantCloudSnapshot(year,month){
   if(!authUser||!hasCloudEntitlement())throw new Error('cloud_required');
   const uid=authUser.id,epoch=accessEpoch,client=await getAuthClient();
   const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
   if(!sameAccess(uid,epoch))throw new Error('account_changed');
   if(error)throw error;
-  const payload=data&&data.payload||null,snapshot=newestMeaningfulCloudSnapshot(payload)||(payload&&payload.state?payload:null);
-  if(!snapshot||!snapshot.state)throw new Error('cloud_empty');
-  return{state:normalizeState(snapshot.state),updatedAt:data.updated_at||snapshot.savedAt||''};
+  const payload=data&&data.payload||null;
+  if(!payload)throw new Error('cloud_empty');
+  const candidates=[payload,...cloudHistoryEntries(payload)].filter(x=>x&&x.state);
+  if(!candidates.length)throw new Error('cloud_empty');
+  const ranked=candidates.map((snapshot,index)=>({snapshot,index,score:meowAssistantMonthSnapshotScore(snapshot,year,month)}))
+    .sort((a,b)=>b.score-a.score||a.index-b.index);
+  const picked=ranked[0];
+  return{
+    state:normalizeState(picked.snapshot.state),
+    updatedAt:picked.snapshot.savedAt||data.updated_at||'',
+    historical:picked.index>0,
+    monthEvidence:picked.score>0
+  };
 }
 function renderMeowAssistantMonth(snapshot,year,month,meta=''){
   const grid=$('meowAssistantMonthGrid');if(!grid)return;
@@ -5644,10 +5673,15 @@ async function showMeowAssistantMonth(year,month){
   if(!canUse('meow_schedule_assistant')){renderMeowAssistantReply('月份班表查詢是 Pro 功能。','error');return false}
   renderMeowAssistantReply('正在讀取雲端班表…');
   try{
-    const cloud=await meowAssistantCloudSnapshot();
-    renderMeowAssistantMonth(cloud.state,year,month,cloud.updatedAt?'雲端資料更新：'+new Date(cloud.updatedAt).toLocaleString('zh-TW'):'雲端同步資料');
+    const cloud=await meowAssistantCloudSnapshot(year,month);
+    const meta=cloud.historical
+      ?'雲端歷史快照：'+(cloud.updatedAt?new Date(cloud.updatedAt).toLocaleString('zh-TW'):'')
+      :cloud.monthEvidence
+        ?'雲端保存資料：'+(cloud.updatedAt?new Date(cloud.updatedAt).toLocaleString('zh-TW'):'')
+        :'依目前雲端保存的班制回推此月份';
+    renderMeowAssistantMonth(cloud.state,year,month,meta);
+    closeMeowAssistant();
     const d=$('meowAssistantMonthDialog');if(d&&!d.open)d.showModal();
-    renderMeowAssistantReply('已打開 '+(month+1)+' 月份班表。','success');
     return true;
   }catch(e){
     renderMeowAssistantReply(e&&e.message==='cloud_empty'?'雲端目前沒有可讀取的班表備份。':'雲端班表暫時讀不到，本機資料沒有被改動。','error');
@@ -5710,7 +5744,7 @@ function executeMeowAssistantPlan(plan){
   if($('meowAssistantUndo'))$('meowAssistantUndo').classList.remove('hidden');
   if($('meowAssistantPreview'))$('meowAssistantPreview').classList.add('hidden');
   meowAssistantPending=null;
-  renderMeowAssistantReply('已完成：'+meowAssistantPlanText(plan)+' 我已經寫進班表。','success');
+  renderMeowAssistantReply('已更新班表。','success');
   return true;
 }
 function undoMeowAssistant(){
@@ -5737,9 +5771,16 @@ async function previewMeowAssistant(){
   executeMeowAssistantPlan(parsed);
   $('meowAssistantInput').value='';
 }
+function setMeowAssistantMinimized(minimized){
+  const d=$('meowAssistantDialog');if(!d)return;
+  d.classList.toggle('minimized',!!minimized);
+  const b=$('meowAssistantMinimize');if(b){b.textContent=minimized?'□':'—';b.setAttribute('aria-label',minimized?'展開喵助理':'縮小喵助理')}
+}
 function openMeowAssistant(){
   const d=$('meowAssistantDialog');if(!d.open)d.show();
+  setMeowAssistantMinimized(false);
   positionMeowAssistantDefault();bindMeowAssistantDrag();
+  renderMeowAssistantReply('');
   $('meowAssistantInput').focus({preventScroll:true});
   if(!canUse('meow_schedule_assistant'))renderMeowAssistantReply('喵助理是 Pro 功能。','error');
 }
@@ -6179,6 +6220,7 @@ function setTheme(t){
 $('heroTheme').onclick=()=>setTheme(state.theme==='dark'?'light':'dark');if($('desktopThemeButton'))$('desktopThemeButton').onclick=()=>setTheme(state.theme==='dark'?'light':'dark');if($('themeLight'))$('themeLight').onclick=()=>setTheme('light');if($('themeDark'))$('themeDark').onclick=()=>setTheme('dark');if($('themeSystem'))$('themeSystem').onclick=()=>setTheme('system');if(window.matchMedia){const mq=window.matchMedia('(prefers-color-scheme: dark)');const onSystemTheme=()=>{if(themeModePreference==='system'){themePreference=mq.matches?'dark':'light';try{localStorage.setItem(THEME_KEY,themePreference)}catch(e){}applyTheme()}};if(mq.addEventListener)mq.addEventListener('change',onSystemTheme);else if(mq.addListener)mq.addListener(onSystemTheme)}
 if($('meowAssistantFab'))$('meowAssistantFab').onclick=openMeowAssistant;
 if($('meowAssistantClose'))$('meowAssistantClose').onclick=closeMeowAssistant;
+if($('meowAssistantMinimize'))$('meowAssistantMinimize').onclick=()=>{const d=$('meowAssistantDialog');if(d)setMeowAssistantMinimized(!d.classList.contains('minimized'))};
 if($('meowAssistantSend'))$('meowAssistantSend').onclick=previewMeowAssistant;
 if($('meowAssistantMic'))$('meowAssistantMic').onclick=startMeowAssistantVoice;
 if($('meowAssistantUndo'))$('meowAssistantUndo').onclick=undoMeowAssistant;
