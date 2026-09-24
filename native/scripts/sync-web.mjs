@@ -20,7 +20,9 @@ const files = [
   'workcat-home-v12.png',
   'app-icon-v155-180.png',
   'app-icon-v155-192.png',
-  'app-icon-v155-512.png'
+  'app-icon-v155-512.png',
+  'app-icon-v174-512.png',
+  'splash-v174.webp'
 ];
 
 for (const name of files) {
