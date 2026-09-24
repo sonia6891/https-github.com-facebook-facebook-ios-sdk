@@ -136,6 +136,8 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('AI 班表匯入已從產品入口移除', !html.includes('id="aiScheduleCard"') && !html.includes('id="aiScheduleUpload"') && !html.includes("smart_schedule_import:{label:'智慧匯入班表'"));
     check('浮動喵助理使用定稿厭世喵素材', html.includes('./assets/meow-assistant-pro-v169.webp?v=169') && html.includes('<b>喵助理</b></button>'));
     check('喵助理語音會先寫入輸入框再自動送出', html.includes("input.value=text") && html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"));
+    check('喵助理文字位於貓咪下方且拖曳熱區加大', html.includes('flex-direction:column') && html.includes('min-width:98px;min-height:118px'));
+    check('喵助理可重複啟動語音辨識', html.includes('function resetMeowAssistantVoice()') && html.includes('meowAssistantRecognitionToken++') && html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToken===token'));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV119.openWelcome()));
     check('網頁登入頁保留 Google、LINE 兩個登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine').count() === 2);
