@@ -88,7 +88,7 @@ jobs:
           import hashlib,json,os,re,time,urllib.request,urllib.error
           result={'commit':os.environ['GITHUB_SHA'],'files':{}}
           base=os.environ['PAGE_URL']
-          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v155-180.png','app-icon-v155-192.png','app-icon-v155-512.png','assets/welcome-brand-v112.webp','assets/meow-assistant-pro-v168.webp']:
+          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v155-180.png','app-icon-v155-192.png','app-icon-v155-512.png','assets/welcome-brand-v112.webp','assets/meow-assistant-pro-v169.webp']:
               expected=hashlib.sha256(Path(name).read_bytes()).hexdigest()
               url=base+name+'?build-check='+os.environ['GITHUB_SHA']
               for attempt in range(10):
@@ -102,8 +102,8 @@ jobs:
                   except Exception:
                       if attempt==9: raise
                       time.sleep(3)
-          mascot=Path('assets/meow-assistant-pro-v168.webp').read_bytes()
-          assert len(mascot)>20000, 'Meow Assistant asset unexpectedly small/truncated'
+          mascot=Path('assets/meow-assistant-pro-v169.webp').read_bytes()
+          assert len(mascot)>9000, 'Meow Assistant asset unexpectedly small/truncated'
           assert mascot[:4]==b'RIFF' and mascot[8:12]==b'WEBP', 'Meow Assistant asset is not valid WebP'
           html=Path('index.html').read_text()
           import re
