@@ -17,7 +17,7 @@
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v189-logout-splash-restore">
+<meta name="meow-ui-build" content="v187-developer-cloud-restore">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -2416,6 +2416,12 @@ async function loadEntitlement(){
     if(!Number.isFinite(now))throw Error('access_time_unavailable');
     accessServerMs=now;accessLocalMs=performance.now();accessCheckedUser=uid;
     developerAccess=!!(data&&data.developer);serverAccessTier=String(data&&data.access_tier||'free');
+    // Developer accounts always use their cloud workspace automatically.
+    // This also restores sync after reinstall / PWA path changes where localStorage consent is missing.
+    if(developerAccess){
+      cloudConsent=true;
+      try{localStorage.setItem('meow-work-cloud-consent:'+uid,'yes')}catch(e){}
+    }
     entitlementStatus=row&&row.status||'free';entitlementUntil=row&&row.pro_until||null;
     trialStartedAt=row&&row.trial_started_at||null;billingProvider=row&&row.billing_provider||null;
     providerSubscriptionId=row&&row.provider_subscription_id||null;cancelAtPeriodEnd=!!(row&&row.cancel_at_period_end);canceledAt=row&&row.canceled_at||null;
@@ -2423,7 +2429,7 @@ async function loadEntitlement(){
     scheduleExpiry();
     if(!canCloudSync()){
       await stopAccountRealtime();cloudReady=false;
-      setCloudStatus(hasCloudEntitlement()?'Pro 可用・請先啟用雲端同步':(trialStartedAt||entitlementUntil?'雲端同步已暫停・方案未生效或已到期':'未啟用・Pro 專屬'));
+      setCloudStatus(hasCloudEntitlement()?(developerAccess?'開發者雲端同步啟用中':'Pro 可用・請先啟用雲端同步'):(trialStartedAt||entitlementUntil?'雲端同步已暫停・方案未生效或已到期':'未啟用・Pro 專屬'));
     }else if(!cloudReady){await loadAccountState();if(sameAccess(uid,epoch)&&canCloudSync())await subscribeAccountRealtime()}
   }catch(e){
     if(!sameAccess(uid,epoch)||request!==entitlementRequest)return;
