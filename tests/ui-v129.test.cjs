@@ -37,12 +37,15 @@ assert(html.includes('Free／Pro 方案比較'),'Free/Pro comparison dialog miss
 assert(html.includes('薪資單三層交叉檢查'),'Pro comparison must include three-layer payslip verification');
 assert(html.includes("appearanceOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'"),'appearance fold state missing');
 assert(html.includes("schedulePrefsOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'"),'schedule preference fold state missing');
-assert(html.includes('./assets/meow-assistant-pro-v167.webp'),'final Meow Assistant mascot asset missing');
+assert(html.includes("workSettingsOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'"),'work settings fold state missing');
+assert(html.includes("dataSyncOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'"),'data management fold state missing');
+assert(html.includes('grid-template-columns:26px minmax(0,1fr) 96px'),'settings fold header alignment grid missing');
+assert(html.includes('./assets/meow-assistant-pro-v168.webp?v=168'),'final Meow Assistant mascot asset missing');
 assert(html.includes('<b>喵助理</b></button>'),'floating Meow Assistant label missing');
 assert(!html.includes('<span aria-hidden="true">🐾</span><b>喵助理</b><small>Pro</small>'),'old paw/Pro floating button must be removed');
 assert(html.includes("renderMeowAssistantReply('已聽到：「'+text+'」\\n正在處理…')"),'voice transcript/submission status missing');
 assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"),'voice command must auto-submit after transcript');
-console.log('PASS v167 final Meow Assistant, settings folds, and voice flow');
+console.log('PASS v168 aligned settings folds, final Meow Assistant, and voice flow');
 
 
 const scheduleSection=html.slice(
@@ -70,7 +73,7 @@ console.log('PASS v138 schedule actions structure');
 
 assert.equal(ids.scheduleMenuClearAi||0,0,'removed AI schedule clear action must stay absent');
 assert(!scheduleSection.includes('智慧匯入班表'),'calendar must not advertise removed AI schedule import');
-console.log('PASS v167 removed AI schedule import UI');
+console.log('PASS v168 removed AI schedule import UI');
 
 
 for(const id of [
