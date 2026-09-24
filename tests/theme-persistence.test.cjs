@@ -61,7 +61,7 @@ test('switch to dark survives immediate close/reopen',()=>{
 test('login and real-time cloud data cannot overwrite device preference',()=>{
   const app=openApp();app.run("state=normalizeState({theme:'dark',settings:{baseSalary:45678},schedule:{shiftName:'B班'},dayStatus:{'2026-09-23':'annual'}});applyTheme()");assert.equal(app.theme(),'light');assert.equal(app.dark(),false);assert.equal(app.run('state.settings.baseSalary'),45678);assert.equal(app.run('state.schedule.shiftName'),'B班');assert.equal(app.run("state.dayStatus['2026-09-23']"),'annual');
 });
-test('both snapshot normalizers protect the device preference',()=>{assert.equal(normalizers.length,2);for(const normalizer of normalizers)assert.ok(normalizer.includes('s.theme=preferredTheme();'))});
+test('the authoritative snapshot normalizer protects the device preference',()=>{assert.equal(normalizers.length,1);assert.ok(normalizers[0].includes('s.theme=preferredTheme();'))});
 test('late IndexedDB restore cannot overwrite a just-selected mode',()=>{
   const app=openApp(new Map([[key,'dark']]));app.run("setTheme('light');state=normalizeState({theme:'dark',personalEvents:{meeting:{title:'回診'}}});applyTheme()");assert.equal(app.theme(),'light');assert.equal(app.run('state.personalEvents.meeting.title'),'回診');
 });
