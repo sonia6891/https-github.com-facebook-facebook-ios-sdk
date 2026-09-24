@@ -174,6 +174,22 @@ assert(html.includes("if($('salaryTabPro'))$('salaryTabPro').onclick=()=>{setSal
 assert(html.includes("if($('salaryProPane'))$('salaryProPane').classList.toggle('hidden',salarySubTab!=='pro')"),'Pro reconciliation pane switch missing');
 console.log('PASS v159 Free/Pro salary reconciliation tabs structure');
 
+for(const id of ['meowAssistantFab','meowAssistantDialog','meowAssistantDragHandle','meowAssistantInput','meowAssistantSend','meowAssistantMonthDialog','meowAssistantMonthGrid']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert.equal(ids.meowAssistantPreview||0,0,'old assistant confirmation preview must be removed');
+assert.equal(ids.meowAssistantApply||0,0,'old assistant confirm button must be removed');
+assert.equal((html.match(/data-meow-example=/g)||[]).length,0,'assistant example chips must be removed');
+assert(!html.includes('用一句話幫你改加班日期'),'old assistant subtitle must be removed');
+assert(html.includes("if(!d.open)d.show();"),'assistant must open non-modally');
+assert(html.includes('function bindMeowAssistantDrag()'),'assistant drag behavior missing');
+assert(html.includes("type:'viewSchedule'"),'assistant month schedule intent missing');
+assert(html.includes("from('user_sync_state').select('payload,updated_at')"),'assistant month viewer must read Pro cloud work data');
+assert(html.includes("state.dayStatus[plan.to].note=state.dayStatus[plan.to].note||'';"),'assistant moves must not add visible notes');
+assert(html.includes("return{type:'overtime',hours,note:'',label:'',overtimeKind:kind};"),'assistant overtime adds must not add visible notes');
+console.log('PASS v160 floating Meow assistant and cloud month viewer structure');
+
+
 const settingsSection=html.slice(
   html.indexOf('<section class="page" id="page-settings">'),
   html.indexOf('</main></div></div>')
