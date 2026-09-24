@@ -2216,7 +2216,7 @@ async function saveAccountState(showAlert=false,resolveConflict=false){
   try{
     const client=await getAuthClient();if(!sameAccess(uid,epoch)||!canCloudSync())return false;
     const {data,error}=await client.rpc('meow_save_snapshot',{p_payload:payload,p_expected_updated_at:cloudRevision});
-    if(!sameAccess(uid,epoch)||!canCloudSync())return false;
+    if(!sameAccess(uid,epoch)||!hasCloudEntitlement())return false;
     if(error)throw error;
     if(!data||!data.updated_at)throw Error('missing_sync_confirmation');
     cloudRevision=data.updated_at;cloudPayload=payload;cloudLastSuccess=data.updated_at;pendingCloud=null;
@@ -2388,8 +2388,8 @@ function renderSyncStatus(){
     ?'最後成功同步：'+new Date(cloudLastSuccess).toLocaleString('zh-TW')
     :(entitled?'開啟同步後，才會把工作資料上傳雲端。':'升級 Pro 後可再使用雲端同步、備份與還原。');
   if($('toggleCloudSync')){$('toggleCloudSync').textContent=enabled?'關閉雲端同步':(entitled?'啟用雲端同步':'查看 Pro 雲端同步')}
-  if($('cloudBackupNow'))$('cloudBackupNow').disabled=!enabled;
-  if($('cloudRestoreNow'))$('cloudRestoreNow').disabled=!enabled;
+  if($('cloudBackupNow'))$('cloudBackupNow').disabled=!entitled;
+  if($('cloudRestoreNow'))$('cloudRestoreNow').disabled=!entitled;
   if($('legacyCloudExport'))$('legacyCloudExport').classList.add('hidden');
   if($('cloudConflictBox'))$('cloudConflictBox').classList.toggle('hidden',!pendingCloud||!enabled);
   if($('saveState'))$('saveState').textContent=localSaveError?'本機儲存失敗，請匯出備份後檢查空間':(lastSavedAt?'本機已儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'資料會自動保存在這台裝置');
@@ -5506,8 +5506,51 @@ async function importBackupFile(file){
     alert('備份已還原。');
   }catch(e){alert('備份檔無法讀取，請確認是本 App 匯出的 JSON 檔，且檔案大小不超過 8 MB。')}
 }
+async function backupCloudNow(showAlert=true){
+  if(!hasCloudEntitlement()||!authUser||localOwner!==authUser.id){
+    if(showAlert)alert('備份到雲端是 Pro 功能，請先登入並確認 Pro／試用資格。');
+    return false;
+  }
+  if(!navigator.onLine){if(showAlert)alert('目前沒有網路，無法備份到雲端。');return false}
+  const uid=authUser.id,epoch=accessEpoch,button=$('cloudBackupNow');
+  if(button)button.disabled=true;
+  setCloudStatus('正在備份到雲端…');
+  try{
+    const client=await getAuthClient();
+    const {data:remote,error:readError}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+    if(!sameAccess(uid,epoch)||!hasCloudEntitlement())return false;
+    if(readError)throw readError;
+    const remotePayload=remote&&remote.payload||null;
+    const remoteState=remotePayload&&remotePayload.state?normalizeState(remotePayload.state):null;
+    if(remoteState&&workFingerprint(remoteState)!==workFingerprint(state)){
+      if(!confirm('雲端目前有另一份不同的資料。\n\n要用這台裝置的資料更新雲端嗎？原本雲端版本會保留在安全歷史內。')){
+        setCloudStatus(cloudConsent?'已取消備份・自動同步仍開啟':'已取消備份・本機資料保留');
+        return false;
+      }
+    }
+    const snapshot=JSON.parse(JSON.stringify(state));delete snapshot.theme;
+    let history=cloudHistoryEntries(remotePayload);
+    if(remotePayload&&meaningfulSnapshot(remotePayload))history=[{savedAt:remotePayload.savedAt,state:remotePayload.state},...history];
+    const payload={version:4,savedAt:lastSavedAt||new Date().toISOString(),deviceId,state:snapshot,history:history.slice(0,5)};
+    const {data,error}=await client.rpc('meow_save_snapshot',{p_payload:payload,p_expected_updated_at:remote&&remote.updated_at||null});
+    if(!sameAccess(uid,epoch)||!hasCloudEntitlement())return false;
+    if(error)throw error;
+    if(!data||!data.updated_at)throw Error('missing_sync_confirmation');
+    cloudRevision=data.updated_at;cloudPayload=payload;cloudLastSuccess=data.updated_at;pendingCloud=null;localDirty=false;writeWorkspaceMeta();
+    setCloudStatus(cloudConsent?'已同步':'已備份到雲端・自動同步未開啟');
+    if(showAlert)alert('已備份到雲端。');
+    return true;
+  }catch(e){
+    if(e&&e.code==='40001')setCloudStatus('雲端已有更新版本・請重新確認');
+    else setCloudStatus('雲端備份失敗・本機資料保留');
+    if(showAlert)alert('雲端備份失敗，本機資料沒有被改動。請稍後再試。');
+    return false;
+  }finally{
+    if(button)button.disabled=!hasCloudEntitlement();
+  }
+}
 async function restoreFromCloud(showAlert=true){
-  if(!canCloudSync()){if(showAlert)alert('請先確認有效 Pro／試用資格並啟用雲端同步。');return false}
+  if(!hasCloudEntitlement()||!authUser||localOwner!==authUser.id){if(showAlert)alert('從雲端還原是 Pro 功能，請先登入並確認 Pro／試用資格。');return false}
   if(!navigator.onLine){setCloudStatus('離線・目前無法讀取雲端備份');if(showAlert)alert('目前沒有網路，無法從雲端還原。');return false}
   const uid=authUser.id,epoch=accessEpoch,button=$('cloudRestoreNow');
   if(button)button.disabled=true;
@@ -5558,7 +5601,7 @@ async function restoreFromCloud(showAlert=true){
     if(showAlert)alert('雲端備份讀取失敗，目前本機資料沒有被改動。請稍後再試。');
     return false;
   }finally{
-    if(button)button.disabled=!canCloudSync();
+    if(button)button.disabled=!hasCloudEntitlement();
   }
 }
 function setDevPlan(plan){
@@ -5842,7 +5885,7 @@ qsa('[data-item-actual]').forEach(input=>input.oninput=e=>saveActualItem(e.targe
 if($('exportBackup'))$('exportBackup').onclick=exportBackupFile;
 if($('importBackup'))$('importBackup').onclick=()=>$('importBackupInput').click();
 if($('importBackupInput'))$('importBackupInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)importBackupFile(file);e.target.value=''};
-if($('cloudBackupNow'))$('cloudBackupNow').onclick=()=>saveAccountState(true);
+if($('cloudBackupNow'))$('cloudBackupNow').onclick=()=>backupCloudNow(true);
 if($('cloudRestoreNow'))$('cloudRestoreNow').onclick=()=>restoreFromCloud(true);
 if($('accountUpgrade'))$('accountUpgrade').onclick=()=>{const y=window.scrollY;accountProOpen=!accountProOpen;renderSettings();window.scrollTo({top:y,behavior:'auto'})};
 $('accountLogout').onclick=signOutAccount;
