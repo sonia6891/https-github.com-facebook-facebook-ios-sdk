@@ -2333,10 +2333,15 @@ async function restoreLegacyCloud(){
     const label=when?new Date(when).toLocaleString('zh-TW'):'較早的版本';
     if(!confirm('找到 '+label+' 的舊版雲端備份。\n\n要直接還原到這台裝置嗎？目前資料會先保留一份安全副本，不需要另外開啟 JSON 檔。'))return false;
     if(!preserveBeforeReplace()){alert('本機空間不足，沒有覆蓋目前資料。請先匯出備份。');return false}
+    const previousState=state,previousSavedAt=lastSavedAt;
     state=normalizeState(snapshot.state);
     localEditVersion++;
     localDirty=true;
-    if(!persistLocalSnapshot()){alert('舊版備份已讀取，但本機儲存失敗，沒有更新目前資料。');return false}
+    if(!persistLocalSnapshot()){
+      state=previousState;lastSavedAt=previousSavedAt;applyTheme();render();
+      alert('舊版備份已讀取，但本機儲存失敗，所以目前資料沒有被替換。');
+      return false;
+    }
     writeWorkspaceMeta();applyTheme();render();
     setCloudStatus(canCloudSync()?'舊版備份已還原到本機・尚未覆蓋目前雲端':'舊版備份已還原到本機');
     alert('舊版備份已直接還原。\n\n請先確認資料；如果內容正確，再按「立即備份到雲端」更新目前雲端版本。');
@@ -5478,11 +5483,18 @@ async function restoreFromCloud(showAlert=true){
       return false;
     }
     if(!preserveBeforeReplace()){setCloudStatus('本機空間不足・未覆蓋現有資料');if(showAlert)alert('本機空間不足，沒有覆蓋目前資料。請先匯出備份。');return false}
+    const previousState=state,previousSavedAt=lastSavedAt;
     state=remote;localDirty=false;localEditVersion++;
     cloudRevision=data.updated_at;cloudPayload=payload;pendingCloud=null;cloudLastSuccess=data.updated_at||'';
-    persistLocalSnapshot();writeWorkspaceMeta();applyTheme();render();setCloudStatus(localSaveError?'雲端已讀取，但本機儲存失敗':'已同步');
-    if(showAlert)alert(localSaveError?'雲端備份已讀取，但本機儲存失敗，請先檢查裝置空間。':'已從雲端還原。\n\n備份時間：'+label);
-    return !localSaveError;
+    if(!persistLocalSnapshot()){
+      state=previousState;lastSavedAt=previousSavedAt;localDirty=true;applyTheme();render();
+      setCloudStatus('雲端已讀取，但本機儲存失敗・原資料保留');
+      if(showAlert)alert('雲端備份已讀取，但本機儲存失敗，所以目前資料沒有被替換。請先檢查裝置空間。');
+      return false;
+    }
+    writeWorkspaceMeta();applyTheme();render();setCloudStatus('已同步');
+    if(showAlert)alert('已從雲端還原。\n\n備份時間：'+label);
+    return true;
   }catch(e){
     if(sameAccess(uid,epoch))setCloudStatus('雲端讀取失敗・本機資料仍可使用');
     if(showAlert)alert('雲端備份讀取失敗，目前本機資料沒有被改動。請稍後再試。');
