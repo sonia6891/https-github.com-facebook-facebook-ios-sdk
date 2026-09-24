@@ -58,8 +58,13 @@ jobs:
           rm -rf ios
           npx cap add ios
           node scripts/patch-ios-bridge.mjs
+          swift scripts/render-ios-branding.swift
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription 使用相機拍攝班表、薪資單或頭像圖片。" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string 使用相機拍攝班表、薪資單或頭像圖片。" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryUsageDescription 選取班表、薪資單或頭像圖片。" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 選取班表、薪資單或頭像圖片。" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations array" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait" ios/App/App/Info.plist
@@ -108,6 +113,17 @@ jobs:
             exit 1
           fi
           grep -q 'window?.rootViewController = ViewController()' ios/App/App/SceneDelegate.swift
+          /usr/libexec/PlistBuddy -c "Print :NSCameraUsageDescription" ios/App/App/Info.plist | grep -q '班表'
+          /usr/libexec/PlistBuddy -c "Print :NSPhotoLibraryUsageDescription" ios/App/App/Info.plist | grep -q '薪資單'
+          ICON_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png)"
+          echo "$ICON_INFO" | grep -q 'pixelWidth: 1024'
+          echo "$ICON_INFO" | grep -q 'pixelHeight: 1024'
+          echo "$ICON_INFO" | grep -q 'hasAlpha: no'
+          SPLASH_INFO="$(sips -g pixelWidth -g pixelHeight ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png)"
+          echo "$SPLASH_INFO" | grep -q 'pixelWidth: 2732'
+          echo "$SPLASH_INFO" | grep -q 'pixelHeight: 2732'
+          cmp ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
+          cmp ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
           test -f ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'NSPrivacyCollectedDataTypeOtherFinancialInfo' ios/App/App/PrivacyInfo.xcprivacy
           grep -q 'NSPrivacyCollectedDataTypeHealth' ios/App/App/PrivacyInfo.xcprivacy
@@ -206,6 +222,8 @@ jobs:
           test -f "$APP_DIR/public/terms.html"
           test -f "$APP_DIR/public/support.html"
           /usr/libexec/PlistBuddy -c "Print :ITSAppUsesNonExemptEncryption" "$APP_DIR/Info.plist" | grep -q false
+          /usr/libexec/PlistBuddy -c "Print :NSCameraUsageDescription" "$APP_DIR/Info.plist" | grep -q '班表'
+          /usr/libexec/PlistBuddy -c "Print :NSPhotoLibraryUsageDescription" "$APP_DIR/Info.plist" | grep -q '薪資單'
           IPHONE_ORIENTATIONS="$(/usr/libexec/PlistBuddy -c "Print :UISupportedInterfaceOrientations" "$APP_DIR/Info.plist")"
           echo "$IPHONE_ORIENTATIONS" | grep -q UIInterfaceOrientationPortrait
           if echo "$IPHONE_ORIENTATIONS" | grep -q UIInterfaceOrientationLandscape; then
