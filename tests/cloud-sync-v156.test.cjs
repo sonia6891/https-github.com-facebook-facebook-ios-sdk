@@ -63,8 +63,8 @@ assert(
   'Backup import must reject oversized files and backups for another app.'
 );
 assert(
-  html.includes("meow-sw-reloaded-v156") &&
-  html.includes("register('./sw.js?v=156'"),
+  html.includes("meow-sw-reloaded-v161") &&
+  html.includes("register('./sw.js?v=161'"),
   'Service worker registration must be cache-busted after recovery changes.'
 );
 
