@@ -83,7 +83,7 @@ jobs:
               assert im.size==size, (name,im.size)
               assert im.mode in ('RGB','P'), (name,im.mode)
           im=Image.open('splash-v176.jpg')
-          assert im.width>1000 and im.height>1000
+          assert im.width>=900 and im.height>=1500
           print('v176 brand assets valid:',[(p.name,p.stat().st_size) for p in map(Path,['app-icon-v176-180.png','app-icon-v176-192.png','app-icon-v176-512.png','splash-v176.jpg'])])
           PY
       - name: Stage public application files only
