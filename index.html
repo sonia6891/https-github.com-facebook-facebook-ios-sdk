@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v160-schedule-date-fit">
+<meta name="meow-ui-build" content="v161-schedule-date-picker">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -958,19 +958,32 @@ html.dark .settings-pro-v129{
 }
 @media(max-width:760px){
   #scheduleAddDialog{
-    width:calc(100vw - 16px);
-    max-width:calc(100vw - 16px);
+    width:calc(100vw - 20px);
+    max-width:calc(100vw - 20px);
+    width:calc(100dvw - 20px);
+    max-width:calc(100dvw - 20px);
   }
   #scheduleAddDialog .dialog-head{padding-left:14px;padding-right:14px}
   #scheduleAddDialog .dialog-body{padding-left:12px;padding-right:12px}
   #scheduleAddDialog .dialog-foot{padding-left:12px;padding-right:12px;flex-wrap:wrap}
   #scheduleAddDialog .field{width:100%;max-width:100%}
   #scheduleAddDate,#scheduleAddShift{
-    width:-webkit-fill-available!important;
-    inline-size:-webkit-fill-available!important;
-    max-width:-webkit-fill-available!important;
-    max-inline-size:-webkit-fill-available!important;
+    width:100%!important;
+    inline-size:100%!important;
+    max-width:100%!important;
+    max-inline-size:100%!important;
   }
+  #scheduleAddDate.schedule-add-date-trigger{
+    -webkit-appearance:none;
+    appearance:none;
+    text-align:left;
+    cursor:pointer;
+    caret-color:transparent;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  #scheduleAddDate.schedule-add-date-trigger::-webkit-calendar-picker-indicator{display:none}
 }
 @media(max-width:360px){
   #scheduleAddDialog .dialog-foot{
@@ -5424,12 +5437,13 @@ function openScheduleAddDialog(date){
 }
 if($('scheduleAddDay'))$('scheduleAddDay').onclick=()=>openScheduleAddDialog();
 if($('scheduleAddDialogClose'))$('scheduleAddDialogClose').onclick=()=>{if($('scheduleAddDialog').open)$('scheduleAddDialog').close('cancel')};
-if($('scheduleAddDate'))$('scheduleAddDate').onchange=e=>{
-  const select=$('scheduleAddShift'),date=e.target.value,existing=state.scheduleOverrides&&state.scheduleOverrides[date];
-  if(!existing)return;
+function syncScheduleAddShiftForDate(date){
+  const select=$('scheduleAddShift'),existing=state.scheduleOverrides&&state.scheduleOverrides[date];
+  if(!select||!existing)return;
   const exact=(existing.kind||'work')+'|'+String(existing.shiftName||'');
   if(Array.from(select.options).some(o=>o.value===exact))select.value=exact;
-};
+}
+if($('scheduleAddDate'))$('scheduleAddDate').onchange=e=>syncScheduleAddShiftForDate(e.target.value);
 if($('scheduleAddSave'))$('scheduleAddSave').onclick=()=>{
   const date=$('scheduleAddDate').value,value=$('scheduleAddShift').value;
   if(!date||!/^\d{4}-\d{2}-\d{2}$/.test(date)){alert('請先選擇日期。');return}
@@ -6002,6 +6016,47 @@ $('workDateClear').onclick=()=>commitWorkDate('');
 $('workDateDialog').addEventListener('cancel',event=>{event.preventDefault();closeWorkDate()});
 bindWorkDate('settingHireDate','公司到職日','hireDate');
 bindWorkDate('settingAnnualCustomDate','公司特休結算日','annualCustomDate');
+
+function bindScheduleAddDatePicker(){
+  const field=$('scheduleAddDate');if(!field)return;
+  const binding={
+    id:'scheduleAddDate',
+    field,
+    label:'新增班表日期',
+    required:true,
+    read:()=>field.value,
+    write:value=>{field.value=value;syncScheduleAddShiftForDate(value)},
+    save:()=>{}
+  };
+  function mode(){
+    const mobile=workDateMedia.matches;
+    field.type=mobile?'text':'date';
+    field.readOnly=mobile;
+    field.classList.toggle('schedule-add-date-trigger',mobile);
+    if(mobile){
+      field.setAttribute('aria-haspopup','dialog');
+      field.setAttribute('aria-controls','workDateDialog');
+      field.setAttribute('inputmode','none');
+      field.setAttribute('placeholder','點一下選擇日期');
+    }else{
+      field.removeAttribute('aria-haspopup');
+      field.removeAttribute('aria-controls');
+      field.removeAttribute('inputmode');
+      field.removeAttribute('placeholder');
+    }
+  }
+  mode();workDateMedia.addEventListener('change',mode);
+  field.addEventListener('pointerdown',event=>{
+    if(workDateMedia.matches&&event.button===0){event.preventDefault();openWorkDate(binding)}
+  });
+  field.addEventListener('click',event=>{
+    if(workDateMedia.matches){event.preventDefault();openWorkDate(binding)}
+  });
+  field.addEventListener('keydown',event=>{
+    if(workDateMedia.matches&&(event.key==='Enter'||event.key===' ')){event.preventDefault();openWorkDate(binding)}
+  });
+}
+bindScheduleAddDatePicker();
 
 $('settingAnnualCycle').onchange=e=>{state.settings.annualLeaveCycle=e.target.value||'anniversary';changedAndSync();render()};
 
