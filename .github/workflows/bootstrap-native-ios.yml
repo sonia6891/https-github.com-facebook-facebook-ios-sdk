@@ -51,8 +51,10 @@ jobs:
       - name: Generate v155 full-bleed desktop and home-screen icons
         run: |
           set -euo pipefail
-          python3 -m pip install --quiet pillow
-          python3 native/scripts/generate-app-icons-v155.py
+          ICON_VENV="$RUNNER_TEMP/meow-icon-venv"
+          python3 -m venv "$ICON_VENV"
+          "$ICON_VENV/bin/python" -m pip install --quiet pillow
+          "$ICON_VENV/bin/python" native/scripts/generate-app-icons-v155.py
           for f in app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png; do
             test -s "$f"
             INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha "$f")"
