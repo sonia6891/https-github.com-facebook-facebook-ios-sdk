@@ -44,7 +44,7 @@ assert(html.includes('./assets/meow-assistant-pro-v169.webp?v=169'),'final Meow 
 assert(html.includes('<b>喵助理</b></button>'),'floating Meow Assistant label missing');
 assert(!html.includes('<span aria-hidden="true">🐾</span><b>喵助理</b><small>Pro</small>'),'old paw/Pro floating button must be removed');
 assert(html.includes("renderMeowAssistantReply('已聽到：「'+text+'」\\n正在處理…')"),'voice transcript/submission status missing');
-assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"),'voice command must auto-submit after transcript');
+assert(html.includes("setTimeout(()=>{if(token===meowAssistantRecognitionToken)void previewMeowAssistant()},120)"),'voice command must auto-submit after transcript');
 assert(html.includes('flex-direction:column'),'Meow Assistant label must sit below mascot');
 assert(html.includes('min-width:98px;min-height:118px'),'Meow Assistant drag hit area must be enlarged');
 assert(html.includes('async function resetMeowAssistantVoice(cancelNative=true)'),'repeat voice session reset helper missing');
