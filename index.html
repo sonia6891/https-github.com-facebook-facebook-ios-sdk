@@ -1166,11 +1166,17 @@ html.auth-needs-login #app-splash{opacity:1!important;pointer-events:none}
 .welcome-login-mini-head{display:none}
 @media(max-width:760px){
   #app-splash{
-    top:0;right:0;bottom:0;left:0;
-    width:100vw;height:100dvh;min-height:100svh;
+    top:calc(0px - env(safe-area-inset-top,0px));
+    right:0;
+    bottom:auto;
+    left:0;
+    width:100vw;
+    height:calc(100dvh + env(safe-area-inset-top,0px));
+    min-height:calc(100svh + env(safe-area-inset-top,0px));
     background:#f6ede3;
   }
   #app-splash img{width:100vw;height:100%;object-fit:cover;object-position:center top}
+  .meow-welcome.welcome-auto-login{bottom:calc(env(safe-area-inset-bottom,0px) + 64px)}
 }
 </style>
 <style id="meow-welcome-styles">
