@@ -147,6 +147,31 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('LINE 按鈕使用 custom:line', await guest.evaluate(() => window.__accountTest.oauth.at(-1).provider === 'custom:line'));
     check('LINE 要求 openid profile', await guest.evaluate(() => window.__accountTest.oauth.at(-1).options.scopes === 'openid profile'));
     check('Apple 原生流程使用 signInWithIdToken', html.includes("signInWithIdToken(payload)"));
+    await guest.evaluate(()=>window.__accountV119.calendar());
+    await guest.locator('#scheduleAddDay').click();
+    await guest.waitForTimeout(60);
+    const scheduleAddFit=await guest.evaluate(()=>{
+      const dialog=document.getElementById('scheduleAddDialog');
+      const field=document.getElementById('scheduleAddDate');
+      const dr=dialog.getBoundingClientRect(),fr=field.getBoundingClientRect();
+      return {
+        open:dialog.open,
+        type:field.type,
+        readOnly:field.readOnly,
+        dialogLeft:dr.left,
+        dialogRight:dr.right,
+        fieldLeft:fr.left,
+        fieldRight:fr.right,
+        viewport:document.documentElement.clientWidth
+      };
+    });
+    check('手機新增日期班表不超出視窗', scheduleAddFit.open && scheduleAddFit.dialogLeft>=0 && scheduleAddFit.dialogRight<=scheduleAddFit.viewport+1 && scheduleAddFit.fieldLeft>=scheduleAddFit.dialogLeft-1 && scheduleAddFit.fieldRight<=scheduleAddFit.dialogRight+1);
+    check('手機新增班表日期改用緊湊文字觸發器', scheduleAddFit.type==='text' && scheduleAddFit.readOnly===true);
+    await guest.locator('#scheduleAddDate').click();
+    await guest.waitForTimeout(40);
+    check('手機新增班表日期使用年月日選擇器', await guest.locator('#workDateDialog').evaluate(el=>el.open));
+    await guest.locator('#workDateCancel').click();
+    await guest.locator('#scheduleAddDialogClose').click();
     const localScheduleParsed=await guest.evaluate(()=>window.__accountV119.parseLocalScheduleVision([
       {text:'1',confidence:.99,x:.08,y:.80,width:.04,height:.03},
       {text:'2',confidence:.99,x:.18,y:.80,width:.04,height:.03},
