@@ -61,7 +61,7 @@ jobs:
           python3 -m venv "$ICON_VENV"
           "$ICON_VENV/bin/python" -m pip install --quiet pillow
           "$ICON_VENV/bin/python" native/scripts/generate-app-icons-v155.py
-          curl -L --fail --retry 3 "https://d2jqrm6oza8nb6.cloudfront.net/datasets/e87448c4-0abc-43b3-9dd3-286ecbefc318.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiODAyOWUzYWMxOWM3NDg4MCIsImJ1Y2tldCI6InJ1bndheS1kYXRhc2V0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MDM3MjkwOH0.iAiAOXhmCutM9NfNEZHzCuPWWcTG3nA9aolSK13qfZ4" -o splash-v176-source.png
+          curl -L --fail --retry 3 "https://d2jqrm6oza8nb6.cloudfront.net/datasets/bc1488da-711c-44e9-9f18-3bd228c6a0d5.png" -o splash-v177-source.png
           "$ICON_VENV/bin/python" - <<'PY'
           from PIL import Image, ImageOps
           from pathlib import Path
@@ -70,26 +70,26 @@ jobs:
           # Remove the old circular/double-frame treatment by using a full-bleed square crop.
           for size in (180,192,512):
               out=ImageOps.fit(icon,(size,size),method=Image.Resampling.LANCZOS)
-              out.save(f'app-icon-v176-{size}.png',format='PNG',optimize=True)
+              out.save(f'app-icon-v177-{size}.png',format='PNG',optimize=True)
 
           # Use the exact user-approved corrected launch artwork. Preserve the full portrait:
           # no square crop and no object-fit: cover.
-          splash=Image.open('splash-v176-source.png').convert('RGB')
+          splash=Image.open('splash-v177-source.png').convert('RGB')
           splash.thumbnail((1536,2732),Image.Resampling.LANCZOS)
-          splash.save('splash-v176.jpg',format='JPEG',quality=90,optimize=True,progressive=True)
+          splash.save('splash-v177.jpg',format='JPEG',quality=90,optimize=True,progressive=True)
 
-          for name,size in [('app-icon-v176-180.png',(180,180)),('app-icon-v176-192.png',(192,192)),('app-icon-v176-512.png',(512,512))]:
+          for name,size in [('app-icon-v177-180.png',(180,180)),('app-icon-v177-192.png',(192,192)),('app-icon-v177-512.png',(512,512))]:
               im=Image.open(name)
               assert im.size==size, (name,im.size)
               assert im.mode in ('RGB','P'), (name,im.mode)
-          im=Image.open('splash-v176.jpg')
+          im=Image.open('splash-v177.jpg')
           assert im.width>=900 and im.height>=1500
-          print('v176 brand assets valid:',[(p.name,p.stat().st_size) for p in map(Path,['app-icon-v176-180.png','app-icon-v176-192.png','app-icon-v176-512.png','splash-v176.jpg'])])
+          print('v177 brand assets valid:',[(p.name,p.stat().st_size) for p in map(Path,['app-icon-v177-180.png','app-icon-v177-192.png','app-icon-v177-512.png','splash-v177.jpg'])])
           PY
       - name: Stage public application files only
         run: |
           mkdir -p _site
-          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png app-icon-v176-180.png app-icon-v176-192.png app-icon-v176-512.png splash-v176.jpg _site/
+          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png app-icon-v177-180.png app-icon-v177-192.png app-icon-v177-512.png splash-v177.jpg _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
       - name: Setup Pages
@@ -110,7 +110,7 @@ jobs:
           import hashlib,json,os,re,time,urllib.request,urllib.error
           result={'commit':os.environ['GITHUB_SHA'],'files':{}}
           base=os.environ['PAGE_URL']
-          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v155-180.png','app-icon-v155-192.png','app-icon-v155-512.png','app-icon-v176-180.png','app-icon-v176-192.png','app-icon-v176-512.png','splash-v176.jpg','assets/welcome-brand-v112.webp','assets/meow-assistant-pro-v169.webp']:
+          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v155-180.png','app-icon-v155-192.png','app-icon-v155-512.png','app-icon-v177-180.png','app-icon-v177-192.png','app-icon-v177-512.png','splash-v177.jpg','assets/welcome-brand-v112.webp','assets/meow-assistant-pro-v169.webp']:
               expected=hashlib.sha256(Path(name).read_bytes()).hexdigest()
               url=base+name+'?build-check='+os.environ['GITHUB_SHA']
               for attempt in range(10):
@@ -129,9 +129,9 @@ jobs:
               data=Path(path).read_bytes()
               assert data[:8]==b'\x89PNG\r\n\x1a\n', path
               return struct.unpack('>II',data[16:24])
-          for name,size in [('app-icon-v176-180.png',(180,180)),('app-icon-v176-192.png',(192,192)),('app-icon-v176-512.png',(512,512))]:
+          for name,size in [('app-icon-v177-180.png',(180,180)),('app-icon-v177-192.png',(192,192)),('app-icon-v177-512.png',(512,512))]:
               assert png_size(name)==size, (name,png_size(name))
-          jpg=Path('splash-v176.jpg').read_bytes()
+          jpg=Path('splash-v177.jpg').read_bytes()
           assert jpg[:2]==b'\xff\xd8' and jpg[-2:]==b'\xff\xd9', 'invalid splash jpeg'
           mascot=Path('assets/meow-assistant-pro-v169.webp').read_bytes()
           assert len(mascot)>9000, 'Meow Assistant asset unexpectedly small/truncated'
