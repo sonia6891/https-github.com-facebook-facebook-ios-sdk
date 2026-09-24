@@ -4684,30 +4684,7 @@ function buildSalaryPrintHtml(){
   if(scope==='year'){
     const year=current.getFullYear(),rows=exportYearRecords(year),actual=rows.reduce((s,r)=>s+(r.actual===null?0:r.actual),0),diff=rows.reduce((s,r)=>s+(r.diff===null?0:r.diff),0);
     const tr=rows.map(r=>'<tr><td>'+r.month+' 月</td><td>'+(r.expected===null?'—':money(r.expected))+'</td><td>'+(r.actual===null?'—':money(r.actual))+'</td><td>'+(r.diff===null?'—':signedMoney(r.diff))+'</td></tr>').join('');
-    return '<!doctype html><html><head><meta charset="utf-8"><title>'+year+' 年薪資對帳</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+year+' 年薪資對帳</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>對帳月份</b><strong>'+rows.length+'</strong></div><div class="card"><b>全年公司實發</b><strong>'+money(actual)+'</strong></div><div class="card"><b>全年差額</b><strong>'+signedMoney(diff)+'</strong></div></div><table><thead><tr><th>月份</th><th>App 預估實領</th><th>公司實發</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">此報告依 App 中已儲存的排班、薪資與對帳資料產生，實際薪資仍以公司薪資單為準。</div><script>
-(function(){
-  var meowSplashStarted=performance.now();
-  var splash=document.getElementById('app-splash');
-  if(!splash)return;
-  function finish(){
-    var elapsed=performance.now()-meowSplashStarted;
-    var wait=Math.max(0,1450-elapsed);
-    setTimeout(function(){
-      splash.classList.add('is-leaving');
-      setTimeout(function(){ if(splash&&splash.parentNode)splash.parentNode.removeChild(splash); },420);
-    },wait);
-  }
-  var guard=0;
-  var timer=setInterval(function(){
-    guard+=1;
-    if(!document.documentElement.classList.contains('auth-booting')||guard>160){
-      clearInterval(timer);
-      finish();
-    }
-  },50);
-})();
-</script>
-</body></html>';
+    return '<!doctype html><html><head><meta charset="utf-8"><title>'+year+' 年薪資對帳</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+year+' 年薪資對帳</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>對帳月份</b><strong>'+rows.length+'</strong></div><div class="card"><b>全年公司實發</b><strong>'+money(actual)+'</strong></div><div class="card"><b>全年差額</b><strong>'+signedMoney(diff)+'</strong></div></div><table><thead><tr><th>月份</th><th>App 預估實領</th><th>公司實發</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">此報告依 App 中已儲存的排班、薪資與對帳資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
   }
   const r=exportMonthRecord(),tr=r.rows.map(x=>'<tr><td>'+escapeHtml(x.label)+'</td><td>'+money(x.expected)+'</td><td>'+(x.actual===null?'—':money(x.actual))+'</td><td>'+(x.actual===null?'—':signedMoney(x.actual-x.expected))+'</td></tr>').join('');
   return '<!doctype html><html><head><meta charset="utf-8"><title>'+r.title+'</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+r.title+'</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>App 預估實領</b><strong>'+money(r.expectedNet)+'</strong></div><div class="card"><b>公司實發</b><strong>'+(r.actualNet===null?'—':money(r.actualNet))+'</strong></div><div class="card"><b>差額</b><strong>'+(r.diff===null?'—':signedMoney(r.diff))+'</strong></div></div><table><thead><tr><th>項目</th><th>App 預估</th><th>公司實際</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">本月實際出勤 '+r.attendance+' 天・加班 '+r.overtimeHours+' 小時・請假 '+r.leaveDays+' 天。此報告依 App 中已儲存資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
@@ -6781,6 +6758,29 @@ applyTheme();render();
 setTimeout(()=>{void syncAllNativeReminders()},1200);
 restoreIndexedMirrorIfNewer();
 if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+})();
+</script>
+<script>
+(function(){
+  var meowSplashStarted=performance.now();
+  var splash=document.getElementById('app-splash');
+  if(!splash)return;
+  function finish(){
+    var elapsed=performance.now()-meowSplashStarted;
+    var wait=Math.max(0,1450-elapsed);
+    setTimeout(function(){
+      splash.classList.add('is-leaving');
+      setTimeout(function(){ if(splash&&splash.parentNode)splash.parentNode.removeChild(splash); },420);
+    },wait);
+  }
+  var guard=0;
+  var timer=setInterval(function(){
+    guard+=1;
+    if(!document.documentElement.classList.contains('auth-booting')||guard>160){
+      clearInterval(timer);
+      finish();
+    }
+  },50);
 })();
 </script>
 </body>
