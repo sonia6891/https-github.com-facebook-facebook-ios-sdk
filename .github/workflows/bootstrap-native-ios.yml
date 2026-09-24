@@ -52,7 +52,7 @@ jobs:
         working-directory: native
         run: npm install
 
-      - name: Prepare v178 branded native and web assets
+      - name: Prepare v181 sky splash and v178 icon assets
         run: |
           set -euo pipefail
           ICON_VENV="$RUNNER_TEMP/meow-icon-venv"
@@ -64,23 +64,49 @@ jobs:
           curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/b8ccc9163e5d72861ccb895c9425ea26942dcbc01b1f112860ca39e8cc48795c.png" -o native/ios-sources/splash-v178-source.png
 
           "$ICON_VENV/bin/python" - <<'PY'
-          from PIL import Image, ImageOps
+          from PIL import Image, ImageOps, ImageFilter
 
           icon = Image.open('native/ios-sources/app-icon-v178-source.png').convert('RGB')
           icon = ImageOps.fit(icon, (1024, 1024), method=Image.Resampling.LANCZOS)
           icon.save('native-icon-v178-1024.png', format='PNG', optimize=True)
 
           splash = Image.open('native/ios-sources/splash-v178-source.png').convert('RGB')
-          canvas = Image.new('RGB', (2732, 2732), '#F6EDE3')
-          art = ImageOps.contain(splash, (2732, 2732), method=Image.Resampling.LANCZOS)
+          w,h=splash.size
+          target_h=max(h,round(w*844/390))
+          extra=target_h-h
+          if extra>0:
+              sky_h=min(300,max(120,h//5))
+              sky=splash.crop((0,0,w,sky_h))
+              extension=ImageOps.flip(sky).resize((w,extra),Image.Resampling.LANCZOS)
+              extension=extension.filter(ImageFilter.GaussianBlur(1.2))
+              blend=min(72,extra)
+              if blend>0:
+                  tail=extension.crop((0,extra-blend,w,extra))
+                  row0=splash.crop((0,0,w,1)).resize((w,blend),Image.Resampling.BILINEAR)
+                  mask=Image.new('L',(w,blend))
+                  mp=mask.load()
+                  for yy in range(blend):
+                      a=round(255*(yy/(blend-1 if blend>1 else 1)))
+                      for xx in range(w):
+                          mp[xx,yy]=a
+                  tail=Image.composite(row0,tail,mask)
+                  extension.paste(tail,(0,extra-blend))
+              extended=Image.new('RGB',(w,target_h))
+              extended.paste(extension,(0,0))
+              extended.paste(splash,(0,extra))
+          else:
+              extended=splash
+
+          canvas = Image.new('RGB', (2732, 2732), '#C9E5F1')
+          art = ImageOps.contain(extended, (2732, 2732), method=Image.Resampling.LANCZOS)
           canvas.paste(art, ((2732-art.width)//2, (2732-art.height)//2))
-          canvas.save('native-splash-v178-2732.png', format='PNG', optimize=True)
+          canvas.save('native-splash-v181-2732.png', format='PNG', optimize=True)
 
           for size in (180,192,512):
               out=ImageOps.fit(icon,(size,size),method=Image.Resampling.LANCZOS)
               out.save(f'app-icon-v178-{size}.png',format='PNG',optimize=True)
 
-          splash.save('splash-v178.jpg',format='JPEG',quality=92,optimize=True,progressive=True)
+          extended.save('splash-v181.jpg',format='JPEG',quality=92,optimize=True,progressive=True)
           PY
 
           ICON_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-icon-v178-1024.png)"
@@ -89,7 +115,7 @@ jobs:
           echo "$ICON_INFO" | grep -q 'pixelHeight: 1024'
           echo "$ICON_INFO" | grep -q 'hasAlpha: no'
 
-          SPLASH_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-splash-v178-2732.png)"
+          SPLASH_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-splash-v181-2732.png)"
           echo "$SPLASH_INFO"
           echo "$SPLASH_INFO" | grep -q 'pixelWidth: 2732'
           echo "$SPLASH_INFO" | grep -q 'pixelHeight: 2732'
@@ -98,7 +124,7 @@ jobs:
           test -s app-icon-v178-180.png
           test -s app-icon-v178-192.png
           test -s app-icon-v178-512.png
-          test -s splash-v178.jpg
+          test -s splash-v181.jpg
 
       - name: Sync web bundle
         working-directory: native
@@ -111,9 +137,9 @@ jobs:
           npx cap add ios
           node scripts/patch-ios-bridge.mjs
           cp ../native-icon-v178-1024.png ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
-          cp ../native-splash-v178-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png
-          cp ../native-splash-v178-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
-          cp ../native-splash-v178-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
+          cp ../native-splash-v181-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png
+          cp ../native-splash-v181-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
+          cp ../native-splash-v181-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription 使用相機拍攝班表、薪資單或頭像圖片。" ios/App/App/Info.plist || \
