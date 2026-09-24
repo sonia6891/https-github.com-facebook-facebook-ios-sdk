@@ -94,12 +94,14 @@ assert(html.includes('#scheduleAddDate,\n#scheduleAddShift{'),'schedule add cont
 assert(html.includes('min-inline-size:0'),'schedule date must be allowed to shrink on mobile');
 assert(html.includes('#scheduleAddDialog .dialog-body{\n  overflow-x:hidden;'),'schedule add dialog must block horizontal overflow');
 console.log('PASS v145 schedule date fit structure');
-assert(html.includes("/* ===== v160 schedule add dialog mobile fit ===== */"),'v160 schedule add dialog fit block missing');
-assert(html.includes("width:-webkit-fill-available!important;"),'iOS date input fill-available safeguard missing');
-assert(html.includes("#scheduleAddDate::-webkit-date-and-time-value{"),'iOS date value shrink rule missing');
-assert(html.includes("#scheduleAddDialog .field{\n  width:100%;\n  overflow:hidden;"),'schedule date field must clip native iOS overflow');
+assert(html.includes("/* ===== v160 schedule add dialog mobile fit ===== */"),'schedule add dialog fit block missing');
+assert(html.includes("function bindScheduleAddDatePicker()"),'mobile schedule date picker binding missing');
+assert(html.includes("field.type=mobile?'text':'date'"),'mobile schedule date must avoid native iOS date intrinsic width');
+assert(html.includes("field.classList.toggle('schedule-add-date-trigger',mobile)"),'mobile schedule date trigger class missing');
+assert(html.includes("#scheduleAddDate.schedule-add-date-trigger{"),'compact schedule date trigger CSS missing');
+assert(html.includes("#scheduleAddDialog .field{\n  width:100%;\n  overflow:hidden;"),'schedule date field must clip overflow');
 assert(html.includes("@media(max-width:360px){\n  #scheduleAddDialog .dialog-foot{"),'narrow phone dialog footer fallback missing');
-console.log('PASS v160 schedule add date stays inside mobile viewport');
+console.log('PASS v161 schedule add date uses compact mobile picker');
 
 
 
