@@ -22,6 +22,7 @@ const bridge = `window.__accountV119={
   calendar:()=>setTab('calendar'),
   attendance:()=>setTab('attendance'),
   parseLocalScheduleVision,
+  parseMeowAssistant:(text)=>meowAssistantParse(text),
   parsePayrollFixture:(words)=>{
     const groups=new Map();
     (words||[]).forEach(w=>{const k=w.lineKey||'line';if(!groups.has(k))groups.set(k,[]);groups.get(k).push(w)});
@@ -158,6 +159,14 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     ]));
     check('本機 Vision 班表解析器可把日期對到班別', localScheduleParsed.shifts.length===4 && localScheduleParsed.shifts.map(x=>x.code).join(',')==='A,B,休,N');
     check('本機 Vision 解析保留休假狀態', localScheduleParsed.shifts[2].is_workday===false && localScheduleParsed.shifts[3].name==='夜班');
+    const meowAdd=await guest.evaluate(()=>window.__accountV119.parseMeowAssistant('22號有加班'));
+    check('喵助理可理解單日加班', meowAdd.ok===true && meowAdd.type==='add' && meowAdd.dates.length===1 && /-22$/.test(meowAdd.dates[0]));
+    const meowMove=await guest.evaluate(()=>window.__accountV119.parseMeowAssistant('把22號加班改到26號'));
+    check('喵助理可理解加班日期搬移', meowMove.ok===true && meowMove.type==='move' && /-22$/.test(meowMove.from) && /-26$/.test(meowMove.to));
+    const meowBatch=await guest.evaluate(()=>window.__accountV119.parseMeowAssistant('下個月5號、12號、18號要加班'));
+    check('喵助理可理解下個月多日加班', meowBatch.ok===true && meowBatch.type==='add' && meowBatch.dates.length===3 && meowBatch.dates.map(x=>x.slice(-2)).join(',')==='05,12,18');
+    const meowHours=await guest.evaluate(()=>window.__accountV119.parseMeowAssistant('22號加班4小時'));
+    check('喵助理可理解指定加班時數', meowHours.ok===true && meowHours.hours===4);
     const payrollParsed=await guest.evaluate(()=>window.__accountV119.parsePayrollFixture([
       {text:'底薪',confidence:98,lineKey:'l1',bbox:{x0:50,y0:100,x1:150,y1:130}},
       {text:'36,000',confidence:99,lineKey:'l1',bbox:{x0:800,y0:100,x1:900,y1:130}},
