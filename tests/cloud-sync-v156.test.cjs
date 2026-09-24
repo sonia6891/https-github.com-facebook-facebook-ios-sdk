@@ -68,4 +68,24 @@ assert(
   'Service worker registration must be cache-busted after recovery changes.'
 );
 
+
+assert(
+  html.includes("async function restoreFromCloud(showAlert=true)") &&
+  html.includes("正在讀取雲端備份…") &&
+  html.includes("目前這台裝置已經和雲端備份完全相同") &&
+  html.includes("已從雲端還原。"),
+  'Manual cloud restore must always give visible feedback and restore directly.'
+);
+assert(
+  html.includes("async function restoreLegacyCloud()") &&
+  html.includes("直接還原舊版備份") &&
+  html.includes("不需要另外開啟 JSON 檔") &&
+  !html.includes("$('legacyCloudExport').onclick=exportLegacyCloud"),
+  'Legacy backup action must restore in-app instead of forcing a JSON download/import detour.'
+);
+assert(
+  html.includes("所以目前資料沒有被替換"),
+  'Restore persistence failures must leave the previous in-memory data intact.'
+);
+
 console.log('Cloud sync v156 regression checks passed.');
