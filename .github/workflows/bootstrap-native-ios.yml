@@ -85,6 +85,10 @@ jobs:
             /usr/libexec/PlistBuddy -c "Add :NSCameraUsageDescription string 使用相機拍攝班表、薪資單或頭像圖片。" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Set :NSPhotoLibraryUsageDescription 選取班表、薪資單或頭像圖片。" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :NSPhotoLibraryUsageDescription string 選取班表、薪資單或頭像圖片。" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :NSMicrophoneUsageDescription 使用麥克風讓喵助理接收你的語音指令。" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :NSMicrophoneUsageDescription string 使用麥克風讓喵助理接收你的語音指令。" ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Set :NSSpeechRecognitionUsageDescription 將你對喵助理說的話轉成文字指令。" ios/App/App/Info.plist || \
+            /usr/libexec/PlistBuddy -c "Add :NSSpeechRecognitionUsageDescription string 將你對喵助理說的話轉成文字指令。" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Delete :UISupportedInterfaceOrientations" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations array" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Add :UISupportedInterfaceOrientations:0 string UIInterfaceOrientationPortrait" ios/App/App/Info.plist
@@ -125,6 +129,13 @@ jobs:
           grep -q 'registerPluginInstance(MeowScheduleVisionPlugin())' ios/App/App/SceneDelegate.swift
           grep -q 'purpose == "payslip"' ios/App/App/SceneDelegate.swift
           grep -q 'request.usesLanguageCorrection = purpose == "payslip"' ios/App/App/SceneDelegate.swift
+          grep -q 'MeowSpeechPlugin' ios/App/App/SceneDelegate.swift
+          grep -q 'import Speech' ios/App/App/SceneDelegate.swift
+          grep -q 'SFSpeechRecognizer' ios/App/App/SceneDelegate.swift
+          grep -q 'AVAudioEngine' ios/App/App/SceneDelegate.swift
+          grep -q 'registerPluginInstance(MeowSpeechPlugin())' ios/App/App/SceneDelegate.swift
+          grep -q 'NSMicrophoneUsageDescription' ios/App/App/Info.plist
+          grep -q 'NSSpeechRecognitionUsageDescription' ios/App/App/Info.plist
           grep -q "purpose:'payslip'" ../index.html
           grep -q "purpose:'schedule'" ../index.html
           grep -q 'MeowScheduleVision' ../index.html
