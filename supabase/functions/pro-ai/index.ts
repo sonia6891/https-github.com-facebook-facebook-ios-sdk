@@ -10,7 +10,7 @@ Deno.serve(async (req: Request) => {
   return new Response(JSON.stringify({
     ok: false,
     code: "FEATURE_REMOVED",
-    message: "Cloud Pro AI assistant is not part of the current app. Schedule and payroll intelligence run on device."
+    message: "The former Pro AI assistant was removed. Schedule import stays on-device; Pro payslip cross-verification is handled by the protected payslip-verify service."
   }), {
     status: 410,
     headers: { ...corsHeaders, "Content-Type": "application/json; charset=utf-8" }
