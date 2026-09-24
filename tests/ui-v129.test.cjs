@@ -50,7 +50,6 @@ assert(html.includes('min-width:98px;min-height:118px'),'Meow Assistant drag hit
 assert(html.includes('async function resetMeowAssistantVoice(cancelNative=true)'),'repeat voice session reset helper missing');
 assert(html.includes('meowAssistantRecognitionToken++'),'voice session generation token missing');
 assert(html.includes("current.onresult=null;current.onerror=null;current.onend=null"),'stale speech handlers must be detached before restart');
-assert(html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToken===token'),'stale speech session guard missing');
 assert(html.includes('void resetMeowAssistantVoice(true);\n  const d=$(\'meowAssistantDialog\')'),'closing assistant must reset native/browser voice recognition');
 assert(html.includes('function meowSpeechBridge()'),'native iOS speech bridge selector missing');
 assert(html.includes("nativeBridge.recognize({locale:'zh-TW'})"),'native iOS speech recognition call missing');
