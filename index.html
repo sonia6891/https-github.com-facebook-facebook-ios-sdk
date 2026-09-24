@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v170-meow-drag-voice-restart">
+<meta name="meow-ui-build" content="v171-native-ios-speech">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -5968,29 +5968,76 @@ function openMeowAssistant(){
   const mic=$('meowAssistantMic');if(mic)mic.classList.remove('listening');
   if(!canUse('meow_schedule_assistant'))renderMeowAssistantReply('喵助理是 Pro 功能。','error');
 }
-function resetMeowAssistantVoice(){
+function meowSpeechBridge(){
+  const bridge=window.MeowSpeech||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.MeowSpeech);
+  return bridge&&typeof bridge.recognize==='function'?bridge:null;
+}
+async function resetMeowAssistantVoice(cancelNative=true){
   const current=meowAssistantRecognition;
   meowAssistantRecognition=null;
   meowAssistantRecognitionToken++;
   const mic=$('meowAssistantMic');if(mic)mic.classList.remove('listening');
+
   if(current){
     try{current.onresult=null;current.onerror=null;current.onend=null}catch(e){}
     try{current.abort()}catch(e){try{current.stop()}catch(err){}}
   }
+
+  const nativeBridge=meowSpeechBridge();
+  if(cancelNative&&nativeBridge&&typeof nativeBridge.cancel==='function'){
+    try{await nativeBridge.cancel()}catch(e){}
+  }
 }
 function closeMeowAssistant(){
-  resetMeowAssistantVoice();
+  void resetMeowAssistantVoice(true);
   const d=$('meowAssistantDialog');if(d&&d.open)d.close();
 }
-function startMeowAssistantVoice(){
+async function startMeowAssistantVoice(){
+  const input=$('meowAssistantInput'),mic=$('meowAssistantMic');
+  const nativeBridge=meowSpeechBridge();
+
+  if(nativeBridge){
+    await resetMeowAssistantVoice(true);
+    const token=++meowAssistantRecognitionToken;
+    if(mic)mic.classList.add('listening');
+    renderMeowAssistantReply('我在聽…');
+
+    try{
+      const result=await nativeBridge.recognize({locale:'zh-TW'});
+      if(token!==meowAssistantRecognitionToken)return;
+      if(!result||result.cancelled)return;
+
+      const text=String(result.text||'').trim();
+      if(!text){
+        renderMeowAssistantReply('剛剛沒有聽清楚，可以再按一次麥克風。','error');
+        return;
+      }
+
+      if(input){
+        input.value=text;
+        input.dispatchEvent(new Event('input',{bubbles:true}));
+      }
+      renderMeowAssistantReply('已聽到：「'+text+'」\n正在處理…');
+      setTimeout(()=>{if(token===meowAssistantRecognitionToken)void previewMeowAssistant()},120);
+    }catch(e){
+      if(token!==meowAssistantRecognitionToken)return;
+      const message=String(e&&e.message||e||'');
+      renderMeowAssistantReply(
+        /permission|denied/i.test(message)
+          ?'請在 iPhone 設定中允許麥克風與語音辨識權限，再回來重試。'
+          :'語音辨識暫時沒有收到文字，可以再按一次麥克風。'
+      ,'error');
+    }finally{
+      if(token===meowAssistantRecognitionToken&&mic)mic.classList.remove('listening');
+    }
+    return;
+  }
+
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SR){renderMeowAssistantReply('這台裝置目前沒有提供網頁語音辨識。你可以直接打字，功能一樣。','error');return}
 
-  // Always dispose the previous recognizer before creating a fresh one.
-  // iOS/Safari can leave a stopped recognizer in a dead state after the assistant is closed.
-  resetMeowAssistantVoice();
+  await resetMeowAssistantVoice(false);
 
-  const input=$('meowAssistantInput'),mic=$('meowAssistantMic');
   const token=++meowAssistantRecognitionToken;
   const r=new SR();
   meowAssistantRecognition=r;
@@ -6041,7 +6088,6 @@ function startMeowAssistantVoice(){
   r.onerror=e=>{
     if(!isCurrent())return;
     const code=e&&e.error||'';
-    // "aborted" is expected when the user closes/restarts the assistant.
     if(code==='aborted'){finishCurrent();return}
     hadError=true;
     finishCurrent();
@@ -6628,7 +6674,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v170';
+    const reloadKey='meow-sw-reloaded-v171';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -6637,7 +6683,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=170',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=171',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
