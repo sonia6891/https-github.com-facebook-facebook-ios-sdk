@@ -190,19 +190,34 @@ Deno.serve(async (req: Request) => {
 
   let provider: any = null;
   try {
-    const res = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer " + openaiKey,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(requestBody)
-    });
-    provider = await res.json().catch(() => null);
+    let res: Response | null = null;
+    const retryable = new Set([429, 500, 502, 503, 504]);
+    for (let attempt = 0; attempt < 2; attempt++) {
+      provider = null;
+      res = await fetch("https://api.openai.com/v1/responses", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + openaiKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody),
+        signal: AbortSignal.timeout(45_000)
+      });
+      provider = await res.json().catch(() => null);
+      if (res.ok || !retryable.has(res.status) || attempt === 1) break;
+      await new Promise((resolve) => setTimeout(resolve, 900));
+    }
+    if (!res) throw new Error("OPENAI_NO_RESPONSE");
+
     const inTok = Number(provider?.usage?.input_tokens || 0);
     const outTok = Number(provider?.usage?.output_tokens || 0);
 
     if (!res.ok) {
+      console.warn("payslip-verify upstream rejected request", {
+        status: res.status,
+        code: String(provider?.error?.code || ""),
+        type: String(provider?.error?.type || "")
+      });
       await rpc("meow_finalize_payslip_ai_usage", {
         p_user_id: userId, p_success: false,
         p_input_tokens: inTok, p_output_tokens: outTok
@@ -211,6 +226,7 @@ Deno.serve(async (req: Request) => {
         ok: false,
         code: "OPENAI_REQUEST_FAILED",
         provider_status: res.status,
+        provider_code: String(provider?.error?.code || ""),
         usage: quota
       }, 502);
     }
