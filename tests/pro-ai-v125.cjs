@@ -79,8 +79,10 @@ assert(html.includes('./assets/meow-assistant-pro-v169.webp?v=169'), 'final Pro 
 assert(html.includes('<b>喵助理</b></button>'), 'floating assistant label missing');
 assert(html.includes("input.dispatchEvent(new Event('input',{bubbles:true}))"), 'voice transcript must be written into the input');
 assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"), 'voice transcript must auto-submit after recognition');
-assert(html.includes('function resetMeowAssistantVoice()'), 'repeat microphone reset helper missing');
+assert(html.includes('async function resetMeowAssistantVoice(cancelNative=true)'), 'repeat microphone reset helper missing');
 assert(html.includes('meowAssistantRecognitionToken++'), 'speech session token missing');
-assert(html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToken===token'), 'stale recognizer guard missing');
+assert(html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToken===token'), 'browser fallback stale recognizer guard missing');
+assert(html.includes('function meowSpeechBridge()'), 'native iOS speech bridge selector missing');
+assert(html.includes("nativeBridge.recognize({locale:'zh-TW'})"), 'native iOS speech call missing');
 
 console.log('PASS cross-validated Pro payroll, final Meow Assistant, and removed schedule import checks');
