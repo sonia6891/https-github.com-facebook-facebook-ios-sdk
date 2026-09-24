@@ -101,6 +101,7 @@ App Store Connect 選「會收集資料」，依目前 App 功能至少檢查以
 - Purchases：Purchase History
 - Financial Info：Other Financial Info（薪資／扣款）
 - Health & Fitness：Health（病假／生理假等健康相關假別資料，若啟用雲端）
+- User Content：Photos or Videos（僅在使用 Pro 薪資單交叉驗證時，處理後的薪資單影像會經受保護的後端送往 OpenAI 做第二判讀；不寫入 Supabase Storage）
 - User Content：Other User Content（班表／行程／待辦／備註；僅在使用者主動啟用 Pro 雲端同步時上傳支援的工作資料）
 
 目前用途：App Functionality。  
@@ -150,22 +151,18 @@ CI 必須同時通過：
 
 目前程式端已進入「可接 App Store Connect / TestFlight 前置」狀態。正式送審仍需完成 Apple Developer、App Store Connect、Supabase Apple provider 與真實公開聯絡資訊等外部設定。
 
-## 2026-09-24 本機智慧辨識與薪資對帳定稿
+## 2026-09-24 智慧辨識與薪資對帳定稿
 
-- [x] 「喵助理／Pro AI 工作助理」已從第一版移除
-- [x] App 前端不再呼叫 `pro-ai`
-- [x] Supabase `pro-ai` version 10 為舊版相容端點，只回傳 `FEATURE_REMOVED`，不呼叫 OpenAI
-- [x] 正式版不需要 `OPENAI_API_KEY`
-- [x] 智慧匯入班表使用 Apple Vision 本機辨識
+- [x] 一般聊天型「喵助理／Pro AI 工作助理」不列入第一版功能
+- [x] 智慧匯入班表使用 Apple Vision 在 iPhone 本機辨識，不呼叫 OpenAI
 - [x] 智慧匯入班表使用獨立 Pro entitlement `smart_schedule_import`
-- [x] iPhone 薪資單辨識改用 Apple Vision 為主要 OCR 引擎
-- [x] 非 iOS 薪資單辨識保留本機 Tesseract fallback
-- [x] 薪資單仍使用同義詞、欄位位置、格式記憶與 3 次影像交叉比對
-- [x] 逐項薪資對帳直接標示一致／少發／多發／多扣／少扣
-- [x] 對帳摘要以公司薪資單「實發金額」對 App 預估實領計算總差額
-- [x] 對帳結論會列出主要差異，並指出尚未被已辨識項目解釋的差額
-- [x] 班表與薪資辨識圖片不因這些功能上傳 OpenAI
-- [x] OpenAI API 邊際成本：0
+- [x] Pro 薪資單採三層交叉驗證：Apple Vision 本機 OCR → OpenAI 第二判讀 → App 自有薪資計算引擎逐項驗算
+- [x] OpenAI 請求僅由具登入與 Pro 權益保護的 Supabase Edge Function `payslip-verify` 發出；API key 不放在 App 內
+- [x] 薪資單影像不寫入 Supabase Storage／資料庫；OpenAI Responses 請求使用 `store:false`
+- [x] 目前後端有每月使用量控制，避免 AI 成本無上限
+- [x] Apple Vision 與 OpenAI 判讀衝突時不自動硬選答案，會標記欄位讓使用者確認
+- [x] 最終薪資差異仍由 App 自有公式依班表、加班、請假、津貼與扣款重新計算
+- [x] 逐項對帳直接標示一致／少發／多發／多扣／少扣
 
 ## 2026-09-24 v152 補強紀錄
 
