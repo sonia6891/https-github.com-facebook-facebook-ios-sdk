@@ -133,8 +133,9 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('本機儲存使用 localStorage 與 IndexedDB 鏡像', html.includes("localStorage.setItem(SAVE_KEY") && html.includes("indexedDB.open(BACKUP_DB_NAME"));
     check('舊版雲端備份使用獨立唯讀資料表', html.includes("from('user_legacy_exports').select('payload,original_updated_at')"));
     check('單一雲端還原會自動檢查舊版備份，不再要求使用者另外開檔', html.includes('async function restoreLegacyCloud()') && html.includes("return await restoreLegacyCloud()") && html.includes('不需要另外開啟 JSON 檔'));
-    check('智慧匯入班表不再呼叫 OpenAI schedule_scan', !html.includes("invokeUserFunction('pro-ai',{mode:'schedule_scan'"));
-    check('智慧匯入班表使用 iPhone 本機 Vision bridge', html.includes('MeowScheduleVision') && html.includes('Apple Vision 本機辨識'));
+    check('AI 班表匯入已從產品入口移除', !html.includes('id="aiScheduleCard"') && !html.includes('id="aiScheduleUpload"') && !html.includes("smart_schedule_import:{label:'智慧匯入班表'"));
+    check('浮動喵助理使用定稿厭世喵素材', html.includes('./assets/meow-assistant-pro-v167.webp') && html.includes('<b>喵助理</b></button>'));
+    check('喵助理語音會先寫入輸入框再自動送出', html.includes("input.value=text") && html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV119.openWelcome()));
     check('網頁登入頁保留 Google、LINE 兩個登入按鈕', await guest.locator('#welcomeGoogle, #welcomeLine').count() === 2);
@@ -374,40 +375,8 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         await page.setViewportSize({width:390,height:844});
         await page.waitForTimeout(80);
 
-        const aiCrop = await page.evaluate(async () => {
-          const banner=document.querySelector('.schedule-ai-v129-banner');
-          const img=banner&&banner.querySelector('img');
-          if(!banner||!img)return null;
-          if(!img.complete)await new Promise(resolve=>img.addEventListener('load',resolve,{once:true}));
-          try{await img.decode()}catch(e){}
-          const canvas=document.createElement('canvas');
-          canvas.width=img.naturalWidth;canvas.height=img.naturalHeight;
-          const ctx=canvas.getContext('2d',{willReadFrequently:true});
-          ctx.drawImage(img,0,0);
-          const y0=Math.floor(canvas.height*.2),y1=Math.ceil(canvas.height*.8);
-          const pixels=ctx.getImageData(0,y0,canvas.width,y1-y0).data;
-          let blank=0;
-          for(let x=0;x<canvas.width;x++){
-            let pale=0,total=0;
-            for(let y=0;y<(y1-y0);y++){
-              const i=(y*canvas.width+x)*4,r=pixels[i],g=pixels[i+1],b=pixels[i+2],a=pixels[i+3];
-              total++;
-              if(a<20||(r>232&&g>229&&b>220&&Math.max(r,g,b)-Math.min(r,g,b)<30))pale++;
-            }
-            if(pale/total>.92)blank++; else break;
-          }
-          const ir=img.getBoundingClientRect(),br=banner.getBoundingClientRect(),style=getComputedStyle(img);
-          const scale=Math.max(ir.width/img.naturalWidth,ir.height/img.naturalHeight);
-          const renderedWidth=img.naturalWidth*scale;
-          const pos=parseFloat(style.objectPosition)||50;
-          const objectOffset=(ir.width-renderedWidth)*(pos/100);
-          const sourceStartFromObject=Math.max(0,-objectOffset/scale);
-          const clippedElementPx=Math.max(0,br.left-ir.left);
-          const sourceStart=sourceStartFromObject+clippedElementPx/scale;
-          return {blank,naturalWidth:img.naturalWidth,sourceStart,irLeft:ir.left,brLeft:br.left,objectPosition:style.objectPosition};
-        });
-        check('AI 圖卡實際裁切已越過原圖左側白邊', aiCrop && aiCrop.sourceStart >= aiCrop.blank + 1);
-        await page.locator('#aiScheduleCard').screenshot({ path: path.join(out, 'schedule-ai-card-v141-390.png') });
+        check('月曆頁不再顯示 AI 班表匯入', await page.locator('#aiScheduleCard').count()===0 && await page.locator('#scheduleMenuClearAi').count()===0);
+        check('浮動喵助理顯示定稿圖與名稱', await page.locator('#meowAssistantFab img').getAttribute('src')==='./assets/meow-assistant-pro-v167.webp' && (await page.locator('#meowAssistantFab').innerText()).includes('喵助理'));
 
         await page.evaluate(() => window.__accountV119.attendance());
         await page.waitForTimeout(120);
