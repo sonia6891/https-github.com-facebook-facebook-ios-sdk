@@ -6054,8 +6054,10 @@ async function startMeowAssistantVoice(){
 
   await resetMeowAssistantVoice(false);
 
+  const recoveryToken=meowAssistantRecognitionToken;
   if(meowAssistantWebSpeechNeedsRecovery&&isIOSWebSpeechEnvironment()){
     await recoverIOSWebSpeechSession();
+    if(recoveryToken!==meowAssistantRecognitionToken||!$('meowAssistantDialog')?.open)return;
     meowAssistantWebSpeechNeedsRecovery=false;
   }
   meowAssistantWebSpeechUsed=true;
@@ -6123,24 +6125,20 @@ async function startMeowAssistantVoice(){
     finishCurrent();
   };
 
-  let receivedSpeechEvent=false;
-  const markSpeechEvent=()=>{receivedSpeechEvent=true};
-  const priorOnStart=r.onstart,priorOnResult=r.onresult,priorOnError=r.onerror,priorOnEnd=r.onend;
-  r.onstart=e=>{markSpeechEvent();if(priorOnStart)priorOnStart(e)};
-  r.onresult=e=>{markSpeechEvent();if(priorOnResult)priorOnResult(e)};
-  r.onerror=e=>{markSpeechEvent();if(priorOnError)priorOnError(e)};
-  r.onend=e=>{markSpeechEvent();if(priorOnEnd)priorOnEnd(e)};
+  let receivedSpeechResult=false;
+  const priorOnResult=r.onresult;
+  r.onresult=e=>{receivedSpeechResult=true;if(priorOnResult)priorOnResult(e)};
 
   try{
     r.start();
     if(isIOSWebSpeechEnvironment()){
       setTimeout(()=>{
-        if(!isCurrent()||receivedSpeechEvent)return;
+        if(!isCurrent()||receivedSpeechResult)return;
         meowAssistantWebSpeechNeedsRecovery=true;
         try{r.abort()}catch(e){}
         finishCurrent();
         renderMeowAssistantReply('iPhone 語音辨識沒有回應。請再按一次麥克風，App 會自動重新啟用語音服務。','error');
-      },2600);
+      },5200);
     }
   }
   catch(e){
