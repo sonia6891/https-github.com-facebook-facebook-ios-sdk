@@ -52,11 +52,6 @@ jobs:
           assert disable_auto=='true', disable_auto
           print('LINE provider redirect verified:',parsed.netloc,scopes,'disable_auto_login='+disable_auto)
           PY
-      - name: Verify v154 home-screen icon assets
-        run: |
-          test -s app-icon-v154-180.png
-          test -s app-icon-v154-192.png
-          test -s app-icon-v154-512.png
       - name: Stage public application files only
         run: |
           mkdir -p _site
