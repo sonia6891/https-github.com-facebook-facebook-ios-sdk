@@ -15,17 +15,17 @@
   ],
   "icons": [
     {
-      "src": "./app-icon-v155-192.png?v=165",
-      "sizes": "192x192",
+      "src": "./app-icon-v174-512.png?v=174",
+      "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./app-icon-v155-512.png?v=155",
+      "src": "./app-icon-v174-512.png?v=174",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
-  "id": "/https-github.com-facebook-facebook-ios-sdk/?v=15"
+  "id": "/https-github.com-facebook-facebook-ios-sdk/?v=174"
 }
