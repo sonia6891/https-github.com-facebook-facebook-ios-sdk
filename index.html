@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v161-schedule-date-picker">
+<meta name="meow-ui-build" content="v160-floating-meow-assistant">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -110,7 +110,16 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 
 .schedule-card{padding:14px 16px;}.schedule-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;}.schedule-summary-main{display:flex;align-items:center;gap:12px;min-width:0;}.schedule-summary-icon{width:50px;height:50px;border-radius:15px;background:var(--mobile-surface, #fff0dc);color:var(--mobile-muted, #9c5b3b);display:grid;place-items:center;flex:0 0 auto;}.schedule-summary-icon .icon{font-size:25px;}.schedule-summary-text{min-width:0;}.schedule-summary-text b{display:block;font-size:15px;color:var(--mobile-muted, #876352);}.schedule-summary-text strong{display:block;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;}.expand-btn{border:0;background:var(--mobile-gold-surface, #fff0dc);color:var(--mobile-gold-ink, #9d531d);border-radius:18px;padding:12px 14px;font-weight:900;display:flex;align-items:center;gap:7px;flex:0 0 auto;}.schedule-settings{margin-top:14px;padding-top:14px;border-top:1px dashed var(--mobile-line, #e8d4c0);}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}.field{min-width:0;}.field label{display:block;font-size:12px;font-weight:800;color:var(--mobile-muted, #6e5448);margin-bottom:6px;}.field input,.field select,.field textarea{width:100%;border:1px solid var(--mobile-line, #e3d8cf);background:var(--mobile-field, #fffdf9);color:var(--ink);border-radius:12px;padding:11px 12px;min-height:44px;}.field textarea{min-height:84px;resize:vertical;}.hint{font-size:11px;color:var(--muted);margin-top:5px;}.month-toolbar{display:grid;grid-template-columns:44px 1fr 44px auto;gap:8px;align-items:center;margin:16px 0 10px;}.month-title{text-align:center;font-size:26px;font-weight:950;}.icon-btn,.today-btn{border:1px solid var(--mobile-line, #eadbcc);background:var(--mobile-surface, #fff);border-radius:14px;height:44px;color:var(--mobile-text, #4b251a);font-weight:900;}.today-btn{padding:0 16px;}.calendar-card{overflow:hidden;}.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}.weekdays div{text-align:center;padding:11px 2px;background:var(--mobile-surface, #fffaf5);border-bottom:1px solid var(--line);font-size:12px;font-weight:800;color:var(--mobile-text, #725b50);}.day{position:relative;min-height:102px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 6px;background:var(--mobile-surface, #fff);}.day:nth-child(7n){border-right:0;}.day.empty{background:var(--mobile-surface, #fffaf7);color:var(--mobile-text, #b4aaa4);}.date-num{font-weight:900;}.day.today .date-num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--mobile-surface, #8f5a42);color:var(--mobile-text, #fff);}.day-status{display:grid;gap:4px;margin-top:6px;}.status-pill{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;border-radius:10px;padding:5px 3px;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.status-pill .icon{font-size:13px;flex:0 0 auto;}.st-a{background:var(--mobile-gold-surface, #fff0c8);color:var(--mobile-gold-ink, #704116);}.st-b{background:var(--mobile-blue-surface, #ddecff);color:var(--mobile-blue-ink, #0a57a0);}.st-off{background:var(--mobile-gray-surface, #eee);color:var(--mobile-gray-ink, #555);}.st-ot{background:var(--mobile-pink-surface, #f8e3ee);color:var(--mobile-pink-ink, #a72e67);}.st-sick{background:var(--mobile-pink-surface, #ffdce1);color:var(--mobile-pink-ink, #b5162e);}.st-menstrual{background:var(--mobile-purple-surface, #f0ddff);color:var(--mobile-purple-ink, #7b36a1);}.st-personal{background:var(--mobile-blue-surface, #e7eff6);color:var(--mobile-blue-ink, #4e6f88);}.st-annual{background:var(--mobile-green-surface, #e4f6e5);color:var(--mobile-green-ink, #28753a);}.st-custom{background:var(--mobile-teal-surface, #d9f3f5);color:var(--mobile-teal-ink, #126871);}.holiday-tag{display:block;margin-top:4px;padding:3px 5px;border-radius:7px;font-size:9px;font-weight:950;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}.holiday-tag.national{background:var(--mobile-pink-surface, #ffe2e5);color:var(--mobile-pink-ink, #b31f35);border:1px solid var(--mobile-line, #f5c0c7);}.holiday-tag.govcomp{background:var(--mobile-pink-surface, #fff7f7);color:var(--mobile-pink-ink, #b94c5b);border:1px dashed var(--mobile-line, #e8a9b2);}.base-note{font-size:9px;color:var(--mobile-muted, #94817a);text-align:center;}.day-hit{position:absolute;inset:0;border:0;background:transparent;z-index:5;}.legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px;}.legend-item{display:flex;align-items:center;gap:5px;font-size:12px;}.dot{width:14px;height:14px;border-radius:50%;}.dot.a{background:var(--mobile-gold-ink, #ffd06f);}.dot.b{background:var(--mobile-blue-ink, #73b4f5);}.dot.off{background:var(--mobile-gray-ink, #cfcfcf);}.dot.ot{background:var(--mobile-pink-ink, #cf4f88);}.dot.sick{background:var(--mobile-pink-ink, #dc3545);}.dot.menstrual{background:var(--mobile-purple-ink, #b05bd3);}.dot.personal{background:var(--mobile-blue-ink, #7892a6);}.dot.annual{background:var(--mobile-green-ink, #79ca87);}.dot.custom{background:var(--mobile-teal-ink, #45aeb5);}.dot.national{background:var(--mobile-pink-ink, #d73d52);}.dot.govcomp{background:var(--mobile-pink-ink, #fff);border:2px solid var(--mobile-line, #d98592);}
 .attendance-head{padding:16px;}.status-shortcuts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px;}.status-shortcut{border:0;border-radius:14px;padding:10px 6px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px;}.status-shortcut .icon{font-size:17px;}.attendance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px;}.summary-card{padding:14px;display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;}.summary-card strong{font-size:24px;display:block;}.summary-card small{color:var(--muted);}.records{padding:0 14px 14px;}.record-head,.record-row{display:grid;grid-template-columns:1.2fr .9fr .55fr 1.2fr 32px;gap:8px;align-items:center;}.record-head{padding:10px 6px;color:var(--mobile-muted, #6f5c53);font-size:11px;font-weight:800;border-bottom:1px solid var(--line);}.record-row{padding:11px 6px;border-bottom:1px solid var(--line);font-size:13px;}.record-row:last-child{border-bottom:0;}.record-type{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:10px;font-weight:850;width:max-content;max-width:100%;}.record-note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mobile-muted, #6f625c);}.record-more{border:0;background:transparent;color:var(--mobile-muted, #8f776b);font-size:18px;}.empty-state{text-align:center;padding:26px;color:var(--muted);}.edit-today{width:100%;margin-top:12px;border:0;border-radius:16px;background:var(--mobile-gold-surface, linear-gradient(90deg,#ffc963,#f6b443));color:var(--mobile-gold-ink, #7a3f08);padding:14px;font-weight:950;font-size:16px;}
-.meow-assistant-fab{position:fixed;right:20px;bottom:24px;z-index:95;border:0;border-radius:999px;background:var(--mobile-surface,#2f2723);color:#fff;box-shadow:0 12px 30px rgba(53,38,30,.2);padding:11px 15px;display:flex;align-items:center;gap:7px;font-weight:900}.meow-assistant-fab span{font-size:18px}.meow-assistant-fab b{font-size:13px}.meow-assistant-fab small{font-size:9px;padding:2px 5px;border-radius:999px;background:var(--mobile-gold-surface,#fff0cf);color:var(--mobile-gold-ink,#86520d)}.meow-assistant-dialog{width:min(560px,calc(100vw - 24px));max-width:none;padding:0;border:0;border-radius:24px;background:transparent}.meow-assistant-dialog::backdrop{background:rgba(38,29,25,.34);backdrop-filter:blur(2px)}.meow-assistant-sheet{background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eadfd6);border-radius:24px;padding:16px;box-shadow:0 24px 70px rgba(58,39,29,.2)}.meow-assistant-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.meow-assistant-head>div{display:grid;gap:3px}.meow-assistant-head b{font-size:20px}.meow-assistant-head small{font-size:12px;color:var(--muted)}.meow-assistant-examples{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.meow-assistant-examples button{border:1px solid var(--mobile-line,#eadfd6);background:var(--mobile-surface,#fff8f3);color:var(--mobile-text,#704b38);border-radius:999px;padding:7px 10px;font-size:11px;font-weight:850}.meow-assistant-chat{margin-top:12px;padding:11px 12px;border-radius:14px;background:var(--mobile-gold-surface,#fff9ee);color:var(--mobile-text,#674937);font-size:12px;line-height:1.55}.meow-assistant-compose{display:grid;grid-template-columns:minmax(0,1fr) 44px auto;gap:8px;align-items:end;margin-top:10px}.meow-assistant-compose textarea{min-height:46px;max-height:110px;resize:vertical;border:1px solid var(--mobile-line,#d8d0cb);border-radius:12px;padding:10px;background:var(--mobile-field,#fff);color:var(--mobile-text,FieldText);font:inherit}.meow-assistant-mic{width:44px;height:44px;border:1px solid var(--mobile-line,#e3d6cc);border-radius:12px;background:var(--mobile-surface,#fff);font-size:19px}.meow-assistant-mic.listening{animation:meowMicPulse 1s infinite;background:var(--mobile-pink-surface,#fff1f2)}@keyframes meowMicPulse{50%{transform:scale(.94);opacity:.72}}.meow-assistant-preview{margin-top:10px;padding:12px;border:1px solid var(--mobile-green-line,#d5e8d8);border-radius:14px;background:var(--mobile-green-surface,#f7fff8);font-size:12px;line-height:1.55}.meow-assistant-preview>b{display:block;margin-bottom:5px}.meow-assistant-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:10px}.meow-assistant-undo{margin-top:10px;border:0;background:transparent;color:var(--mobile-blue-ink,#3c73b7);font-weight:850;padding:6px 0}.meow-assistant-privacy{margin-top:10px;color:var(--muted);font-size:10px;line-height:1.45}@media(max-width:760px){.meow-assistant-fab{right:14px;bottom:84px;padding:10px 13px}.meow-assistant-dialog{width:100vw;max-width:none;margin:auto 0 0 0;border-radius:22px 22px 0 0}.meow-assistant-sheet{border-radius:22px 22px 0 0;padding:14px 14px calc(14px + env(safe-area-inset-bottom))}.meow-assistant-compose{grid-template-columns:minmax(0,1fr) 42px}.meow-assistant-compose .btn.primary{grid-column:1/-1}.meow-assistant-mic{width:42px;height:42px}.meow-assistant-examples{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}.meow-assistant-examples button{white-space:nowrap}}
+.meow-assistant-fab{position:fixed;right:20px;bottom:24px;z-index:95;border:0;border-radius:999px;background:var(--mobile-surface,#2f2723);color:#fff;box-shadow:0 12px 30px rgba(53,38,30,.2);padding:11px 15px;display:flex;align-items:center;gap:7px;font-weight:900}.meow-assistant-fab span{font-size:18px}.meow-assistant-fab b{font-size:13px}.meow-assistant-fab small{font-size:9px;padding:2px 5px;border-radius:999px;background:var(--mobile-gold-surface,#fff0cf);color:var(--mobile-gold-ink,#86520d)}
+.meow-assistant-dialog{position:fixed;inset:auto 18px 88px auto;width:min(390px,calc(100vw - 20px));max-width:none;max-height:min(70dvh,610px);margin:0;padding:0;border:0;border-radius:20px;background:transparent;overflow:visible;z-index:120}
+.meow-assistant-dialog::backdrop{display:none}
+.meow-assistant-sheet{background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eadfd6);border-radius:20px;padding:12px;box-shadow:0 18px 54px rgba(58,39,29,.22);max-height:min(70dvh,610px);overflow:auto}
+.meow-assistant-head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:grab;touch-action:none;user-select:none;padding:2px 2px 4px}
+.meow-assistant-head:active{cursor:grabbing}.meow-assistant-title{display:flex;align-items:center;gap:8px}.meow-assistant-head b{font-size:17px}.meow-assistant-drag{font-size:16px;letter-spacing:-3px;color:var(--muted);opacity:.7}
+.meow-assistant-chat{margin-top:8px;padding:9px 10px;border-radius:12px;background:var(--mobile-gold-surface,#fff9ee);color:var(--mobile-text,#674937);font-size:12px;line-height:1.5}.meow-assistant-chat[data-state="success"]{background:var(--mobile-green-surface,#f2fbf4)}.meow-assistant-chat[data-state="error"]{background:var(--mobile-pink-surface,#fff2f3)}
+.meow-assistant-compose{display:grid;grid-template-columns:minmax(0,1fr) 42px auto;gap:7px;align-items:end;margin-top:8px}.meow-assistant-compose textarea{min-height:44px;max-height:100px;resize:vertical;border:1px solid var(--mobile-line,#d8d0cb);border-radius:11px;padding:9px;background:var(--mobile-field,#fff);color:var(--mobile-text,FieldText);font:inherit}.meow-assistant-mic{width:42px;height:42px;border:1px solid var(--mobile-line,#e3d6cc);border-radius:11px;background:var(--mobile-surface,#fff);font-size:18px}.meow-assistant-mic.listening{animation:meowMicPulse 1s infinite;background:var(--mobile-pink-surface,#fff1f2)}@keyframes meowMicPulse{50%{transform:scale(.94);opacity:.72}}.meow-assistant-undo{margin-top:8px;border:0;background:transparent;color:var(--mobile-blue-ink,#3c73b7);font-weight:850;padding:5px 0}
+.meow-assistant-month-dialog{width:min(620px,calc(100vw - 24px));max-width:none;border:0;padding:0;border-radius:22px;background:transparent}.meow-assistant-month-dialog::backdrop{background:rgba(38,29,25,.32);backdrop-filter:blur(2px)}.meow-assistant-month-sheet{background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eadfd6);border-radius:22px;padding:14px;box-shadow:0 24px 70px rgba(58,39,29,.2)}.meow-month-weekdays,.meow-month-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}.meow-month-weekdays{margin:8px 0 5px;color:var(--muted);font-size:10px;font-weight:900;text-align:center}.meow-month-cell{min-height:58px;border:1px solid var(--mobile-line,#eadfd6);border-radius:11px;padding:6px;background:var(--mobile-surface,#fffaf6);font-size:10px}.meow-month-cell.empty{visibility:hidden}.meow-month-cell>strong{display:block;font-size:12px}.meow-month-cell>span{display:block;margin-top:4px;font-weight:850;line-height:1.25}.meow-month-cell.work>span{color:var(--mobile-blue-ink,#3c73b7)}.meow-month-cell.off>span{color:var(--muted)}.meow-month-cell.overtime{border-color:var(--mobile-gold-ink,#d28b2a);background:var(--mobile-gold-surface,#fff7df)}.meow-month-cell.leave{border-color:var(--mobile-pink-ink,#d55e68);background:var(--mobile-pink-surface,#fff4f5)}
+@media(max-width:760px){.meow-assistant-fab{right:14px;bottom:84px;padding:10px 13px}.meow-assistant-dialog{right:10px;bottom:82px;width:min(350px,calc(100vw - 20px));max-height:58dvh}.meow-assistant-sheet{max-height:58dvh;padding:11px}.meow-assistant-compose{grid-template-columns:minmax(0,1fr) 40px}.meow-assistant-compose .btn.primary{grid-column:1/-1}.meow-assistant-mic{width:40px;height:40px}.meow-assistant-month-dialog{width:calc(100vw - 16px)}.meow-month-cell{min-height:50px;padding:4px;font-size:9px}.meow-month-cell>strong{font-size:11px}}
 .salary-card{padding:16px;}.salary-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:12px;padding:5px;border-radius:16px;background:var(--mobile-surface, #f4ede7);border:1px solid var(--mobile-line, #ebddd2);}.salary-tab{border:0;border-radius:12px;background:transparent;color:var(--mobile-text, #8a6654);padding:11px 8px;font-weight:950;font-size:14px;min-width:0;white-space:nowrap;}.salary-tab.active{background:var(--mobile-surface, #fff);box-shadow:0 4px 14px rgba(100,65,45,.09);color:var(--mobile-text, #7a4329);}.salary-tab-tier{display:inline-flex;align-items:center;justify-content:center;margin-left:4px;padding:2px 5px;border-radius:999px;font-size:9px;font-weight:950;line-height:1.2;vertical-align:1px}.salary-tab-tier.free{background:var(--mobile-green-surface,#e8f7eb);color:var(--mobile-green-ink,#2d8a48)}.salary-tab-tier.pro{background:var(--mobile-surface,#2c2420);color:#fff}.salary-tab-pro.active .salary-tab-tier.pro{background:var(--mobile-gold-surface,#fff0cf);color:var(--mobile-gold-ink,#8a5818)}.salary-pane{min-width:0;}.salary-section{border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:12px;background:var(--mobile-surface, #fff);}.salary-section-title{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:950;margin-bottom:10px;}.salary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}.salary-field{padding:10px;border-radius:14px;background:var(--mobile-surface, #fff7f1);border:1px solid var(--mobile-line, #f5e3d7);}.salary-field .field-icon{width:36px;height:36px;border-radius:12px;font-size:18px;margin-bottom:6px;}.salary-field .field-icon .icon{font-size:19px;}.salary-field label{font-size:12px;font-weight:850;display:block;margin-bottom:5px;}.salary-field input{width:100%;height:40px;border:1px solid var(--mobile-line, #d8d0cb);border-radius:9px;background:var(--mobile-field, #fff);padding:7px 9px;font-size:16px;font-weight:800;color:var(--mobile-text, FieldText);}.salary-results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}.salary-compare-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}.compare-card{padding:14px;}.compare-card b{display:block;font-size:12px;color:var(--muted);}.compare-card strong{display:block;font-size:25px;margin-top:5px;}.compare-card small{display:block;margin-top:5px;color:var(--muted);}.compare-diff.negative strong{color:var(--mobile-pink-ink, #c83f52);}.compare-diff.positive strong{color:var(--mobile-green-ink, #248a49);}.compare-diff.equal strong{color:var(--mobile-text, #5f6a63);}.pro-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}.pro-grid>.payslip-scan-panel,.pro-grid>.itemized-panel,.pro-grid>.salary-history-panel{grid-column:1/-1;margin-top:0;}.pro-card{position:relative;padding:15px;border:1px solid var(--mobile-line, #eadfd6);border-radius:16px;background:var(--mobile-surface, #fffaf6);min-height:124px;}.pro-card .pro-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;}.pro-card b{font-size:15px;}.pro-card p{margin:7px 0 0;color:var(--muted);font-size:12px;line-height:1.55;}.pro-badge{display:inline-flex;align-items:center;gap:4px;padding:5px 8px;border-radius:999px;background:var(--mobile-surface, #2c2420);color:var(--mobile-text, #fff);font-size:10px;font-weight:900;white-space:nowrap;}.pro-card.unlocked{background:var(--mobile-green-surface, #f7fff8);border-color:var(--mobile-line, #cde6d2);}.pro-card.unlocked .pro-badge{background:var(--mobile-green-surface, #39864b);}.pro-card button{margin-top:10px;width:100%;border:1px solid var(--mobile-line, #e5d8ce);background:var(--mobile-surface, #fff);border-radius:11px;padding:8px 10px;font-weight:850;color:var(--mobile-text, #73442c);}
 .itemized-panel{margin-top:12px;border:1px solid var(--mobile-line, #d7e8da);border-radius:16px;background:var(--mobile-surface, #fbfffc);overflow:hidden;}.itemized-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--mobile-line, #e1ece3);}.itemized-head b{font-size:16px;}.itemized-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px;}.itemized-summary .card{padding:11px;}.itemized-summary b{font-size:11px;color:var(--muted);display:block;}.itemized-summary strong{font-size:20px;display:block;margin-top:3px;}.itemized-progress{font-size:11px;color:var(--muted);padding:0 14px 10px;}.itemized-table{display:grid;}.itemized-table-head,.itemized-row{display:grid;grid-template-columns:1.1fr .8fr .9fr .9fr;gap:8px;align-items:center;padding:9px 12px;}.itemized-table-head{background:var(--mobile-surface, #f0f7f1);font-size:11px;font-weight:900;color:var(--mobile-text, #607065);}.itemized-row{border-top:1px solid var(--mobile-line, #edf1ed);font-size:12px;}.itemized-row .item-label{font-weight:850;}.itemized-row .expected{text-align:right;font-weight:800;}.itemized-row input{width:100%;height:36px;border:1px solid var(--mobile-line, #d9dfda);border-radius:9px;padding:6px 8px;text-align:right;font-weight:800;background:var(--mobile-field, #fff);color:var(--mobile-text, FieldText);}.itemized-status{text-align:right;font-weight:900;font-size:11px;}.itemized-status.ok{color:var(--mobile-green-ink, #36854a);}.itemized-status.bad{color:var(--mobile-pink-ink, #c23f52);}.itemized-status.warn{color:var(--mobile-gold-ink, #b46a17);}.itemized-group{padding:8px 12px;background:var(--mobile-surface, #fff8ed);color:var(--mobile-text, #8b5b31);font-size:11px;font-weight:950;border-top:1px solid var(--mobile-line, #eee5d8);}
 .payslip-scan-panel{margin-top:12px;border:1px solid var(--mobile-line, #efd7b5);border-radius:16px;background:var(--mobile-surface, #fffdf8);overflow:hidden;}.scan-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:14px;border-bottom:1px solid var(--mobile-line, #f1e3d0);}.scan-head b{font-size:16px;}.scan-privacy{margin-top:4px;font-size:10px;color:var(--mobile-muted, #52815d);font-weight:800;}.scan-upload{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px;}.scan-upload-btn{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--mobile-line, #e7cfad);background:var(--mobile-gold-surface, #fff8e9);color:var(--mobile-gold-ink, #7c4c22);border-radius:13px;padding:11px;font-weight:900;}.scan-preview-wrap{padding:0 12px 12px;}.scan-preview-stage{position:relative;}.scan-preview{display:none;width:100%;max-height:340px;object-fit:contain;border:1px solid var(--mobile-line, #e7ddd3);border-radius:13px;background:var(--mobile-surface, #f7f4f1);}.scan-preview.show{display:block;}.scan-amount-overlay{position:absolute;inset:0;z-index:5;pointer-events:auto;}.scan-amount-btn{position:absolute;transform:translate(-50%,-50%);border:1px solid var(--mobile-line, #d9912c);background:var(--mobile-surface, rgba(255,247,218,.96));color:var(--mobile-text, #7d4b13);border-radius:8px;padding:3px 5px;font-size:9px;font-weight:950;box-shadow:0 2px 8px rgba(64,43,20,.18);white-space:nowrap;}.scan-amount-btn:hover,.scan-amount-btn:focus{outline:2px solid var(--mobile-line, #e7a642);}.scan-picker-hint{margin-top:7px;padding:7px 9px;border-radius:10px;background:var(--mobile-surface, #fff4df);color:var(--mobile-muted, #8f5a18);font-size:10px;font-weight:850;line-height:1.45;}.ocr-pick-btn{margin-top:6px;border:1px dashed var(--mobile-line, #d9b785);background:var(--mobile-surface, #fffaf0);color:var(--mobile-text, #8b5b31);border-radius:8px;padding:5px 7px;font-size:9px;font-weight:900;width:100%;}.scan-status{margin:0 12px 12px;padding:10px 11px;border-radius:12px;background:var(--mobile-surface, #f2f6fb);color:var(--mobile-text, #496478);font-size:11px;font-weight:800;}.scan-progress{height:6px;border-radius:999px;background:var(--mobile-track, #e6edf3);overflow:hidden;margin-top:7px;}.scan-progress i{display:block;width:0;height:100%;background:var(--mobile-blue-ink, #7098b7);transition:width .2s ease;}.scan-result{padding:0 12px 12px;}.scan-result-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}.scan-result-field{padding:9px;border-radius:12px;background:var(--mobile-surface, #fff);border:1px solid var(--mobile-line, #ede3da);}.scan-result-field label{display:block;font-size:10px;font-weight:900;margin-bottom:5px;color:var(--mobile-muted, #70584c);}.scan-result-field input{width:100%;height:36px;border:1px solid var(--mobile-line, #ddd3cb);border-radius:9px;padding:6px 8px;font-weight:850;}.ocr-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:5px;font-size:9px;line-height:1.35;}.ocr-confidence{display:inline-flex;align-items:center;padding:2px 6px;border-radius:999px;background:var(--mobile-surface, #eaf7ed);color:var(--mobile-text, #347949);font-weight:900;}.ocr-confidence.mid{background:var(--mobile-gold-surface, #fff4df);color:var(--mobile-gold-ink, #9a651d);}.ocr-confidence.low{background:var(--mobile-pink-surface, #ffe9eb);color:var(--mobile-pink-ink, #ad4050);}.ocr-source{color:var(--mobile-muted, #6d8b72);font-weight:800;}.ocr-warning{display:block;margin-top:5px;padding:5px 7px;border-radius:8px;background:var(--mobile-surface, #fff0e8);color:var(--mobile-text, #b05632);font-size:9px;font-weight:850;line-height:1.4;}.scan-result-field.has-warning{border-color:var(--mobile-line, #efc4ae);background:var(--mobile-surface, #fffaf7);}.scan-result-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}.scan-raw{margin-top:9px;}.scan-raw summary{cursor:pointer;font-size:11px;font-weight:850;color:var(--mobile-muted, #776159);}.scan-raw pre{white-space:pre-wrap;word-break:break-word;max-height:220px;overflow:auto;background:var(--mobile-surface, #f7f4f1);border-radius:10px;padding:9px;font-size:9px;line-height:1.5;}.salary-history-panel{margin-top:12px;border:1px solid var(--mobile-line, #dfdfec);border-radius:16px;background:var(--mobile-surface, #fcfcff);overflow:hidden;}.salary-export-panel{margin-top:12px;border:1px solid var(--mobile-line,#e2d8ef);border-radius:16px;background:var(--mobile-surface,#fffdfd);overflow:hidden}.export-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--mobile-line,#eee5f3)}.export-head b{font-size:16px}.export-controls{padding:12px}.export-controls .field{max-width:360px}.export-preview{margin-top:10px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.export-preview .card{padding:10px}.export-preview b{display:block;font-size:10px;color:var(--muted)}.export-preview strong{display:block;margin-top:4px;font-size:18px}.export-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:0 12px 12px}.export-actions .btn{min-height:42px}.export-note{padding:0 12px 13px;color:var(--muted);font-size:10px;line-height:1.5}@media(max-width:760px){.export-preview strong{font-size:15px}.export-actions{grid-template-columns:1fr}}.history-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 14px;border-bottom:1px solid var(--mobile-line, #e8e8f0);}.history-head b{font-size:16px;}.history-yearbar{display:flex;align-items:center;justify-content:center;gap:10px;padding:10px 12px;background:var(--mobile-surface, #f7f7fc);}.history-yearbar button{width:34px;height:34px;border:1px solid var(--mobile-line, #dcdce8);background:var(--mobile-surface, #fff);border-radius:10px;font-weight:950;}.history-yearbar strong{min-width:72px;text-align:center;}.history-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;padding:12px;}.history-summary .card{padding:11px;}.history-summary b{font-size:10px;color:var(--muted);display:block;}.history-summary strong{font-size:19px;display:block;margin-top:3px;}.history-list{padding:0 12px 12px;}.history-row{display:grid;grid-template-columns:.65fr 1fr 1fr .9fr auto;gap:8px;align-items:center;padding:11px 6px;border-top:1px solid var(--mobile-line, #eeeeF5);font-size:12px;}.history-row:first-child{border-top:0;}.history-row .month{font-weight:950;}.history-row .num{text-align:right;font-weight:800;}.history-row .diff{text-align:right;font-weight:950;}.history-row .diff.neg{color:var(--mobile-pink-ink, #c23f52);}.history-row .diff.pos{color:var(--mobile-green-ink, #2c8a4b);}.history-row .open-month{border:1px solid var(--mobile-line, #dddde8);background:var(--mobile-surface, #fff);border-radius:9px;padding:7px 9px;font-weight:850;color:var(--mobile-text, #65506e);}.history-meta{font-size:10px;color:var(--muted);grid-column:2/5;}.history-empty{text-align:center;padding:24px 12px;color:var(--muted);font-size:12px;}.dev-plan-card{border:1px dashed var(--mobile-line, #d8a660);background:var(--mobile-surface, #fff8e9);}.dev-plan-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}.dev-plan-btn{border:1px solid var(--mobile-line, #e2c38f);background:var(--mobile-surface, #fff);border-radius:12px;padding:9px 12px;font-weight:900;color:var(--mobile-text, #7a4a1e);}.dev-plan-btn.active{background:var(--mobile-surface, #2d2723);color:var(--mobile-text, #fff);border-color:var(--mobile-line, #2d2723);}.cloud-protection{margin-top:10px;padding:10px 12px;border-radius:13px;background:var(--mobile-gold-surface, #fff4e7);color:var(--mobile-text, #945e2b);font-size:11px;font-weight:850;line-height:1.5;}.account-plan-line{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-top:5px}.account-plan-badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:999px;background:var(--mobile-gray-surface,#eee);color:var(--mobile-gray-ink,#666);font-size:10px;font-weight:950}.account-plan-badge.pro{background:var(--mobile-gold-surface,#fff0d4);color:var(--mobile-gold-ink,#a45b13);box-shadow:inset 0 0 0 1px var(--mobile-line,#edcf9f)}.pro-plan-settings{border-color:var(--mobile-line,#ead8bf);background:linear-gradient(180deg,var(--mobile-surface,#fffdf9),var(--mobile-gold-surface,#fff8ec))}.pro-plan-feature-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:12px}.pro-plan-feature-grid span{padding:8px 10px;border-radius:11px;background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eee2d5);font-size:11px;font-weight:850}.pro-plan-status{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eee2d5);font-size:11px;line-height:1.55}.pro-plan-status b{display:block;font-size:13px;margin-bottom:2px}.pro-stage-tools{margin-top:10px;padding-top:10px;border-top:1px dashed var(--mobile-line,#e1c9ad)}@media(max-width:760px){.pro-plan-feature-grid{grid-template-columns:1fr 1fr}.pro-plan-feature-grid span{font-size:10px;padding:7px 8px}}.cloud-protection.safe{background:var(--mobile-green-surface, #eaf8ed);color:var(--mobile-green-ink, #347848);}.backup-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}.backup-note{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.5;}.result-card{padding:14px;display:flex;gap:10px;align-items:center;min-width:0;overflow:hidden;}.result-card .summary-icon{flex:0 0 auto;}.result-card>div:last-child{min-width:0;}.result-card b{font-size:12px;}.result-card strong{font-size:24px;display:block;margin-top:2px;max-width:100%;}.formula{margin-top:12px;padding:14px;border-radius:16px;background:var(--mobile-blue-surface, #eaf3ff);color:var(--mobile-blue-ink, #36526a);font-size:12px;line-height:1.7;}.formula b{font-size:15px;color:var(--mobile-blue-ink, #254a6d);}.advanced{margin-top:10px;}.advanced summary{cursor:pointer;font-weight:850;color:var(--mobile-muted, #7c5845);}
@@ -1793,33 +1802,30 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 
 <button type="button" class="meow-assistant-fab" id="meowAssistantFab" aria-label="開啟喵助理"><span aria-hidden="true">🐾</span><b>喵助理</b><small>Pro</small></button>
 
-<dialog class="dialog meow-assistant-dialog" id="meowAssistantDialog">
+<dialog class="dialog meow-assistant-dialog" id="meowAssistantDialog" aria-modal="false">
   <div class="meow-assistant-sheet">
-    <div class="meow-assistant-head">
-      <div><b>🐾 喵助理</b><small>用一句話幫你改加班日期</small></div>
+    <div class="meow-assistant-head" id="meowAssistantDragHandle">
+      <div class="meow-assistant-title"><b>🐾 喵助理</b><span class="meow-assistant-drag" aria-hidden="true">⋮⋮</span></div>
       <button type="button" class="dialog-close" id="meowAssistantClose" aria-label="關閉">×</button>
     </div>
-    <div class="meow-assistant-examples">
-      <button type="button" data-meow-example="22號有加班">22號有加班</button>
-      <button type="button" data-meow-example="把22號加班改到26號">22號改到26號</button>
-      <button type="button" data-meow-example="下個月5號、12號、18號要加班">下個月多日加班</button>
-    </div>
-    <div class="meow-assistant-chat" id="meowAssistantReply" aria-live="polite">你可以直接打字，或按麥克風說：「22號加班」、「把22號加班換到26號」、「下個月5號、12號、18號要加班」。</div>
+    <div class="meow-assistant-chat hidden" id="meowAssistantReply" aria-live="polite"></div>
     <div class="meow-assistant-compose">
-      <textarea id="meowAssistantInput" rows="2" maxlength="180" placeholder="例如：下個月5號、12號、18號要加班"></textarea>
+      <textarea id="meowAssistantInput" rows="2" maxlength="180" placeholder="直接說你要做什麼，例如：我要看 8 月份班表"></textarea>
       <button type="button" class="meow-assistant-mic" id="meowAssistantMic" aria-label="語音輸入">🎙</button>
-      <button type="button" class="btn primary" id="meowAssistantSend">理解這句</button>
-    </div>
-    <div class="meow-assistant-preview hidden" id="meowAssistantPreview">
-      <b>準備執行</b>
-      <div id="meowAssistantPlanText"></div>
-      <div class="meow-assistant-actions">
-        <button type="button" class="btn" id="meowAssistantCancelPlan">取消</button>
-        <button type="button" class="btn primary" id="meowAssistantApply">確認套用</button>
-      </div>
+      <button type="button" class="btn primary" id="meowAssistantSend">送出</button>
     </div>
     <button type="button" class="meow-assistant-undo hidden" id="meowAssistantUndo">↶ 復原上一步</button>
-    <div class="meow-assistant-privacy">🔒 排班指令在這台裝置解析，不會把你的語音文字送到 OpenAI。語音轉文字是否可用依裝置瀏覽器支援。</div>
+  </div>
+</dialog>
+
+<dialog class="dialog meow-assistant-month-dialog" id="meowAssistantMonthDialog">
+  <div class="meow-assistant-month-sheet">
+    <div class="dialog-head">
+      <div><b id="meowAssistantMonthTitle">雲端班表</b><div class="hint" id="meowAssistantMonthMeta"></div></div>
+      <button type="button" class="dialog-close" id="meowAssistantMonthClose" aria-label="關閉">×</button>
+    </div>
+    <div class="meow-month-weekdays"><span>日</span><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span></div>
+    <div class="meow-month-grid" id="meowAssistantMonthGrid"></div>
   </div>
 </dialog>
 
@@ -5538,8 +5544,18 @@ function meowAssistantHours(text){
 }
 function meowAssistantParse(raw){
   const text=normalizeMeowAssistantText(raw);
-  if(!text)return{ok:false,message:'跟我說你想怎麼改，例如「22號加班」。'};
-  if(!/加班/.test(text))return{ok:false,message:'目前喵助理第一版先處理加班日期。你可以說「22號加班」或「把22號加班改到26號」。'};
+  if(!text)return{ok:false,message:'直接告訴我你要做什麼。'};
+  const wantsSchedule=/(看|查看|顯示|打開|調出|找).{0,12}(班表|排班)|(班表|排班).{0,12}(看|查看|顯示|打開|調出|找)/.test(text);
+  if(wantsSchedule){
+    const explicit=text.match(/(?:(\d{4})年)?(\d{1,2})月(?:份)?/);
+    if(!explicit)return{ok:false,message:'請告訴我要看哪一個月份，例如「我要看 8 月份班表」。'};
+    const now=new Date(),month=Number(explicit[2]);
+    let year=explicit[1]?Number(explicit[1]):now.getFullYear();
+    if(!explicit[1]&&month>now.getMonth()+1)year--;
+    if(month<1||month>12)return{ok:false,message:'月份要在 1 到 12 月之間。'};
+    return{ok:true,type:'viewSchedule',year,month:month-1,raw:text};
+  }
+  if(!/加班/.test(text))return{ok:false,message:'目前可以幫你看月份班表，或新增、取消、移動加班日期。'};
   const moveWord=text.match(/換到|換成|改到|改成|移到|移至|挪到/);
   if(moveWord){
     const at=moveWord.index,left=text.slice(0,at),right=text.slice(at+moveWord[0].length);
@@ -5562,6 +5578,7 @@ function meowAssistantDateLabel(date){
 }
 function meowAssistantPlanCheck(plan){
   if(!plan||!plan.ok)return plan;
+  if(plan.type==='viewSchedule')return plan;
   if(plan.type==='move'){
     const src=state.dayStatus[plan.from],dest=state.dayStatus[plan.to];
     if(!src||src.type!=='overtime')return{ok:false,message:'目前 '+meowAssistantDateLabel(plan.from)+' 沒有加班紀錄，所以我沒有移動任何資料。'};
@@ -5580,7 +5597,89 @@ function meowAssistantPlanText(plan){
 }
 function meowAssistantOvertimeRecord(date,hours){
   const dt=new Date(date+'T00:00:00'),kind=scheduleForDate(dt)==='work'?'regular':'rest';
-  return{type:'overtime',hours,note:'喵助理新增',label:'',overtimeKind:kind};
+  return{type:'overtime',hours,note:'',label:'',overtimeKind:kind};
+}
+
+function scheduleForSnapshotDate(snapshot,dt){
+  const date=iso(dt),override=snapshot.scheduleOverrides&&snapshot.scheduleOverrides[date];
+  if(override&&['work','off'].includes(override.kind))return{kind:override.kind,label:override.kind==='work'?(override.shiftName||snapshot.schedule?.shiftName||'上班'):'休'};
+  const schedule=snapshot.schedule||{};
+  const rotating=threeShiftForDate(dt,schedule);
+  if(rotating)return{kind:rotating.work?'work':'off',label:rotating.label};
+  const w=Math.max(1,parseInt(schedule.workDays)||1),o=Math.max(1,parseInt(schedule.offDays)||1),cycle=w+o;
+  const start=new Date((schedule.startDate||iso(new Date()))+'T00:00:00');
+  const diff=Math.floor((Date.UTC(dt.getFullYear(),dt.getMonth(),dt.getDate())-Date.UTC(start.getFullYear(),start.getMonth(),start.getDate()))/DAY);
+  const phase=((diff%cycle)+cycle)%cycle,work=phase<w;
+  return{kind:work?'work':'off',label:work?(schedule.shiftName||'上班'):'休'};
+}
+async function meowAssistantCloudSnapshot(){
+  if(!authUser||!hasCloudEntitlement())throw new Error('cloud_required');
+  const uid=authUser.id,epoch=accessEpoch,client=await getAuthClient();
+  const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+  if(!sameAccess(uid,epoch))throw new Error('account_changed');
+  if(error)throw error;
+  const payload=data&&data.payload||null,snapshot=newestMeaningfulCloudSnapshot(payload)||(payload&&payload.state?payload:null);
+  if(!snapshot||!snapshot.state)throw new Error('cloud_empty');
+  return{state:normalizeState(snapshot.state),updatedAt:data.updated_at||snapshot.savedAt||''};
+}
+function renderMeowAssistantMonth(snapshot,year,month,meta=''){
+  const grid=$('meowAssistantMonthGrid');if(!grid)return;
+  $('meowAssistantMonthTitle').textContent=year+' 年 '+(month+1)+' 月班表';
+  $('meowAssistantMonthMeta').textContent=meta;
+  grid.innerHTML='';
+  const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate();
+  for(let i=0;i<first;i++){const cell=document.createElement('div');cell.className='meow-month-cell empty';grid.appendChild(cell)}
+  for(let day=1;day<=days;day++){
+    const dt=new Date(year,month,day),date=iso(dt),base=scheduleForSnapshotDate(snapshot,dt),st=snapshot.dayStatus&&snapshot.dayStatus[date];
+    const cell=document.createElement('div');
+    let cls='meow-month-cell '+base.kind,label=base.label;
+    if(st&&st.type&&st.type!=='none'){
+      if(st.type==='overtime'){cls+=' overtime';label='加班'+(num(st.hours)>0?' '+num(st.hours)+'h':'')}
+      else{cls+=' leave';const m=typeMeta(st);label=m?m.label:'假別'}
+    }
+    cell.className=cls;cell.innerHTML='<strong>'+day+'</strong><span>'+escapeHtml(label)+'</span>';grid.appendChild(cell);
+  }
+}
+async function showMeowAssistantMonth(year,month){
+  if(!canUse('meow_schedule_assistant')){renderMeowAssistantReply('月份班表查詢是 Pro 功能。','error');return false}
+  renderMeowAssistantReply('正在讀取雲端班表…');
+  try{
+    const cloud=await meowAssistantCloudSnapshot();
+    renderMeowAssistantMonth(cloud.state,year,month,cloud.updatedAt?'雲端資料更新：'+new Date(cloud.updatedAt).toLocaleString('zh-TW'):'雲端同步資料');
+    const d=$('meowAssistantMonthDialog');if(d&&!d.open)d.showModal();
+    renderMeowAssistantReply('已打開 '+(month+1)+' 月份班表。','success');
+    return true;
+  }catch(e){
+    renderMeowAssistantReply(e&&e.message==='cloud_empty'?'雲端目前沒有可讀取的班表備份。':'雲端班表暫時讀不到，本機資料沒有被改動。','error');
+    return false;
+  }
+}
+let meowAssistantDragState=null;
+function positionMeowAssistantDefault(){
+  const d=$('meowAssistantDialog');if(!d)return;
+  if(d.dataset.dragged==='1')return;
+  d.style.left='';d.style.top='';d.style.right=window.innerWidth<=760?'10px':'18px';d.style.bottom=window.innerWidth<=760?'82px':'88px';
+}
+function bindMeowAssistantDrag(){
+  const d=$('meowAssistantDialog'),head=$('meowAssistantDragHandle');if(!d||!head||head.dataset.dragBound==='1')return;
+  head.dataset.dragBound='1';
+  head.addEventListener('pointerdown',e=>{
+    if(e.target.closest('button'))return;
+    const r=d.getBoundingClientRect();
+    d.style.left=r.left+'px';d.style.top=r.top+'px';d.style.right='auto';d.style.bottom='auto';d.dataset.dragged='1';
+    meowAssistantDragState={pointerId:e.pointerId,dx:e.clientX-r.left,dy:e.clientY-r.top};
+    try{head.setPointerCapture(e.pointerId)}catch(err){}
+    e.preventDefault();
+  });
+  head.addEventListener('pointermove',e=>{
+    if(!meowAssistantDragState||meowAssistantDragState.pointerId!==e.pointerId)return;
+    const r=d.getBoundingClientRect(),pad=8;
+    const left=Math.max(pad,Math.min(window.innerWidth-r.width-pad,e.clientX-meowAssistantDragState.dx));
+    const top=Math.max(pad,Math.min(window.innerHeight-r.height-pad,e.clientY-meowAssistantDragState.dy));
+    d.style.left=left+'px';d.style.top=top+'px';
+  });
+  const stop=e=>{if(meowAssistantDragState&&meowAssistantDragState.pointerId===e.pointerId)meowAssistantDragState=null};
+  head.addEventListener('pointerup',stop);head.addEventListener('pointercancel',stop);
 }
 function executeMeowAssistantPlan(plan){
   plan=meowAssistantPlanCheck(plan);
@@ -5591,7 +5690,7 @@ function executeMeowAssistantPlan(plan){
   const oldCurrent={y:current.getFullYear(),m:current.getMonth()};
   if(plan.type==='move'){
     state.dayStatus[plan.to]=JSON.parse(JSON.stringify(state.dayStatus[plan.from]));
-    state.dayStatus[plan.to].note=state.dayStatus[plan.to].note||'喵助理移動';
+    state.dayStatus[plan.to].note=state.dayStatus[plan.to].note||'';
     delete state.dayStatus[plan.from];
   }else if(plan.type==='remove'){
     plan.dates.forEach(date=>{if(state.dayStatus[date]&&state.dayStatus[date].type==='overtime')delete state.dayStatus[date]});
@@ -5624,24 +5723,25 @@ function undoMeowAssistant(){
 }
 function renderMeowAssistantReply(message,type=''){
   const box=$('meowAssistantReply');if(!box)return;
-  box.textContent=message;box.dataset.state=type;
+  box.textContent=message||'';box.dataset.state=type;
+  box.classList.toggle('hidden',!message);
 }
-function previewMeowAssistant(){
+async function previewMeowAssistant(){
   if(!canUse('meow_schedule_assistant')){
-    renderMeowAssistantReply('喵助理是 Pro 排班功能。你的開發者帳號可以直接使用；Free 帳號會看到 Pro 解鎖提示。','error');
+    renderMeowAssistantReply('喵助理是 Pro 功能。','error');
     return;
   }
   const parsed=meowAssistantPlanCheck(meowAssistantParse($('meowAssistantInput').value));
-  if(!parsed.ok){
-    meowAssistantPending=null;$('meowAssistantPreview').classList.add('hidden');renderMeowAssistantReply(parsed.message,'error');return;
-  }
-  meowAssistantPending=parsed;$('meowAssistantPlanText').textContent=meowAssistantPlanText(parsed);$('meowAssistantPreview').classList.remove('hidden');
-  renderMeowAssistantReply('我理解好了，先看一下下面的動作。確認後我才會改班表。');
+  if(!parsed.ok){renderMeowAssistantReply(parsed.message,'error');return}
+  if(parsed.type==='viewSchedule'){await showMeowAssistantMonth(parsed.year,parsed.month);return}
+  executeMeowAssistantPlan(parsed);
+  $('meowAssistantInput').value='';
 }
 function openMeowAssistant(){
-  const d=$('meowAssistantDialog');if(!d.open)d.showModal();
+  const d=$('meowAssistantDialog');if(!d.open)d.show();
+  positionMeowAssistantDefault();bindMeowAssistantDrag();
   $('meowAssistantInput').focus({preventScroll:true});
-  if(!canUse('meow_schedule_assistant'))renderMeowAssistantReply('喵助理是 Pro 排班功能：可以新增、取消、移動加班日期。','error');
+  if(!canUse('meow_schedule_assistant'))renderMeowAssistantReply('喵助理是 Pro 功能。','error');
 }
 function closeMeowAssistant(){if($('meowAssistantDialog').open)$('meowAssistantDialog').close()}
 function startMeowAssistantVoice(){
@@ -5649,7 +5749,7 @@ function startMeowAssistantVoice(){
   if(!SR){renderMeowAssistantReply('這台裝置目前沒有提供網頁語音辨識。你可以直接打字，功能一樣。','error');return}
   if(meowAssistantRecognition){try{meowAssistantRecognition.stop()}catch(e){}}
   const r=new SR();meowAssistantRecognition=r;r.lang='zh-TW';r.interimResults=false;r.maxAlternatives=1;
-  $('meowAssistantMic').classList.add('listening');renderMeowAssistantReply('我在聽，說完後會先整理成操作預覽，不會直接改班表。');
+  $('meowAssistantMic').classList.add('listening');renderMeowAssistantReply('我在聽…');
   r.onresult=e=>{const text=e.results&&e.results[0]&&e.results[0][0]&&e.results[0][0].transcript||'';$('meowAssistantInput').value=text;previewMeowAssistant()};
   r.onerror=()=>renderMeowAssistantReply('剛剛沒有聽清楚，可以再按一次麥克風，或直接打字。','error');
   r.onend=()=>{$('meowAssistantMic').classList.remove('listening');meowAssistantRecognition=null};
@@ -6081,12 +6181,12 @@ if($('meowAssistantFab'))$('meowAssistantFab').onclick=openMeowAssistant;
 if($('meowAssistantClose'))$('meowAssistantClose').onclick=closeMeowAssistant;
 if($('meowAssistantSend'))$('meowAssistantSend').onclick=previewMeowAssistant;
 if($('meowAssistantMic'))$('meowAssistantMic').onclick=startMeowAssistantVoice;
-if($('meowAssistantApply'))$('meowAssistantApply').onclick=()=>{if(meowAssistantPending)executeMeowAssistantPlan(meowAssistantPending)};
-if($('meowAssistantCancelPlan'))$('meowAssistantCancelPlan').onclick=()=>{meowAssistantPending=null;$('meowAssistantPreview').classList.add('hidden');renderMeowAssistantReply('這次沒有修改班表。')};
 if($('meowAssistantUndo'))$('meowAssistantUndo').onclick=undoMeowAssistant;
-if($('meowAssistantInput'))$('meowAssistantInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();previewMeowAssistant()}});
-qsa('[data-meow-example]').forEach(btn=>btn.onclick=()=>{$('meowAssistantInput').value=btn.dataset.meowExample||'';previewMeowAssistant()});
+if($('meowAssistantInput'))$('meowAssistantInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();void previewMeowAssistant()}});
+if($('meowAssistantMonthClose'))$('meowAssistantMonthClose').onclick=()=>{if($('meowAssistantMonthDialog').open)$('meowAssistantMonthDialog').close()};
 $('meowAssistantDialog').addEventListener('cancel',e=>{e.preventDefault();closeMeowAssistant()});
+$('meowAssistantMonthDialog').addEventListener('cancel',e=>{e.preventDefault();$('meowAssistantMonthDialog').close()});
+window.addEventListener('resize',()=>{const d=$('meowAssistantDialog');if(d&&d.open&&d.dataset.dragged!=='1')positionMeowAssistantDefault()});
 if($('sideAvatarButton'))$('sideAvatarButton').onclick=()=>$('avatarInput').click();
 if($('desktopAvatarButton'))$('desktopAvatarButton').onclick=()=>$('avatarInput').click();
 if($('mobileAvatarButton'))$('mobileAvatarButton').onclick=()=>$('avatarInput').click();
