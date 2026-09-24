@@ -13,7 +13,6 @@ assert.deepEqual(duplicates,[],'duplicate DOM ids found');
 
 for(const id of [
   'scheduleUiPlan','scheduleUiShift','scheduleUiCycle','scheduleUiStart',
-  'aiScheduleCard','aiScheduleUpload','aiScheduleFileInput','aiScheduleStatus','aiScheduleResult',
   'settingsAvatarButton','themeLight','themeDark','themeSystem','settingsOpenSchedule',
   'toggleAppearance','appearanceBody','toggleSchedulePrefs','schedulePrefsBody',
   'accountPlanCard','proPlanDialog','proPlanSettings','settingsPlanBadge','settingsPlanDetailBadge',
@@ -23,8 +22,10 @@ for(const id of [
 }
 
 assert(html.includes('排班設定'));
-assert(html.includes('智慧匯入班表'));
-assert(html.includes('iPhone 本機辨識班表圖片，不上傳 AI 雲端。'));
+assert.equal(ids.aiScheduleCard||0,0,'removed AI schedule card must stay absent');
+assert.equal(ids.aiScheduleUpload||0,0,'removed AI schedule upload button must stay absent');
+assert.equal(ids.aiScheduleFileInput||0,0,'removed AI schedule file input must stay absent');
+assert(!html.includes("smart_schedule_import:{label:'智慧匯入班表'"),'removed AI schedule import must not remain in plan catalog');
 assert(html.includes('--v129-accent:#c77a35'));
 assert(html.includes('--v129-honey-soft:#fff6e8'));
 assert(html.includes('id="themeSystem"'));
@@ -34,9 +35,14 @@ assert(html.includes('id="settingsScheduleSummary"'));
 assert.equal(ids.settingsAiImport||0,0,'settings page must not advertise removed AI schedule import');
 assert(html.includes('Free／Pro 方案比較'),'Free/Pro comparison dialog missing');
 assert(html.includes('薪資單三層交叉檢查'),'Pro comparison must include three-layer payslip verification');
-assert(html.includes("appearanceOpen?'收起設定⌃':'展開設定⌄'"),'appearance fold state missing');
-assert(html.includes("schedulePrefsOpen?'收起設定⌃':'展開設定⌄'"),'schedule preference fold state missing');
-console.log('PASS v166 settings plan comparison and fold structure');
+assert(html.includes("appearanceOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'"),'appearance fold state missing');
+assert(html.includes("schedulePrefsOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'"),'schedule preference fold state missing');
+assert(html.includes('./assets/meow-assistant-pro-v167.webp'),'final Meow Assistant mascot asset missing');
+assert(html.includes('<b>喵助理</b></button>'),'floating Meow Assistant label missing');
+assert(!html.includes('<span aria-hidden="true">🐾</span><b>喵助理</b><small>Pro</small>'),'old paw/Pro floating button must be removed');
+assert(html.includes("renderMeowAssistantReply('已聽到：「'+text+'」\\n正在處理…')"),'voice transcript/submission status missing');
+assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"),'voice command must auto-submit after transcript');
+console.log('PASS v167 final Meow Assistant, settings folds, and voice flow');
 
 
 const scheduleSection=html.slice(
@@ -46,27 +52,25 @@ const scheduleSection=html.slice(
 assert(build && Number(build[1])>=152,'expected v152+ Apple auth build');
 for(const id of [
   'scheduleAddDay','scheduleAddDialog','scheduleAddDate','scheduleAddShift','scheduleAddSave','scheduleAddClear',
-  'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel','scheduleMenuClearAi'
+  'scheduleMoreToggle','scheduleMoreMenu','scheduleMenuSettings','scheduleMenuSettingsLabel'
 ]){
   assert.equal(ids[id],1,'missing or duplicated #'+id);
 }
 assert.equal(ids.scheduleMenuEvent||0,0,'schedule more menu must not duplicate itinerary add');
 assert.equal(ids.toggleSchedule||0,0,'calendar-plus must not be reused as schedule settings toggle');
-assert(scheduleSection.includes('schedule-card-v136'),'schedule page must use v136+ AI-card layout');
+assert(scheduleSection.includes('schedule-card-v136'),'schedule page must keep approved calendar card layout');
 assert(scheduleSection.includes('>我的班表</b>'),'schedule page heading must say 我的班表');
 assert(!scheduleSection.includes('schedule-v129-head'),'old visible schedule-settings header must be removed from schedule page');
-assert(scheduleSection.indexOf('id="aiScheduleCard"') < scheduleSection.indexOf('id="calPrev"'),'AI import card must remain directly above calendar controls');
+assert(!scheduleSection.includes('id="aiScheduleCard"'),'AI schedule import card must be removed from calendar');
 assert(scheduleSection.includes('id="scheduleAddDay"'),'calendar-plus dated shift action missing');
 assert(scheduleSection.includes('<use href="#i-calendar"/>'),'dated shift action should use calendar icon');
 assert(html.includes("scheduleOpen=!scheduleOpen;render()"),'three-dot schedule settings must toggle open/closed');
 assert(html.includes("source:'manual'"),'dated shift action must save a manual schedule override');
 console.log('PASS v138 schedule actions structure');
 
-assert(html.includes('.schedule-ai-v129-banner img{position:absolute;left:-6%;'),'AI mascot image must crop past left edge');
-assert(html.includes('.schedule-ai-v129-banner img{left:-8%;bottom:-6%;width:52%;height:112%;object-position:80% center}'),'mobile AI mascot crop must stay flush to left edge');
-assert(html.includes('MeowScheduleVision'),'local Vision bridge missing from schedule import');
-assert(!html.includes("invokeUserFunction('pro-ai',{mode:'schedule_scan'"),'schedule import must not call OpenAI');
-console.log('PASS v141 local schedule import and mascot source crop');
+assert.equal(ids.scheduleMenuClearAi||0,0,'removed AI schedule clear action must stay absent');
+assert(!scheduleSection.includes('智慧匯入班表'),'calendar must not advertise removed AI schedule import');
+console.log('PASS v167 removed AI schedule import UI');
 
 
 for(const id of [
