@@ -16,7 +16,10 @@ assert(!html.includes('id="proAiPanel"'), 'removed Pro AI panel must not return'
 assert(!html.includes('aiAssistantQuestion'), 'assistant input must not return');
 assert(html.includes('id="meowAssistantDialog"'), 'local schedule Meow Assistant missing');
 assert(html.includes("meow_schedule_assistant:{label:'喵助理・排班指令',tier:'pro'}"), 'schedule assistant entitlement missing');
-assert(html.includes('不會把你的語音文字送到 OpenAI'), 'schedule assistant must stay local');
+assert(!html.includes("invokeUserFunction('pro-ai'"), 'schedule assistant commands must not call legacy cloud AI');
+assert(html.includes("type:'viewSchedule'"), 'schedule assistant must support month schedule viewing');
+assert(html.includes("from('user_sync_state').select('payload,updated_at')"), 'month schedule viewer may read the user\'s Pro cloud backup');
+assert(!html.includes('用一句話幫你改加班日期'), 'assistant should not show the old verbose subtitle');
 assert(!html.includes('aiAssistantQuestion'), 'generic cloud assistant input must not return');
 assert(!html.includes("invokeUserFunction('pro-ai'"), 'app must not call legacy cloud Pro AI');
 assert(!legacyEdge.includes('OPENAI_API_KEY'), 'disabled legacy backend must not require an OpenAI key');
