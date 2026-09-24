@@ -21,8 +21,10 @@ const files = [
   'app-icon-v155-180.png',
   'app-icon-v155-192.png',
   'app-icon-v155-512.png',
-  'app-icon-v174-512.png',
-  'splash-v174.webp'
+  'app-icon-v175-180.png',
+  'app-icon-v175-192.png',
+  'app-icon-v175-512.png',
+  'splash-v175.jpg'
 ];
 
 for (const name of files) {
