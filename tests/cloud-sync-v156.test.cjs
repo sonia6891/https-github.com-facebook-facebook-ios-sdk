@@ -46,4 +46,21 @@ assert(
   'Public client must not contain server-only Supabase credentials.'
 );
 
+
+assert(
+  html.includes("const restored={savedAt:lastSavedAt,state,owner:localOwner}") &&
+  html.includes("localStorage.setItem(workspaceKey(localOwner),JSON.stringify(restored))"),
+  'IndexedDB recovery must preserve workspace ownership and its per-account mirror.'
+);
+assert(
+  html.includes("if(file.size>8*1024*1024)throw new Error('backup_too_large')") &&
+  html.includes("data.app&&data.app!=='喵的，又要上班了'"),
+  'Backup import must reject oversized files and backups for another app.'
+);
+assert(
+  html.includes("meow-sw-reloaded-v156") &&
+  html.includes("register('./sw.js?v=156'"),
+  'Service worker registration must be cache-busted after recovery changes.'
+);
+
 console.log('Cloud sync v156 regression checks passed.');
