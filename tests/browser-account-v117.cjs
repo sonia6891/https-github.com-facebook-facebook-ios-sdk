@@ -131,7 +131,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
   try {
     check('本機儲存使用 localStorage 與 IndexedDB 鏡像', html.includes("localStorage.setItem(SAVE_KEY") && html.includes("indexedDB.open(BACKUP_DB_NAME"));
     check('舊版雲端備份使用獨立唯讀資料表', html.includes("from('user_legacy_exports').select('payload,original_updated_at')"));
-    check('舊版取回只下載 JSON 而不套用遠端狀態', html.includes("'meow-legacy-backup.json'") && !/exportLegacyCloud[\s\S]*?applyRemoteRow\(/.test(html.slice(html.indexOf('async function exportLegacyCloud'), html.indexOf('function renderSyncStatus'))));
+    check('舊版雲端備份可直接在 App 內還原，不再要求開啟 JSON', html.includes('async function restoreLegacyCloud()') && html.includes('直接還原舊版備份') && html.includes('不需要另外開啟 JSON 檔') && html.includes("$('legacyCloudExport').onclick=restoreLegacyCloud"));
     check('智慧匯入班表不再呼叫 OpenAI schedule_scan', !html.includes("invokeUserFunction('pro-ai',{mode:'schedule_scan'"));
     check('智慧匯入班表使用 iPhone 本機 Vision bridge', html.includes('MeowScheduleVision') && html.includes('Apple Vision 本機辨識'));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
