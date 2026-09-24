@@ -20,7 +20,7 @@ assert(
   'Schedule overrides must survive load/normalize/cloud restore.'
 );
 assert.equal(
-  (html.match(/function normalizeState\\(v\\)\\{/g)||[]).length,
+  (html.match(/function normalizeState\(v\)\{/g)||[]).length,
   1,
   'normalizeState must have one authoritative definition; a stale duplicate can silently drop fields.'
 );
