@@ -14,7 +14,10 @@ const payslipEdge = fs.readFileSync('supabase/functions/payslip-verify/index.ts'
 assert(!html.includes('ai_pro_suite'), 'removed Pro AI suite must not return');
 assert(!html.includes('id="proAiPanel"'), 'removed Pro AI panel must not return');
 assert(!html.includes('aiAssistantQuestion'), 'assistant input must not return');
-assert(!html.includes('喵助理'), 'assistant copy must not return');
+assert(html.includes('id="meowAssistantDialog"'), 'local schedule Meow Assistant missing');
+assert(html.includes("meow_schedule_assistant:{label:'喵助理・排班指令',tier:'pro'}"), 'schedule assistant entitlement missing');
+assert(html.includes('不會把你的語音文字送到 OpenAI'), 'schedule assistant must stay local');
+assert(!html.includes('aiAssistantQuestion'), 'generic cloud assistant input must not return');
 assert(!html.includes("invokeUserFunction('pro-ai'"), 'app must not call legacy cloud Pro AI');
 assert(!legacyEdge.includes('OPENAI_API_KEY'), 'disabled legacy backend must not require an OpenAI key');
 assert(!legacyEdge.includes('api.openai.com'), 'disabled legacy backend must not call OpenAI');
