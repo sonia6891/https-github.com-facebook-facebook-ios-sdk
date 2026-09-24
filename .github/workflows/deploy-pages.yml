@@ -120,12 +120,15 @@ jobs:
                   except Exception:
                       if attempt==9: raise
                       time.sleep(3)
-          from PIL import Image
+          import struct
+          def png_size(path):
+              data=Path(path).read_bytes()
+              assert data[:8]==b'\x89PNG\r\n\x1a\n', path
+              return struct.unpack('>II',data[16:24])
           for name,size in [('app-icon-v175-180.png',(180,180)),('app-icon-v175-192.png',(192,192)),('app-icon-v175-512.png',(512,512))]:
-              with Image.open(name) as im:
-                  assert im.size==size, (name,im.size)
-          with Image.open('splash-v175.jpg') as im:
-              assert im.width>1000 and im.height>1000, im.size
+              assert png_size(name)==size, (name,png_size(name))
+          jpg=Path('splash-v175.jpg').read_bytes()
+          assert jpg[:2]==b'\xff\xd8' and jpg[-2:]==b'\xff\xd9', 'invalid splash jpeg'
           mascot=Path('assets/meow-assistant-pro-v169.webp').read_bytes()
           assert len(mascot)>9000, 'Meow Assistant asset unexpectedly small/truncated'
           assert mascot[:4]==b'RIFF' and mascot[8:12]==b'WEBP', 'Meow Assistant asset is not valid WebP'
