@@ -54,11 +54,13 @@ assert(html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToke
 assert(html.includes('void resetMeowAssistantVoice(true);\n  const d=$(\'meowAssistantDialog\')'),'closing assistant must reset native/browser voice recognition');
 assert(html.includes('function meowSpeechBridge()'),'native iOS speech bridge selector missing');
 assert(html.includes("nativeBridge.recognize({locale:'zh-TW'})"),'native iOS speech recognition call missing');
-assert(html.includes('async function recoverIOSWebSpeechSession()'),'iOS WebKit speech recovery helper missing');
-assert(html.includes('navigator.mediaDevices.getUserMedia({audio:true})'),'iOS WebKit microphone priming missing');
-assert(html.includes('setTimeout(resolve,3800)'),'iOS WebKit recovery delay missing');
-assert(html.includes('meowAssistantWebSpeechNeedsRecovery=true'),'repeat Web Speech recovery state missing');
-console.log('PASS v172 native iOS speech plus WebKit repeat-session recovery');
+assert(html.includes('async function recordMeowAssistantAudio(token)'),'PWA audio recorder missing');
+assert(html.includes('navigator.mediaDevices.getUserMedia'),'PWA microphone capture missing');
+assert(html.includes('new MediaRecorder'),'PWA MediaRecorder path missing');
+assert(html.includes("invokeUserFunction('speech-transcribe'"),'PWA server transcription call missing');
+assert(!html.includes('recoverIOSWebSpeechSession'),'obsolete WebKit recovery path must be removed');
+assert(!html.includes('window.webkitSpeechRecognition'),'PWA must not rely on WebKit SpeechRecognition');
+console.log('PASS v173 native iOS speech plus PWA recorded-audio transcription');
 
 
 const scheduleSection=html.slice(
