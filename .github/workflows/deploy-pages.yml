@@ -178,8 +178,15 @@ jobs:
               raise AssertionError('delete-account should reject anonymous request')
           except urllib.error.HTTPError as error:
               assert error.code==401, error.code
+          speech_req=urllib.request.Request(api+'/functions/v1/speech-transcribe',data=b'{}',method='POST',headers={'Content-Type':'application/json'})
+          try:
+              urllib.request.urlopen(speech_req,timeout=15)
+              raise AssertionError('speech-transcribe should reject anonymous request')
+          except urllib.error.HTTPError as error:
+              assert error.code==401, error.code
           result['apple_functions_online']=True
           result['account_deletion_online']=True
+          result['speech_transcription_online']=True
           try:
               req=urllib.request.Request(api+'/auth/v1/settings',headers={'apikey':key})
               with urllib.request.urlopen(req,timeout=15) as response:
