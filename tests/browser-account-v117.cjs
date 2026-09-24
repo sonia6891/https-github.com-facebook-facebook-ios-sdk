@@ -131,7 +131,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
   try {
     check('本機儲存使用 localStorage 與 IndexedDB 鏡像', html.includes("localStorage.setItem(SAVE_KEY") && html.includes("indexedDB.open(BACKUP_DB_NAME"));
     check('舊版雲端備份使用獨立唯讀資料表', html.includes("from('user_legacy_exports').select('payload,original_updated_at')"));
-    check('舊版雲端備份可直接在 App 內還原，不再要求開啟 JSON', html.includes('async function restoreLegacyCloud()') && html.includes('直接還原舊版備份') && html.includes('不需要另外開啟 JSON 檔') && html.includes("$('legacyCloudExport').onclick=restoreLegacyCloud"));
+    check('單一雲端還原會自動檢查舊版備份，不再要求使用者另外開檔', html.includes('async function restoreLegacyCloud()') && html.includes("return await restoreLegacyCloud()") && html.includes('不需要另外開啟 JSON 檔'));
     check('智慧匯入班表不再呼叫 OpenAI schedule_scan', !html.includes("invokeUserFunction('pro-ai',{mode:'schedule_scan'"));
     check('智慧匯入班表使用 iPhone 本機 Vision bridge', html.includes('MeowScheduleVision') && html.includes('Apple Vision 本機辨識'));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
@@ -226,6 +226,10 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       await page.waitForTimeout(100);
       check(`${width}px 帳號資料使用獨立帳號卡`, await page.evaluate(() => Boolean(document.querySelector('.settings-account-v129')?.contains(document.getElementById('profilePreview')))));
       check(`${width}px Pro 方案使用獨立方案卡`, await page.locator('#accountUpgrade').isVisible() && (await page.locator('#accountUpgrade').innerText()).includes('查看方案'));
+      check(`${width}px Pro 方案緊接在登入喵星人下方`, await page.evaluate(() => {
+        const account=document.querySelector('.settings-account-v129'),plan=document.getElementById('accountPlanCard');
+        return account && plan && account.nextElementSibling===plan;
+      }));
       check(`${width}px 帳號狀態登入方式與登出集中在帳號卡`, await page.evaluate(() => ['accountTitle','accountLoginMethod','accountLogout'].every(id => document.querySelector('.settings-account-v129').contains(document.getElementById(id)))));
       check(`${width}px 帳號區不顯示 Email`, await page.evaluate(() => !document.getElementById('accountEmail') && !document.querySelector('.settings-account-v129').innerText.includes('member@example.test')));
       check(`${width}px 登入方式正確顯示 Google`, (await page.locator('#accountLoginMethod').innerText()).includes('Google'));
@@ -249,9 +253,11 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       await page.locator('#toggleDataSync').scrollIntoViewIfNeeded();
       await page.locator('#toggleDataSync').click();
       check(`${width}px 資料與同步可就地展開`, await page.locator('#dataSyncBody').isVisible() && await page.locator('#toggleDataSync').getAttribute('aria-expanded') === 'true');
-      check(`${width}px 本機與舊版雲端差異有明確說明`, await page.evaluate(() => document.getElementById('dataSyncBody').innerText.includes('localStorage') === false && document.getElementById('dataSyncBody').innerText.includes('不會自動覆蓋本機')));
-      check(`${width}px 舊版雲端取回集中在資料同步區`, await page.evaluate(() => document.getElementById('dataSyncCard').contains(document.getElementById('legacyCloudExport'))));
-      check(`${width}px Free 的雲端備份與還原保持鎖定`, await page.locator('#cloudBackupNow').isDisabled() && await page.locator('#cloudRestoreNow').isDisabled());
+      check(`${width}px 資料管理只分 Free 本機與 Pro 雲端`, await page.evaluate(() => {
+        const text=document.getElementById('dataSyncBody').innerText;
+        return text.includes('Free・本機保存') && text.includes('Pro・本機＋雲端') && !text.includes('匯出備份檔') && !text.includes('匯入備份檔');
+      }));
+      check(`${width}px Free 的 Pro 雲端操作保持鎖定`, await page.locator('#cloudBackupNow').isDisabled() && await page.locator('#cloudRestoreNow').isDisabled());
       check(`${width}px 展開內容留在資料同步卡內`, await page.evaluate(() => document.getElementById('dataSyncCard').contains(document.getElementById('dataSyncBody'))));
       const layout = await page.evaluate(() => ({
         viewport: document.documentElement.clientWidth,
@@ -264,7 +270,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       check(`${width}px 資料同步按鈕未跑版`, layout.buttons.every(r => r.left >= -1 && r.right <= layout.viewport + 1));
       const settingsLayout = await page.evaluate(() => {
         const nav=document.querySelector('.bottom-nav');
-        const nodes=[document.querySelector('.settings-account-v129'),document.getElementById('appearanceCard'),document.getElementById('workSettingsCard'),document.querySelector('.settings-schedule-pref'),document.getElementById('accountPlanCard'),document.getElementById('dataSyncCard'),document.getElementById('aboutCard')];
+        const nodes=[document.querySelector('.settings-account-v129'),document.getElementById('accountPlanCard'),document.getElementById('appearanceCard'),document.getElementById('workSettingsCard'),document.querySelector('.settings-schedule-pref'),document.getElementById('dataSyncCard'),document.getElementById('aboutCard')];
         const ordered=nodes.every(Boolean)&&nodes.slice(0,-1).every((node,i)=>Boolean(node.compareDocumentPosition(nodes[i+1]) & Node.DOCUMENT_POSITION_FOLLOWING));
         return {
           navPosition:getComputedStyle(nav).position,
