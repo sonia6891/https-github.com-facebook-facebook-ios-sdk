@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v161-meow-assistant-draggable">
+<meta name="meow-ui-build" content="v163-meow-assistant-fab-draggable">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -111,6 +111,7 @@ svg.icon{width:1em;height:1em;display:block;fill:none;stroke:currentColor;stroke
 .schedule-card{padding:14px 16px;}.schedule-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;}.schedule-summary-main{display:flex;align-items:center;gap:12px;min-width:0;}.schedule-summary-icon{width:50px;height:50px;border-radius:15px;background:var(--mobile-surface, #fff0dc);color:var(--mobile-muted, #9c5b3b);display:grid;place-items:center;flex:0 0 auto;}.schedule-summary-icon .icon{font-size:25px;}.schedule-summary-text{min-width:0;}.schedule-summary-text b{display:block;font-size:15px;color:var(--mobile-muted, #876352);}.schedule-summary-text strong{display:block;font-size:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:3px;}.expand-btn{border:0;background:var(--mobile-gold-surface, #fff0dc);color:var(--mobile-gold-ink, #9d531d);border-radius:18px;padding:12px 14px;font-weight:900;display:flex;align-items:center;gap:7px;flex:0 0 auto;}.schedule-settings{margin-top:14px;padding-top:14px;border-top:1px dashed var(--mobile-line, #e8d4c0);}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}.field{min-width:0;}.field label{display:block;font-size:12px;font-weight:800;color:var(--mobile-muted, #6e5448);margin-bottom:6px;}.field input,.field select,.field textarea{width:100%;border:1px solid var(--mobile-line, #e3d8cf);background:var(--mobile-field, #fffdf9);color:var(--ink);border-radius:12px;padding:11px 12px;min-height:44px;}.field textarea{min-height:84px;resize:vertical;}.hint{font-size:11px;color:var(--muted);margin-top:5px;}.month-toolbar{display:grid;grid-template-columns:44px 1fr 44px auto;gap:8px;align-items:center;margin:16px 0 10px;}.month-title{text-align:center;font-size:26px;font-weight:950;}.icon-btn,.today-btn{border:1px solid var(--mobile-line, #eadbcc);background:var(--mobile-surface, #fff);border-radius:14px;height:44px;color:var(--mobile-text, #4b251a);font-weight:900;}.today-btn{padding:0 16px;}.calendar-card{overflow:hidden;}.weekdays,.days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}.weekdays div{text-align:center;padding:11px 2px;background:var(--mobile-surface, #fffaf5);border-bottom:1px solid var(--line);font-size:12px;font-weight:800;color:var(--mobile-text, #725b50);}.day{position:relative;min-height:102px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:7px 6px;background:var(--mobile-surface, #fff);}.day:nth-child(7n){border-right:0;}.day.empty{background:var(--mobile-surface, #fffaf7);color:var(--mobile-text, #b4aaa4);}.date-num{font-weight:900;}.day.today .date-num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--mobile-surface, #8f5a42);color:var(--mobile-text, #fff);}.day-status{display:grid;gap:4px;margin-top:6px;}.status-pill{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;border-radius:10px;padding:5px 3px;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}.status-pill .icon{font-size:13px;flex:0 0 auto;}.st-a{background:var(--mobile-gold-surface, #fff0c8);color:var(--mobile-gold-ink, #704116);}.st-b{background:var(--mobile-blue-surface, #ddecff);color:var(--mobile-blue-ink, #0a57a0);}.st-off{background:var(--mobile-gray-surface, #eee);color:var(--mobile-gray-ink, #555);}.st-ot{background:var(--mobile-pink-surface, #f8e3ee);color:var(--mobile-pink-ink, #a72e67);}.st-sick{background:var(--mobile-pink-surface, #ffdce1);color:var(--mobile-pink-ink, #b5162e);}.st-menstrual{background:var(--mobile-purple-surface, #f0ddff);color:var(--mobile-purple-ink, #7b36a1);}.st-personal{background:var(--mobile-blue-surface, #e7eff6);color:var(--mobile-blue-ink, #4e6f88);}.st-annual{background:var(--mobile-green-surface, #e4f6e5);color:var(--mobile-green-ink, #28753a);}.st-custom{background:var(--mobile-teal-surface, #d9f3f5);color:var(--mobile-teal-ink, #126871);}.holiday-tag{display:block;margin-top:4px;padding:3px 5px;border-radius:7px;font-size:9px;font-weight:950;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;}.holiday-tag.national{background:var(--mobile-pink-surface, #ffe2e5);color:var(--mobile-pink-ink, #b31f35);border:1px solid var(--mobile-line, #f5c0c7);}.holiday-tag.govcomp{background:var(--mobile-pink-surface, #fff7f7);color:var(--mobile-pink-ink, #b94c5b);border:1px dashed var(--mobile-line, #e8a9b2);}.base-note{font-size:9px;color:var(--mobile-muted, #94817a);text-align:center;}.day-hit{position:absolute;inset:0;border:0;background:transparent;z-index:5;}.legend{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px;}.legend-item{display:flex;align-items:center;gap:5px;font-size:12px;}.dot{width:14px;height:14px;border-radius:50%;}.dot.a{background:var(--mobile-gold-ink, #ffd06f);}.dot.b{background:var(--mobile-blue-ink, #73b4f5);}.dot.off{background:var(--mobile-gray-ink, #cfcfcf);}.dot.ot{background:var(--mobile-pink-ink, #cf4f88);}.dot.sick{background:var(--mobile-pink-ink, #dc3545);}.dot.menstrual{background:var(--mobile-purple-ink, #b05bd3);}.dot.personal{background:var(--mobile-blue-ink, #7892a6);}.dot.annual{background:var(--mobile-green-ink, #79ca87);}.dot.custom{background:var(--mobile-teal-ink, #45aeb5);}.dot.national{background:var(--mobile-pink-ink, #d73d52);}.dot.govcomp{background:var(--mobile-pink-ink, #fff);border:2px solid var(--mobile-line, #d98592);}
 .attendance-head{padding:16px;}.status-shortcuts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-top:12px;}.status-shortcut{border:0;border-radius:14px;padding:10px 6px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px;}.status-shortcut .icon{font-size:17px;}.attendance-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:12px;}.summary-card{padding:14px;display:grid;grid-template-columns:42px 1fr;gap:10px;align-items:center;}.summary-card strong{font-size:24px;display:block;}.summary-card small{color:var(--muted);}.records{padding:0 14px 14px;}.record-head,.record-row{display:grid;grid-template-columns:1.2fr .9fr .55fr 1.2fr 32px;gap:8px;align-items:center;}.record-head{padding:10px 6px;color:var(--mobile-muted, #6f5c53);font-size:11px;font-weight:800;border-bottom:1px solid var(--line);}.record-row{padding:11px 6px;border-bottom:1px solid var(--line);font-size:13px;}.record-row:last-child{border-bottom:0;}.record-type{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:10px;font-weight:850;width:max-content;max-width:100%;}.record-note{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--mobile-muted, #6f625c);}.record-more{border:0;background:transparent;color:var(--mobile-muted, #8f776b);font-size:18px;}.empty-state{text-align:center;padding:26px;color:var(--muted);}.edit-today{width:100%;margin-top:12px;border:0;border-radius:16px;background:var(--mobile-gold-surface, linear-gradient(90deg,#ffc963,#f6b443));color:var(--mobile-gold-ink, #7a3f08);padding:14px;font-weight:950;font-size:16px;}
 .meow-assistant-fab{position:fixed;right:20px;bottom:24px;z-index:95;border:0;border-radius:999px;background:var(--mobile-surface,#2f2723);color:#fff;box-shadow:0 12px 30px rgba(53,38,30,.2);padding:11px 15px;display:flex;align-items:center;gap:7px;font-weight:900}.meow-assistant-fab span{font-size:18px}.meow-assistant-fab b{font-size:13px}.meow-assistant-fab small{font-size:9px;padding:2px 5px;border-radius:999px;background:var(--mobile-gold-surface,#fff0cf);color:var(--mobile-gold-ink,#86520d)}
+.meow-assistant-fab{touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;will-change:left,top,transform;transition:box-shadow .16s ease,transform .12s ease}.meow-assistant-fab.is-dragging{cursor:grabbing;transform:scale(.98);box-shadow:0 16px 36px rgba(53,38,30,.26)}
 .meow-assistant-dialog{position:fixed;inset:auto 18px 88px auto;width:min(390px,calc(100vw - 20px));max-width:none;max-height:min(70dvh,610px);margin:0;padding:0;border:0;border-radius:20px;background:transparent;overflow:visible;z-index:120}
 .meow-assistant-dialog::backdrop{display:none}
 .meow-assistant-sheet{background:var(--mobile-surface,#fff);border:1px solid var(--mobile-line,#eadfd6);border-radius:20px;padding:12px;box-shadow:0 18px 54px rgba(58,39,29,.22);max-height:min(70dvh,610px);overflow:auto}
@@ -5688,6 +5689,73 @@ async function showMeowAssistantMonth(year,month){
     return false;
   }
 }
+let meowAssistantFabDragState=null;
+let meowAssistantFabSuppressClickUntil=0;
+const MEOW_ASSISTANT_FAB_POS_KEY='meow-work-assistant-fab-pos-v1';
+function clampMeowAssistantFabPosition(left,top){
+  const fab=$('meowAssistantFab');if(!fab)return{left:0,top:0};
+  const r=fab.getBoundingClientRect(),pad=8,vv=window.visualViewport;
+  const vx=vv?vv.offsetLeft:0,vy=vv?vv.offsetTop:0,vw=vv?vv.width:window.innerWidth,vh=vv?vv.height:window.innerHeight;
+  return{
+    left:Math.max(vx+pad,Math.min(Math.max(vx+pad,vx+vw-r.width-pad),Number(left)||vx+pad)),
+    top:Math.max(vy+pad,Math.min(Math.max(vy+pad,vy+vh-r.height-pad),Number(top)||vy+pad))
+  };
+}
+function saveMeowAssistantFabPosition(){
+  const fab=$('meowAssistantFab');if(!fab||fab.dataset.dragged!=='1')return;
+  const r=fab.getBoundingClientRect();
+  try{localStorage.setItem(MEOW_ASSISTANT_FAB_POS_KEY,JSON.stringify({left:r.left,top:r.top}))}catch(e){}
+}
+function restoreMeowAssistantFabPosition(){
+  const fab=$('meowAssistantFab');if(!fab)return false;
+  try{
+    const saved=JSON.parse(localStorage.getItem(MEOW_ASSISTANT_FAB_POS_KEY)||'null');
+    if(!saved||!Number.isFinite(Number(saved.left))||!Number.isFinite(Number(saved.top)))return false;
+    const p=clampMeowAssistantFabPosition(saved.left,saved.top);
+    fab.style.left=p.left+'px';fab.style.top=p.top+'px';fab.style.right='auto';fab.style.bottom='auto';fab.dataset.dragged='1';
+    return true;
+  }catch(e){return false}
+}
+function bindMeowAssistantFabDrag(){
+  const fab=$('meowAssistantFab');if(!fab||fab.dataset.dragBound==='1')return;
+  fab.dataset.dragBound='1';
+  restoreMeowAssistantFabPosition();
+  fab.addEventListener('pointerdown',e=>{
+    if(e.pointerType==='mouse'&&e.button!==0)return;
+    const r=fab.getBoundingClientRect();
+    meowAssistantFabDragState={pointerId:e.pointerId,startX:e.clientX,startY:e.clientY,left:r.left,top:r.top,moved:false};
+    try{fab.setPointerCapture(e.pointerId)}catch(err){}
+  });
+  fab.addEventListener('pointermove',e=>{
+    const s=meowAssistantFabDragState;if(!s||s.pointerId!==e.pointerId)return;
+    const dx=e.clientX-s.startX,dy=e.clientY-s.startY;
+    if(!s.moved&&Math.hypot(dx,dy)<6)return;
+    if(!s.moved){s.moved=true;fab.classList.add('is-dragging');fab.dataset.dragged='1';fab.style.right='auto';fab.style.bottom='auto'}
+    const p=clampMeowAssistantFabPosition(s.left+dx,s.top+dy);
+    fab.style.left=p.left+'px';fab.style.top=p.top+'px';
+    e.preventDefault();
+  });
+  const stop=e=>{
+    const s=meowAssistantFabDragState;if(!s||s.pointerId!==e.pointerId)return;
+    meowAssistantFabDragState=null;
+    try{fab.releasePointerCapture(e.pointerId)}catch(err){}
+    if(s.moved){
+      fab.classList.remove('is-dragging');
+      saveMeowAssistantFabPosition();
+      meowAssistantFabSuppressClickUntil=performance.now()+450;
+      e.preventDefault();
+    }
+  };
+  fab.addEventListener('pointerup',stop);
+  fab.addEventListener('pointercancel',e=>{
+    const s=meowAssistantFabDragState;if(!s||s.pointerId!==e.pointerId)return;
+    meowAssistantFabDragState=null;fab.classList.remove('is-dragging');
+  });
+  fab.addEventListener('click',e=>{
+    if(performance.now()<meowAssistantFabSuppressClickUntil){e.preventDefault();e.stopPropagation();return}
+    openMeowAssistant();
+  });
+}
 let meowAssistantDragState=null;
 const MEOW_ASSISTANT_POS_KEY='meow-work-assistant-pos-v1';
 function clampMeowAssistantPosition(left,top){
@@ -6245,7 +6313,7 @@ function setTheme(t){
   changedAndSync();applyTheme();
 }
 $('heroTheme').onclick=()=>setTheme(state.theme==='dark'?'light':'dark');if($('desktopThemeButton'))$('desktopThemeButton').onclick=()=>setTheme(state.theme==='dark'?'light':'dark');if($('themeLight'))$('themeLight').onclick=()=>setTheme('light');if($('themeDark'))$('themeDark').onclick=()=>setTheme('dark');if($('themeSystem'))$('themeSystem').onclick=()=>setTheme('system');if(window.matchMedia){const mq=window.matchMedia('(prefers-color-scheme: dark)');const onSystemTheme=()=>{if(themeModePreference==='system'){themePreference=mq.matches?'dark':'light';try{localStorage.setItem(THEME_KEY,themePreference)}catch(e){}applyTheme()}};if(mq.addEventListener)mq.addEventListener('change',onSystemTheme);else if(mq.addListener)mq.addListener(onSystemTheme)}
-if($('meowAssistantFab'))$('meowAssistantFab').onclick=openMeowAssistant;
+bindMeowAssistantFabDrag();
 if($('meowAssistantClose'))$('meowAssistantClose').onclick=closeMeowAssistant;
 if($('meowAssistantMinimize'))$('meowAssistantMinimize').onclick=()=>{const d=$('meowAssistantDialog');if(d)setMeowAssistantMinimized(!d.classList.contains('minimized'))};
 if($('meowAssistantSend'))$('meowAssistantSend').onclick=previewMeowAssistant;
@@ -6256,6 +6324,11 @@ if($('meowAssistantMonthClose'))$('meowAssistantMonthClose').onclick=()=>{if($('
 $('meowAssistantDialog').addEventListener('cancel',e=>{e.preventDefault();closeMeowAssistant()});
 $('meowAssistantMonthDialog').addEventListener('cancel',e=>{e.preventDefault();$('meowAssistantMonthDialog').close()});
 window.addEventListener('resize',()=>{
+  const fab=$('meowAssistantFab');
+  if(fab&&fab.dataset.dragged==='1'){
+    const fr=fab.getBoundingClientRect(),fp=clampMeowAssistantFabPosition(fr.left,fr.top);
+    fab.style.left=fp.left+'px';fab.style.top=fp.top+'px';saveMeowAssistantFabPosition();
+  }
   const d=$('meowAssistantDialog');if(!d||!d.open)return;
   if(d.dataset.dragged==='1'){
     const r=d.getBoundingClientRect(),p=clampMeowAssistantPosition(r.left,r.top);
@@ -6388,7 +6461,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v162';
+    const reloadKey='meow-sw-reloaded-v163';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -6397,7 +6470,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=162',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=163',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
