@@ -79,7 +79,7 @@ assert(!html.includes('id="aiScheduleUpload"'), 'removed smart schedule upload a
 assert(html.includes('./assets/meow-assistant-pro-v169.webp?v=169'), 'final Pro Meow Assistant mascot missing');
 assert(html.includes('<b>喵助理</b></button>'), 'floating assistant label missing');
 assert(html.includes("input.dispatchEvent(new Event('input',{bubbles:true}))"), 'voice transcript must be written into the input');
-assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"), 'voice transcript must auto-submit after recognition');
+assert(html.includes("setTimeout(()=>{if(token===meowAssistantRecognitionToken)void previewMeowAssistant()},120)"), 'voice transcript must auto-submit after recognition');
 assert(html.includes('async function resetMeowAssistantVoice(cancelNative=true)'), 'repeat microphone reset helper missing');
 assert(html.includes('meowAssistantRecognitionToken++'), 'speech session token missing');
 assert(html.includes('function meowSpeechBridge()'), 'native iOS speech bridge selector missing');
