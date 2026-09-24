@@ -149,3 +149,19 @@ assert(html.includes('href="./support.html"'),'support link missing');
 assert(html.includes('id="restoreStorePurchases"'),'restore purchases control missing');
 assert(html.includes('id="cancelProBilling"'),'manage subscription control missing');
 console.log('PASS v151 App Store readiness structure');
+
+for(const id of ['salaryTabCalc','salaryTabReconcile','salaryTabPro','salaryCalcPane','salaryReconcilePane','salaryProPane']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+const salarySection=html.slice(
+  html.indexOf('<section class="page" id="page-salary">'),
+  html.indexOf('<section class="page" id="page-settings">')
+);
+assert(salarySection.indexOf('id="salaryTabReconcile"') < salarySection.indexOf('id="salaryTabPro"'),'Free salary reconciliation must sit directly left of Pro');
+assert(salarySection.includes('薪資對帳 <span class="salary-tab-tier free">Free</span>'),'Free reconciliation tab label missing');
+assert(salarySection.includes('薪資對帳 <span class="salary-tab-tier pro">Pro</span>'),'Pro reconciliation tab label missing');
+assert(salarySection.indexOf('id="salaryReconcilePane"') < salarySection.indexOf('id="salaryProPane"'),'Free and Pro reconciliation must use separate panes');
+assert(html.includes("if($('salaryTabPro'))$('salaryTabPro').onclick=()=>{setSalarySubTab('pro')}"),'Pro reconciliation tab handler missing');
+assert(html.includes("if($('salaryProPane'))$('salaryProPane').classList.toggle('hidden',salarySubTab!=='pro')"),'Pro reconciliation pane switch missing');
+console.log('PASS v159 Free/Pro salary reconciliation tabs structure');
+
