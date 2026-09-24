@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v160-meow-assistant-float-cloud-month">
+<meta name="meow-ui-build" content="v161-meow-assistant-draggable">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1805,7 +1805,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 <dialog class="dialog meow-assistant-dialog" id="meowAssistantDialog" aria-modal="false">
   <div class="meow-assistant-sheet">
     <div class="meow-assistant-head" id="meowAssistantDragHandle">
-      <div class="meow-assistant-title"><b>🐾 喵助理</b><span class="meow-assistant-drag" aria-hidden="true">⋮⋮</span></div>
+      <div class="meow-assistant-title"><b>🐾 喵助理</b><span class="meow-assistant-drag" aria-hidden="true" title="拖曳移動喵助理">⋮⋮</span></div>
       <div class="meow-assistant-head-actions">
         <button type="button" class="meow-assistant-minimize" id="meowAssistantMinimize" aria-label="縮小喵助理">—</button>
         <button type="button" class="dialog-close" id="meowAssistantClose" aria-label="關閉">×</button>
@@ -5689,14 +5689,40 @@ async function showMeowAssistantMonth(year,month){
   }
 }
 let meowAssistantDragState=null;
+const MEOW_ASSISTANT_POS_KEY='meow-work-assistant-pos-v1';
+function clampMeowAssistantPosition(left,top){
+  const d=$('meowAssistantDialog');if(!d)return{left:0,top:0};
+  const r=d.getBoundingClientRect(),pad=8;
+  return{
+    left:Math.max(pad,Math.min(Math.max(pad,window.innerWidth-r.width-pad),Number(left)||pad)),
+    top:Math.max(pad,Math.min(Math.max(pad,window.innerHeight-r.height-pad),Number(top)||pad))
+  };
+}
+function saveMeowAssistantPosition(){
+  const d=$('meowAssistantDialog');if(!d||d.dataset.dragged!=='1')return;
+  const r=d.getBoundingClientRect();
+  try{localStorage.setItem(MEOW_ASSISTANT_POS_KEY,JSON.stringify({left:r.left,top:r.top}))}catch(e){}
+}
+function restoreMeowAssistantPosition(){
+  const d=$('meowAssistantDialog');if(!d)return false;
+  try{
+    const saved=JSON.parse(localStorage.getItem(MEOW_ASSISTANT_POS_KEY)||'null');
+    if(!saved||!Number.isFinite(Number(saved.left))||!Number.isFinite(Number(saved.top)))return false;
+    const p=clampMeowAssistantPosition(saved.left,saved.top);
+    d.style.left=p.left+'px';d.style.top=p.top+'px';d.style.right='auto';d.style.bottom='auto';d.dataset.dragged='1';
+    return true;
+  }catch(e){return false}
+}
 function positionMeowAssistantDefault(){
   const d=$('meowAssistantDialog');if(!d)return;
   if(d.dataset.dragged==='1')return;
+  if(restoreMeowAssistantPosition())return;
   d.style.left='';d.style.top='';d.style.right=window.innerWidth<=760?'10px':'18px';d.style.bottom=window.innerWidth<=760?'82px':'88px';
 }
 function bindMeowAssistantDrag(){
   const d=$('meowAssistantDialog'),head=$('meowAssistantDragHandle');if(!d||!head||head.dataset.dragBound==='1')return;
   head.dataset.dragBound='1';
+  head.setAttribute('title','按住上方拖曳，可把喵助理移到不擋畫面的地方');
   head.addEventListener('pointerdown',e=>{
     if(e.target.closest('button'))return;
     const r=d.getBoundingClientRect();
@@ -5707,12 +5733,13 @@ function bindMeowAssistantDrag(){
   });
   head.addEventListener('pointermove',e=>{
     if(!meowAssistantDragState||meowAssistantDragState.pointerId!==e.pointerId)return;
-    const r=d.getBoundingClientRect(),pad=8;
-    const left=Math.max(pad,Math.min(window.innerWidth-r.width-pad,e.clientX-meowAssistantDragState.dx));
-    const top=Math.max(pad,Math.min(window.innerHeight-r.height-pad,e.clientY-meowAssistantDragState.dy));
-    d.style.left=left+'px';d.style.top=top+'px';
+    const p=clampMeowAssistantPosition(e.clientX-meowAssistantDragState.dx,e.clientY-meowAssistantDragState.dy);
+    d.style.left=p.left+'px';d.style.top=p.top+'px';
   });
-  const stop=e=>{if(meowAssistantDragState&&meowAssistantDragState.pointerId===e.pointerId)meowAssistantDragState=null};
+  const stop=e=>{
+    if(!meowAssistantDragState||meowAssistantDragState.pointerId!==e.pointerId)return;
+    meowAssistantDragState=null;saveMeowAssistantPosition();
+  };
   head.addEventListener('pointerup',stop);head.addEventListener('pointercancel',stop);
 }
 function executeMeowAssistantPlan(plan){
@@ -6228,7 +6255,13 @@ if($('meowAssistantInput'))$('meowAssistantInput').addEventListener('keydown',e=
 if($('meowAssistantMonthClose'))$('meowAssistantMonthClose').onclick=()=>{if($('meowAssistantMonthDialog').open)$('meowAssistantMonthDialog').close()};
 $('meowAssistantDialog').addEventListener('cancel',e=>{e.preventDefault();closeMeowAssistant()});
 $('meowAssistantMonthDialog').addEventListener('cancel',e=>{e.preventDefault();$('meowAssistantMonthDialog').close()});
-window.addEventListener('resize',()=>{const d=$('meowAssistantDialog');if(d&&d.open&&d.dataset.dragged!=='1')positionMeowAssistantDefault()});
+window.addEventListener('resize',()=>{
+  const d=$('meowAssistantDialog');if(!d||!d.open)return;
+  if(d.dataset.dragged==='1'){
+    const r=d.getBoundingClientRect(),p=clampMeowAssistantPosition(r.left,r.top);
+    d.style.left=p.left+'px';d.style.top=p.top+'px';saveMeowAssistantPosition();
+  }else positionMeowAssistantDefault();
+});
 if($('sideAvatarButton'))$('sideAvatarButton').onclick=()=>$('avatarInput').click();
 if($('desktopAvatarButton'))$('desktopAvatarButton').onclick=()=>$('avatarInput').click();
 if($('mobileAvatarButton'))$('mobileAvatarButton').onclick=()=>$('avatarInput').click();
