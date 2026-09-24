@@ -2033,17 +2033,6 @@ async function clearIndexedBackup(){
   try{const db=await openBackupDb();if(!db)return;await new Promise((resolve,reject)=>{const tx=db.transaction(BACKUP_STORE,'readwrite');tx.objectStore(BACKUP_STORE).delete('latest');tx.oncomplete=resolve;tx.onerror=()=>reject(tx.error)});db.close()}catch(e){}
 }
 
-function normalizeState(v){
-  const s=defaultState(),x=v||{};
-  s.theme=preferredTheme();
-  s.profile=Object.assign({},s.profile,x.profile||{});
-  s.schedule=Object.assign({},s.schedule,x.schedule||{});
-  s.settings=Object.assign({},s.settings,x.settings||{});
-  s.months=x.months||{};
-  s.dayStatus=x.dayStatus||{};
-  s.personalEvents=x.personalEvents||{};
-  return s;
-}
 async function getAuthClient(){
   if(authClient)return authClient;
   const mod=await import('https://esm.sh/@supabase/supabase-js@2?bundle');
