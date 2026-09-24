@@ -42,6 +42,16 @@ for (const label of ['勞退自提','福利金','勞保費','健保費','輪班�
 assert(html.includes('rateLike||quantityLike'), 'rates/hours must be excluded from payroll money candidates');
 assert(html.includes('3 種影像版本'), 'three-pass payroll image preprocessing missing');
 
+assert(html.includes("meow-work-payslip-format-memory-v3"), 'stale payroll format memory must be invalidated after deduction mapping changes');
+assert(html.includes(".replace(/考前扣款/g,'考勤扣款')"), 'attendance OCR confusion normalization missing');
+assert(html.includes(".replace(/建保/g,'健保')"), 'health insurance OCR confusion normalization missing');
+assert(html.includes("criticalDeduction=['dedAttendance','dedLabor','dedHealth','dedHealthExtra','dedPension']"), 'critical deductions must not be silently filled from stale format memory');
+assert(html.includes("payslipAiEvidenceSupportsField"), 'critical deduction AI evidence guard missing');
+assert(payslipEdge.includes("考勤扣款、勞保費、健保費是三個不同欄位"), 'deduction semantics prompt missing');
+assert(payslipEdge.includes("同一列或同一排同時出現考勤扣款、勞保費、健保費"), 'same-row deduction pairing instruction missing');
+assert(payslipEdge.includes("FIELD_DESCRIPTIONS"), 'structured output field descriptions missing');
+
+
 // Dedicated verifier must be server-side, stateless and cost-protected.
 assert(payslipEdge.includes('OPENAI_API_KEY'), 'payslip verifier must load server-side OpenAI key');
 assert(payslipEdge.includes('https://api.openai.com/v1/responses'), 'payslip verifier must use Responses API');
