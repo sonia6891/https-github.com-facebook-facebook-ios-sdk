@@ -15,6 +15,8 @@ on:
       - app-icon-v115-180.png
       - app-icon-v115-192.png
       - app-icon-v115-512.png
+      - app-icon-v174-512.png
+      - splash-v174.webp
       - native/package.json
       - native/capacitor.config.json
       - native/scripts/**
@@ -48,18 +50,29 @@ jobs:
         working-directory: native
         run: npm install
 
-      - name: Generate v155 full-bleed desktop and home-screen icons
+      - name: Prepare v174 branded native icon and splash
         run: |
           set -euo pipefail
           ICON_VENV="$RUNNER_TEMP/meow-icon-venv"
           python3 -m venv "$ICON_VENV"
           "$ICON_VENV/bin/python" -m pip install --quiet pillow
-          "$ICON_VENV/bin/python" native/scripts/generate-app-icons-v155.py
-          for f in app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png; do
+          "$ICON_VENV/bin/python" - <<'PY'
+          from PIL import Image, ImageOps
+          from pathlib import Path
+
+          icon = Image.open('app-icon-v174-512.png').convert('RGB')
+          icon = ImageOps.fit(icon, (1024, 1024), method=Image.Resampling.LANCZOS)
+          icon.save('native-icon-v174-1024.png', format='PNG', optimize=True)
+
+          splash = Image.open('splash-v174.webp').convert('RGB')
+          canvas = Image.new('RGB', (2732, 2732), '#F6EDE3')
+          art = ImageOps.contain(splash, (2732, 2732), method=Image.Resampling.LANCZOS)
+          canvas.paste(art, ((2732-art.width)//2, (2732-art.height)//2))
+          canvas.save('native-splash-v174-2732.png', format='PNG', optimize=True)
+          PY
+          for f in native-icon-v174-1024.png native-splash-v174-2732.png; do
             test -s "$f"
-            INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha "$f")"
-            echo "$INFO"
-            echo "$INFO" | grep -q 'hasAlpha: no'
+            sips -g pixelWidth -g pixelHeight -g hasAlpha "$f"
           done
 
       - name: Sync web bundle
@@ -72,13 +85,10 @@ jobs:
           rm -rf ios
           npx cap add ios
           node scripts/patch-ios-bridge.mjs
-          sips -z 1024 1024 ../app-icon-v155-512.png --out ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png >/dev/null
-          BRAND_TMP="$(mktemp -d)"
-          sips -z 928 928 ../app-icon-v155-512.png --out "$BRAND_TMP/splash-art.png" >/dev/null
-          sips -p 2732 2732 --padColor FFF8EF "$BRAND_TMP/splash-art.png" --out ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png >/dev/null
-          cp ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
-          cp ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
-          rm -rf "$BRAND_TMP"
+          cp ../native-icon-v174-1024.png ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
+          cp ../native-splash-v174-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png
+          cp ../native-splash-v174-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
+          cp ../native-splash-v174-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription 使用相機拍攝班表、薪資單或頭像圖片。" ios/App/App/Info.plist || \
@@ -273,7 +283,7 @@ jobs:
           set -euo pipefail
           git config user.name "meow-native-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add native/ios native/package-lock.json app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png
+          git add native/ios native/package-lock.json
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
             exit 0
