@@ -2386,7 +2386,7 @@ function renderSyncStatus(){
     :(entitled?'Pro 已可使用・目前仍以本機保存為主':(entitlementStatus==='error'?'方案確認失敗・資料仍安全保存在本機':'Free：資料自動保存在這台裝置'));
   if($('cloudDetail'))$('cloudDetail').textContent=enabled&&cloudLastSuccess
     ?'最後成功同步：'+new Date(cloudLastSuccess).toLocaleString('zh-TW')
-    :(entitled?'開啟同步後，才會把工作資料上傳雲端。':'升級 Pro 後可再使用雲端同步、備份與還原。');
+    :(entitled?'可直接備份／還原；開啟同步後，之後的變更才會自動更新到雲端。':'升級 Pro 後可再使用雲端同步、備份與還原。');
   if($('toggleCloudSync')){$('toggleCloudSync').textContent=enabled?'關閉雲端同步':(entitled?'啟用雲端同步':'查看 Pro 雲端同步')}
   if($('cloudBackupNow'))$('cloudBackupNow').disabled=!entitled;
   if($('cloudRestoreNow'))$('cloudRestoreNow').disabled=!entitled;
@@ -5558,7 +5558,7 @@ async function restoreFromCloud(showAlert=true){
   try{
     const client=await getAuthClient();
     const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
-    if(!sameAccess(uid,epoch)||!canCloudSync())return false;
+    if(!sameAccess(uid,epoch)||!hasCloudEntitlement())return false;
     if(error)throw error;
     if(!data){
       setCloudStatus('目前雲端沒有現行備份・正在檢查舊版備份');
