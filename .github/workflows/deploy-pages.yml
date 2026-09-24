@@ -52,18 +52,6 @@ jobs:
           assert disable_auto=='true', disable_auto
           print('LINE provider redirect verified:',parsed.netloc,scopes,'disable_auto_login='+disable_auto)
           PY
-      - name: Generate full-bleed desktop and home-screen icons
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from PIL import Image
-          src=Image.open('app-icon-v115-512.png').convert('RGB')
-          left=(src.width-448)//2
-          top=(src.height-448)//2
-          crop=src.crop((left,top,left+448,top+448))
-          for size in (180,192,512):
-              crop.resize((size,size),Image.Resampling.LANCZOS).save(f'app-icon-v153-{size}.png')
-          PY
       - name: Stage public application files only
         run: |
           mkdir -p _site
