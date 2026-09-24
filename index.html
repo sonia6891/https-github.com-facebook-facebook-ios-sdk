@@ -3286,15 +3286,15 @@ const ITEMIZED_FIELDS=[
   {key:'dedOther',label:'其他扣款',kind:'deduction'}
 ];
 let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salaryExportOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),aiSchedulePending=null,payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0},payslipManualFieldKey='',payslipAiResult=null,payslipAiStatus='idle';
-const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v2';
+const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v3';
 const PAYSLIP_OCR_FIELDS=[
   {key:'actualNet',label:'實發金額',kind:'net',priority:30,terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
   {key:'dedHealthExtra',label:'健保補扣／補充保費',kind:'deduction',priority:40,terms:['健保補扣','健保補扣款','健保補繳','健保補收','健保補費','健保追補','補健保','健保補充保費','健保補充費','補充保費','補充健保費','補充保險費','補充保險','補充保','補保費','二代健保','二代健保補充保費','二代健保費','二代健保補費'],mode:'sum'},
   {key:'dedPension',label:'勞退自提',kind:'deduction',priority:28,terms:['勞退自提','勞退自提額','勞退自提金','勞退自繳','勞退個人自提','勞退個人提繳','自提退休金','退休金自提','退休金自繳','勞工退休金自提','勞退提繳','勞退自願提繳','自願提繳退休金','員工自提','員工退休自提','自提勞退','勞退6%','自提6%','勞退','退休自提'],mode:'sum'},
-  {key:'dedAttendance',label:'考勤扣款',kind:'deduction',priority:24,terms:['考勤扣款','缺勤扣款','曠職扣款','遲到扣款','早退扣款','請假扣款','事病假扣款','病假扣款','事假扣款','缺勤','考勤'],mode:'sum'},
+  {key:'dedAttendance',label:'考勤扣款',kind:'deduction',priority:30,terms:['考勤扣款','考勤扣除','考勤減項','考勤扣薪','缺勤扣款','缺勤扣除','缺勤扣薪','曠職扣款','遲到扣款','早退扣款','請假扣款','請假扣薪','事病假扣款','病假扣款','事假扣款','缺勤','考勤'],mode:'sum'},
   {key:'dedWelfare',label:'福利金',kind:'deduction',priority:26,terms:['職工福利金','職工福利費','福利金','福利費','福利扣款','福利金扣款','福委會費','福委費','福委金','福利委員會費','職福金','職福會費','職工福利','福委'],mode:'sum'},
-  {key:'dedLabor',label:'勞保費',kind:'deduction',priority:26,terms:['勞保費','勞保費用','勞保自付','勞保自付額','勞保自負','勞工保險費','勞工保險','勞保個人負擔','勞保個人負擔額','勞保個人','勞保扣款','勞保代扣','勞工保費','勞保'],mode:'sum'},
-  {key:'dedHealth',label:'健保費',kind:'deduction',priority:25,terms:['健保費','健保費用','健保自付','健保自付額','健保自負','全民健保費','健康保險費','健保個人負擔','健保個人負擔額','健保個人','健保扣款','健保代扣','健保'],mode:'sum'},
+  {key:'dedLabor',label:'勞保費',kind:'deduction',priority:31,terms:['勞保費','勞保費用','勞保保費','勞保自付','勞保自付額','勞保自負','勞工保險費','勞工保險自付','勞工保險','勞保個人負擔','勞保個人負擔額','勞保個人','員工勞保','員工勞保費','勞保扣款','勞保代扣','勞工保費','勞保'],mode:'sum'},
+  {key:'dedHealth',label:'健保費',kind:'deduction',priority:31,terms:['健保費','健保費用','健保保費','健保自付','健保自付額','健保自負','全民健保費','全民健康保險費','健康保險費','健康保費','健保個人負擔','健保個人負擔額','健保個人','員工健保','員工健保費','健保扣款','健保代扣','健保'],mode:'sum'},
   {key:'dedTax',label:'所得稅',kind:'deduction',priority:25,terms:['薪資所得稅','所得稅額','所得稅扣款','所得稅','扣繳所得稅','扣繳稅額','扣繳稅','代扣所得稅','代扣稅','所得稅款','薪資扣繳','預扣所得稅','預扣稅','薪資稅','稅額'],mode:'sum'},
   {key:'dedOther',label:'其他扣款',kind:'deduction',priority:5,minScore:.94,terms:['其他扣款','其他代扣','其他減項','應扣其他','代扣其他','雜項扣款','其他應扣'],mode:'sum'},
   {key:'base',label:'底薪／本薪',kind:'income',priority:28,terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','經常性薪資','經常性工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
@@ -3325,7 +3325,7 @@ function normalizeOcrText(s){
     .toUpperCase()
     .replace(/薪资/g,'薪資').replace(/工资/g,'工資').replace(/实发/g,'實發').replace(/实领/g,'實領')
     .replace(/净额/g,'淨額').replace(/金额/g,'金額').replace(/应发/g,'應發').replace(/应领/g,'應領')
-    .replace(/劳保/g,'勞保').replace(/劳退/g,'勞退').replace(/保险/g,'保險').replace(/津贴/g,'津貼')
+    .replace(/劳保/g,'勞保').replace(/劳退/g,'勞退').replace(/保险/g,'保險').replace(/津贴/g,'津貼').replace(/考前扣款/g,'考勤扣款').replace(/考前/g,'考勤').replace(/建保/g,'健保').replace(/健堡/g,'健保').replace(/健倸/g,'健保')
     .replace(/补助/g,'補助').replace(/补贴/g,'補貼').replace(/费用/g,'費用').replace(/加班费/g,'加班費')
     .replace(/绩效/g,'績效').replace(/奖金/g,'獎金').replace(/所得税/g,'所得稅').replace(/扣缴/g,'扣繳')
     .replace(/[\s_·•・．。,:：;；()（）\[\]【】\-\/]/g,'')
@@ -3782,6 +3782,8 @@ function applyFormatMemory(run){
   const found=bestPayslipTemplate(run);if(!found)return run;
   Object.entries(found.template.anchors||{}).forEach(([key,anchor])=>{
     const current=run.fields[key];if(current&&current.confidence>=.78)return;
+    const criticalDeduction=['dedAttendance','dedLabor','dedHealth','dedHealthExtra','dedPension'].includes(key);
+    if(criticalDeduction&&(!run.labelAnchors[key]||num(run.labelAnchors[key].score)<.72))return;
     const hit=nearestAmountForTemplate(run,anchor);if(!hit)return;
     const def=PAYSLIP_OCR_FIELDS.find(x=>x.key===key);if(!def)return;
     run.fields[key]={key,value:hit.amount.value,term:anchor.term||'格式記憶',confidence:Math.min(.94,.76+found.score*.14+hit.score*.04),method:'格式記憶',variant:run.variant,
@@ -3944,6 +3946,7 @@ function renderPayslipDetected(){
       payslipOcrResult[key]=num(raw);
       payslipOcrResult.__confidence=payslipOcrResult.__confidence||{};payslipOcrResult.__confidence[key]=1;
       payslipOcrResult.__manualKeys=payslipOcrResult.__manualKeys||{};payslipOcrResult.__manualKeys[key]=true;
+      payslipOcrResult.__matches=Array.isArray(payslipOcrResult.__matches)?payslipOcrResult.__matches.filter(m=>m.key!==key):[];
       if(payslipOcrResult.__fieldWarnings)delete payslipOcrResult.__fieldWarnings[key];
       if(payslipOcrResult.__openAiAlternates)delete payslipOcrResult.__openAiAlternates[key];
     }
@@ -4028,6 +4031,13 @@ function visionWordsToOcrData(result){
   const lines=groupOcrWordsIntoLines(words).map(line=>line.words.map(w=>w.text).join(' '));
   return{text:lines.join('\n'),words};
 }
+function payslipAiEvidenceSupportsField(key,evidence){
+  const t=normalizeOcrText(evidence||'');
+  if(key==='dedAttendance')return /(考勤|缺勤|曠職|遲到|早退|請假|病假|事假).*(扣款|扣除|扣薪|減項)?/.test(t);
+  if(key==='dedLabor')return /(勞保|勞工保險)/.test(t)&&!/(雇主|僱主|公司|單位).*(負擔|提繳|提撥)/.test(t);
+  if(key==='dedHealth')return /(健保|全民健保|健康保險)/.test(t)&&!/(補扣|補充|二代|雇主|僱主|公司|單位)/.test(t);
+  return false;
+}
 function payslipAmountsAgree(a,b){
   const x=Number(a),y=Number(b);
   return Number.isFinite(x)&&Number.isFinite(y)&&Math.abs(x-y)<=1;
@@ -4061,11 +4071,22 @@ function mergePayslipAiVerification(ai){
       if(hit){hit.confidence=payslipOcrResult.__confidence[def.key];hit.source='Apple Vision + OpenAI 一致'}
       delete payslipOcrResult.__fieldWarnings[def.key];delete payslipOcrResult.__openAiAlternates[def.key];
     }else if(aiConf>=.68){
-      conflicts++;
-      payslipOcrResult.__openAiAlternates[def.key]={value:aiValue,confidence:aiConf,evidence};
-      payslipOcrResult.__confidence[def.key]=Math.min(Number(payslipOcrResult.__confidence[def.key])||.64,.64);
-      payslipOcrResult.__fieldWarnings[def.key]='Apple Vision：'+appleValue.toLocaleString('zh-TW')+'；OpenAI：'+aiValue.toLocaleString('zh-TW')+'。兩邊不一致，請確認原圖。';
-      if(hit)hit.source='Apple Vision／OpenAI 不一致';
+      const localConf=Number(payslipOcrResult.__confidence[def.key])||0;
+      const directCritical=payslipAiEvidenceSupportsField(def.key,evidence);
+      const weakLocal=!hit||localConf<.8||/(格式記憶|文字模糊|座標模糊)/.test(String(hit.method||''));
+      if(directCritical&&aiConf>=.9&&weakLocal){
+        payslipOcrResult[def.key]=aiValue;
+        payslipOcrResult.__confidence[def.key]=Math.min(.96,.86+aiConf*.1);
+        if(hit){hit.value=aiValue;hit.amount=aiValue;hit.term=evidence||hit.term;hit.confidence=payslipOcrResult.__confidence[def.key];hit.method='OpenAI 高信心校正';hit.source='Apple Vision + OpenAI 校正'}
+        delete payslipOcrResult.__fieldWarnings[def.key];delete payslipOcrResult.__openAiAlternates[def.key];
+        added++;
+      }else{
+        conflicts++;
+        payslipOcrResult.__openAiAlternates[def.key]={value:aiValue,confidence:aiConf,evidence};
+        payslipOcrResult.__confidence[def.key]=Math.min(localConf||.64,.64);
+        payslipOcrResult.__fieldWarnings[def.key]='Apple Vision：'+appleValue.toLocaleString('zh-TW')+'；OpenAI：'+aiValue.toLocaleString('zh-TW')+'。兩邊不一致，請確認原圖。';
+        if(hit)hit.source='Apple Vision／OpenAI 不一致';
+      }
     }
   });
   payslipOcrResult.__aiVerified=true;
