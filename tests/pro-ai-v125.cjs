@@ -4,6 +4,7 @@ const assert = require('assert');
 const html = fs.readFileSync('index.html', 'utf8');
 const legacyEdge = fs.readFileSync('supabase/functions/pro-ai/index.ts', 'utf8');
 const payslipEdge = fs.readFileSync('supabase/functions/payslip-verify/index.ts', 'utf8');
+const speechEdge = fs.readFileSync('supabase/functions/speech-transcribe/index.ts', 'utf8');
 
 {
   const build = html.match(/<meta name="meow-ui-build" content="v(\d+)[^"]*">/);
@@ -81,8 +82,15 @@ assert(html.includes("input.dispatchEvent(new Event('input',{bubbles:true}))"), 
 assert(html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"), 'voice transcript must auto-submit after recognition');
 assert(html.includes('async function resetMeowAssistantVoice(cancelNative=true)'), 'repeat microphone reset helper missing');
 assert(html.includes('meowAssistantRecognitionToken++'), 'speech session token missing');
-assert(html.includes('meowAssistantRecognition===r&&meowAssistantRecognitionToken===token'), 'browser fallback stale recognizer guard missing');
 assert(html.includes('function meowSpeechBridge()'), 'native iOS speech bridge selector missing');
 assert(html.includes("nativeBridge.recognize({locale:'zh-TW'})"), 'native iOS speech call missing');
+assert(html.includes('async function recordMeowAssistantAudio(token)'), 'PWA audio recorder missing');
+assert(html.includes("invokeUserFunction('speech-transcribe'"), 'PWA speech transcription backend call missing');
+assert(!html.includes('window.webkitSpeechRecognition'), 'PWA must not depend on WebKit SpeechRecognition');
+assert(speechEdge.includes('https://api.openai.com/v1/audio/transcriptions'), 'speech backend must use OpenAI transcription endpoint');
+assert(speechEdge.includes('gpt-4o-mini-transcribe'), 'speech backend transcription model missing');
+assert(speechEdge.includes('meow_account_access'), 'speech backend must honor developer/Pro account access');
+assert(speechEdge.includes('PRO_REQUIRED'), 'speech backend must reject Free users');
+assert(speechEdge.includes('OPENAI_API_KEY'), 'speech backend must keep OpenAI key server-side');
 
 console.log('PASS cross-validated Pro payroll, final Meow Assistant, and removed schedule import checks');
