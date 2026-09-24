@@ -23,6 +23,8 @@ jobs:
         run: node tests/theme-persistence.test.cjs
       - name: v129 schedule and settings UI checks
         run: node tests/ui-v129.test.cjs
+      - name: v156 cloud sync hardening checks
+        run: node tests/cloud-sync-v156.test.cjs
       - name: Install browser tests
         run: |
           npm install --no-save playwright@1.57.0
