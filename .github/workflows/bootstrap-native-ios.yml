@@ -52,7 +52,7 @@ jobs:
         working-directory: native
         run: npm install
 
-      - name: Prepare v175 branded native and web assets
+      - name: Prepare v178 branded native and web assets
         run: |
           set -euo pipefail
           ICON_VENV="$RUNNER_TEMP/meow-icon-venv"
@@ -60,55 +60,45 @@ jobs:
           "$ICON_VENV/bin/python" -m pip install --quiet pillow
 
           mkdir -p native/ios-sources
-          if [ ! -s native/ios-sources/app-icon-v174-source.png ]; then
-            curl -L --fail --retry 3 "https://d2jqrm6oza8nb6.cloudfront.net/datasets/8af449e4-6033-4f88-88ba-1aaff2985213.png?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiM2M2ZGE5ZmE3MzEzMGE2MSIsImJ1Y2tldCI6InJ1bndheS1kYXRhc2V0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MDM4MzA5OH0.XGB-uNCT-_zWnzu8Kp825GHAeEI0uxWzNeK0THAZi78" -o native/ios-sources/app-icon-v174-source.png
-          fi
-          if [ ! -s native/ios-sources/splash-v174-source.jpg ]; then
-            curl -L --fail --retry 3 "https://d2jqrm6oza8nb6.cloudfront.net/datasets/a8bef9c0-6ae8-4e8d-96a4-c056cc1b55dc.jpg?_jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJrZXlIYXNoIjoiYThmYmY1NjlkMWZkYThjMiIsImJ1Y2tldCI6InJ1bndheS1kYXRhc2V0cyIsInN0YWdlIjoicHJvZCIsImV4cCI6MTc5MDQyMjI0OX0.49WGIG3KRCb-OcTzakJCVSMXBT-IVhSzbNXpMf1tAm4" -o native/ios-sources/splash-v174-source.jpg
-          fi
+          curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/55737aaf2c45506d5e29d823d614db2626d1ad79dd3ea82806858d64c267a2bc.png" -o native/ios-sources/app-icon-v178-source.png
+          curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/b8ccc9163e5d72861ccb895c9425ea26942dcbc01b1f112860ca39e8cc48795c.png" -o native/ios-sources/splash-v178-source.png
 
           "$ICON_VENV/bin/python" - <<'PY'
           from PIL import Image, ImageOps
 
-          icon = Image.open('native/ios-sources/app-icon-v174-source.png').convert('RGB')
+          icon = Image.open('native/ios-sources/app-icon-v178-source.png').convert('RGB')
           icon = ImageOps.fit(icon, (1024, 1024), method=Image.Resampling.LANCZOS)
-          icon.save('native-icon-v174-1024.png', format='PNG', optimize=True)
+          icon.save('native-icon-v178-1024.png', format='PNG', optimize=True)
 
-          splash = Image.open('native/ios-sources/splash-v174-source.jpg').convert('RGB')
+          splash = Image.open('native/ios-sources/splash-v178-source.png').convert('RGB')
           canvas = Image.new('RGB', (2732, 2732), '#F6EDE3')
           art = ImageOps.contain(splash, (2732, 2732), method=Image.Resampling.LANCZOS)
           canvas.paste(art, ((2732-art.width)//2, (2732-art.height)//2))
-          canvas.save('native-splash-v174-2732.png', format='PNG', optimize=True)
+          canvas.save('native-splash-v178-2732.png', format='PNG', optimize=True)
+
+          for size in (180,192,512):
+              out=ImageOps.fit(icon,(size,size),method=Image.Resampling.LANCZOS)
+              out.save(f'app-icon-v178-{size}.png',format='PNG',optimize=True)
+
+          splash.save('splash-v178.jpg',format='JPEG',quality=92,optimize=True,progressive=True)
           PY
 
-          ICON_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-icon-v174-1024.png)"
+          ICON_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-icon-v178-1024.png)"
           echo "$ICON_INFO"
           echo "$ICON_INFO" | grep -q 'pixelWidth: 1024'
           echo "$ICON_INFO" | grep -q 'pixelHeight: 1024'
           echo "$ICON_INFO" | grep -q 'hasAlpha: no'
 
-          SPLASH_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-splash-v174-2732.png)"
+          SPLASH_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-splash-v178-2732.png)"
           echo "$SPLASH_INFO"
           echo "$SPLASH_INFO" | grep -q 'pixelWidth: 2732'
           echo "$SPLASH_INFO" | grep -q 'pixelHeight: 2732'
           echo "$SPLASH_INFO" | grep -q 'hasAlpha: no'
 
-          "$ICON_VENV/bin/python" - <<'PY'
-          from PIL import Image, ImageOps
-
-          icon=Image.open('native/ios-sources/app-icon-v174-source.png').convert('RGB')
-          for size in (180,192,512):
-              out=ImageOps.fit(icon,(size,size),method=Image.Resampling.LANCZOS)
-              out.save(f'app-icon-v175-{size}.png',format='PNG',optimize=True)
-
-          splash=Image.open('native/ios-sources/splash-v174-source.jpg').convert('RGB')
-          splash.thumbnail((1366,1366),Image.Resampling.LANCZOS)
-          splash.save('splash-v175.jpg',format='JPEG',quality=82,optimize=True,progressive=True)
-          PY
-          test -s app-icon-v175-180.png
-          test -s app-icon-v175-192.png
-          test -s app-icon-v175-512.png
-          test -s splash-v175.jpg
+          test -s app-icon-v178-180.png
+          test -s app-icon-v178-192.png
+          test -s app-icon-v178-512.png
+          test -s splash-v178.jpg
 
       - name: Sync web bundle
         working-directory: native
@@ -120,10 +110,10 @@ jobs:
           rm -rf ios
           npx cap add ios
           node scripts/patch-ios-bridge.mjs
-          cp ../native-icon-v174-1024.png ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
-          cp ../native-splash-v174-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png
-          cp ../native-splash-v174-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
-          cp ../native-splash-v174-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
+          cp ../native-icon-v178-1024.png ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
+          cp ../native-splash-v178-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png
+          cp ../native-splash-v178-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
+          cp ../native-splash-v178-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription 使用相機拍攝班表、薪資單或頭像圖片。" ios/App/App/Info.plist || \
@@ -318,7 +308,7 @@ jobs:
           set -euo pipefail
           git config user.name "meow-native-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add native/ios native/package-lock.json native/ios-sources/app-icon-v174-source.png native/ios-sources/splash-v174-source.jpg
+          git add native/ios native/package-lock.json native/ios-sources/app-icon-v178-source.png native/ios-sources/splash-v178-source.png
           if git diff --cached --quiet; then
             echo "No generated changes to commit."
             exit 0
