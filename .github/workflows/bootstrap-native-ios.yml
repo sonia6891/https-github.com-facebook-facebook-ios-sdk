@@ -52,7 +52,7 @@ jobs:
         working-directory: native
         run: npm install
 
-      - name: Prepare approved v182 splash and v178 icon assets
+      - name: Prepare restored original v183 splash and v178 icon assets
         run: |
           set -euo pipefail
           ICON_VENV="$RUNNER_TEMP/meow-icon-venv"
@@ -61,7 +61,7 @@ jobs:
 
           mkdir -p native/ios-sources
           curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/55737aaf2c45506d5e29d823d614db2626d1ad79dd3ea82806858d64c267a2bc.png" -o native/ios-sources/app-icon-v178-source.png
-          curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/badda8313265d6a2f12ed3320a02c2ea1ee1fc0ba3cf62134133fb77029cec5e.png" -o native/ios-sources/splash-v182-source.png
+          curl -L --fail --retry 3 "https://cdn.openart.ai/openart-uploads/production/attachment-transfers/b8ccc9163e5d72861ccb895c9425ea26942dcbc01b1f112860ca39e8cc48795c.png" -o native/ios-sources/splash-v183-source.png
 
           "$ICON_VENV/bin/python" - <<'PY'
           from PIL import Image, ImageOps
@@ -70,17 +70,17 @@ jobs:
           icon = ImageOps.fit(icon, (1024, 1024), method=Image.Resampling.LANCZOS)
           icon.save('native-icon-v178-1024.png', format='PNG', optimize=True)
 
-          splash = Image.open('native/ios-sources/splash-v182-source.png').convert('RGB')
+          splash = Image.open('native/ios-sources/splash-v183-source.png').convert('RGB')
           canvas = Image.new('RGB', (2732, 2732), '#90BCE9')
           art = ImageOps.contain(splash, (2732, 2732), method=Image.Resampling.LANCZOS)
           canvas.paste(art, ((2732-art.width)//2, (2732-art.height)//2))
-          canvas.save('native-splash-v182-2732.png', format='PNG', optimize=True)
+          canvas.save('native-splash-v183-2732.png', format='PNG', optimize=True)
 
           for size in (180,192,512):
               out=ImageOps.fit(icon,(size,size),method=Image.Resampling.LANCZOS)
               out.save(f'app-icon-v178-{size}.png',format='PNG',optimize=True)
 
-          splash.save('splash-v182.jpg',format='JPEG',quality=92,optimize=True,progressive=True)
+          splash.save('splash-v183.jpg',format='JPEG',quality=92,optimize=True,progressive=True)
           PY
 
           ICON_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-icon-v178-1024.png)"
@@ -89,7 +89,7 @@ jobs:
           echo "$ICON_INFO" | grep -q 'pixelHeight: 1024'
           echo "$ICON_INFO" | grep -q 'hasAlpha: no'
 
-          SPLASH_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-splash-v182-2732.png)"
+          SPLASH_INFO="$(sips -g pixelWidth -g pixelHeight -g hasAlpha native-splash-v183-2732.png)"
           echo "$SPLASH_INFO"
           echo "$SPLASH_INFO" | grep -q 'pixelWidth: 2732'
           echo "$SPLASH_INFO" | grep -q 'pixelHeight: 2732'
@@ -98,7 +98,7 @@ jobs:
           test -s app-icon-v178-180.png
           test -s app-icon-v178-192.png
           test -s app-icon-v178-512.png
-          test -s splash-v182.jpg
+          test -s splash-v183.jpg
 
       - name: Sync web bundle
         working-directory: native
@@ -111,9 +111,9 @@ jobs:
           npx cap add ios
           node scripts/patch-ios-bridge.mjs
           cp ../native-icon-v178-1024.png ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png
-          cp ../native-splash-v182-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png
-          cp ../native-splash-v182-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
-          cp ../native-splash-v182-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
+          cp ../native-splash-v183-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png
+          cp ../native-splash-v183-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
+          cp ../native-splash-v183-2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription 使用相機拍攝班表、薪資單或頭像圖片。" ios/App/App/Info.plist || \
