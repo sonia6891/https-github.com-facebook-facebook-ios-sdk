@@ -52,7 +52,7 @@ jobs:
         run: |
           set -euo pipefail
           TMP_ICON_DIR="$(mktemp -d)"
-          sips -c 448 448 app-icon-v115-512.png --out "$TMP_ICON_DIR/icon-crop.png" >/dev/null
+          sips -c 480 480 app-icon-v115-512.png --out "$TMP_ICON_DIR/icon-crop.png" >/dev/null
           sips -z 180 180 "$TMP_ICON_DIR/icon-crop.png" --out app-icon-v153-180.png >/dev/null
           sips -z 192 192 "$TMP_ICON_DIR/icon-crop.png" --out app-icon-v153-192.png >/dev/null
           sips -z 512 512 "$TMP_ICON_DIR/icon-crop.png" --out app-icon-v153-512.png >/dev/null
