@@ -54,20 +54,38 @@ jobs:
           assert disable_auto=='true', disable_auto
           print('LINE provider redirect verified:',parsed.netloc,scopes,'disable_auto_login='+disable_auto)
           PY
-      - name: Generate v155 full-bleed home-screen icons
+      - name: Generate valid web home-screen icons and splash
         run: |
           set -euo pipefail
           ICON_VENV="$RUNNER_TEMP/meow-icon-venv"
           python3 -m venv "$ICON_VENV"
           "$ICON_VENV/bin/python" -m pip install --quiet pillow
           "$ICON_VENV/bin/python" native/scripts/generate-app-icons-v155.py
-          test -s app-icon-v155-180.png
-          test -s app-icon-v155-192.png
-          test -s app-icon-v155-512.png
+          "$ICON_VENV/bin/python" - <<'PY'
+          from PIL import Image, ImageOps
+          from pathlib import Path
+
+          icon=Image.open('native/ios-sources/app-icon-v174-source.png').convert('RGB')
+          for size in (180,192,512):
+              out=ImageOps.fit(icon,(size,size),method=Image.Resampling.LANCZOS)
+              out.save(f'app-icon-v175-{size}.png',format='PNG',optimize=True)
+
+          splash=Image.open('native/ios-sources/splash-v174-source.jpg').convert('RGB')
+          splash.thumbnail((1366,1366),Image.Resampling.LANCZOS)
+          splash.save('splash-v175.jpg',format='JPEG',quality=82,optimize=True,progressive=True)
+
+          for name,size in [('app-icon-v175-180.png',(180,180)),('app-icon-v175-192.png',(192,192)),('app-icon-v175-512.png',(512,512))]:
+              im=Image.open(name)
+              assert im.size==size, (name,im.size)
+              assert im.mode in ('RGB','P'), (name,im.mode)
+          im=Image.open('splash-v175.jpg')
+          assert im.width>1000 and im.height>1000
+          print('v175 brand assets valid:',[(p.name,p.stat().st_size) for p in map(Path,['app-icon-v175-180.png','app-icon-v175-192.png','app-icon-v175-512.png','splash-v175.jpg'])])
+          PY
       - name: Stage public application files only
         run: |
           mkdir -p _site
-          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png app-icon-v174-512.png splash-v174.webp _site/
+          cp index.html privacy.html terms.html support.html sw.js manifest.webmanifest 404.html workcat-home-v12.png app-icon-v155-180.png app-icon-v155-192.png app-icon-v155-512.png app-icon-v175-180.png app-icon-v175-192.png app-icon-v175-512.png splash-v175.jpg _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
       - name: Setup Pages
@@ -88,7 +106,7 @@ jobs:
           import hashlib,json,os,re,time,urllib.request,urllib.error
           result={'commit':os.environ['GITHUB_SHA'],'files':{}}
           base=os.environ['PAGE_URL']
-          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v155-180.png','app-icon-v155-192.png','app-icon-v155-512.png','app-icon-v174-512.png','splash-v174.webp','assets/welcome-brand-v112.webp','assets/meow-assistant-pro-v169.webp']:
+          for name in ['index.html','privacy.html','terms.html','support.html','sw.js','manifest.webmanifest','app-icon-v155-180.png','app-icon-v155-192.png','app-icon-v155-512.png','app-icon-v175-180.png','app-icon-v175-192.png','app-icon-v175-512.png','splash-v175.jpg','assets/welcome-brand-v112.webp','assets/meow-assistant-pro-v169.webp']:
               expected=hashlib.sha256(Path(name).read_bytes()).hexdigest()
               url=base+name+'?build-check='+os.environ['GITHUB_SHA']
               for attempt in range(10):
@@ -102,6 +120,12 @@ jobs:
                   except Exception:
                       if attempt==9: raise
                       time.sleep(3)
+          from PIL import Image
+          for name,size in [('app-icon-v175-180.png',(180,180)),('app-icon-v175-192.png',(192,192)),('app-icon-v175-512.png',(512,512))]:
+              with Image.open(name) as im:
+                  assert im.size==size, (name,im.size)
+          with Image.open('splash-v175.jpg') as im:
+              assert im.width>1000 and im.height>1000, im.size
           mascot=Path('assets/meow-assistant-pro-v169.webp').read_bytes()
           assert len(mascot)>9000, 'Meow Assistant asset unexpectedly small/truncated'
           assert mascot[:4]==b'RIFF' and mascot[8:12]==b'WEBP', 'Meow Assistant asset is not valid WebP'
