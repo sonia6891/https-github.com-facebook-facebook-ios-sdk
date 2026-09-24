@@ -134,7 +134,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
     check('舊版雲端備份使用獨立唯讀資料表', html.includes("from('user_legacy_exports').select('payload,original_updated_at')"));
     check('單一雲端還原會自動檢查舊版備份，不再要求使用者另外開檔', html.includes('async function restoreLegacyCloud()') && html.includes("return await restoreLegacyCloud()") && html.includes('不需要另外開啟 JSON 檔'));
     check('AI 班表匯入已從產品入口移除', !html.includes('id="aiScheduleCard"') && !html.includes('id="aiScheduleUpload"') && !html.includes("smart_schedule_import:{label:'智慧匯入班表'"));
-    check('浮動喵助理使用定稿厭世喵素材', html.includes('./assets/meow-assistant-pro-v167.webp') && html.includes('<b>喵助理</b></button>'));
+    check('浮動喵助理使用定稿厭世喵素材', html.includes('./assets/meow-assistant-pro-v168.webp?v=168') && html.includes('<b>喵助理</b></button>'));
     check('喵助理語音會先寫入輸入框再自動送出', html.includes("input.value=text") && html.includes("setTimeout(()=>{void previewMeowAssistant()},120)"));
     const { context: guestContext, page: guest } = await openPage(browser, base, 390);
     check('未登入一定顯示登入頁', await guest.evaluate(() => window.__accountV119.openWelcome()));
@@ -292,6 +292,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       await page.locator('#toggleSchedulePrefs').scrollIntoViewIfNeeded();
       await page.locator('#toggleSchedulePrefs').click();
       check(`${width}px 排班偏好可展開`, await page.locator('#schedulePrefsBody').isVisible() && await page.locator('#toggleSchedulePrefs').getAttribute('aria-expanded') === 'true');
+      check(`${width}px 四個設定展開文字右側對齊`, await page.evaluate(() => ['appearanceFoldState','workSettingsFoldState','schedulePrefsFoldState','dataSyncFoldState'].every(id=>{const el=document.getElementById(id);return el&&getComputedStyle(el).textAlign==='right'})));
       check(`${width}px 排班偏好不再提供 AI 班表匯入`, !(await page.locator('#schedulePrefCard').innerText()).includes('AI 班表匯入'));
       await page.locator('#toggleSchedulePrefs').click();
       await page.locator('#toggleWorkSettings').scrollIntoViewIfNeeded();
@@ -376,7 +377,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
         await page.waitForTimeout(80);
 
         check('月曆頁不再顯示 AI 班表匯入', await page.locator('#aiScheduleCard').count()===0 && await page.locator('#scheduleMenuClearAi').count()===0);
-        check('浮動喵助理顯示定稿圖與名稱', await page.locator('#meowAssistantFab img').getAttribute('src')==='./assets/meow-assistant-pro-v167.webp' && (await page.locator('#meowAssistantFab').innerText()).includes('喵助理'));
+        check('浮動喵助理顯示定稿圖與名稱', await page.locator('#meowAssistantFab img').getAttribute('src')==='./assets/meow-assistant-pro-v168.webp?v=168' && (await page.locator('#meowAssistantFab').innerText()).includes('喵助理'));
 
         await page.evaluate(() => window.__accountV119.attendance());
         await page.waitForTimeout(120);
