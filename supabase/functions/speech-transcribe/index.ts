@@ -42,24 +42,22 @@ function userIdFromAuth(header: string | null) {
   }
 }
 
-async function hasPro(userId: string) {
+async function hasAssistantAccess(authHeader: string) {
   const url = Deno.env.get("SUPABASE_URL") || "";
   const key = serviceRoleKey();
   if (!url || !key) throw new Error("SUPABASE_SERVER_CONFIG_MISSING");
-  const now = new Date().toISOString();
-  const query = new URLSearchParams({
-    user_id: "eq." + userId,
-    plan: "eq.pro",
-    status: "in.(active,trialing)",
-    pro_until: "gt." + now,
-    select: "user_id",
-    limit: "1"
+  const res = await fetch(url + "/rest/v1/rpc/meow_account_access", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": key,
+      "Authorization": authHeader
+    },
+    body: "{}"
   });
-  const res = await fetch(url + "/rest/v1/user_entitlements?" + query.toString(), {
-    headers: { "apikey": key, "Authorization": "Bearer " + key }
-  });
-  const rows = await res.json().catch(() => []);
-  return res.ok && Array.isArray(rows) && rows.length > 0;
+  const data = await res.json().catch(() => null);
+  if (!res.ok) throw new Error("ACCESS_CHECK_FAILED");
+  return data?.access_tier === "developer" || data?.access_tier === "pro";
 }
 
 function decodeDataUrl(dataUrl: string) {
@@ -84,11 +82,12 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   if (req.method !== "POST") return json({ ok: false, code: "METHOD_NOT_ALLOWED" }, 405);
 
-  const userId = userIdFromAuth(req.headers.get("Authorization"));
+  const authHeader = req.headers.get("Authorization") || "";
+  const userId = userIdFromAuth(authHeader);
   if (!userId) return json({ ok: false, code: "NOT_AUTHENTICATED" }, 401);
 
   try {
-    if (!(await hasPro(userId))) return json({ ok: false, code: "PRO_REQUIRED" }, 403);
+    if (!(await hasAssistantAccess(authHeader))) return json({ ok: false, code: "PRO_REQUIRED" }, 403);
   } catch (_) {
     return json({ ok: false, code: "ENTITLEMENT_CHECK_FAILED" }, 503);
   }
