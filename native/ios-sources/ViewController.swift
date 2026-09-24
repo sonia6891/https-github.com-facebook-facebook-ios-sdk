@@ -7,6 +7,8 @@ import AuthenticationServices
 import CryptoKit
 import Security
 import Vision
+import Speech
+import AVFoundation
 
 @objc(MeowStoreBillingPlugin)
 public class MeowStoreBillingPlugin: CAPPlugin, CAPBridgedPlugin {
@@ -644,11 +646,224 @@ public class MeowReminderPlugin: CAPPlugin, CAPBridgedPlugin, UNUserNotification
 }
 
 
+@objc(MeowSpeechPlugin)
+public class MeowSpeechPlugin: CAPPlugin, CAPBridgedPlugin {
+    public let identifier = "MeowSpeechPlugin"
+    public let jsName = "MeowSpeech"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "recognize", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "cancel", returnType: CAPPluginReturnPromise)
+    ]
+
+    private let audioEngine = AVAudioEngine()
+    private var recognitionTask: SFSpeechRecognitionTask?
+    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+    private var pendingCall: CAPPluginCall?
+    private var silenceWorkItem: DispatchWorkItem?
+    private var timeoutWorkItem: DispatchWorkItem?
+    private var latestTranscript = ""
+    private var tapInstalled = false
+    private var generation = 0
+
+    @objc func recognize(_ call: CAPPluginCall) {
+        generation += 1
+        let requestGeneration = generation
+        let localeIdentifier = call.getString("locale") ?? "zh-TW"
+
+        cancelCurrent(resolvePending: true)
+
+        requestPermissions { [weak self] allowed, reason in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                guard self.generation == requestGeneration else {
+                    call.resolve(["cancelled": true])
+                    return
+                }
+                guard allowed else {
+                    call.reject(reason ?? "Speech recognition permission denied")
+                    return
+                }
+                self.beginRecognition(call, localeIdentifier: localeIdentifier)
+            }
+        }
+    }
+
+    @objc func cancel(_ call: CAPPluginCall) {
+        generation += 1
+        cancelCurrent(resolvePending: true)
+        call.resolve(["cancelled": true])
+    }
+
+    private func requestPermissions(_ completion: @escaping (Bool, String?) -> Void) {
+        SFSpeechRecognizer.requestAuthorization { status in
+            guard status == .authorized else {
+                completion(false, "Speech recognition permission denied")
+                return
+            }
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                completion(granted, granted ? nil : "Microphone permission denied")
+            }
+        }
+    }
+
+    private func beginRecognition(_ call: CAPPluginCall, localeIdentifier: String) {
+        cancelCurrent(resolvePending: true)
+
+        guard let recognizer = SFSpeechRecognizer(locale: Locale(identifier: localeIdentifier)),
+              recognizer.isAvailable else {
+            call.reject("Speech recognizer unavailable")
+            return
+        }
+
+        let request = SFSpeechAudioBufferRecognitionRequest()
+        request.shouldReportPartialResults = true
+        request.taskHint = .dictation
+
+        let session = AVAudioSession.sharedInstance()
+        do {
+            try session.setCategory(.record, mode: .measurement, options: [.duckOthers])
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+        } catch {
+            call.reject("Unable to start microphone", nil, error)
+            return
+        }
+
+        pendingCall = call
+        latestTranscript = ""
+        recognitionRequest = request
+
+        let inputNode = audioEngine.inputNode
+        let format = inputNode.outputFormat(forBus: 0)
+        guard format.sampleRate > 0 else {
+            finishWithError("Microphone audio format unavailable")
+            return
+        }
+
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
+            self?.recognitionRequest?.append(buffer)
+        }
+        tapInstalled = true
+
+        recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
+            DispatchQueue.main.async {
+                guard let self, self.pendingCall != nil else { return }
+
+                if let result {
+                    let text = result.bestTranscription.formattedString.trimmingCharacters(in: .whitespacesAndNewlines)
+                    if !text.isEmpty {
+                        self.latestTranscript = text
+                        self.notifyListeners("partialResult", data: ["text": text])
+                        self.scheduleSilenceFinish()
+                    }
+                    if result.isFinal {
+                        self.finishSuccess(text)
+                        return
+                    }
+                }
+
+                if let error {
+                    if !self.latestTranscript.isEmpty {
+                        self.finishSuccess(self.latestTranscript)
+                    } else {
+                        self.finishWithError("Speech recognition failed: \(error.localizedDescription)")
+                    }
+                }
+            }
+        }
+
+        do {
+            audioEngine.prepare()
+            try audioEngine.start()
+        } catch {
+            finishWithError("Unable to start microphone: \(error.localizedDescription)")
+            return
+        }
+
+        let timeout = DispatchWorkItem { [weak self] in
+            guard let self, self.pendingCall != nil else { return }
+            if self.latestTranscript.isEmpty {
+                self.finishWithError("No speech detected")
+            } else {
+                self.finishSuccess(self.latestTranscript)
+            }
+        }
+        timeoutWorkItem = timeout
+        DispatchQueue.main.asyncAfter(deadline: .now() + 15, execute: timeout)
+    }
+
+    private func scheduleSilenceFinish() {
+        silenceWorkItem?.cancel()
+        let work = DispatchWorkItem { [weak self] in
+            guard let self, self.pendingCall != nil, !self.latestTranscript.isEmpty else { return }
+            self.finishSuccess(self.latestTranscript)
+        }
+        silenceWorkItem = work
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.15, execute: work)
+    }
+
+    private func finishSuccess(_ text: String) {
+        guard let call = pendingCall else { return }
+        let transcript = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        cleanup()
+        if transcript.isEmpty {
+            call.reject("No speech detected")
+        } else {
+            call.resolve([
+                "cancelled": false,
+                "text": transcript
+            ])
+        }
+    }
+
+    private func finishWithError(_ message: String) {
+        guard let call = pendingCall else {
+            cleanup()
+            return
+        }
+        cleanup()
+        call.reject(message)
+    }
+
+    private func cancelCurrent(resolvePending: Bool) {
+        let call = pendingCall
+        cleanup()
+        if resolvePending, let call {
+            call.resolve(["cancelled": true])
+        }
+    }
+
+    private func cleanup() {
+        silenceWorkItem?.cancel()
+        silenceWorkItem = nil
+        timeoutWorkItem?.cancel()
+        timeoutWorkItem = nil
+
+        recognitionTask?.cancel()
+        recognitionTask = nil
+        recognitionRequest?.endAudio()
+        recognitionRequest = nil
+
+        if audioEngine.isRunning {
+            audioEngine.stop()
+        }
+        if tapInstalled {
+            audioEngine.inputNode.removeTap(onBus: 0)
+            tapInstalled = false
+        }
+
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        pendingCall = nil
+        latestTranscript = ""
+    }
+}
+
+
 final class ViewController: CAPBridgeViewController {
     override public func capacitorDidLoad() {
         bridge?.registerPluginInstance(MeowStoreBillingPlugin())
         bridge?.registerPluginInstance(MeowReminderPlugin())
         bridge?.registerPluginInstance(MeowAppleAuthPlugin())
         bridge?.registerPluginInstance(MeowScheduleVisionPlugin())
+        bridge?.registerPluginInstance(MeowSpeechPlugin())
     }
 }
