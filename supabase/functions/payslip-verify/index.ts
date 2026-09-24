@@ -77,7 +77,27 @@ function outputText(data: any) {
 
 const nullableNumber = { anyOf: [{ type: "number" }, { type: "null" }] };
 const nullableString = { anyOf: [{ type: "string" }, { type: "null" }] };
-const fieldProperties = Object.fromEntries(FIELD_KEYS.map((k) => [k, nullableNumber]));
+const FIELD_DESCRIPTIONS: Record<string,string> = {
+  actualNet: "薪資單明確標示的實發、實領、淨額或入帳金額。",
+  base: "本薪、底薪、基本薪資或基本工資金額。",
+  shiftAllowance: "輪班、夜班、小夜、大夜、中班等班別津貼或加給的金額合計。",
+  meal: "伙食、膳食或餐費津貼金額。",
+  performance: "表現、績效、工作、職務等明確獎金或津貼。",
+  transport: "交通、通勤、車馬等津貼。",
+  otherIncome: "薪資單明確標為其他收入、其他應發或其他薪資的金額。",
+  otPay: "明確的加班費、延長工時工資；不得使用時數、時薪或倍率。",
+  dedLabor: "員工本人負擔的勞保／勞工保險費。不得填考勤扣款，也不得填雇主負擔。",
+  dedHealth: "員工本人負擔的一般健保／全民健康保險費。不得填健保補扣、補充保費或雇主負擔。",
+  dedWelfare: "職工福利金、福利費、福委會費等員工扣款。",
+  dedPension: "員工自願提繳／自提的勞退退休金。不得填雇主提撥。",
+  dedAttendance: "考勤、缺勤、請假、遲到、早退、曠職等造成的扣款或扣薪。",
+  dedTax: "薪資所得稅、扣繳稅額、預扣所得稅等。",
+  dedHealthExtra: "健保補扣、補繳、追補、二代健保或補充保費。",
+  dedOther: "薪資單明確標示的其他扣款或其他代扣。"
+};
+const fieldProperties = Object.fromEntries(
+  FIELD_KEYS.map((k) => [k, { ...nullableNumber, description: FIELD_DESCRIPTIONS[k] || k }])
+);
 const confidenceProperties = Object.fromEntries(FIELD_KEYS.map((k) => [k, { type: "number", minimum: 0, maximum: 1 }]));
 const evidenceProperties = Object.fromEntries(FIELD_KEYS.map((k) => [k, nullableString]));
 
@@ -154,6 +174,10 @@ Deno.serve(async (req: Request) => {
     "請獨立閱讀圖片；OCR 原始文字只作輔助，不得因 OCR 某個數字存在就硬套欄位。",
     "只能輸出薪資單上有明確證據的金額；看不清楚、欄位不明或只有推測時填 null。",
     "要區分員工扣款與雇主負擔。雇主負擔的勞保、健保、勞退不可填入員工扣款欄位。",
+    "考勤扣款、勞保費、健保費是三個不同欄位：考勤／缺勤／請假／遲到／早退造成的金額只能放 dedAttendance；明確標示勞保／勞工保險的員工自付額只能放 dedLabor；明確標示健保／全民健康保險的一般員工自付額只能放 dedHealth。",
+    "健保費 dedHealth 與健保補扣／補充保費 dedHealthExtra 必須分開。只有出現補扣、補繳、追補、補充、二代健保等字樣才放 dedHealthExtra。",
+    "如果同一列或同一排同時出現考勤扣款、勞保費、健保費等多個扣款欄位，必須依欄位文字與相鄰／同欄的金額一一配對，不能用金額大小或常見金額猜。",
+    "OCR 可能把『考勤』讀成『考前』，把『健保』讀成『建保／健堡／健倸』；遇到這些情況要回看圖片字形與表格位置，不可因此把金額放到別的扣款欄位。",
     "加班費可把明確標示為免稅加班費、應稅加班費、平日/休息日/國定假日加班費等同類金額加總；不要把加班時數、時薪、倍率當成加班費。",
     "輪班/夜班津貼可加總明確同屬班別津貼的金額；不要把班數、天數或時數當成津貼。",
     "otherIncome 與 dedOther 只在薪資單明確標示『其他收入/其他應發』或『其他扣款/其他代扣』時使用，不要把未知項目硬塞進去。",
