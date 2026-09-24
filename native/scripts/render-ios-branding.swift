@@ -31,7 +31,7 @@ func renderSquare(
         pixelsWide: pixels,
         pixelsHigh: pixels,
         bitsPerSample: 8,
-        samplesPerPixel: 4,
+        samplesPerPixel: 3,
         hasAlpha: false,
         isPlanar: false,
         colorSpaceName: .deviceRGB,
