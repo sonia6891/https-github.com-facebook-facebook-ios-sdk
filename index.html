@@ -1128,36 +1128,41 @@ html.dark .settings-pro-v129{
 /* Signed-out launch: keep the approved splash visible and float a compact login card on top. */
 html.auth-needs-login #app-splash{opacity:1!important;pointer-events:none}
 .meow-welcome.welcome-auto-login{
-  width:min(360px,calc(100vw - 36px));
-  max-width:360px;
+  width:min(324px,calc(100vw - 36px));
+  max-width:324px;
   height:auto;
   max-height:none;
   padding:0;
   border:1px solid rgba(255,255,255,.82);
-  border-radius:24px;
+  border-radius:20px;
   background:rgba(255,250,244,.96);
   color:#3c1c15;
-  box-shadow:0 22px 70px rgba(55,35,22,.28),0 0 0 1px rgba(125,89,62,.08);
+  box-shadow:0 18px 48px rgba(55,35,22,.24),0 0 0 1px rgba(125,89,62,.07);
   overflow:hidden;
-  inset:0;
-  margin:auto;
+  top:auto;
+  right:auto;
+  bottom:calc(env(safe-area-inset-bottom,0px) + 72px);
+  left:50%;
+  margin:0;
+  transform:translateX(-50%);
 }
 .meow-welcome.welcome-auto-login::backdrop{
-  background:rgba(35,24,18,.18);
-  backdrop-filter:blur(2px);
-  -webkit-backdrop-filter:blur(2px);
+  background:rgba(35,24,18,.08);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 .meow-welcome.welcome-auto-login .welcome-sheet{padding:0;background:transparent}
 .meow-welcome.welcome-auto-login .welcome-art,
 .meow-welcome.welcome-auto-login .welcome-benefits,
 .meow-welcome.welcome-auto-login .welcome-foot{display:none!important}
-.meow-welcome.welcome-auto-login .welcome-content{padding:22px 18px 18px}
-.meow-welcome.welcome-auto-login .welcome-login-mini-head{display:block;text-align:center;margin:0 0 16px}
-.meow-welcome.welcome-auto-login .welcome-login-mini-head b{display:block;font-size:20px;line-height:1.25;color:#3c1c15}
-.meow-welcome.welcome-auto-login .welcome-login-mini-head span{display:block;margin-top:5px;font-size:13px;color:#8b7468}
-.meow-welcome.welcome-auto-login .welcome-actions{gap:10px}
-.meow-welcome.welcome-auto-login .welcome-button{min-height:50px;border-radius:15px}
+.meow-welcome.welcome-auto-login .welcome-content{padding:15px 14px 14px}
+.meow-welcome.welcome-auto-login .welcome-login-mini-head{display:block;text-align:center;margin:0 0 10px}
+.meow-welcome.welcome-auto-login .welcome-login-mini-head b{display:block;font-size:16px;line-height:1.2;color:#3c1c15}
+.meow-welcome.welcome-auto-login .welcome-login-mini-head span{display:none}
+.meow-welcome.welcome-auto-login .welcome-actions{gap:8px}
+.meow-welcome.welcome-auto-login .welcome-button{min-height:46px;border-radius:14px;font-size:15px;padding:9px 14px}
 .meow-welcome.welcome-auto-login .welcome-message{margin:10px 2px 0;font-size:12px;text-align:center}
+.meow-welcome.welcome-auto-login #welcomeApple{display:none!important}
 .welcome-login-mini-head{display:none}
 @media(max-width:760px){
   #app-splash{
