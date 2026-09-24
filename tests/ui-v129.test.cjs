@@ -174,6 +174,18 @@ assert(html.includes("if($('salaryTabPro'))$('salaryTabPro').onclick=()=>{setSal
 assert(html.includes("if($('salaryProPane'))$('salaryProPane').classList.toggle('hidden',salarySubTab!=='pro')"),'Pro reconciliation pane switch missing');
 console.log('PASS v159 Free/Pro salary reconciliation tabs structure');
 
+for(const id of ['meowAssistantFab','meowAssistantDialog','meowAssistantDragHandle','meowAssistantMinimize']){
+  assert.equal(ids[id],1,'missing or duplicated #'+id);
+}
+assert(html.includes("const MEOW_ASSISTANT_POS_KEY='meow-work-assistant-pos-v1'"),'Meow Assistant drag position persistence missing');
+assert(html.includes('function bindMeowAssistantDrag()'),'Meow Assistant drag binding missing');
+assert(html.includes('function clampMeowAssistantPosition(left,top)'),'Meow Assistant viewport clamp missing');
+assert(html.includes("saveMeowAssistantPosition()"),'Meow Assistant dragged position must be remembered');
+assert(html.includes("d.show()"),'Meow Assistant must open as non-modal floating UI');
+assert(html.includes(".meow-assistant-dialog::backdrop{display:none}"),'Meow Assistant must not block the page with a modal backdrop');
+console.log('PASS v161 draggable floating Meow Assistant structure');
+
+
 for(const id of ['meowAssistantFab','meowAssistantDialog','meowAssistantDragHandle','meowAssistantMinimize','meowAssistantMonthDialog','meowAssistantMonthGrid']){
   assert.equal(ids[id],1,'missing or duplicated #'+id);
 }
