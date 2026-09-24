@@ -58,7 +58,13 @@ jobs:
           rm -rf ios
           npx cap add ios
           node scripts/patch-ios-bridge.mjs
-          swift scripts/render-ios-branding.swift
+          sips -z 1024 1024 ../app-icon-v115-512.png --out ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png >/dev/null
+          BRAND_TMP="$(mktemp -d)"
+          sips -z 928 928 ../app-icon-v115-512.png --out "$BRAND_TMP/splash-art.png" >/dev/null
+          sips -p 2732 2732 --padColor FFF8EF "$BRAND_TMP/splash-art.png" --out ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png >/dev/null
+          cp ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-1.png
+          cp ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732.png ios/App/App/Assets.xcassets/Splash.imageset/splash-2732x2732-2.png
+          rm -rf "$BRAND_TMP"
           /usr/libexec/PlistBuddy -c "Set :ITSAppUsesNonExemptEncryption false" ios/App/App/Info.plist || \
             /usr/libexec/PlistBuddy -c "Add :ITSAppUsesNonExemptEncryption bool false" ios/App/App/Info.plist
           /usr/libexec/PlistBuddy -c "Set :NSCameraUsageDescription 使用相機拍攝班表、薪資單或頭像圖片。" ios/App/App/Info.plist || \
