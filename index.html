@@ -17,7 +17,7 @@
 <link rel="icon" type="image/png" sizes="512x512" href="./app-icon-v155-512.png?v=155">
 <link rel="shortcut icon" type="image/png" href="./app-icon-v155-192.png?v=155">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v165-meow-assistant-no-auto-keyboard">
+<meta name="meow-ui-build" content="v166-settings-pro-comparison-folds">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -554,6 +554,20 @@ html.dark{
 .settings-modern-head,.settings-modern-fold .work-settings-header{display:flex;align-items:center;gap:9px;padding:12px 14px;color:var(--v129-text)}
 .settings-modern-head>b,.settings-modern-fold .section-title{font-size:15px;font-weight:950;flex:1}
 .settings-modern-head>span:last-child{font-size:16px;font-weight:950}
+.settings-fold-toggle{width:100%;border:0;background:transparent;text-align:left;cursor:pointer}
+.settings-fold-state{font-size:10px!important;color:var(--muted);font-weight:900!important;white-space:nowrap}
+.plan-compare{margin-top:10px;border:1px solid var(--mobile-line,#eadfd5);border-radius:14px;overflow:hidden;background:var(--mobile-surface,#fff)}
+.plan-compare-head,.plan-compare-row{display:grid;grid-template-columns:minmax(0,1fr) 56px 56px;align-items:center;gap:8px;padding:9px 10px}
+.plan-compare-head{background:var(--mobile-soft,#f7f3ef);font-size:10px;color:var(--muted);font-weight:900}
+.plan-compare-row{border-top:1px solid var(--line);font-size:10px}
+.plan-compare-row>span{font-weight:800;color:var(--v129-text)}
+.plan-compare-row>b{text-align:center;color:var(--muted)}
+.plan-compare-row .pro-col{color:var(--v129-accent-strong)}
+.plan-compare-row.pro-only{background:var(--v129-honey-soft,#fff9f0)}
+.pro-plan-dialog{width:min(560px,calc(100vw - 20px))}
+.pro-plan-dialog .dialog-body{max-height:76dvh}
+.pro-plan-dialog .account-inline-plan{margin:0;padding:0;border-top:0}
+@media(max-width:390px){.plan-compare-head,.plan-compare-row{grid-template-columns:minmax(0,1fr) 44px 44px;padding:8px}.plan-compare-row{font-size:9px}}
 .settings-section-icon{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--v129-accent-soft);color:var(--v129-accent);font-size:15px;flex:0 0 auto}
 .settings-modern-row{border-top:1px solid var(--line);padding:10px 14px;display:grid;grid-template-columns:minmax(105px,.65fr) 1.35fr;gap:12px;align-items:center}
 .settings-modern-row b{display:block;font-size:12px;color:var(--v129-text)}
@@ -1604,12 +1618,25 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           <div class="account-inline-plan-head">
             <div>
               <b class="account-current-plan-title">目前方案</b>
-              <div class="hint" id="proPlanSettingsHint" style="margin-top:4px">解鎖雲端同步、自動備份，以及薪資單辨識、逐項對帳、歷史薪資與報告匯出。</div>
+              <div class="hint" id="proPlanSettingsHint" style="margin-top:4px">Free 保留本機基本功能；Pro 解鎖雲端、喵助理、薪資對帳、歷史與匯出。</div>
             </div>
             <span class="account-plan-badge" id="settingsPlanDetailBadge">Free</span>
           </div>
-          <div class="pro-plan-feature-grid">
-            <span>☁️ 雲端同步</span><span>💾 自動備份</span><span>📷 薪資單 OCR v4</span><span>🧾 逐項薪資對帳</span><span>✨ AI 班表／薪資助理</span><span>📚 歷史薪資</span><span>📄 PDF／Excel</span>
+          <div class="plan-compare">
+            <div class="plan-compare-head"><span>功能</span><b>Free</b><b class="pro-col">Pro</b></div>
+            <div class="plan-compare-row"><span>基本排班／月曆班表</span><b>✓</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row"><span>加班、請假、特休紀錄</span><b>✓</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row"><span>行程／待辦事項</span><b>✓</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row"><span>基本薪資試算</span><b>✓</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row"><span>本機自動儲存</span><b>✓</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row pro-only"><span>雲端同步／跨裝置</span><b>—</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row pro-only"><span>雲端自動備份／還原</span><b>—</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row pro-only"><span>喵助理</span><b>—</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row pro-only"><span>逐項薪資對帳</span><b>—</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row pro-only"><span>完整歷史薪資／跨月比較</span><b>—</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row pro-only"><span>PDF／Excel 匯出</span><b>—</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row pro-only"><span>薪資單智慧辨識</span><b>—</b><b class="pro-col">✓</b></div>
+            <div class="plan-compare-row pro-only"><span>薪資單三層交叉檢查</span><b>—</b><b class="pro-col">✓</b></div>
           </div>
           <div class="pro-plan-status" id="proPlanStatusBox"></div>
           <div class="settings-actions" id="liveBillingActions" style="margin-top:10px">
@@ -1635,14 +1662,26 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         </div>
       </div>
 
+      <dialog class="dialog pro-plan-dialog" id="proPlanDialog">
+        <div class="dialog-head">
+          <div><b>Free／Pro 方案比較</b><div class="hint">先看差異，再決定是否升級。</div></div>
+          <button type="button" class="dialog-close" id="proPlanDialogClose" aria-label="關閉">×</button>
+        </div>
+        <div class="dialog-body" id="proPlanDialogContent"></div>
+      </dialog>
+
       <div class="card settings-card settings-modern-card" id="appearanceCard">
-        <div class="settings-modern-head"><span class="settings-section-icon">◕</span><b>顯示與外觀</b><span>⌃</span></div>
-        <div class="settings-modern-row">
-          <div><b>主題模式</b><small>依你的使用習慣顯示</small></div>
-          <div class="settings-segmented">
-            <button type="button" id="themeLight"><span>淺色</span><span>○</span></button>
-            <button type="button" id="themeDark"><span>深色</span><span>○</span></button>
-            <button type="button" id="themeSystem"><span>跟隨系統</span><span>○</span></button>
+        <button type="button" class="settings-modern-head settings-fold-toggle" id="toggleAppearance" aria-controls="appearanceBody" aria-expanded="false">
+          <span class="settings-section-icon">◕</span><b>顯示與外觀</b><span class="settings-fold-state" id="appearanceFoldState">展開設定⌄</span>
+        </button>
+        <div class="hidden" id="appearanceBody">
+          <div class="settings-modern-row">
+            <div><b>主題模式</b><small>依你的使用習慣顯示</small></div>
+            <div class="settings-segmented">
+              <button type="button" id="themeLight"><span>淺色</span><span>○</span></button>
+              <button type="button" id="themeDark"><span>深色</span><span>○</span></button>
+              <button type="button" id="themeSystem"><span>跟隨系統</span><span>○</span></button>
+            </div>
           </div>
         </div>
       </div>
@@ -1674,10 +1713,13 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         </div>
       </div>
 
-      <div class="card settings-card settings-modern-card settings-schedule-pref">
-        <div class="settings-modern-head"><span class="settings-section-icon">▣</span><b>排班偏好</b><span>⌃</span></div>
-        <button type="button" class="settings-modern-action" id="settingsOpenSchedule"><span><b>目前排班方案</b><small id="settingsScheduleSummary">四班二輪・做二休二</small></span><strong>›</strong></button>
-        <button type="button" class="settings-modern-action" id="settingsAiImport"><span><b>✦ AI 班表匯入</b><small>從圖片辨識並轉成班表</small></span><strong>›</strong></button>
+      <div class="card settings-card settings-modern-card settings-schedule-pref" id="schedulePrefCard">
+        <button type="button" class="settings-modern-head settings-fold-toggle" id="toggleSchedulePrefs" aria-controls="schedulePrefsBody" aria-expanded="false">
+          <span class="settings-section-icon">▣</span><b>排班偏好</b><span class="settings-fold-state" id="schedulePrefsFoldState">展開設定⌄</span>
+        </button>
+        <div class="hidden" id="schedulePrefsBody">
+          <button type="button" class="settings-modern-action" id="settingsOpenSchedule"><span><b>目前排班方案</b><small id="settingsScheduleSummary">四班二輪・做二休二</small></span><strong>›</strong></button>
+        </div>
       </div>
 
       <div class="card settings-card work-settings-card settings-fold-card data-sync-card settings-modern-fold" id="dataSyncCard">
@@ -2654,7 +2696,7 @@ function saveSchedulePrefs(){
   try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));}catch(e){}
   changedAndSync();
 }
-current.setDate(1);let activeTab='dashboard',editingDate='',scheduleOpen=false,workSettingsOpen=false,accountProOpen=false,dataSyncOpen=false,deferredPrompt=null,editingEventId='';
+current.setDate(1);let activeTab='dashboard',editingDate='',scheduleOpen=false,workSettingsOpen=false,appearanceOpen=false,schedulePrefsOpen=false,accountProOpen=false,dataSyncOpen=false,deferredPrompt=null,editingEventId='';
 function mb(){const k=monthKey(current.getFullYear(),current.getMonth());state.months[k]=state.months[k]||{};return state.months[k]}
 // Display-only hierarchy. Keep existing saved preset keys and date calculations intact.
 function chineseScheduleCount(value){
@@ -5265,7 +5307,7 @@ function renderProPlanSettings(){
 function renderAccountPlan(){
   const hint=$('accountPlanHint');if(!hint)return;
   const plan=currentPlan();
-  if(!authUser){hint.textContent='登入後可查看 Pro 功能與 3 天免費試用';return}
+  if(!authUser){hint.textContent='查看 Free／Pro 差異；登入後可訂閱 Pro';return}
   if(plan==='developer'){hint.textContent='開發者帳號・全部功能永久解鎖';return}
   if(DEV_TESTING_ENABLED){hint.textContent='開發測試模式，不代表正式訂閱狀態';return}
   if(entitlementStatus==='error'){hint.textContent='方案確認失敗，暫以 Free 使用';return}
@@ -5274,7 +5316,7 @@ function renderAccountPlan(){
   }else if(['past_due','canceled','expired'].includes(entitlementStatus)){
     hint.textContent='目前 Free・Pro 未啟用';
   }else{
-    hint.textContent='目前 Free・展開查看 Pro 功能與 3 天免費試用';
+    hint.textContent='目前 Free・查看 Free／Pro 差異與 3 天免費試用';
   }
 }
 function accountProviderText(user){
@@ -5286,14 +5328,29 @@ function accountProviderText(user){
   if(raw.includes('google'))return'登入方式：Google';
   return'登入方式：Google／LINE／Apple';
 }
+function openProPlanDialog(){
+  const dialog=$('proPlanDialog'),panel=$('proPlanSettings'),host=$('proPlanDialogContent');
+  if(!dialog||!panel||!host)return;
+  if(panel.parentElement!==host)host.appendChild(panel);
+  panel.classList.remove('hidden');
+  renderProPlanSettings();
+  if(!dialog.open)dialog.showModal();
+}
+function closeProPlanDialog(){
+  const dialog=$('proPlanDialog');if(dialog&&dialog.open)dialog.close();
+}
 function openProSettings(){
   setTab('settings');
-  accountProOpen=true;
-  renderSettings();
+  setTimeout(openProPlanDialog,0);
 }
 function renderSettings(){renderHeroProfile();if($('themeLight')&&$('themeDark')){const mode=themeModePreference;$('themeLight').classList.toggle('active',mode==='light');$('themeDark').classList.toggle('active',mode==='dark');if($('themeSystem'))$('themeSystem').classList.toggle('active',mode==='system');$('themeLight').lastElementChild.textContent=mode==='light'?'●':'○';$('themeDark').lastElementChild.textContent=mode==='dark'?'●':'○';if($('themeSystem'))$('themeSystem').lastElementChild.textContent=mode==='system'?'●':'○';}$('saveState').textContent=lastSavedAt?'上次儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'將目前設定與資料儲存到本機裝置';if($('accountStatus'))$('accountStatus').textContent=accountStatusText;if($('accountTitle'))$('accountTitle').textContent=authUser?'帳號已登入':'尚未登入';if($('accountLoginMethod'))$('accountLoginMethod').textContent=accountProviderText(authUser);if($('accountLoggedIn'))$('accountLoggedIn').classList.toggle('hidden',!authUser);if($('accountLoggedOut'))$('accountLoggedOut').classList.toggle('hidden',!!authUser);if($('accountLogout'))$('accountLogout').classList.toggle('hidden',!authUser);if($('accountDeleteZone'))$('accountDeleteZone').classList.toggle('hidden',!authUser);
-if($('proPlanSettings'))$('proPlanSettings').classList.toggle('hidden',!accountProOpen||!authUser);
-if($('accountUpgrade')){$('accountUpgrade').setAttribute('aria-expanded',String(accountProOpen));$('accountUpgrade').setAttribute('aria-label',accountProOpen?'收起 Pro 方案':'展開 Pro 方案');if($('accountPlanChevron'))$('accountPlanChevron').textContent=accountProOpen?'⌃':'⌄'}
+if($('accountUpgrade')){$('accountUpgrade').setAttribute('aria-expanded','false');$('accountUpgrade').setAttribute('aria-label','查看 Free／Pro 方案比較');if($('accountPlanChevron'))$('accountPlanChevron').textContent='›'}
+if($('appearanceBody'))$('appearanceBody').classList.toggle('hidden',!appearanceOpen);
+if($('toggleAppearance'))$('toggleAppearance').setAttribute('aria-expanded',String(appearanceOpen));
+if($('appearanceFoldState'))$('appearanceFoldState').textContent=appearanceOpen?'收起設定⌃':'展開設定⌄';
+if($('schedulePrefsBody'))$('schedulePrefsBody').classList.toggle('hidden',!schedulePrefsOpen);
+if($('toggleSchedulePrefs'))$('toggleSchedulePrefs').setAttribute('aria-expanded',String(schedulePrefsOpen));
+if($('schedulePrefsFoldState'))$('schedulePrefsFoldState').textContent=schedulePrefsOpen?'收起設定⌃':'展開設定⌄';
 if($('dataSyncBody'))$('dataSyncBody').classList.toggle('hidden',!dataSyncOpen);
 if($('toggleDataSync')){$('toggleDataSync').setAttribute('aria-expanded',String(dataSyncOpen));$('toggleDataSync').textContent=dataSyncOpen?'⚙ 收起設定⌃':'⚙ 展開設定⌄'}
 const setWork=(id,v)=>{if($(id)&&document.activeElement!==$(id))$(id).value=(v??'')};
@@ -5482,6 +5539,8 @@ document.addEventListener('click',e=>{
   closeScheduleMoreMenu();
 });
 $('toggleWorkSettings').onclick=()=>{workSettingsOpen=!workSettingsOpen;renderSettings()};
+if($('toggleAppearance'))$('toggleAppearance').onclick=()=>{appearanceOpen=!appearanceOpen;renderSettings()};
+if($('toggleSchedulePrefs'))$('toggleSchedulePrefs').onclick=()=>{schedulePrefsOpen=!schedulePrefsOpen;renderSettings()};
 if($('toggleDataSync'))$('toggleDataSync').onclick=()=>{dataSyncOpen=!dataSyncOpen;renderSettings()};
 $('patternPreset').onchange=e=>selectSchedulePlan(e.target.value);
 $('editRotation').onclick=openRotationSetup;
@@ -6386,7 +6445,6 @@ if($('mobileAvatarButton'))$('mobileAvatarButton').onclick=()=>$('avatarInput').
 if($('saveAccountUsername'))$('saveAccountUsername').onclick=saveAccountUsername;
 if($('settingsAvatarButton'))$('settingsAvatarButton').onclick=()=>$('avatarInput').click();
 if($('settingsOpenSchedule'))$('settingsOpenSchedule').onclick=()=>setTab('calendar');
-if($('settingsAiImport'))$('settingsAiImport').onclick=()=>{setTab('calendar');setTimeout(()=>{if(canUse('smart_schedule_import'))$('aiScheduleFileInput').click();else if($('aiScheduleCard'))$('aiScheduleCard').scrollIntoView({behavior:'smooth',block:'center'})},50)};
 if($('accountUsername'))$('accountUsername').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveAccountUsername();e.currentTarget.blur()}});
 $('avatarInput').onchange=e=>{
   const f=e.target.files&&e.target.files[0];
@@ -6496,7 +6554,9 @@ if($('importBackup'))$('importBackup').onclick=()=>$('importBackupInput').click(
 if($('importBackupInput'))$('importBackupInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)importBackupFile(file);e.target.value=''};
 if($('cloudBackupNow'))$('cloudBackupNow').onclick=()=>backupCloudNow(true);
 if($('cloudRestoreNow'))$('cloudRestoreNow').onclick=()=>restoreFromCloud(true);
-if($('accountUpgrade'))$('accountUpgrade').onclick=()=>{const y=window.scrollY;accountProOpen=!accountProOpen;renderSettings();window.scrollTo({top:y,behavior:'auto'})};
+if($('accountUpgrade'))$('accountUpgrade').onclick=openProPlanDialog;
+if($('proPlanDialogClose'))$('proPlanDialogClose').onclick=closeProPlanDialog;
+if($('proPlanDialog'))$('proPlanDialog').addEventListener('cancel',e=>{e.preventDefault();closeProPlanDialog()});
 $('accountLogout').onclick=signOutAccount;
 if($('deleteAccount'))$('deleteAccount').onclick=deleteAccountPermanently;
 initWelcome();
@@ -6506,7 +6566,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v165';
+    const reloadKey='meow-sw-reloaded-v166';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -6515,7 +6575,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=165',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=166',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
