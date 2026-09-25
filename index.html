@@ -6908,8 +6908,56 @@ async function routeMeowAssistantWithAI(query,context){
     return null;
   }
 }
+function meowAssistantValidIsoDate(value){
+  const s=String(value||'');
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return false;
+  const dt=new Date(s+'T00:00:00');
+  return !Number.isNaN(dt.getTime())&&iso(dt)===s;
+}
+async function handleMeowAssistantAiOperation(route){
+  const op=route&&route.operation;
+  if(!op||!op.kind||op.kind==='none')return false;
+  if(num(route.confidence)<.88){
+    renderMeowAssistantReply(route.clarifyingQuestion||'我理解你想修改班表，但日期還不夠確定。請再說一次要改哪一天。','error');
+    return true;
+  }
+  if(op.kind==='view_schedule'){
+    const year=Number(op.year),month=Number(op.month);
+    if(!Number.isInteger(year)||!Number.isInteger(month)||month<1||month>12){
+      renderMeowAssistantReply('我知道你想看班表，但還無法確定月份。請告訴我要看哪個月份。','error');
+      return true;
+    }
+    await showMeowAssistantMonth(year,month-1);
+    return true;
+  }
+  if(op.kind==='add_overtime'||op.kind==='remove_overtime'){
+    const dates=(Array.isArray(op.dates)?op.dates:[]).filter(meowAssistantValidIsoDate);
+    if(!dates.length){
+      renderMeowAssistantReply(route.clarifyingQuestion||'我知道你想修改加班，但日期還不夠確定。','error');
+      return true;
+    }
+    const plan={ok:true,type:op.kind==='add_overtime'?'add':'remove',dates};
+    if(plan.type==='add')plan.hours=Number(op.hours)>0?Number(op.hours):Math.max(.5,num(state.settings.defaultOvertimeHours)||10);
+    const checked=meowAssistantPlanCheck(plan);
+    if(!checked.ok){renderMeowAssistantReply(checked.message,'error');return true}
+    executeMeowAssistantPlan(checked);
+    return true;
+  }
+  if(op.kind==='move_overtime'){
+    if(!meowAssistantValidIsoDate(op.fromDate)||!meowAssistantValidIsoDate(op.toDate)){
+      renderMeowAssistantReply(route.clarifyingQuestion||'我知道你想移動加班，但原日期或新日期還不夠確定。','error');
+      return true;
+    }
+    const checked=meowAssistantPlanCheck({ok:true,type:'move',from:op.fromDate,to:op.toDate});
+    if(!checked.ok){renderMeowAssistantReply(checked.message,'error');return true}
+    executeMeowAssistantPlan(checked);
+    return true;
+  }
+  return false;
+}
 async function handleMeowAssistantAiRoute(route,raw){
   if(!route||route.understood===false)return false;
+  if(await handleMeowAssistantAiOperation(route))return true;
   const intents=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])]
     .filter((x,i,a)=>x&&a.indexOf(x)===i);
   if(intents.length&&MEOW_ASSISTANT_AI_LEGACY_INTENTS.has(intents[0])){
