@@ -39,6 +39,8 @@ jobs:
         run: node tests/meow-assistant-multiturn-fuzz-1000.test.cjs
       - name: Meow Assistant live OpenAI semantic quality harness contract
         run: node tests/meow-assistant-live-quality-harness.test.cjs
+      - name: Meow Assistant live OpenAI failure classification
+        run: node tests/meow-assistant-live-failure-classification.test.cjs
       - name: Meow Assistant multi-intent response composition
         run: node tests/meow-assistant-multi-intent-response.test.cjs
       - name: Meow Assistant Taiwan labor knowledge base
