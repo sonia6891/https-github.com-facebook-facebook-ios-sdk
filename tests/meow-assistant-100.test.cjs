@@ -39,8 +39,16 @@ function extractFunction(name){
   throw new Error('unterminated function '+name);
 }
 
-const src=extractFunction('meowAssistantKnowledgeIntent');
-const meowAssistantKnowledgeIntent=(new Function(src+'; return meowAssistantKnowledgeIntent;'))();
+const helperStart=html.indexOf('function meowAssistantChineseNumber');
+const helperEnd=html.indexOf('function meowAssistantCalcMonthAt',helperStart);
+assert(helperStart>=0&&helperEnd>helperStart,'Meow Assistant helper block missing');
+const helperBlock=html.slice(helperStart,helperEnd);
+const factory=new Function(`
+  ${helperBlock}
+  return {normalizeMeowAssistantText,meowAssistantKnowledgeIntent};
+`);
+const api=factory();
+const meowAssistantKnowledgeIntent=q=>api.meowAssistantKnowledgeIntent(api.normalizeMeowAssistantText(q));
 
 const groups={
   help:[
