@@ -6987,13 +6987,16 @@ const MEOW_ASSISTANT_LIVE_QUALITY_CASES=[
   },
   {
     q:'今天大夜，明天又早班，而且這個月已經加50小時，公司還叫我留下來，這樣可以嗎？',
-    intent:'shiftRestInterval',
-    secondaryAny:['overtimeLimit','mandatoryOvertime']
+    requiredIntents:['shiftRestInterval','overtimeLimit','mandatoryOvertime']
   }
 ];
 function meowAssistantLiveCasePass(route,test){
   if(!route||route.understood===false)return false;
   if(test.intent&&route.primaryIntent!==test.intent)return false;
+  if(test.requiredIntents&&test.requiredIntents.length){
+    const all=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])];
+    if(!test.requiredIntents.every(x=>all.includes(x)))return false;
+  }
   if(test.secondaryAny&&test.secondaryAny.length){
     const all=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])];
     if(!test.secondaryAny.some(x=>all.includes(x)))return false;
@@ -7015,6 +7018,10 @@ function meowAssistantLiveFailureKind(route,test,error=''){
   if(!route)return{code:'no_route',label:'沒有取得語意路由',layer:'第 2 層'};
   if(route.understood===false)return{code:'not_understood',label:'自然語言未理解',layer:'第 0 層'};
   if(test.intent&&route.primaryIntent!==test.intent)return{code:'primary_intent',label:'主要意圖判斷錯誤',layer:'第 0／2 層'};
+  if(test.requiredIntents&&test.requiredIntents.length){
+    const all=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])];
+    if(!test.requiredIntents.every(x=>all.includes(x)))return{code:'secondary_intent',label:'複合意圖漏判',layer:'第 0／2 層'};
+  }
   if(test.secondaryAny&&test.secondaryAny.length){
     const all=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])];
     if(!test.secondaryAny.some(x=>all.includes(x)))return{code:'secondary_intent',label:'複合意圖漏判',layer:'第 0／2 層'};
@@ -7195,7 +7202,7 @@ async function runMeowAssistantLiveQualityTest(options={}){
 
       const pass=!error&&meowAssistantLiveCasePass(route,test);
       const failure=pass?null:meowAssistantLiveFailureKind(route,test,error);
-      runResults.push({n,q:test.q,pass,error,expected:test.intent||test.operation||null,route,failure});
+      runResults.push({n,q:test.q,pass,error,expected:test.intent||test.requiredIntents||test.operation||null,route,failure});
       setMeowAssistantLiveQualityUi(true,i+1,totalCases,(failedOnly?'重跑失敗題 ':'正式 OpenAI 測試 ')+(i+1)+' / '+totalCases+(pass?' ✓':' ✕'));
       renderMeowAssistantReply((failedOnly?'正在重跑失敗題… ':'正在執行喵助理真實 OpenAI 語意測試… ')+(i+1)+'/'+totalCases);
     }
