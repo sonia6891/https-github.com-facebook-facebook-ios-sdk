@@ -6725,7 +6725,7 @@ function renderMeowAssistantReply(message,type=''){
   box.textContent=message||'';box.dataset.state=type;
   box.classList.toggle('hidden',!message);
   const value=String(message||'').trim();
-  const transient=value==='我在理解你的意思…'||value==='正在把語音轉成文字…'||/正在處理…$/.test(value);
+  const transient=value==='我在理解你的意思…'||value==='正在把語音轉成文字…'||/^正在執行喵助理真實 OpenAI 語意測試/.test(value)||/正在處理…$/.test(value);
   if(value&&!transient)meowAssistantRemember('assistant',value);
 }
 
