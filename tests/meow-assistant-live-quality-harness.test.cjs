@@ -38,5 +38,9 @@ for(const token of [
 for(const op of ['remove_overtime','move_overtime','undo_last','view_schedule']){
   assert(corpusMatch[1].includes(op),'missing contextual live operation '+op);
 }
+assert(corpusMatch[1].includes("requiredIntents:['shiftRestInterval','overtimeLimit','mandatoryOvertime']"),'multi-risk case must score complete intent coverage rather than fixed primary order');
+assert(corpusMatch[1].includes("intent:'partTimeRights',secondaryAny:['holidayPay']"),'part-time holiday case must preserve status-specific primary intent');
+assert(corpusMatch[1].includes("intent:'fixedShift',secondaryAny:['shiftRestInterval']"),'fixed-shift interval case must preserve applicability primary intent');
+assert(html.includes('test.requiredIntents&&test.requiredIntents.length'),'live scorer must support requiredIntents coverage');
 
 console.log('PASS Meow Assistant developer-only live OpenAI semantic quality harness: '+count+' cases');
