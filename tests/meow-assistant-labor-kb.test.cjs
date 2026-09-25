@@ -12,7 +12,9 @@ assert(kb.verifiedAt,'verifiedAt missing');
 const required=[
   'shiftRestInterval','overtimeLimit','workBreak','consecutiveWorkDays','flexibleWorkingHours',
   'compensatoryLeave','annualLeaveTermination','holidayTransfer','pregnancyNightShift',
-  'article841','security841','partTimeRights','naturalDisaster','overtimeWageBase'
+  'article841','security841','partTimeRights','naturalDisaster','overtimeWageBase',
+  'splitShift','onCallStandby','handoverWorkTime','crossMidnightShift','scheduleChange','shiftSwap',
+  'mandatoryOvertime','attendanceRecord','trainingMeetingTime','mealBreakOnDuty','scheduleNotice','fixedShift'
 ];
 for(const key of required){
   const e=kb.entries&&kb.entries[key];
