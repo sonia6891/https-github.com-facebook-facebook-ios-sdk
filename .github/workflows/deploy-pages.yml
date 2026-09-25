@@ -47,6 +47,9 @@ jobs:
         run: node tests/meow-assistant-multi-intent-response.test.cjs
       - name: Meow Assistant Taiwan labor knowledge base
         run: node tests/meow-assistant-labor-kb.test.cjs
+
+      - name: Meow Assistant leave-law and minimum-wage routing
+        run: node tests/meow-assistant-leave-law.test.cjs
       - name: Meow Assistant natural-language discovery baseline
         run: node tests/meow-assistant-auto-discovery.test.cjs
       - name: Install browser tests
