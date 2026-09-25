@@ -1977,6 +1977,19 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         </div>
       </div>
       <div class="card settings-card install-only" id="installCard"><div class="section-title"><span class="paw">🐾</span>App 安裝 / 加入主畫面</div><div class="install-row"><div><b>將 App 加入主畫面</b><div class="hint" id="installHint">快速開啟，使用更方便</div></div><button class="btn primary" id="installApp"><svg class="icon" style="display:inline-block;vertical-align:-3px"><use href="#i-phone"/></svg> 安裝</button></div></div>
+      <div class="card settings-card hidden" id="meowDeveloperAiTestCard">
+        <div class="section-title"><span class="paw">🧪</span>喵助理 OpenAI 品質測試</div>
+        <div class="hint">僅開發者帳號可見。使用正式 Supabase → OpenAI 路由測真人口語，不會修改班表或薪資資料。</div>
+        <div class="settings-actions" style="margin-top:10px">
+          <button class="btn primary" id="meowAiTestRun" type="button">執行 32 題正式測試</button>
+          <button class="btn" id="meowAiTestRerunFailed" type="button">只重跑失敗題</button>
+        </div>
+        <div class="hint" id="meowAiTestSummary" style="margin-top:10px">尚未執行正式 OpenAI 語意測試。</div>
+        <details id="meowAiTestDetails" style="margin-top:8px">
+          <summary>查看失敗案例與詳細結果</summary>
+          <div id="meowAiTestFailures" class="hint" style="margin-top:8px;white-space:pre-wrap"></div>
+        </details>
+      </div>
       <div class="card settings-card" id="aboutCard">
         <div class="install-row"><div><b>ⓘ 關於</b><div class="hint">版本資訊・v1.0.0</div></div><span>🐾</span></div>
         <div class="about-legal-links">
@@ -5902,6 +5915,7 @@ renderAccountPlan();
 renderProPlanSettings();
 renderBillingHistory();
 renderSyncStatus();
+renderMeowAssistantLiveQualityReport();
 }
 function safeRender(name,fn){
   try{fn()}
@@ -6071,6 +6085,8 @@ $('toggleWorkSettings').onclick=()=>{workSettingsOpen=!workSettingsOpen;renderSe
 if($('toggleAppearance'))$('toggleAppearance').onclick=()=>{appearanceOpen=!appearanceOpen;renderSettings()};
 if($('toggleSchedulePrefs'))$('toggleSchedulePrefs').onclick=()=>{schedulePrefsOpen=!schedulePrefsOpen;renderSettings()};
 if($('toggleDataSync'))$('toggleDataSync').onclick=()=>{dataSyncOpen=!dataSyncOpen;renderSettings()};
+if($('meowAiTestRun'))$('meowAiTestRun').onclick=()=>void runMeowAssistantLiveQualityTest();
+if($('meowAiTestRerunFailed'))$('meowAiTestRerunFailed').onclick=()=>void runMeowAssistantLiveQualityTest({failedOnly:true});
 $('patternPreset').onchange=e=>selectSchedulePlan(e.target.value);
 $('editRotation').onclick=openRotationSetup;
 $('rotationSequence').oninput=rotationDraftPreview;
@@ -6984,36 +7000,103 @@ function meowAssistantLiveCasePass(route,test){
   }
   return true;
 }
-async function runMeowAssistantLiveQualityTest(){
+function meowAssistantReadLiveQualityReport(){
+  if(window.meowAssistantLastLiveQualityReport)return window.meowAssistantLastLiveQualityReport;
+  try{
+    const raw=localStorage.getItem('meow-assistant-live-quality-report');
+    if(raw){
+      const parsed=JSON.parse(raw);
+      if(parsed&&Array.isArray(parsed.results))return parsed;
+    }
+  }catch(e){}
+  return null;
+}
+function meowAssistantLiveRouteSummary(route){
+  if(!route)return '（沒有回傳 route）';
+  const secondary=Array.isArray(route.secondaryIntents)&&route.secondaryIntents.length?' / 次要：'+route.secondaryIntents.join('、'):'';
+  const op=route.operation&&route.operation.kind&&route.operation.kind!=='none'
+    ?' / 操作：'+route.operation.kind
+      +(Array.isArray(route.operation.dates)&&route.operation.dates.length?' '+route.operation.dates.join('、'):'')
+      +(route.operation.fromDate?' '+route.operation.fromDate+'→'+route.operation.toDate:'')
+    :'';
+  return '主要：'+String(route.primaryIntent||'unknown')+secondary+op
+    +' / 前文：'+(route.referencesPriorContext?'是':'否')
+    +' / 信心：'+Math.round(num(route.confidence)*100)+'%';
+}
+function renderMeowAssistantLiveQualityReport(){
+  const card=$('meowDeveloperAiTestCard');
+  if(card)card.classList.toggle('hidden',!isDeveloperAccount());
+  if(!isDeveloperAccount())return;
+  const summary=$('meowAiTestSummary'),failBox=$('meowAiTestFailures'),retry=$('meowAiTestRerunFailed');
+  const report=meowAssistantReadLiveQualityReport();
+  if(!report){
+    if(summary)summary.textContent='尚未執行正式 OpenAI 語意測試。';
+    if(failBox)failBox.textContent='目前沒有測試報告。';
+    if(retry)retry.disabled=true;
+    return;
+  }
+  const total=Number(report.total)||0,passed=Number(report.passed)||0,failed=Number(report.failed)||0;
+  const when=report.generatedAt?new Date(report.generatedAt).toLocaleString('zh-TW'):'';
+  if(summary)summary.textContent='上次結果：'+passed+'/'+total+' 通過（'+Math.round(passed/Math.max(1,total)*100)+'%）・失敗 '+failed+' 題'
+    +(report.lastRunMode==='failed-only'?'・剛完成失敗題重測':'')+(when?'・'+when:'');
+  if(retry)retry.disabled=failed===0;
+  const failures=(Array.isArray(report.results)?report.results:[]).filter(x=>!x.pass);
+  if(failBox){
+    failBox.textContent=failures.length?failures.map(x=>{
+      const expected=typeof x.expected==='string'?x.expected:JSON.stringify(x.expected);
+      return '#'+x.n+' '+x.q+'\n期望：'+expected+'\n實際：'+meowAssistantLiveRouteSummary(x.route)+(x.error?'\n錯誤：'+x.error:'');
+    }).join('\n\n'):'全部通過，目前沒有失敗案例。';
+  }
+}
+async function runMeowAssistantLiveQualityTest(options={}){
   if(!isDeveloperAccount()){
     renderMeowAssistantReply('這個自我測試只開放開發者帳號。','error');
     return false;
   }
-  const started=Date.now(),results=[];
-  renderMeowAssistantReply('正在執行喵助理真實 OpenAI 語意測試…');
-  for(let i=0;i<MEOW_ASSISTANT_LIVE_QUALITY_CASES.length;i++){
-    const test=MEOW_ASSISTANT_LIVE_QUALITY_CASES[i];
+  const failedOnly=!!options.failedOnly,previous=meowAssistantReadLiveQualityReport();
+  let cases=MEOW_ASSISTANT_LIVE_QUALITY_CASES.map((test,index)=>({test,n:index+1}));
+  if(failedOnly){
+    const failedQs=new Set(previous&&Array.isArray(previous.results)?previous.results.filter(x=>!x.pass).map(x=>x.q):[]);
+    cases=cases.filter(x=>failedQs.has(x.test.q));
+    if(!cases.length){
+      renderMeowAssistantReply('目前沒有失敗題需要重跑。','success');
+      renderMeowAssistantLiveQualityReport();
+      return true;
+    }
+  }
+  const started=Date.now(),runResults=[];
+  renderMeowAssistantReply(failedOnly?'正在重跑失敗題…':'正在執行喵助理真實 OpenAI 語意測試…');
+  for(let i=0;i<cases.length;i++){
+    const {test,n}=cases[i];
     let route=null,error='';
     try{
       route=await routeMeowAssistantWithAI(test.q,test.context||[]);
     }catch(e){error=String(e&&e.message||e)}
     const pass=!error&&meowAssistantLiveCasePass(route,test);
-    results.push({n:i+1,q:test.q,pass,error,expected:test.intent||test.operation||null,route});
-    const done=i+1;
-    renderMeowAssistantReply('正在執行喵助理真實 OpenAI 語意測試… '+done+'/'+MEOW_ASSISTANT_LIVE_QUALITY_CASES.length);
+    runResults.push({n,q:test.q,pass,error,expected:test.intent||test.operation||null,route});
+    renderMeowAssistantReply((failedOnly?'正在重跑失敗題… ':'正在執行喵助理真實 OpenAI 語意測試… ')+(i+1)+'/'+cases.length);
+  }
+  let results=runResults;
+  if(failedOnly&&previous&&Array.isArray(previous.results)){
+    const replacement=new Map(runResults.map(x=>[x.q,x]));
+    results=previous.results.map(x=>replacement.get(x.q)||x);
   }
   const passed=results.filter(x=>x.pass).length,total=results.length,failed=results.filter(x=>!x.pass);
   window.meowAssistantLastLiveQualityReport={
     generatedAt:new Date().toISOString(),
+    lastRunMode:failedOnly?'failed-only':'full',
+    testedThisRun:runResults.length,
     total,passed,failed:failed.length,durationMs:Date.now()-started,results
   };
   try{localStorage.setItem('meow-assistant-live-quality-report',JSON.stringify(window.meowAssistantLastLiveQualityReport))}catch(e){}
+  renderMeowAssistantLiveQualityReport();
   const examples=failed.slice(0,3).map(x=>'#'+x.n+'「'+x.q+'」').join('、');
-  const msg='真實 OpenAI 語意測試完成：'+passed+'/'+total+' 通過（'+Math.round(passed/Math.max(1,total)*100)+'%）'
-    +(failed.length?'。失敗 '+failed.length+' 題：'+examples+'。完整結果已保存在開發者測試報告。':'。目前沒有發現語意路由失敗。');
+  const msg=(failedOnly?'失敗題重測完成：':'真實 OpenAI 語意測試完成：')+passed+'/'+total+' 通過（'+Math.round(passed/Math.max(1,total)*100)+'%）'
+    +(failed.length?'。仍失敗 '+failed.length+' 題：'+examples+'。設定頁開發者測試區可看完整結果。':'。目前沒有發現語意路由失敗。');
   renderMeowAssistantReply(msg,failed.length?'error':'success');
   return failed.length===0;
 }
+
 async function routeMeowAssistantWithAI(query,context){
   try{
     const result=await invokeUserFunction('meow-assistant-route',{
