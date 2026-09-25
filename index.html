@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=202">
+<link rel="manifest" href="./manifest.webmanifest?v=203">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v202-meow-round2-adversarial">
+<meta name="meow-ui-build" content="v203-meow-openai-nlu">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -6725,6 +6725,101 @@ function renderMeowAssistantReply(message,type=''){
   box.textContent=message||'';box.dataset.state=type;
   box.classList.toggle('hidden',!message);
 }
+
+const MEOW_ASSISTANT_AI_LEGACY_INTENTS=new Set([
+  'help','todayShift','tomorrowShift','nextWork','nextOff','monthSummary','overtimeHours',
+  'grossPay','estimatedPay','holidayPay','missingOvertime','overtimePay','missingShiftAllowance',
+  'shiftAllowance','deductions','payday','annualLeave','reconcileSummary','whyPayChanged','history',
+  'unknownDeduction','extraItem','missingItem','rerunPayslip','salaryCalc','freeReconcile',
+  'leaveConflict','paystubContents','sickLeavePay','rotationHelp','scheduleGeneral','payrollGeneral'
+]);
+const MEOW_ASSISTANT_AI_INTENT_LABELS={
+  shiftRestInterval:'兩個班次之間的休息時間',
+  consecutiveWorkDays:'連續上班天數',
+  workBreak:'工作中的休息時間',
+  splitShift:'兩頭班／兩段班',
+  onCallStandby:'On Call／待命工時',
+  handoverWorkTime:'交班／交接時間是否算工時',
+  crossMidnightShift:'跨午夜班次',
+  scheduleChange:'臨時改班',
+  shiftSwap:'與同事換班',
+  overtimeLimit:'加班時數上限',
+  compensatoryLeave:'加班換補休',
+  holidayTransfer:'國定假日調移',
+  overtimeWageBase:'加班費計算基礎',
+  annualLeaveTermination:'離職時未休特休',
+  pregnancyNightShift:'懷孕／哺乳期間夜班',
+  flexibleWorkingHours:'變形工時',
+  article841:'勞基法 84-1 特殊工時',
+  partTimeRights:'工讀／兼職／部分工時',
+  naturalDisaster:'颱風／天然災害出勤',
+  mandatoryOvertime:'臨時或強制加班',
+  attendanceRecord:'打卡與實際工作時間',
+  trainingMeetingTime:'教育訓練／會議工時',
+  mealBreakOnDuty:'用餐時仍須待命',
+  scheduleNotice:'班表公布／改班通知',
+  fixedShift:'固定班與輪班的差異',
+  unknown:'這個問題'
+};
+let meowAssistantConversation=[];
+function meowAssistantRemember(role,text){
+  const value=String(text||'').trim();if(!value)return;
+  meowAssistantConversation.push({role:role==='assistant'?'assistant':'user',text:value.slice(0,600)});
+  if(meowAssistantConversation.length>12)meowAssistantConversation=meowAssistantConversation.slice(-12);
+}
+function meowAssistantAppContext(){
+  const now=new Date(),settings=state.settings||{},schedule=state.schedule||{};
+  return{
+    today:iso(now),
+    currentMonth:now.getFullYear()+'-'+pad(now.getMonth()+1),
+    viewedMonth:current.getFullYear()+'-'+pad(current.getMonth()+1),
+    scheduleName:typeof scheduleName==='function'?scheduleName():'',
+    scheduleStartDate:schedule.startDate||null,
+    dailyWorkHours:num(settings.dailyWorkHours)||8,
+    defaultOvertimeHours:num(settings.defaultOvertimeHours)||10,
+    overtimeRateConfigured:settings.overtimeRateMode&&settings.overtimeRateMode!=='unselected',
+    hasPayday:num(settings.payday)>0,
+    hasHireDate:!!settings.hireDate
+  };
+}
+async function routeMeowAssistantWithAI(query,context){
+  try{
+    const result=await invokeUserFunction('meow-assistant-route',{
+      query:String(query||'').slice(0,800),
+      context:Array.isArray(context)?context.slice(-8):meowAssistantConversation.slice(-8),
+      appContext:meowAssistantAppContext()
+    });
+    return result&&result.ok&&result.route?result.route:null;
+  }catch(e){
+    console.warn('[meow-assistant] AI routing unavailable',e&&e.message||e);
+    return null;
+  }
+}
+async function handleMeowAssistantAiRoute(route,raw){
+  if(!route||route.understood===false)return false;
+  if(route.shouldClarify&&route.clarifyingQuestion){
+    const msg=String(route.clarifyingQuestion||'').trim();
+    if(msg){renderMeowAssistantReply(msg);meowAssistantRemember('assistant',msg);return true}
+  }
+  const intents=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])]
+    .filter((x,i,a)=>x&&a.indexOf(x)===i);
+  if(intents.length&&MEOW_ASSISTANT_AI_LEGACY_INTENTS.has(intents[0])){
+    const local=intents.filter(x=>MEOW_ASSISTANT_AI_LEGACY_INTENTS.has(x)).slice(0,4);
+    if(local.length>1)await handleMeowAssistantKnowledgeMulti(local,raw);
+    else await handleMeowAssistantKnowledge(local[0],raw);
+    return true;
+  }
+  const intent=route.primaryIntent||'unknown',label=MEOW_ASSISTANT_AI_INTENT_LABELS[intent]||route.userGoal||'這個問題';
+  const missing=(Array.isArray(route.missingInformation)?route.missingInformation:[]).filter(Boolean).slice(0,3);
+  const data=(Array.isArray(route.appDataNeeded)?route.appDataNeeded:[]).filter(x=>x&&x!=='none');
+  let msg='我理解你是在問「'+label+'」。';
+  if(data.length)msg+='這題需要結合你的 App 資料判斷。';
+  if(missing.length)msg+='還需要確認：'+missing.join('、')+'。';
+  else msg+='目前我先不直接下法律或薪資結論，避免在規則資料還沒核對前亂答。';
+  renderMeowAssistantReply(msg);
+  meowAssistantRemember('assistant',msg);
+  return true;
+}
 async function openSmartPayslipFromMeowAssistant(){
   if(!canUse('payslip_scan')){
     renderMeowAssistantReply('智慧薪資對帳是 Pro 功能。請先確認目前帳號的 Pro 方案。','error');
@@ -6749,25 +6844,44 @@ async function previewMeowAssistant(){
     renderMeowAssistantReply('喵助理是 Pro 功能。','error');
     return;
   }
-  const parsed=meowAssistantPlanCheck(meowAssistantParse($('meowAssistantInput').value));
-  if(!parsed.ok){renderMeowAssistantReply(parsed.message,'error');return}
-  if(parsed.type==='viewSchedule'){await showMeowAssistantMonth(parsed.year,parsed.month);return}
+  const input=$('meowAssistantInput'),raw=String(input&&input.value||'').trim();
+  if(!raw){renderMeowAssistantReply('直接告訴我你要做什麼。','error');return}
+  const priorContext=meowAssistantConversation.slice(-8);
+  const parsed=meowAssistantPlanCheck(meowAssistantParse(raw));
+  const genericKnowledge=parsed&&parsed.ok&&(
+    (parsed.type==='knowledge'&&['scheduleGeneral','payrollGeneral'].includes(parsed.knowledge))||
+    (parsed.type==='knowledgeMulti'&&parsed.knowledgeList&&parsed.knowledgeList.some(x=>['scheduleGeneral','payrollGeneral'].includes(x)))
+  );
+  if(!parsed.ok||genericKnowledge){
+    renderMeowAssistantReply('我在理解你的意思…');
+    const aiRoute=await routeMeowAssistantWithAI(raw,priorContext);
+    meowAssistantRemember('user',raw);
+    if(aiRoute){
+      await handleMeowAssistantAiRoute(aiRoute,raw);
+      if(input)input.value='';
+      return;
+    }
+    if(!parsed.ok){renderMeowAssistantReply(parsed.message,'error');return}
+  }else{
+    meowAssistantRemember('user',raw);
+  }
+  if(parsed.type==='viewSchedule'){await showMeowAssistantMonth(parsed.year,parsed.month);if(input)input.value='';return}
   if(parsed.type==='smartPayslipReconcile'){
-    if(openSmartPayslipFromMeowAssistant())$('meowAssistantInput').value='';
+    if(openSmartPayslipFromMeowAssistant()&&input)input.value='';
     return;
   }
   if(parsed.type==='knowledge'){
     await handleMeowAssistantKnowledge(parsed.knowledge,parsed.raw||'');
-    $('meowAssistantInput').value='';
+    if(input)input.value='';
     return;
   }
   if(parsed.type==='knowledgeMulti'){
     await handleMeowAssistantKnowledgeMulti(parsed.knowledgeList,parsed.raw||'');
-    $('meowAssistantInput').value='';
+    if(input)input.value='';
     return;
   }
   executeMeowAssistantPlan(parsed);
-  $('meowAssistantInput').value='';
+  if(input)input.value='';
 }
 function setMeowAssistantMinimized(minimized){
   const d=$('meowAssistantDialog');if(!d)return;
