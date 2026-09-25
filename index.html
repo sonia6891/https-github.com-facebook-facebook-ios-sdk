@@ -6881,7 +6881,7 @@ async function meowAssistantLaborKnowledge(intent,raw=''){
   if(!intent)return null;
   if(!meowLaborKnowledgeCache){
     try{
-      const res=await fetch('./assets/meow-labor-knowledge-v1.json?v=204',{cache:'no-store'});
+      const res=await fetch('./assets/meow-labor-knowledge-v1.json?v=205',{cache:'no-store'});
       if(res.ok)meowLaborKnowledgeCache=await res.json();
     }catch(e){console.warn('[meow-assistant] labor knowledge unavailable',e)}
   }
