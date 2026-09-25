@@ -7104,6 +7104,35 @@ function meowAssistantReadLiveQualityReport(){
   }catch(e){}
   return null;
 }
+async function syncMeowAssistantLiveQualityReport(report=meowAssistantReadLiveQualityReport()){
+  if(!report||!authUser||!isDeveloperAccount()||!navigator.onLine)return false;
+  const stamp=String(report.generatedAt||'');
+  if(!stamp)return false;
+  const syncKey='meow-assistant-live-quality-synced:'+authUser.id;
+  if(readLocalString(syncKey)===stamp)return true;
+  try{
+    const client=await getAuthClient();
+    const row={
+      user_id:authUser.id,
+      generated_at:stamp,
+      last_run_mode:report.lastRunMode==='failed-only'?'failed-only':'full',
+      tested_this_run:Math.max(0,Number(report.testedThisRun)||0),
+      total:Math.max(0,Number(report.total)||0),
+      passed:Math.max(0,Number(report.passed)||0),
+      failed:Math.max(0,Number(report.failed)||0),
+      failure_summary:report.failureSummary&&typeof report.failureSummary==='object'?report.failureSummary:{},
+      report,
+      updated_at:new Date().toISOString()
+    };
+    const {error}=await client.from('meow_assistant_quality_latest').upsert(row,{onConflict:'user_id'});
+    if(error)throw error;
+    try{localStorage.setItem(syncKey,stamp)}catch(e){}
+    return true;
+  }catch(e){
+    console.warn('[meow-assistant] quality report sync unavailable',e&&e.message||e);
+    return false;
+  }
+}
 function meowAssistantLiveRouteSummary(route){
   if(!route)return '（沒有回傳 route）';
   const secondary=Array.isArray(route.secondaryIntents)&&route.secondaryIntents.length?' / 次要：'+route.secondaryIntents.join('、'):'';
@@ -7128,6 +7157,7 @@ function renderMeowAssistantLiveQualityReport(){
     if(retry)retry.disabled=true;
     return;
   }
+  void syncMeowAssistantLiveQualityReport(report);
   const total=Number(report.total)||0,passed=Number(report.passed)||0,failed=Number(report.failed)||0;
   const when=report.generatedAt?new Date(report.generatedAt).toLocaleString('zh-TW'):'';
   const categories=report.failureSummary||meowAssistantLiveFailureSummary(report.results);
