@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=196">
+<link rel="manifest" href="./manifest.webmanifest?v=197">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v196-payslip-session-retention">
+<meta name="meow-ui-build" content="v197-meow-payroll-navigation">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1138,7 +1138,7 @@ html.dark .settings-pro-v129{
 .pro-recent-row .month{font-weight:950}.pro-recent-row .meta{font-size:10px;color:var(--muted)}.pro-recent-row .diff{font-weight:950}.pro-recent-row .diff.neg{color:var(--mobile-pink-ink,#c83f52)}.pro-recent-row .diff.pos{color:var(--mobile-green-ink,#248a49)}.pro-recent-empty{padding:14px;text-align:center;color:var(--muted);font-size:12px}
 .smart-scan-head{border-bottom:0}.smart-scan-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:4px 14px 12px}.smart-scan-steps span{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-size:9px;font-weight:900;position:relative}.smart-scan-steps i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;font-style:normal;background:var(--mobile-surface,#f1ede9);border:1px solid var(--mobile-line,#e3d8cf)}.smart-scan-steps span.active i,.smart-scan-steps span.done i{background:var(--mobile-gold-surface,#f7c96f);color:#fff;border-color:transparent}.smart-scan-steps span.done{color:var(--mobile-green-ink,#2d8a48)}.smart-scan-steps span.done i{background:var(--mobile-green-ink,#3c9a56)}
 .smart-scan-actions{grid-template-columns:2fr 1fr 1fr}.smart-scan-actions button,.smart-scan-actions .scan-upload-btn{margin:0;min-height:44px}.danger-soft{border-color:#efb7bc!important;background:#fff4f5!important;color:#c23f52!important}
-.smart-scan-status{margin-top:0;font-size:12px;line-height:1.5}.smart-privacy-note{margin:0 14px 14px;padding:10px 11px;border-radius:12px;background:var(--mobile-green-surface,#f3fbf5);line-height:1.5}
+.smart-scan-status{margin-top:0;font-size:12px;line-height:1.5}.smart-privacy-note{display:inline-flex;align-items:center;margin:0 14px 14px;padding:6px 9px;border-radius:999px;background:var(--mobile-green-surface,#f3fbf5);line-height:1.2;font-size:10px;font-weight:900;color:var(--mobile-green-ink,#3d7d4d)}
 .scan-preview-wrap{display:none!important}.ocr-pick-btn[data-ocr-pick]{display:none!important}
 #payslipMissingFields{margin:0 14px 12px!important;padding:10px 11px!important;border-radius:12px!important;background:var(--mobile-gold-surface,#fff6e9)!important;color:var(--mobile-gold-ink,#8b5b31)!important}
 .smart-result-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:4px 0 10px}.smart-result-head b{display:block;font-size:16px}.smart-result-head span{font-size:10px;color:var(--muted)}.smart-result-note{font-weight:850}.scan-rerun-diff{margin:0 0 10px;padding:10px 11px;border-radius:12px;background:#fff3e8;color:#8d5424;font-size:11px;font-weight:800;line-height:1.5}
@@ -1671,7 +1671,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
             尚未選取薪資單。
             <div class="scan-progress"><i id="payslipScanProgress"></i></div>
           </div>
-          <div class="scan-privacy smart-privacy-note">🔒 薪資單影像只用於本次對帳工作階段，不會顯示在對帳畫面，也不會保存到工作資料雲端，更不會刪除你 iPhone 相簿裡的原始照片。關閉此面板後，本次暫存仍會保留，直到你按「清除結果」、換另一張薪資單或離開／重新整理 App。必要的資料處理方式請見隱私權政策。</div>
+          <div class="scan-privacy smart-privacy-note">🔒 本次對帳工作階段</div>
           <div class="hint hidden" id="payslipMissingFields"></div>
           <div class="scan-result hidden" id="payslipScanResult">
             <div class="smart-result-head"><div><b>辨識結果確認</b><span id="payslipImportMonth"></span></div><span class="smart-result-note">有疑問的項目會標成「待確認」</span></div>
@@ -6147,7 +6147,9 @@ function meowAssistantParse(raw){
     if(month<1||month>12)return{ok:false,message:'月份要在 1 到 12 月之間。'};
     return{ok:true,type:'viewSchedule',year,month:month-1,raw:text};
   }
-  if(!/加班/.test(text))return{ok:false,message:'目前可以幫你看月份班表，或新增、取消、移動加班日期。'};
+  const wantsPayslipReconcile=/(智慧.{0,4}對帳|薪資.{0,4}對帳|對帳.{0,4}薪資|對.{0,3}薪資單|核對.{0,4}薪資單|幫我.{0,6}(對|核對).{0,4}薪資單|薪資單.{0,4}(對帳|核對))/.test(text);
+  if(wantsPayslipReconcile)return{ok:true,type:'smartPayslipReconcile',raw:text};
+  if(!/加班/.test(text))return{ok:false,message:'我可以幫你看月份班表、新增／取消／移動加班，或打開智慧薪資對帳。'};
   const moveWord=text.match(/換到|換成|改到|改成|移到|移至|挪到/);
   if(moveWord){
     const at=moveWord.index,left=text.slice(0,at),right=text.slice(at+moveWord[0].length);
@@ -6170,7 +6172,7 @@ function meowAssistantDateLabel(date){
 }
 function meowAssistantPlanCheck(plan){
   if(!plan||!plan.ok)return plan;
-  if(plan.type==='viewSchedule')return plan;
+  if(plan.type==='viewSchedule'||plan.type==='smartPayslipReconcile')return plan;
   if(plan.type==='move'){
     const src=state.dayStatus[plan.from],dest=state.dayStatus[plan.to];
     if(!src||src.type!=='overtime')return{ok:false,message:'目前 '+meowAssistantDateLabel(plan.from)+' 沒有加班紀錄，所以我沒有移動任何資料。'};
@@ -6489,6 +6491,25 @@ function renderMeowAssistantReply(message,type=''){
   box.textContent=message||'';box.dataset.state=type;
   box.classList.toggle('hidden',!message);
 }
+async function openSmartPayslipFromMeowAssistant(){
+  if(!canUse('payslip_scan')){
+    renderMeowAssistantReply('智慧薪資對帳是 Pro 功能。請先確認目前帳號的 Pro 方案。','error');
+    return false;
+  }
+  salarySubTab='pro';
+  payslipScanOpen=true;
+  itemizedOpen=false;
+  salaryHistoryOpen=false;
+  salaryExportOpen=false;
+  setTab('salary');
+  renderSalary();
+  closeMeowAssistant();
+  setTimeout(()=>{
+    const panel=$('payslipScanPanel');
+    if(panel)panel.scrollIntoView({behavior:'smooth',block:'start'});
+  },120);
+  return true;
+}
 async function previewMeowAssistant(){
   if(!canUse('meow_schedule_assistant')){
     renderMeowAssistantReply('喵助理是 Pro 功能。','error');
@@ -6497,6 +6518,10 @@ async function previewMeowAssistant(){
   const parsed=meowAssistantPlanCheck(meowAssistantParse($('meowAssistantInput').value));
   if(!parsed.ok){renderMeowAssistantReply(parsed.message,'error');return}
   if(parsed.type==='viewSchedule'){await showMeowAssistantMonth(parsed.year,parsed.month);return}
+  if(parsed.type==='smartPayslipReconcile'){
+    if(openSmartPayslipFromMeowAssistant())$('meowAssistantInput').value='';
+    return;
+  }
   executeMeowAssistantPlan(parsed);
   $('meowAssistantInput').value='';
 }
@@ -7344,7 +7369,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=196',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=197',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
