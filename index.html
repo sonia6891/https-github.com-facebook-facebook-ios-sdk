@@ -17,7 +17,7 @@
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v192-private-crosscheck-meal-fix">
+<meta name="meow-ui-build" content="v193-smart-payroll-layout">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1603,54 +1603,76 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       <div class="salary-section">
         <div class="salary-section-title"><span class="paw">🐾</span>智慧薪資對帳 <span class="salary-tab-tier pro">Pro</span></div>
         <div class="hint" style="margin-bottom:10px">免費版先看總額有沒有差；Pro 再幫你找出差在哪一項。</div>
-        <div class="pro-grid">
-          <div class="pro-card" data-pro-feature="payslip_scan"><div class="pro-head"><b>📷 薪資單三層交叉檢查</b><span class="pro-badge">🔒 Pro</span></div><p>以多重判讀與薪資邏輯交叉核對逐項找差異；結果不一致或信心不足時不自動猜，會標示請你確認。</p><button type="button" data-pro-action="payslip_scan">即將推出</button></div>
-          <div class="pro-card" data-pro-feature="itemized_salary_compare"><div class="pro-head"><b>🧾 逐項薪資對帳</b><span class="pro-badge">🔒 Pro</span></div><p>逐項比較 App 預估與公司薪資單，直接標示一致、少發、多發、多扣或少扣，並整理總差額。</p><button type="button" data-pro-action="itemized_salary_compare">即將推出</button></div>
-          <div class="pro-card" data-pro-feature="salary_history_unlimited"><div class="pro-head"><b>📚 歷史薪資對帳</b><span class="pro-badge">🔒 Pro</span></div><p>保存每月預估、實發與差額紀錄。</p><button type="button" data-pro-action="salary_history_unlimited">即將推出</button></div>
-          <div class="pro-card" data-pro-feature="salary_export"><div class="pro-head"><b>📄 PDF／Excel 對帳報告</b><span class="pro-badge">🔒 Pro</span></div><p>匯出薪資與差額報告，方便保存核對。</p><button type="button" data-pro-action="salary_export">即將推出</button></div>
+        <div class="pro-grid smart-payroll-shell">
+          <div class="pro-card pro-smart-hero" data-pro-feature="payslip_scan">
+            <div class="pro-smart-title"><div><span class="pro-smart-kicker">🐾 智慧薪資對帳</span><span class="salary-tab-tier pro">Pro</span></div><span class="pro-badge">🔒 Pro</span></div>
+            <p class="pro-smart-lead">讀每一份辛苦，不只看總額。上傳薪資單後，系統會逐項核對並把需要你確認的地方集中列出。</p>
+            <div class="pro-smart-points">
+              <span>◉ 三層交叉檢查</span><span>◉ 逐項找差異與漏項</span><span>◉ 額外加項／扣項自動列示</span><span>◉ 歷史對帳可回看</span>
+            </div>
+            <button type="button" class="pro-start-btn" data-pro-action="payslip_scan">開始對帳</button>
+          </div>
+          <div class="pro-card pro-anchor hidden" data-pro-feature="itemized_salary_compare"><span class="pro-badge">🔒 Pro</span></div>
+          <div class="pro-card pro-anchor hidden" data-pro-feature="salary_history_unlimited"><span class="pro-badge">🔒 Pro</span></div>
+          <div class="pro-card pro-anchor hidden" data-pro-feature="salary_export"><span class="pro-badge">🔒 Pro</span></div>
+          <div class="pro-recent-card" id="proRecentReconcile">
+            <div class="pro-recent-head"><div><b>最近對帳紀錄</b><span>查看最近幾個月的結果</span></div><button type="button" id="openProHistory">查看全部 ›</button></div>
+            <div class="pro-recent-list" id="proRecentReconcileList"><div class="pro-recent-empty">目前還沒有薪資對帳紀錄。</div></div>
+          </div>
         </div>
         <div class="payslip-scan-panel hidden" id="payslipScanPanel">
-          <div class="scan-head">
+          <div class="scan-head smart-scan-head">
             <div>
-              <b>📷 Pro 薪資單三層交叉檢查</b>
-              <div class="hint">使用多重判讀與薪資計算邏輯進行交叉核對；結果不一致或信心不足時會直接標示，請你確認後再導入。</div>
-              <div class="scan-privacy">🔒 薪資單只會為完成辨識與對帳進行必要處理；本 App 不會把薪資單影像保存到工作資料雲端。詳細資料處理方式請見隱私權政策。</div>
+              <b>智慧薪資對帳 <span class="salary-tab-tier pro">Pro</span></b>
+              <div class="hint">正在進行三層交叉檢查。照片不會顯示在畫面上；完成後只呈現薪資項目、金額與需要確認的差異。</div>
             </div>
-            <button type="button" class="btn" id="closePayslipScan">收起</button>
+            <button type="button" class="btn" id="closePayslipScan">返回</button>
           </div>
-          <div class="scan-upload">
-            <label class="scan-upload-btn" for="payslipFileInput">📷 拍照或上傳</label>
+          <div class="smart-scan-steps" id="payslipScanSteps">
+            <span data-scan-step="1"><i>1</i><b>接收資料</b></span>
+            <span data-scan-step="2"><i>2</i><b>解析</b></span>
+            <span data-scan-step="3"><i>3</i><b>交叉檢查</b></span>
+            <span data-scan-step="4"><i>✓</i><b>完成</b></span>
+          </div>
+          <div class="scan-upload smart-scan-actions">
+            <label class="scan-upload-btn" for="payslipFileInput">📷 拍照或上傳薪資單</label>
+            <button type="button" class="btn" id="rerunPayslipScan" disabled>↻ 重新判讀</button>
+            <button type="button" class="btn danger-soft" id="clearPayslipScan">🗑 清除結果</button>
             <input class="hidden" id="payslipFileInput" type="file" accept="image/*">
           </div>
-          <div class="scan-preview-wrap"><div class="scan-preview-stage"><img id="payslipPreview" class="scan-preview" alt="薪資單預覽"><div class="scan-amount-overlay hidden" id="payslipAmountOverlay"></div></div><div class="scan-picker-hint hidden" id="payslipPickerHint"></div></div>
-          <div class="scan-status" id="payslipScanStatus">
-            請點「拍照或上傳」選擇薪資單，系統會自動進行多重交叉檢查。
+          <div class="scan-status smart-scan-status" id="payslipScanStatus">
+            尚未選取薪資單。
             <div class="scan-progress"><i id="payslipScanProgress"></i></div>
           </div>
-          <div class="hint hidden" id="payslipMissingFields" style="margin:-4px 12px 12px;padding:8px 10px;border-radius:10px;background:var(--mobile-gold-icon, #fff6e9);color:var(--mobile-gold-ink, #8b5b31)"></div>
+          <div class="scan-privacy smart-privacy-note">🔒 薪資單影像只用於本次辨識流程，不會顯示在對帳畫面，也不會保存到工作資料雲端。必要的資料處理方式請見隱私權政策。</div>
+          <div class="hint hidden" id="payslipMissingFields"></div>
           <div class="scan-result hidden" id="payslipScanResult">
-            <div class="salary-section-title" style="font-size:15px"><span class="paw">🐾</span>辨識結果確認 <span class="mini-note" id="payslipImportMonth" style="transform:none"></span></div>
+            <div class="smart-result-head"><div><b>辨識結果確認</b><span id="payslipImportMonth"></span></div><span class="smart-result-note">有疑問的項目會標成「待確認」</span></div>
+            <div class="scan-rerun-diff hidden" id="payslipRerunDiff"></div>
             <div class="scan-result-grid" id="payslipDetectedFields"></div>
             <div class="scan-result-actions">
-              <button type="button" class="btn primary" id="importPayslipResult">確認並導入逐項對帳</button>
-              <button type="button" class="btn" id="resetPayslipScan">重新辨識</button>
+              <button type="button" class="btn primary" id="importPayslipResult">確認並查看對帳結果</button>
             </div>
-            <details class="scan-raw"><summary>查看 OCR 原始文字</summary><pre id="payslipRawText"></pre></details>
+            <details class="scan-raw hidden"><summary>查看辨識原始文字</summary><pre id="payslipRawText"></pre></details>
           </div>
         </div>
-        <div class="itemized-panel hidden" id="itemizedComparePanel">
-          <div class="itemized-head">
-            <div><b>🧾 Pro 逐項薪資對帳</b><div class="hint">把公司薪資單上的實際金額填進右欄，App 會逐項核對。</div></div>
+        <div class="itemized-panel hidden smart-itemized" id="itemizedComparePanel">
+          <div class="itemized-head smart-itemized-head">
+            <div><b>智慧薪資對帳 <span class="salary-tab-tier pro">Pro</span></b><div class="hint">先看需要處理的項目；一致項目收在下方，不讓畫面被資料塞滿。</div></div>
             <button type="button" class="btn" id="closeItemizedCompare">收起</button>
           </div>
-          <div class="itemized-summary">
+          <div class="itemized-summary smart-summary">
             <div class="card"><b>App 預估實領</b><strong id="itemizedExpectedNet">NT$0</strong></div>
             <div class="card"><b>公司薪資單實發</b><strong id="itemizedActualNet">—</strong></div>
-            <div class="card"><b>本月總差額</b><strong id="itemizedNetDiff">—</strong></div>
+            <div class="card compare-diff" id="smartDiffCard"><b>本月總差額</b><strong id="itemizedNetDiff">—</strong></div>
           </div>
+          <div class="smart-attention hidden" id="itemizedNeedsAttention"></div>
           <div class="itemized-progress" id="itemizedProgress">尚未有可對帳資料。</div>
-          <div class="card" id="itemizedConclusion" style="margin:10px 0"><b>對帳結論</b><p class="hint" style="margin:6px 0 0">先使用薪資單辨識，或手動輸入公司實際金額。</p></div>
-          <div class="itemized-table">
+          <div class="card smart-conclusion" id="itemizedConclusion"><b>對帳結論</b><p class="hint">先使用薪資單辨識，或手動輸入公司實際金額。</p></div>
+          <div class="smart-review-groups" id="itemizedSmartGroups"></div>
+          <details class="itemized-all-details">
+            <summary>查看全部逐項明細</summary>
+            <div class="itemized-table">
             <div class="itemized-table-head"><span>項目</span><span style="text-align:right">App 預估</span><span style="text-align:right">公司實際</span><span style="text-align:right">結果</span></div>
             <div class="itemized-group">收入</div>
             <div class="itemized-row"><span class="item-label">底薪</span><span class="expected" data-exp="base">NT$0</span><input data-item-actual="base" type="number" min="0" step="1"><span class="itemized-status" data-item-status="base">未填</span></div>
@@ -1670,6 +1692,12 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
             <div class="itemized-row"><span class="item-label">健保補扣</span><span class="expected" data-exp="dedHealthExtra">NT$0</span><input data-item-actual="dedHealthExtra" type="number" min="0" step="1"><span class="itemized-status" data-item-status="dedHealthExtra">未填</span></div>
             <div class="itemized-row"><span class="item-label">其他扣款</span><span class="expected" data-exp="dedOther">NT$0</span><input data-item-actual="dedOther" type="number" min="0" step="1"><span class="itemized-status" data-item-status="dedOther">未填</span></div>
             <div id="itemizedExtraItems"></div>
+          </div>
+        
+          </details>
+          <div class="smart-itemized-actions">
+            <button type="button" class="btn" id="itemizedRerun">↻ 重新判讀</button>
+            <button type="button" class="btn" id="openSalaryHistoryFromResult">📚 歷史對帳</button>
           </div>
         </div>
         <div class="salary-history-panel hidden" id="salaryHistoryPanel">
@@ -5005,7 +5033,34 @@ function buildSalaryPrintHtml(){
     return '<!doctype html><html><head><meta charset="utf-8"><title>'+year+' 年薪資對帳</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+year+' 年薪資對帳</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>對帳月份</b><strong>'+rows.length+'</strong></div><div class="card"><b>全年公司實發</b><strong>'+money(actual)+'</strong></div><div class="card"><b>全年差額</b><strong>'+signedMoney(diff)+'</strong></div></div><table><thead><tr><th>月份</th><th>App 預估實領</th><th>公司實發</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">此報告依 App 中已儲存的排班、薪資與對帳資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
   }
   const r=exportMonthRecord(),tr=r.rows.map(x=>'<tr><td>'+escapeHtml(x.label)+'</td><td>'+money(x.expected)+'</td><td>'+(x.actual===null?'—':money(x.actual))+'</td><td>'+(x.actual===null?'—':signedMoney(x.actual-x.expected))+'</td></tr>').join('');
-  return '<!doctype html><html><head><meta charset="utf-8"><title>'+r.title+'</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+r.title+'</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>App 預估實領</b><strong>'+money(r.expectedNet)+'</strong></div><div class="card"><b>公司實發</b><strong>'+(r.actualNet===null?'—':money(r.actualNet))+'</strong></div><div class="card"><b>差額</b><strong>'+(r.diff===null?'—':signedMoney(r.diff))+'</strong></div></div><table><thead><tr><th>項目</th><th>App 預估</th><th>公司實際</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">本月實際出勤 '+r.attendance+' 天・加班 '+r.overtimeHours+' 小時・請假 '+r.leaveDays+' 天。此報告依 App 中已儲存資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
+  return '<!doctype html><html><head><meta charset="utf-8"><title>'+r.title+'</title><style>'+baseStyle+'
+/* v193 智慧薪資對帳：保留厭世貓品牌，重整資訊層級 */
+.smart-payroll-shell{display:block!important}
+.pro-smart-hero{min-height:0!important;padding:18px!important;background:linear-gradient(145deg,var(--mobile-surface,#fff8e8),var(--mobile-surface,#fffdf8))!important;border-color:var(--mobile-line,#f0cf95)!important}
+.pro-smart-title{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.pro-smart-title>div{display:flex;align-items:center;gap:8px}.pro-smart-kicker{font-size:20px;font-weight:950;color:var(--mobile-text,#4c2518)}
+.pro-smart-lead{font-size:13px!important;line-height:1.65!important;margin:10px 0!important}
+.pro-smart-points{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:12px 0;color:var(--mobile-muted,#7a594a);font-size:11px;font-weight:850}
+.pro-start-btn{width:100%;border:0!important;border-radius:14px!important;padding:13px!important;background:linear-gradient(135deg,#b86a2f,#8b4d25)!important;color:#fff!important;font-size:15px!important;font-weight:950!important;box-shadow:0 8px 18px rgba(120,70,35,.18)}
+.pro-anchor{display:none!important}.pro-recent-card{margin-top:12px;padding:14px;border:1px solid var(--mobile-line,#eadfd6);border-radius:16px;background:var(--mobile-surface,#fff)}
+.pro-recent-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.pro-recent-head b{display:block;font-size:15px}.pro-recent-head span{font-size:10px;color:var(--muted)}.pro-recent-head button{border:0;background:transparent;color:var(--mobile-gold-ink,#8f583e);font-weight:900}
+.pro-recent-list{display:grid;gap:7px}.pro-recent-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:10px 11px;border-radius:12px;background:var(--mobile-surface,#fffaf6);border:1px solid var(--mobile-line,#efe4da)}
+.pro-recent-row .month{font-weight:950}.pro-recent-row .meta{font-size:10px;color:var(--muted)}.pro-recent-row .diff{font-weight:950}.pro-recent-row .diff.neg{color:var(--mobile-pink-ink,#c83f52)}.pro-recent-row .diff.pos{color:var(--mobile-green-ink,#248a49)}.pro-recent-empty{padding:14px;text-align:center;color:var(--muted);font-size:12px}
+.smart-scan-head{border-bottom:0}.smart-scan-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;padding:4px 14px 12px}.smart-scan-steps span{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--muted);font-size:9px;font-weight:900;position:relative}.smart-scan-steps i{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;font-style:normal;background:var(--mobile-surface,#f1ede9);border:1px solid var(--mobile-line,#e3d8cf)}.smart-scan-steps span.active i,.smart-scan-steps span.done i{background:var(--mobile-gold-surface,#f7c96f);color:#fff;border-color:transparent}.smart-scan-steps span.done{color:var(--mobile-green-ink,#2d8a48)}.smart-scan-steps span.done i{background:var(--mobile-green-ink,#3c9a56)}
+.smart-scan-actions{grid-template-columns:2fr 1fr 1fr}.smart-scan-actions button,.smart-scan-actions .scan-upload-btn{margin:0;min-height:44px}.danger-soft{border-color:#efb7bc!important;background:#fff4f5!important;color:#c23f52!important}
+.smart-scan-status{margin-top:0;font-size:12px;line-height:1.5}.smart-privacy-note{margin:0 14px 14px;padding:10px 11px;border-radius:12px;background:var(--mobile-green-surface,#f3fbf5);line-height:1.5}
+.scan-preview-wrap{display:none!important}.ocr-pick-btn[data-ocr-pick]{display:none!important}
+#payslipMissingFields{margin:0 14px 12px!important;padding:10px 11px!important;border-radius:12px!important;background:var(--mobile-gold-surface,#fff6e9)!important;color:var(--mobile-gold-ink,#8b5b31)!important}
+.smart-result-head{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:4px 0 10px}.smart-result-head b{display:block;font-size:16px}.smart-result-head span{font-size:10px;color:var(--muted)}.smart-result-note{font-weight:850}.scan-rerun-diff{margin:0 0 10px;padding:10px 11px;border-radius:12px;background:#fff3e8;color:#8d5424;font-size:11px;font-weight:800;line-height:1.5}
+.smart-itemized{background:var(--mobile-surface,#fff)!important;border-color:var(--mobile-line,#eadfd6)!important}.smart-itemized-head{background:linear-gradient(180deg,var(--mobile-surface,#fffdf9),var(--mobile-surface,#fff))}
+.smart-summary{padding-bottom:8px}.smart-summary .card{border-radius:14px}.smart-attention{margin:0 12px 10px;padding:11px 12px;border-radius:13px;background:#fff6e6;border:1px solid #f2d49b;color:#8b5b1d;font-weight:900;font-size:12px}
+.smart-conclusion{margin:0 12px 12px!important;padding:12px!important}.smart-review-groups{display:grid;gap:10px;padding:0 12px 12px}.smart-review-section{border:1px solid var(--mobile-line,#ece1d8);border-radius:15px;overflow:hidden;background:var(--mobile-surface,#fff)}.smart-review-section>header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 11px;background:var(--mobile-surface,#fffaf5)}.smart-review-section>header b{font-size:13px}.smart-review-section>header span{font-size:10px;color:var(--muted);font-weight:850}
+.smart-review-row{padding:11px;border-top:1px solid var(--mobile-line,#f0e8e1)}.smart-review-main{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:start}.smart-review-label{font-weight:950;font-size:13px}.smart-review-values{margin-top:5px;display:flex;gap:7px;flex-wrap:wrap;font-size:10px;color:var(--muted)}.smart-review-status{font-size:10px;font-weight:950;padding:4px 7px;border-radius:999px;white-space:nowrap}.smart-review-status.pending{background:#fff0d5;color:#a26512}.smart-review-status.bad{background:#ffe6e9;color:#c23f52}.smart-review-status.ok{background:#e7f6ea;color:#2e8548}.smart-review-status.extra{background:#e9f2ff;color:#376fa8}
+.smart-review-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.smart-review-actions button{border:1px solid var(--mobile-line,#e2d6cd);border-radius:9px;background:var(--mobile-surface,#fff);padding:6px 8px;font-size:10px;font-weight:900;color:var(--mobile-text,#6f432e)}
+.itemized-all-details{margin:0 12px 12px;border:1px solid var(--mobile-line,#e8ded6);border-radius:13px;overflow:hidden}.itemized-all-details>summary{padding:10px 12px;cursor:pointer;font-size:11px;font-weight:900;color:var(--mobile-muted,#735e53);background:var(--mobile-surface,#fffaf7)}.smart-itemized-actions{display:flex;gap:8px;padding:0 12px 12px}.smart-itemized-actions .btn{flex:1}
+@media(max-width:720px){.pro-smart-points{grid-template-columns:1fr}.smart-scan-actions{grid-template-columns:1fr 1fr}.smart-scan-actions .scan-upload-btn{grid-column:1/-1}.scan-result-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.smart-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.smart-summary strong{font-size:16px}.itemized-table-head,.itemized-row{grid-template-columns:1.05fr .75fr .9fr .85fr}.pro-recent-row{grid-template-columns:auto 1fr auto}}
+@media(max-width:430px){.scan-result-grid{grid-template-columns:1fr}.smart-summary{grid-template-columns:1fr 1fr}.smart-summary .card:last-child{grid-column:1/-1}.itemized-table{min-width:620px}.itemized-all-details{overflow:auto}}
+</style></head><body><h1>喵的，又要上班了｜'+r.title+'</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>App 預估實領</b><strong>'+money(r.expectedNet)+'</strong></div><div class="card"><b>公司實發</b><strong>'+(r.actualNet===null?'—':money(r.actualNet))+'</strong></div><div class="card"><b>差額</b><strong>'+(r.diff===null?'—':signedMoney(r.diff))+'</strong></div></div><table><thead><tr><th>項目</th><th>App 預估</th><th>公司實際</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">本月實際出勤 '+r.attendance+' 天・加班 '+r.overtimeHours+' 小時・請假 '+r.leaveDays+' 天。此報告依 App 中已儲存資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
 }
 function exportSalaryPdf(){
   if(!canUse('salary_export'))return;
