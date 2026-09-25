@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=198">
+<link rel="manifest" href="./manifest.webmanifest?v=199">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v198-meow-knowledge-intents">
+<meta name="meow-ui-build" content="v199-meow-100-pass">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -6139,7 +6139,7 @@ const MEOW_ASSISTANT_KNOWLEDGE_VERSION='2026-09-shift-payroll-v1';
 
 function meowAssistantKnowledgeIntent(text){
   const rules=[
-    ['help',/(你能做什麼|可以問什麼|能問什麼|怎麼用喵助理|幫助|使用說明)/],
+    ['help',/(你能做什麼|可以問什麼|可以問你什麼|能問什麼|可以幫我做什麼|能幫我做什麼|怎麼用喵助理|幫助|使用說明)/],
     ['todayShift',/(今天|今日).{0,10}(什麼班|上什麼班|有上班|要上班|休假|放假|休息)/],
     ['tomorrowShift',/(明天|明日).{0,10}(什麼班|上什麼班|有上班|要上班|休假|放假|休息)/],
     ['nextWork',/(下次|下一次|最近|哪一天|哪天).{0,8}(上班|工作|出勤)/],
@@ -6148,17 +6148,17 @@ function meowAssistantKnowledgeIntent(text){
     ['overtimeHours',/(本月|這個月|這月).{0,10}(加班幾小時|加班時數|總加班)|加班總時數/],
     ['estimatedPay',/(本月|這個月|這月).{0,12}(預估薪資|預估薪水|預估實領|大概領多少|應該領多少)|預估實領|薪資預估/],
     ['grossPay',/(應發薪資|應發總額|稅前薪資|稅前多少|總薪資多少)/],
+    ['holidayPay',/(國定假日|休息日|例假|假日).{0,12}(薪資|工資|加班費|怎麼算|有沒有加倍|多少)/],
     ['overtimePay',/(本月|這個月|這月).{0,10}加班費|加班費.{0,10}(多少|怎麼算|試算|預估)/],
+    ['missingShiftAllowance',/(輪班|夜班|班別).{0,6}(津貼|加給).{0,10}(沒|沒有|少|漏|不見)/],
     ['shiftAllowance',/(輪班津貼|夜班津貼|班別津貼|夜班加給).{0,10}(多少|有沒有|少了|怎麼算)?/],
     ['deductions',/(本月|這個月|這月).{0,10}(扣款|勞保|健保|福利金|勞退|所得稅)|扣款明細|總扣款/],
     ['payday',/(發薪日|幾號發薪|多久領薪|多久發薪|什麼時候領薪|何時發薪)/],
-    ['annualLeave',/(特休|年假).{0,10}(剩多少|還有多少|幾天|幾小時|餘額|剩餘)/],
-    ['reconcileSummary',/(對帳結果|薪資差額|實發差額|少發多少|多發多少|多扣多少|少扣多少|公司實發.{0,8}預估)/],
-    ['whyPayChanged',/(為什麼|怎麼).{0,8}(薪水|薪資|實領).{0,8}(變少|少了|不一樣|變多)|這個月.{0,8}(比上個月|比上月).{0,8}(少|多)/],
+    ['annualLeave',/(特休|年假).{0,10}(剩多少|還有多少|還有幾天|還有幾小時|幾天|幾小時|餘額|剩餘)/],
+    ['reconcileSummary',/(對帳結果|薪資差額|實發差額|少發多少|多發多少|多扣多少|少扣多少|公司實發.{0,12}(App|預估).{0,8}(差多少|差額)|公司實發.{0,8}(差多少|差額))/],,
+    ['whyPayChanged',/(為什麼|怎麼).{0,8}(薪水|薪資|實領).{0,8}(變少|少了|不一樣|變多)|(薪水|薪資|實領).{0,8}(怎麼|為什麼).{0,8}(變少|少了|不一樣|變多)|這月.{0,8}(實領|薪水|薪資).{0,8}(怎麼|為什麼).{0,8}(少了|變少|不一樣)|這個月.{0,8}(比上個月|比上月).{0,8}(少|多)/],
     ['history',/(歷史|之前|過去|上個月|上月).{0,10}(薪資|對帳)|薪資歷史|對帳歷史/],
     ['missingOvertime',/(加班費).{0,10}(沒|沒有|少|漏|不見|沒算)|漏算加班/],
-    ['missingShiftAllowance',/(輪班|夜班|班別).{0,6}(津貼|加給).{0,10}(沒|沒有|少|漏|不見)/],
-    ['holidayPay',/(國定假日|休息日|例假|假日).{0,12}(薪資|工資|加班費|怎麼算|有沒有加倍|多少)/],
     ['unknownDeduction',/(不認識|看不懂|不知道|不明).{0,8}(扣款|薪資單項目)|這是什麼扣款|多了一筆扣款/],
     ['extraItem',/(薪資單|對帳).{0,10}(多一個|多了一個|多出|額外).{0,8}(項目|扣款|收入|加項)/],
     ['missingItem',/(薪資單|智慧對帳|對帳).{0,10}(沒辨識|辨識不到|沒抓到|漏項|漏掉)/],
@@ -6166,7 +6166,7 @@ function meowAssistantKnowledgeIntent(text){
     ['salaryCalc',/(打開|去|跳到|我要看).{0,8}(薪資試算|薪資計算)|薪資試算頁/],
     ['freeReconcile',/(打開|去|跳到|我要看).{0,8}(免費對帳|快速對帳)|免費薪資對帳/],
     ['leaveConflict',/(行程|請假|特休|代辦).{0,10}(班表|排班).{0,8}(衝突|撞到)|衝突.{0,8}(班表|排班)/],
-    ['paystubContents',/(薪資單|薪資明細).{0,12}(應該|需要|必須).{0,6}(列|寫|有|包含)|薪資單要有哪些項目/],
+    ['paystubContents',/(薪資單|薪資明細).{0,12}(應該|需要|必須).{0,6}(列|寫|有|包含)|薪資單要有哪些項目|薪資單.{0,8}(要)?包含什麼|薪資單.{0,8}(有|包含).{0,6}(哪些|什麼)/],
     ['sickLeavePay',/(病假|事假).{0,12}(扣薪|扣多少|薪水|工資|全勤|怎麼算)/],
     ['rotationHelp',/(四班二輪|四班三輪|做二休二|做四休三|輪班週期|排班模式).{0,12}(怎麼排|怎麼設|怎麼看|是什麼)?/]
   ];
@@ -7540,7 +7540,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v198';
+    const reloadKey='meow-sw-reloaded-v199';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -7549,7 +7549,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=198',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=199',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
