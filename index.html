@@ -6921,6 +6921,14 @@ async function handleMeowAssistantAiOperation(route){
     renderMeowAssistantReply(route.clarifyingQuestion||'我理解你想修改班表，但日期還不夠確定。請再說一次要改哪一天。','error');
     return true;
   }
+  if(op.kind==='undo_last'){
+    if(!meowAssistantUndo){
+      renderMeowAssistantReply('目前沒有可以復原的上一個喵助理操作。','error');
+      return true;
+    }
+    undoMeowAssistant();
+    return true;
+  }
   if(op.kind==='view_schedule'){
     const year=Number(op.year),month=Number(op.month);
     if(!Number.isInteger(year)||!Number.isInteger(month)||month<1||month>12){
