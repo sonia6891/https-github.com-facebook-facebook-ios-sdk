@@ -4686,9 +4686,7 @@ async function buildPayslipRowCrops(variants,candidates){
 }
 function verifyPayslipWithOpenAI(imageDataUrl,rowCrops=[]){
   return invokeUserFunction('payslip-verify',{imageDataUrl,ocrText:String(payslipRawText||'').slice(0,16000),rowCrops});
-}
-  return invokeUserFunction('payslip-verify',{imageDataUrl,ocrText:String(payslipRawText||'').slice(0,16000)});
-}
+} 
 function applyOpenAiPayslipAmount(fieldKey){
   const alt=payslipOcrResult.__openAiAlternates&&payslipOcrResult.__openAiAlternates[fieldKey],def=PAYSLIP_OCR_FIELDS.find(x=>x.key===fieldKey);
   if(!alt||!def)return;
