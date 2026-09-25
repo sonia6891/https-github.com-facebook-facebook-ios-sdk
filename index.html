@@ -6091,14 +6091,10 @@ if($('toggleSchedulePrefs'))$('toggleSchedulePrefs').onclick=()=>{schedulePrefsO
 if($('toggleDataSync'))$('toggleDataSync').onclick=()=>{dataSyncOpen=!dataSyncOpen;renderSettings()};
 if($('meowAiTestRun'))$('meowAiTestRun').onclick=()=>{
   if(meowAssistantLiveQualityRunning)return;
-  setMeowAssistantLiveQualityUi(true,0,MEOW_ASSISTANT_LIVE_QUALITY_CASES.length,'正在啟動正式 OpenAI 測試…');
   void runMeowAssistantLiveQualityTest();
 };
 if($('meowAiTestRerunFailed'))$('meowAiTestRerunFailed').onclick=()=>{
   if(meowAssistantLiveQualityRunning)return;
-  const report=meowAssistantReadLiveQualityReport();
-  const count=report&&Array.isArray(report.results)?report.results.filter(x=>!x.pass).length:0;
-  setMeowAssistantLiveQualityUi(true,0,Math.max(1,count),'正在準備重跑失敗題…');
   void runMeowAssistantLiveQualityTest({failedOnly:true});
 };
 $('patternPreset').onchange=e=>selectSchedulePlan(e.target.value);
