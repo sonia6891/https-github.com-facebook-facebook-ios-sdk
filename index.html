@@ -7000,6 +7000,35 @@ function meowAssistantLiveCasePass(route,test){
   }
   return true;
 }
+function meowAssistantLiveFailureKind(route,test,error=''){
+  if(error)return{code:'provider_error',label:'後端／OpenAI 呼叫失敗',layer:'基礎設施'};
+  if(!route)return{code:'no_route',label:'沒有取得語意路由',layer:'第 2 層'};
+  if(route.understood===false)return{code:'not_understood',label:'自然語言未理解',layer:'第 0 層'};
+  if(test.intent&&route.primaryIntent!==test.intent)return{code:'primary_intent',label:'主要意圖判斷錯誤',layer:'第 0／2 層'};
+  if(test.secondaryAny&&test.secondaryAny.length){
+    const all=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])];
+    if(!test.secondaryAny.some(x=>all.includes(x)))return{code:'secondary_intent',label:'複合意圖漏判',layer:'第 0／2 層'};
+  }
+  if(test.prior&&route.referencesPriorContext!==true)return{code:'context_reference',label:'前文承接失敗',layer:'第 0 層'};
+  if(test.operation){
+    const op=route.operation||{};
+    if(op.kind!==test.operation.kind)return{code:'operation_kind',label:'操作種類判斷錯誤',layer:'第 2 層'};
+    if(test.operation.date&&!(Array.isArray(op.dates)&&op.dates.includes(test.operation.date)))return{code:'operation_argument',label:'操作日期解析錯誤',layer:'第 2 層'};
+    if(test.operation.from&&op.fromDate!==test.operation.from)return{code:'operation_argument',label:'來源日期解析錯誤',layer:'第 2 層'};
+    if(test.operation.to&&op.toDate!==test.operation.to)return{code:'operation_argument',label:'目的日期解析錯誤',layer:'第 2 層'};
+    if(test.operation.year&&Number(op.year)!==Number(test.operation.year))return{code:'operation_argument',label:'年份解析錯誤',layer:'第 2 層'};
+    if(test.operation.month&&Number(op.month)!==Number(test.operation.month))return{code:'operation_argument',label:'月份解析錯誤',layer:'第 2 層'};
+  }
+  return{code:'unknown',label:'未分類失敗',layer:'待確認'};
+}
+function meowAssistantLiveFailureSummary(results){
+  const rows=(Array.isArray(results)?results:[]).filter(x=>!x.pass),counts={};
+  rows.forEach(x=>{
+    const code=x.failure&&x.failure.code||'unknown';
+    counts[code]=(counts[code]||0)+1;
+  });
+  return counts;
+}
 function meowAssistantReadLiveQualityReport(){
   if(window.meowAssistantLastLiveQualityReport)return window.meowAssistantLastLiveQualityReport;
   try{
@@ -7037,14 +7066,21 @@ function renderMeowAssistantLiveQualityReport(){
   }
   const total=Number(report.total)||0,passed=Number(report.passed)||0,failed=Number(report.failed)||0;
   const when=report.generatedAt?new Date(report.generatedAt).toLocaleString('zh-TW'):'';
+  const categories=report.failureSummary||meowAssistantLiveFailureSummary(report.results);
+  const categoryText=Object.entries(categories).filter(([,n])=>n>0).map(([k,n])=>{
+    const map={provider_error:'後端',no_route:'無路由',not_understood:'未理解',primary_intent:'主意圖',secondary_intent:'複合意圖',context_reference:'前文',operation_kind:'操作類型',operation_argument:'操作參數',unknown:'未分類'};
+    return (map[k]||k)+' '+n;
+  }).join('、');
   if(summary)summary.textContent='上次結果：'+passed+'/'+total+' 通過（'+Math.round(passed/Math.max(1,total)*100)+'%）・失敗 '+failed+' 題'
+    +(categoryText?'・'+categoryText:'')
     +(report.lastRunMode==='failed-only'?'・剛完成失敗題重測':'')+(when?'・'+when:'');
   if(retry)retry.disabled=failed===0;
   const failures=(Array.isArray(report.results)?report.results:[]).filter(x=>!x.pass);
   if(failBox){
     failBox.textContent=failures.length?failures.map(x=>{
       const expected=typeof x.expected==='string'?x.expected:JSON.stringify(x.expected);
-      return '#'+x.n+' '+x.q+'\n期望：'+expected+'\n實際：'+meowAssistantLiveRouteSummary(x.route)+(x.error?'\n錯誤：'+x.error:'');
+      const failure=x.failure||{label:'未分類失敗',layer:'待確認'};
+      return '#'+x.n+' '+x.q+'\n類型：'+failure.label+'（'+failure.layer+'）\n期望：'+expected+'\n實際：'+meowAssistantLiveRouteSummary(x.route)+(x.error?'\n錯誤：'+x.error:'');
     }).join('\n\n'):'全部通過，目前沒有失敗案例。';
   }
 }
@@ -7073,7 +7109,8 @@ async function runMeowAssistantLiveQualityTest(options={}){
       route=await routeMeowAssistantWithAI(test.q,test.context||[]);
     }catch(e){error=String(e&&e.message||e)}
     const pass=!error&&meowAssistantLiveCasePass(route,test);
-    runResults.push({n,q:test.q,pass,error,expected:test.intent||test.operation||null,route});
+    const failure=pass?null:meowAssistantLiveFailureKind(route,test,error);
+    runResults.push({n,q:test.q,pass,error,expected:test.intent||test.operation||null,route,failure});
     renderMeowAssistantReply((failedOnly?'正在重跑失敗題… ':'正在執行喵助理真實 OpenAI 語意測試… ')+(i+1)+'/'+cases.length);
   }
   let results=runResults;
@@ -7086,7 +7123,9 @@ async function runMeowAssistantLiveQualityTest(options={}){
     generatedAt:new Date().toISOString(),
     lastRunMode:failedOnly?'failed-only':'full',
     testedThisRun:runResults.length,
-    total,passed,failed:failed.length,durationMs:Date.now()-started,results
+    total,passed,failed:failed.length,durationMs:Date.now()-started,
+    failureSummary:meowAssistantLiveFailureSummary(results),
+    results
   };
   try{localStorage.setItem('meow-assistant-live-quality-report',JSON.stringify(window.meowAssistantLastLiveQualityReport))}catch(e){}
   renderMeowAssistantLiveQualityReport();
