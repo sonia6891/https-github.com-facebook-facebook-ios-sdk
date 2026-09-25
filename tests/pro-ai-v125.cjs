@@ -63,8 +63,13 @@ assert(payslipEdge.includes("FIELD_DESCRIPTIONS"), 'structured output field desc
 assert(payslipEdge.includes("『伙食津貼』與『餐費補助』是兩個不同的薪資項目"), 'meal allowance/subsidy separation rule missing');
 assert(payslipEdge.includes("『餐費補助』與『醫療補助』『營運補助』也不得混淆"), 'meal subsidy character-level guard missing');
 assert(payslipEdge.includes('function exactLabelRead'), 'amount-anchored exact-label visual recheck missing');
+assert(payslipEdge.includes('rowCrops'), 'server must accept amount-anchored row crops');
+assert(html.includes('buildPayslipRowCrops'), 'client must build amount-anchored row crops');
+assert(html.includes("rowCrops=await buildPayslipRowCrops"), 'client must send row crops during payslip verification');
 assert(payslipEdge.includes('只看原始圖片字形，不參考 OCR 文字'), 'exact-label recheck must be independent from OCR text');
 assert(payslipEdge.includes('名稱待確認（兩次逐字判讀不一致）'), 'ambiguous payroll labels must not be forced');
+assert(payslipEdge.includes('trustedKnown = exactAgreement && choiceAgreement'), 'exact label and semantic choice must both agree before auto-labeling');
+assert(html.includes('修正項目名稱'), 'unresolved extra payroll labels need a manual correction action');
 assert(payslipEdge.includes('resolved === "伙食津貼"'), 'only literal meal allowance may map to the standard meal field');
 assert(payslipEdge.includes('resolved === "餐費補助"'), 'meal subsidy must stay separate after exact-label recheck');
 assert(payslipEdge.includes('extraItems'), 'salary-slip-only extra income/deduction extraction missing');
