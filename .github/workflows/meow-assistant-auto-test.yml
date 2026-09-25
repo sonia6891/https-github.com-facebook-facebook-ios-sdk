@@ -50,6 +50,9 @@ jobs:
       - name: Live OpenAI failure classification
         run: node tests/meow-assistant-live-failure-classification.test.cjs
 
+      - name: Live OpenAI repair hints
+        run: node tests/meow-assistant-live-repair-hints.test.cjs
+
       - name: Multi-intent response composition
         run: node tests/meow-assistant-multi-intent-response.test.cjs
 
