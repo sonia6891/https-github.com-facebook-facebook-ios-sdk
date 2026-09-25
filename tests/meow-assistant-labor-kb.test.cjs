@@ -5,7 +5,7 @@ const html=fs.readFileSync('index.html','utf8');
 const kb=JSON.parse(fs.readFileSync('assets/meow-labor-knowledge-v1.json','utf8'));
 
 const build=(html.match(/<meta name="meow-ui-build" content="v(\d+)[^"]*">/)||[])[1];
-assert(Number(build)>=204,'labor knowledge build marker must be v204+');
+assert(Number(build)>=205,'labor knowledge build marker must be v205+');
 assert.strictEqual(kb.jurisdiction,'Taiwan');
 assert(kb.verifiedAt,'verifiedAt missing');
 
@@ -24,7 +24,7 @@ for(const key of required){
     assert(/^https:\/\/(?:www\.)?(?:mol\.gov\.tw|laws\.mol\.gov\.tw)\//.test(s.url),'non-official MOL source '+key+': '+s.url);
   }
 }
-assert(html.includes("fetch('./assets/meow-labor-knowledge-v1.json?v=204'"),'knowledge loader missing');
+assert(html.includes("fetch('./assets/meow-labor-knowledge-v1.json?v=205'"),'knowledge loader missing');
 assert(html.includes('meowAssistantLaborKnowledge(intent)'),'knowledge lookup not wired to AI route');
 assert(html.includes('knowledge&&knowledge.baseAnswer'),'knowledge answer fallback missing');
 
