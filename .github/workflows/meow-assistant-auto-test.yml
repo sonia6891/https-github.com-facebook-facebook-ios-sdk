@@ -1,0 +1,38 @@
+name: Meow Assistant automatic self-test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'tests/meow-assistant-*.test.cjs'
+      - '.github/workflows/meow-assistant-auto-test.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: meow-assistant-auto-test
+  cancel-in-progress: true
+
+jobs:
+  self-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Core regression — round two
+        run: node tests/meow-assistant-round2-100.test.cjs
+
+      - name: Natural-language discovery — 400 cases
+        run: node tests/meow-assistant-auto-discovery.test.cjs
+
+      - name: Upload Meow Assistant test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: meow-assistant-auto-test-report
+          path: test-results/
+          retention-days: 14
