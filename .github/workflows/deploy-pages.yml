@@ -37,6 +37,8 @@ jobs:
         run: node tests/meow-assistant-multiturn-e2e.test.cjs
       - name: Meow Assistant multi-turn fuzz — 1000 stateful turns
         run: node tests/meow-assistant-multiturn-fuzz-1000.test.cjs
+      - name: Meow Assistant multi-intent response composition
+        run: node tests/meow-assistant-multi-intent-response.test.cjs
       - name: Meow Assistant Taiwan labor knowledge base
         run: node tests/meow-assistant-labor-kb.test.cjs
       - name: Meow Assistant natural-language discovery baseline
