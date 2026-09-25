@@ -6724,6 +6724,9 @@ function renderMeowAssistantReply(message,type=''){
   const box=$('meowAssistantReply');if(!box)return;
   box.textContent=message||'';box.dataset.state=type;
   box.classList.toggle('hidden',!message);
+  const value=String(message||'').trim();
+  const transient=value==='我在理解你的意思…'||value==='正在把語音轉成文字…'||/正在處理…$/.test(value);
+  if(value&&!transient)meowAssistantRemember('assistant',value);
 }
 
 const MEOW_ASSISTANT_AI_LEGACY_INTENTS=new Set([
@@ -6764,7 +6767,10 @@ const MEOW_ASSISTANT_AI_INTENT_LABELS={
 let meowAssistantConversation=[];
 function meowAssistantRemember(role,text){
   const value=String(text||'').trim();if(!value)return;
-  meowAssistantConversation.push({role:role==='assistant'?'assistant':'user',text:value.slice(0,600)});
+  const item={role:role==='assistant'?'assistant':'user',text:value.slice(0,600)};
+  const last=meowAssistantConversation[meowAssistantConversation.length-1];
+  if(last&&last.role===item.role&&last.text===item.text)return;
+  meowAssistantConversation.push(item);
   if(meowAssistantConversation.length>12)meowAssistantConversation=meowAssistantConversation.slice(-12);
 }
 function meowAssistantMaxConsecutiveWorkDays(year,month){
