@@ -167,6 +167,12 @@ Deno.serve(async (req: Request) => {
 
   const imageDataUrl = typeof body?.imageDataUrl === "string" ? body.imageDataUrl : "";
   const ocrText = typeof body?.ocrText === "string" ? body.ocrText.slice(0, 16000) : "";
+  const rowCrops = (Array.isArray(body?.rowCrops) ? body.rowCrops : []).slice(0, 24).map((row: any) => ({
+    amount: Number(row?.amount),
+    x: Number(row?.x) || 0,
+    y: Number(row?.y) || 0,
+    images: (Array.isArray(row?.images) ? row.images : []).filter((v: any) => typeof v === "string" && /^data:image\/(jpeg|jpg|png|webp);base64,/i.test(v)).slice(0, 2)
+  })).filter((row: any) => Number.isFinite(row.amount) && row.images.length);
   if (!/^data:image\/(jpeg|jpg|png|webp);base64,/i.test(imageDataUrl)) {
     return json({ ok: false, code: "INVALID_IMAGE" }, 400);
   }
@@ -325,6 +331,21 @@ Deno.serve(async (req: Request) => {
           evidence: nullableString
         }
       };
+
+      const matches = rowCrops
+        .filter((row: any) => Math.abs(Number(row.amount) - amount) <= 1)
+        .slice(0, 3);
+
+      const imageParts: any[] = [];
+      if (matches.length) {
+        for (const row of matches) {
+          const preferred = row.images[Math.min(pass - 1, row.images.length - 1)] || row.images[0];
+          if (preferred) imageParts.push({ type: "input_image", image_url: preferred, detail: "original" });
+        }
+      } else {
+        imageParts.push({ type: "input_image", image_url: imageDataUrl, detail: "original" });
+      }
+
       const body = {
         model: "gpt-5.6",
         store: false,
@@ -332,18 +353,21 @@ Deno.serve(async (req: Request) => {
         max_output_tokens: 420,
         instructions: [
           "你是薪資單『逐字抄寫員』，不是薪資分類器。",
-          "請在圖片中找到金額 " + Math.round(amount).toLocaleString("zh-TW") + " 所在的同一列／同一欄位，然後逐字抄寫與該金額配對的項目名稱。",
-          "只看原始圖片字形，不參考 OCR 文字，也不要參考前一次判讀結果。",
-          "禁止依語意猜字、禁止把不常見名稱改成常見名稱、禁止補出圖片看不到的字。",
-          "『伙食津貼』『餐費補助』『醫療補助』『營運補助』是不同項目，禁止合併；必須逐字核對項目名稱。",
-          "如果無法清楚辨認，choice 必須選『其他或不確定』，confidence 必須低於 0.65。",
-          "transcription 要盡量逐字照抄圖片；choice 只用來標記是否明確屬於已知候選。"
+          matches.length
+            ? "你現在看到的是從薪資單原圖依金額位置裁出的同一列局部圖，請只讀這一列，不要推測其他區域。"
+            : "如果現在是完整薪資單，請先找到指定金額的同一列，再只讀那一列。",
+          "請找金額 " + Math.round(amount).toLocaleString("zh-TW") + " 所在的列，逐字抄寫與它配對的項目名稱。",
+          "禁止依語意猜字、禁止把不熟悉的名稱改成較合理或較常見的名稱。",
+          "『伙食津貼』『餐費補助』『醫療補助』『營運補助』是不同項目，禁止互相改寫。",
+          "尤其『餐費』兩字必須看到字形證據才可輸出；『醫療』『營運』亦同。",
+          "如果第一、第二個字看不清楚，choice 必須選『其他或不確定』，confidence 必須低於 0.65。",
+          "transcription 必須逐字照抄圖片，不能根據 choice 反推 transcription。"
         ].join("\n"),
         input: [{
           role: "user",
           content: [
             { type: "input_text", text: "請找金額 " + Math.round(amount).toLocaleString("zh-TW") + " 的那一列，只抄寫與這個金額配對的項目名稱。" },
-            { type: "input_image", image_url: imageDataUrl, detail: "original" }
+            ...imageParts
           ]
         }],
         text: {
@@ -355,6 +379,7 @@ Deno.serve(async (req: Request) => {
           }
         }
       };
+
       const res = await fetch("https://api.openai.com/v1/responses", {
         method: "POST",
         headers: {
@@ -391,11 +416,13 @@ Deno.serve(async (req: Request) => {
         const c2 = String(second.choice || "");
         const cf1 = Math.max(0, Math.min(1, Number(first.confidence) || 0));
         const cf2 = Math.max(0, Math.min(1, Number(second.confidence) || 0));
-        const exactAgreement = t1 && t2 && t1 === t2 && cf1 >= .72 && cf2 >= .72;
-        const choiceAgreement = c1 === c2 && c1 !== "其他或不確定" && cf1 >= .78 && cf2 >= .78;
+        const exactAgreement = t1 && t2 && t1 === t2 && cf1 >= .78 && cf2 >= .78;
+        const choiceAgreement = c1 === c2 && c1 !== "其他或不確定" && cf1 >= .82 && cf2 >= .82;
+        const knownChoices = new Set(["伙食津貼","餐費補助","伙食補助","膳食補助","醫療補助","交通補助"]);
+        const trustedKnown = exactAgreement && choiceAgreement && t1 === c1 && knownChoices.has(c1);
 
-        if (exactAgreement || choiceAgreement) {
-          const resolved = choiceAgreement ? c1 : t1;
+        if (trustedKnown) {
+          const resolved = c1;
           item.label = resolved;
           item.confidence = Math.min(.99, Math.max(cf1, cf2));
 
@@ -416,10 +443,13 @@ Deno.serve(async (req: Request) => {
             parsed.notes.push("補助項目已以金額定位並經兩次獨立影像逐字複核，確認為 " + resolved + "。");
           }
         } else {
-          item.label = "名稱待確認（兩次逐字判讀不一致）";
+          const sameUnknown = exactAgreement && t1 === t2 ? t1 : "";
+          item.label = sameUnknown
+            ? "名稱待確認（讀到：" + sameUnknown + "）"
+            : "名稱待確認（兩次逐字判讀不一致）";
           item.confidence = Math.min(cf1 || .5, cf2 || .5, .5);
           parsed.notes = Array.isArray(parsed.notes) ? parsed.notes : [];
-          parsed.notes.push("金額 " + Math.round(amount).toLocaleString("zh-TW") + " 的補助項目名稱兩次獨立影像逐字判讀不一致，未自動命名。");
+          parsed.notes.push("金額 " + Math.round(amount).toLocaleString("zh-TW") + " 的補助項目未達到兩次逐字辨讀完全一致且分類一致的門檻，因此未自動命名。");
         }
       } catch (_) {
         item.label = "名稱待確認";
