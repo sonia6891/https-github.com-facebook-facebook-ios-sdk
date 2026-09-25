@@ -27,16 +27,18 @@ assert(!legacyEdge.includes('OPENAI_API_KEY'), 'disabled legacy backend must not
 assert(!legacyEdge.includes('api.openai.com'), 'disabled legacy backend must not call OpenAI');
 assert(legacyEdge.includes('FEATURE_REMOVED'), 'legacy pro-ai endpoint must remain hard-disabled');
 
-// Payslip is intentionally cross-validated: Apple Vision -> OpenAI -> local salary engine.
+// Payslip remains cross-validated, but the customer-facing UI must not expose implementation/vendor sequencing.
 assert(html.includes('data-pro-feature="payslip_scan"'), 'Pro payslip recognition card missing');
 assert(html.includes('data-pro-feature="itemized_salary_compare"'), 'Pro itemized reconciliation card missing');
-assert(html.includes('Apple Vision × OpenAI'), 'cross-validation copy missing');
+assert(html.includes('薪資單三層交叉檢查'), 'cross-validation product copy missing');
+assert(!html.includes('Apple Vision × OpenAI'), 'public salary UI must not expose provider sequence');
+assert(!html.includes('Apple Vision 先讀、OpenAI'), 'public salary UI must not explain implementation sequence');
 assert(html.includes("purpose:'payslip'"), 'payslip recognition must use native Vision purpose');
 assert(html.includes("invokeUserFunction('payslip-verify'"), 'payslip must call dedicated verifier');
-assert(html.includes('mergePayslipAiVerification'), 'AI merge layer missing');
-assert(html.includes('Apple Vision／OpenAI 不一致'), 'disagreement state missing');
+assert(html.includes('mergePayslipAiVerification'), 'cross-check merge layer missing');
+assert(html.includes('交叉判讀不一致'), 'disagreement state missing');
 assert(html.includes('兩邊不一致，請確認原圖'), 'disagreement must require human confirmation');
-assert(html.includes('data-ocr-ai'), 'user must explicitly choose the OpenAI alternative on conflict');
+assert(html.includes('採用第二判讀：'), 'user must explicitly choose the second-pass alternative on conflict');
 assert(html.includes('公司薪資單實發'), 'reconciliation must use actual payslip net pay');
 assert(html.includes('id="itemizedConclusion"'), 'local reconciliation conclusion missing');
 assert(html.includes('少發 '), 'underpayment line-item status missing');
@@ -57,6 +59,10 @@ assert(html.includes("payslipAiEvidenceSupportsField"), 'critical deduction AI e
 assert(payslipEdge.includes("考勤扣款、勞保費、健保費是三個不同欄位"), 'deduction semantics prompt missing');
 assert(payslipEdge.includes("同一列或同一排同時出現考勤扣款、勞保費、健保費"), 'same-row deduction pairing instruction missing');
 assert(payslipEdge.includes("FIELD_DESCRIPTIONS"), 'structured output field descriptions missing');
+assert(payslipEdge.includes("『餐費補助』與『醫療補助』不得混淆"), 'meal subsidy semantic guard missing');
+assert(payslipEdge.includes('extraItems'), 'salary-slip-only extra income/deduction extraction missing');
+assert(html.includes("label:'伙食／餐費補助'"), 'meal subsidy label must be preserved in reconciliation UI');
+assert(html.includes('rawHasMeal') && html.includes('rawHasMedical'), 'front-end meal/medical safety correction missing');
 
 
 // Dedicated verifier must be server-side, stateless and cost-protected.
