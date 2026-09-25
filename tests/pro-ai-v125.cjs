@@ -83,7 +83,7 @@ assert(html.includes('id="itemizedSmartGroups"'), 'smart payroll grouped review 
 assert(html.includes('未判讀或兩次判讀不一致的項目不會自動猜'), 'smart payroll pending-review copy missing');
 assert(html.includes('payslipCurrentFile'), 'session-only payslip rerun file state missing');
 assert(html.includes("$('closePayslipScan').onclick=()=>{payslipScanOpen=false;renderSalary()}"), 'closing the scan panel must keep the current payslip in memory');
-assert(html.includes('更不會刪除你 iPhone 相簿裡的原始照片'), 'payslip original photo must not be deleted');
+assert(html.includes('🔒 本次對帳工作階段'), 'compact payslip session privacy label missing');
 assert(!html.includes("$('closePayslipScan').onclick=()=>{resetPayslipScan(true)"), 'closing the scan panel must not release the current payslip');
 
 
@@ -108,6 +108,10 @@ assert(html.includes('./assets/meow-assistant-pro-v169.webp?v=169'), 'final Pro 
 assert(html.includes('<b>喵助理</b></button>'), 'floating assistant label missing');
 assert(html.includes("input.dispatchEvent(new Event('input',{bubbles:true}))"), 'voice transcript must be written into the input');
 assert(html.includes("setTimeout(()=>{if(token===meowAssistantRecognitionToken)void previewMeowAssistant()},120)"), 'voice transcript must auto-submit after recognition');
+assert(html.includes("type:'smartPayslipReconcile'"), 'smart salary reconciliation intent missing');
+assert(html.includes('function openSmartPayslipFromMeowAssistant()'), 'Meow Assistant smart payroll navigator missing');
+assert(html.includes("setTab('salary')"), 'Meow Assistant must navigate to salary page');
+assert(html.includes("payslipScanOpen=true"), 'Meow Assistant must open smart payslip reconciliation');
 assert(html.includes('async function resetMeowAssistantVoice(cancelNative=true)'), 'repeat microphone reset helper missing');
 assert(html.includes('meowAssistantRecognitionToken++'), 'speech session token missing');
 assert(html.includes('function meowSpeechBridge()'), 'native iOS speech bridge selector missing');
