@@ -29,6 +29,9 @@ jobs:
       - name: OpenAI NLU integration contract
         run: node tests/meow-assistant-ai-nlu.test.cjs
 
+      - name: Multi-turn conversation memory
+        run: node tests/meow-assistant-conversation-memory.test.cjs
+
       - name: Taiwan labor knowledge base
         run: node tests/meow-assistant-labor-kb.test.cjs
 
