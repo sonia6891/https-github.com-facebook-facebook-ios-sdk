@@ -131,4 +131,5 @@ assert(speechEdge.includes('PRO_REQUIRED'), 'speech backend must reject Free use
 assert(speechEdge.includes('OPENAI_API_KEY'), 'speech backend must keep OpenAI key server-side');
 
 require('./meow-assistant-100.test.cjs');
+require('./meow-assistant-round2-100.test.cjs');
 console.log('PASS cross-validated Pro payroll, final Meow Assistant, and removed schedule import checks');
