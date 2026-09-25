@@ -38,6 +38,13 @@ for(const token of [
 for(const op of ['remove_overtime','move_overtime','undo_last','view_schedule']){
   assert(corpusMatch[1].includes(op),'missing contextual live operation '+op);
 }
+for(const phrase of [
+  "我是工讀生，國定假日上班薪水怎麼算？',requiredIntents:['holidayPay','partTimeRights']",
+  "我固定大夜，不是輪來輪去，11小時間隔還適用嗎？',requiredIntents:['shiftRestInterval','fixedShift']",
+  "今天大夜，明天又早班，而且這個月已經加50小時，公司還叫我留下來，這樣可以嗎？',\n    requiredIntents:['shiftRestInterval','overtimeLimit','mandatoryOvertime']"
+]){
+  assert(html.includes(phrase),'multi-intent live case must not require a fixed primary ordering: '+phrase);
+}
 assert(corpusMatch[1].includes("requiredIntents:['shiftRestInterval','overtimeLimit','mandatoryOvertime']"),'multi-risk case must score complete intent coverage rather than fixed primary order');
 assert(corpusMatch[1].includes("intent:'partTimeRights',secondaryAny:['holidayPay']"),'part-time holiday case must preserve status-specific primary intent');
 assert(corpusMatch[1].includes("intent:'fixedShift',secondaryAny:['shiftRestInterval']"),'fixed-shift interval case must preserve applicability primary intent');
