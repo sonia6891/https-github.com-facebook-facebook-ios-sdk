@@ -49,5 +49,8 @@ assert(corpusMatch[1].includes("requiredIntents:['shiftRestInterval','overtimeLi
 assert(corpusMatch[1].includes("requiredIntents:['holidayPay','partTimeRights']"),'part-time holiday case must score complete intent coverage without fixed primary ordering');
 assert(corpusMatch[1].includes("requiredIntents:['shiftRestInterval','fixedShift']"),'fixed-shift interval case must score complete intent coverage without fixed primary ordering');
 assert(html.includes('test.requiredIntents&&test.requiredIntents.length'),'live scorer must support requiredIntents coverage');
+assert(html.includes('syncMeowAssistantLiveQualityReport'),'live quality report cloud sync helper missing');
+assert(html.includes("from('meow_assistant_quality_latest').upsert"),'live quality report must persist to Supabase');
+assert(html.includes("void syncMeowAssistantLiveQualityReport(report);"),'stored local report must backfill to Supabase when rendered');
 
 console.log('PASS Meow Assistant developer-only live OpenAI semantic quality harness: '+count+' cases');
