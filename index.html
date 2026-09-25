@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=193">
+<link rel="manifest" href="./manifest.webmanifest?v=194">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v193-smart-payroll-layout">
+<meta name="meow-ui-build" content="v194-separate-meal-subsidy">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -3700,7 +3700,7 @@ function toggleTodoDone(id){
 const ITEMIZED_FIELDS=[
   {key:'base',label:'底薪',kind:'income'},
   {key:'shiftAllowance',label:'輪班津貼',kind:'income'},
-  {key:'meal',label:'伙食／餐費補助',kind:'income'},
+  {key:'meal',label:'伙食津貼',kind:'income'},
   {key:'performance',label:'表現津貼',kind:'income'},
   {key:'transport',label:'交通津貼',kind:'income'},
   {key:'otherIncome',label:'其他收入',kind:'income'},
@@ -3728,7 +3728,7 @@ const PAYSLIP_OCR_FIELDS=[
   {key:'dedOther',label:'其他扣款',kind:'deduction',priority:5,minScore:.94,terms:['其他扣款','其他代扣','其他減項','應扣其他','代扣其他','雜項扣款','其他應扣'],mode:'sum'},
   {key:'base',label:'底薪／本薪',kind:'income',priority:28,terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','經常性薪資','經常性工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
   {key:'shiftAllowance',label:'輪班／夜班津貼',kind:'income',priority:25,terms:['輪班津貼','輪班加給','輪班獎金','輪值津貼','輪值加給','班別津貼','班別加給','班津','夜班津貼','夜班加給','夜勤津貼','夜勤加給','夜勤費','夜班費','夜班','輪班費','輪班','晚班津貼','中班津貼','中夜班津貼','大夜班津貼','大夜津貼','大夜加給','大夜','小夜班津貼','小夜津貼','小夜加給','小夜','特殊班津貼','三班津貼','二班津貼','值班津貼','值班加給','SHIFT ALLOWANCE','NIGHT SHIFT'],mode:'sum'},
-  {key:'meal',label:'伙食／餐費補助',kind:'income',priority:26,terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','膳食','餐費津貼','餐費補助','餐費','餐貼','誤餐費','誤餐','餐補','MEAL ALLOWANCE'],mode:'sum'},
+  {key:'meal',label:'伙食津貼',kind:'income',priority:32,terms:['伙食津貼','伙食津贴','MEAL ALLOWANCE'],mode:'sum'},
   {key:'performance',label:'表現／績效津貼',kind:'income',priority:23,terms:['表現津貼','表現獎金','表現加給','表現','績效津貼','績效獎金','績效獎勵','績效加給','績效','工作獎金','工作津貼','職務津貼','職務加給','專業津貼','專業加給','責任津貼','責任加給','考績獎金','技術津貼','技能津貼','全勤獎金','全勤','獎勵金','PERFORMANCE BONUS','PERFORMANCE ALLOWANCE'],mode:'sum'},
   {key:'transport',label:'交通津貼',kind:'income',priority:20,terms:['交通津貼','交通費','交通補助','交通補貼','通勤津貼','通勤補助','車馬費','車資','油資','TRAVEL ALLOWANCE','TRANSPORT ALLOWANCE'],mode:'sum'},
   {key:'otPay',label:'加班費',kind:'income',priority:30,terms:['免稅加班費','加班免稅','免稅延長工時','免稅延時工資','應稅加班費','加班應稅','應稅延長工時','應稅延時工資','平日加班費','平日加班工資','休息日加班費','休息日加班工資','假日加班費','假日加班工資','國定假日加班費','國假加班費','例假日加班費','延長工時工資','延長工時費','延時工資','超時工資','加班薪資','加班工資','加班費','OVERTIME PAY','OVERTIME'],mode:'sum'},
@@ -4611,34 +4611,14 @@ function mergePayslipAiVerification(ai){
       extraSeen.add(k);return true;
     })
     .slice(0,20);
-  const rawPayText=normalizeOcrText(payslipRawText||'');
-  const rawHasMeal=/(餐費|伙食|膳食|餐補|誤餐)/.test(rawPayText);
-  const rawHasMedical=/(醫療|醫藥)/.test(rawPayText);
-  const mealLike=item=>{
-    const label=normalizeOcrText(item&&item.label||''),evidence=normalizeOcrText(item&&item.evidence||'');
-    if(/(餐費|伙食|膳食|餐補|誤餐)/.test(label+evidence))return true;
-    return /醫療補助/.test(label)&&rawHasMeal&&!rawHasMedical;
-  };
-  const mealExtra=payslipOcrResult.__extraItems.find(mealLike);
-  if(mealExtra){
-    if(!Object.prototype.hasOwnProperty.call(payslipOcrResult,'meal')){
-      payslipOcrResult.meal=num(mealExtra.amount);
-      payslipOcrResult.__confidence.meal=Math.max(.82,num(mealExtra.confidence));
-      payslipOcrResult.__matches.push({
-        key:'meal',
-        label:'伙食／餐費補助',
-        term:'餐費補助',
-        amount:num(mealExtra.amount),
-        value:num(mealExtra.amount),
-        confidence:payslipOcrResult.__confidence.meal,
-        method:'交叉判讀語意校正',
-        source:'多重判讀',
-        line:mealExtra.evidence||mealExtra.label
-      });
-      added++;
-    }
-    payslipOcrResult.__extraItems=payslipOcrResult.__extraItems.filter(item=>!mealLike(item));
-  }
+  // Keep 伙食津貼 and 餐費補助 separate. If the verifier returns a
+  // clearly named 餐費補助, it remains an extra income item and is never
+  // folded into the configured 伙食津貼 field.
+  payslipOcrResult.__extraItems=(Array.isArray(payslipOcrResult.__extraItems)?payslipOcrResult.__extraItems:[]).map(item=>{
+    const label=String(item&&item.label||'').trim();
+    if(label==='餐費補助')return Object.assign({},item,{kind:'income'});
+    return item;
+  });
   payslipOcrResult.__aiVerified=true;
   payslipOcrResult.__aiSummary={agreed,conflicts,added,extra:payslipOcrResult.__extraItems.length,model:ai.model||'',remaining:ai.usage&&ai.usage.remaining};
   payslipOcrResult.__aiNotes=Array.isArray(ai.notes)?ai.notes.slice(0,12):[];
@@ -7292,7 +7272,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v193';
+    const reloadKey='meow-sw-reloaded-v194';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -7301,7 +7281,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=193',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=194',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
