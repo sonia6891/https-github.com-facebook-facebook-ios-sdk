@@ -133,3 +133,5 @@ assert(speechEdge.includes('OPENAI_API_KEY'), 'speech backend must keep OpenAI k
 require('./meow-assistant-100.test.cjs');
 require('./meow-assistant-round2-100.test.cjs'); // adversarial round two
 console.log('PASS cross-validated Pro payroll, final Meow Assistant, and removed schedule import checks');
+
+// round2-gross-priority-recheck
