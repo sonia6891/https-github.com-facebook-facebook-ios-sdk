@@ -1,5 +1,5 @@
-const CACHE_NAME='meow-work-pwa-v194';
-const STATIC_ASSETS=['./index.html','./privacy.html','./terms.html','./support.html','./manifest.webmanifest?v=194','./assets/welcome-brand-v112.webp','./assets/mobile-hero-clean-v75.png','./assets/mobile-rest-card-v75.webp','./assets/meow-assistant-pro-v169.webp?v=194','./workcat-home-v12.png','./app-icon-v178-180.png?v=194','./app-icon-v178-192.png?v=194','./app-icon-v178-512.png?v=194','./splash-v183.jpg?v=194'];
+const CACHE_NAME='meow-work-pwa-v195';
+const STATIC_ASSETS=['./index.html','./privacy.html','./terms.html','./support.html','./manifest.webmanifest?v=195','./assets/welcome-brand-v112.webp','./assets/mobile-hero-clean-v75.png','./assets/mobile-rest-card-v75.webp','./assets/meow-assistant-pro-v169.webp?v=195','./workcat-home-v12.png','./app-icon-v178-180.png?v=195','./app-icon-v178-192.png?v=195','./app-icon-v178-512.png?v=195','./splash-v183.jpg?v=195'];
 self.addEventListener('message',event=>{if(event.data&&event.data.type==='SKIP_WAITING')self.skipWaiting()});
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(STATIC_ASSETS)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('meow-work-pwa-')&&k!==CACHE_NAME).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
