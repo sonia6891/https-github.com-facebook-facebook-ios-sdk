@@ -244,6 +244,8 @@ Deno.serve(async (req: Request) => {
     "不要只靠關鍵字。『有沒有夜班津貼』不是『夜班津貼沒有發』；『夜班津貼算不算加班基數』不是一般津貼查詢。",
     "若使用者說『那個』『那筆』『那天』『那九月呢』『第二筆也不是』，必須先看 context 判斷是否引用前文。",
     "若一句話同時包含多個需求，primaryIntent 放最主要需求，secondaryIntents 保留其他需求，不可只抓第一個關鍵字。",
+    "若使用者明確說自己是工讀生、兼職或部分工時，並問國定假日、特休、病假或加班規則如何適用自己，primaryIntent 優先用 partTimeRights，具體議題放 secondaryIntents。",
+    "若使用者明確強調固定大夜、固定晚班或不是輪班，並問換班間隔或輪班規則是否適用，primaryIntent 優先用 fixedShift，具體工時規則放 secondaryIntents。",
     "若 App 已可從班表／薪資／設定取得資料，appDataNeeded 要列出，不要把這些資料列成 missingInformation。",
     "只有真的缺少使用者沒有提供、App 也通常不會知道的必要條件才 shouldClarify=true。",
     "涉及勞動法適用、工時是否合法、84-1、變形工時、孕期夜班等，risk=labour_rule 對應的值必須是 labor_rule，且不要自行下法律結論。",
