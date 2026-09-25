@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=194">
+<link rel="manifest" href="./manifest.webmanifest?v=195">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v194-separate-meal-subsidy">
+<meta name="meow-ui-build" content="v195-row-crop-label-read">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -4384,10 +4384,11 @@ function renderPayslipDetected(){
       extraItems.map((item,index)=>{
         const kindLabel=item.kind==='deduction'?'額外扣項':'額外加項';
         const conf=Math.round(100*num(item.confidence));
-        return '<div class="scan-result-field"><label>'+escapeHtml(item.label)+'</label>'+
+        return '<div class="scan-result-field'+(conf<72||/^名稱待確認/.test(String(item.label||''))?' has-warning':'')+'"><label>'+escapeHtml(item.label)+'</label>'+
           '<input type="number" min="0" step="1" data-ocr-extra-index="'+index+'" value="'+escapeHtml(Math.round(num(item.amount)))+'">'+
           '<div class="ocr-meta"><span class="ocr-confidence'+(conf>=85?'':conf>=65?' mid':' low')+'">'+kindLabel+'・信心 '+conf+'%</span><span class="ocr-source">交叉判讀</span></div>'+
           (item.evidence?'<span class="ocr-warning" style="color:var(--mobile-muted,#765)">依據：'+escapeHtml(item.evidence)+'</span>':'')+
+          '<button type="button" class="ocr-pick-btn" data-ocr-extra-label="'+index+'">修正項目名稱</button>'+
           '</div>';
       }).join('')
     );
@@ -4397,6 +4398,16 @@ function renderPayslipDetected(){
     if(!items[index])return;
     const value=Number(e.target.value);
     if(Number.isFinite(value)&&value>=0){items[index].amount=value;items[index].confidence=1}
+    renderPayslipDetected();
+  });
+  qsa('[data-ocr-extra-label]').forEach(btn=>btn.onclick=()=>{
+    const index=Number(btn.dataset.ocrExtraLabel),items=payslipOcrResult.__extraItems||[],item=items[index];
+    if(!item)return;
+    const value=prompt('請輸入薪資單上的正確項目名稱：',/^名稱待確認/.test(String(item.label||''))?'':String(item.label||''));
+    if(value===null)return;
+    const label=String(value).trim();
+    if(!label)return;
+    item.label=label;item.confidence=1;item.evidence='使用者手動確認項目名稱';
     renderPayslipDetected();
   });
 
@@ -4624,7 +4635,58 @@ function mergePayslipAiVerification(ai){
   payslipOcrResult.__aiNotes=Array.isArray(ai.notes)?ai.notes.slice(0,12):[];
   return true;
 }
-async function verifyPayslipWithOpenAI(imageDataUrl){
+async function payslipBlobImage(blob){
+  return new Promise((resolve,reject)=>{
+    const url=URL.createObjectURL(blob),img=new Image();
+    img.onload=()=>{URL.revokeObjectURL(url);resolve(img)};
+    img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error('薪資單局部影像讀取失敗'))};
+    img.src=url;
+  });
+}
+function payslipRowCropDataUrl(img,yNorm){
+  const y=Math.max(0,Math.min(1,Number(yNorm)||0)),center=y*img.height;
+  const half=Math.max(58,Math.round(img.height*.038));
+  const sy=Math.max(0,Math.min(img.height-1,Math.round(center-half)));
+  const sh=Math.max(40,Math.min(img.height-sy,half*2));
+  const scale=Math.max(1,Math.min(2.6,2400/Math.max(1,img.width)));
+  const canvas=document.createElement('canvas');
+  canvas.width=Math.max(1,Math.round(img.width*scale));
+  canvas.height=Math.max(1,Math.round(sh*scale));
+  const ctx=canvas.getContext('2d');
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(img,0,sy,img.width,sh,0,0,canvas.width,canvas.height);
+  return canvas.toDataURL('image/jpeg',.9);
+}
+async function buildPayslipRowCrops(variants,candidates){
+  const list=(Array.isArray(candidates)?candidates:[])
+    .filter(a=>a&&a.norm&&Number.isFinite(Number(a.value))&&!a.rateLike&&!a.quantityLike&&Number(a.value)>=20&&Number(a.value)<=200000);
+  if(!list.length||!variants||!variants[0])return[];
+  const ranked=list.map(a=>({
+    a,
+    score:(a.moneyHint?2:0)+Math.max(0,Math.min(1,Number(a.confidence)||0))+(Number(a.value)>=50&&Number(a.value)<=5000?1.6:0)
+  })).sort((x,y)=>y.score-x.score);
+  const selected=[],seen=new Set();
+  for(const entry of ranked){
+    const a=entry.a,key=Math.round(Number(a.value))+'@'+Math.round(Number(a.norm.y)*1000);
+    if(seen.has(key))continue;
+    seen.add(key);selected.push(a);
+    if(selected.length>=20)break;
+  }
+  const original=await payslipBlobImage(variants[0].image);
+  const contrast=variants[1]?await payslipBlobImage(variants[1].image):null;
+  return selected.map(a=>({
+    amount:num(a.value),
+    x:Number(a.norm.x)||0,
+    y:Number(a.norm.y)||0,
+    images:[
+      payslipRowCropDataUrl(original,a.norm.y),
+      contrast?payslipRowCropDataUrl(contrast,a.norm.y):null
+    ].filter(Boolean)
+  }));
+}
+function verifyPayslipWithOpenAI(imageDataUrl,rowCrops=[]){
+  return invokeUserFunction('payslip-verify',{imageDataUrl,ocrText:String(payslipRawText||'').slice(0,16000),rowCrops});
+}
   return invokeUserFunction('payslip-verify',{imageDataUrl,ocrText:String(payslipRawText||'').slice(0,16000)});
 }
 function applyOpenAiPayslipAmount(fieldKey){
@@ -4705,7 +4767,8 @@ async function runPayslipOcr(file){
     setPayslipScanStage(3,'解析完成，正在交叉核對各項金額…',66);
     try{
       const aiImageDataUrl=await blobDataUrl(variants[0].image);
-      const ai=await verifyPayslipWithOpenAI(aiImageDataUrl);
+      const rowCrops=await buildPayslipRowCrops(variants,payslipOcrResult.__amountCandidates||[]).catch(()=>[]);
+      const ai=await verifyPayslipWithOpenAI(aiImageDataUrl,rowCrops);
       if(ai&&ai.ok&&mergePayslipAiVerification(ai))payslipAiStatus='verified';
       else payslipAiStatus='unavailable';
     }catch(aiError){
@@ -4750,6 +4813,8 @@ function importPayslipDetected(){
   if(!canUse('payslip_scan'))return;
   const confirmed={};qsa('[data-ocr-field]').forEach(input=>{if(input.value!=='')confirmed[input.dataset.ocrField]=num(input.value)});
   const extraItems=(Array.isArray(payslipOcrResult.__extraItems)?payslipOcrResult.__extraItems:[]).filter(item=>item&&item.label&&Number.isFinite(Number(item.amount))&&Number(item.amount)>=0);
+  const unresolvedExtra=extraItems.filter(item=>/^名稱待確認/.test(String(item.label||''))||num(item.confidence)<.72);
+  if(unresolvedExtra.length){alert('有 '+unresolvedExtra.length+' 個額外項目的名稱還沒有確認。請先按「修正項目名稱」確認後，再導入逐項對帳。');return}
   const keys=Object.keys(confirmed);if(!keys.length&&!extraItems.length){alert('目前沒有可導入的辨識欄位。');return}
   const warnings=validatePayslipValues(confirmed),disagreement=payslipOcrResult.__fieldWarnings||{},manualKeys=payslipOcrResult.__manualKeys||{};
   const lowConfidenceKeys=keys.filter(key=>!manualKeys[key]&&num(payslipOcrResult.__confidence?.[key])<.72);
@@ -7272,7 +7337,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v194';
+    const reloadKey='meow-sw-reloaded-v195';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -7281,7 +7346,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=194',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=195',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
