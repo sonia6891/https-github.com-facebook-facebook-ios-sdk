@@ -8,6 +8,7 @@ on:
       - 'assets/meow-labor-knowledge-v1.json'
       - 'supabase/functions/meow-assistant-route/index.ts'
       - 'tests/meow-assistant-*.test.cjs'
+      - 'tests/meow-assistant-live-quality-harness.test.cjs'
       - '.github/workflows/meow-assistant-auto-test.yml'
   workflow_dispatch:
 
