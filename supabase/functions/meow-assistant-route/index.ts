@@ -16,7 +16,8 @@ const INTENTS = [
   "compensatoryLeave","holidayTransfer","overtimeWageBase","annualLeaveTermination",
   "pregnancyNightShift","flexibleWorkingHours","article841","partTimeRights","naturalDisaster",
   "mandatoryOvertime","attendanceRecord","trainingMeetingTime","mealBreakOnDuty",
-  "scheduleNotice","fixedShift","unknown"
+  "scheduleNotice","fixedShift","minimumWage","marriageLeave","familyCareLeave","sickLeaveRights",
+  "annualLeaveRule","personalLeaveRule","unknown"
 ] as const;
 
 const APP_DATA = [
@@ -194,7 +195,13 @@ const intentGuide = [
   "trainingMeetingTime=教育訓練、晨會、下班會議是否工時",
   "mealBreakOnDuty=吃飯仍須待命／顧崗位是否算休息",
   "scheduleNotice=班表多久前公布／變更通知",
-  "fixedShift=固定大夜／固定晚班與輪班的區別"
+  "fixedShift=固定大夜／固定晚班與輪班的區別",
+  "minimumWage=最低工資、基本工資、最低時薪、明年最低工資",
+  "marriageLeave=婚假有幾天、婚假怎麼請、結婚可以請幾天",
+  "familyCareLeave=家庭照顧假有幾天／幾小時、照顧家人、孩子臨時生病或預防接種",
+  "sickLeaveRights=病假可以請幾天、病假全勤、請病假被懲處或考績影響",
+  "annualLeaveRule=依法特休有幾天、年資對應特休日數；不是查個人剩餘餘額",
+  "personalLeaveRule=事假依法幾天、事假怎麼請、事假有沒有薪水"
 ].join("\n");
 
 Deno.serve(async (req: Request) => {
@@ -246,6 +253,9 @@ Deno.serve(async (req: Request) => {
     "若一句話同時包含多個需求，primaryIntent 放最主要需求，secondaryIntents 保留其他需求，不可只抓第一個關鍵字。",
     "若使用者明確說自己是工讀生、兼職或部分工時，並問國定假日、特休、病假或加班規則如何適用自己，primaryIntent 優先用 partTimeRights，具體議題放 secondaryIntents。",
     "若使用者明確強調固定大夜、固定晚班或不是輪班，並問換班間隔或輪班規則是否適用，primaryIntent 優先用 fixedShift，具體工時規則放 secondaryIntents。",
+    "請明確區分『特休剩多少／還有幾天』與『依法我有幾天特休』：前者是 annualLeave，後者是 annualLeaveRule。",
+    "婚假、家庭照顧假、病假權益、事假、最低工資屬會隨法規版本變動的問題，分別使用 marriageLeave、familyCareLeave、sickLeaveRights、personalLeaveRule、minimumWage；不要只丟到 payrollGeneral 或 scheduleGeneral。",
+    "如果使用者問『最近新聞說婚假增加是真的嗎』『現在婚假到底幾天』，仍路由 marriageLeave；後續法規版本層會區分現行、已核定未生效、預告／草案。",
     "若 App 已可從班表／薪資／設定取得資料，appDataNeeded 要列出，不要把這些資料列成 missingInformation。",
     "只有真的缺少使用者沒有提供、App 也通常不會知道的必要條件才 shouldClarify=true。",
     "涉及勞動法適用、工時是否合法、84-1、變形工時、孕期夜班等，risk=labour_rule 對應的值必須是 labor_rule，且不要自行下法律結論。",
