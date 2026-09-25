@@ -13,7 +13,7 @@ assert(html.includes('/^正在執行喵助理真實 OpenAI 語意測試/'),'self
 
 const corpusMatch=html.match(/const MEOW_ASSISTANT_LIVE_QUALITY_CASES=\[([\s\S]*?)\];\nfunction meowAssistantLiveCasePass/);
 assert(corpusMatch,'could not locate live quality corpus');
-const count=(corpusMatch[1].match(/\{q:/g)||[]).length;
+const count=(corpusMatch[1].match(/\bq\s*:/g)||[]).length;
 assert(count>=30,'live quality corpus should contain at least 30 real cases');
 
 for(const token of [
