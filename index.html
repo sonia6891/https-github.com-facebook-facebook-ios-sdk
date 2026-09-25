@@ -17,7 +17,7 @@
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v187-developer-cloud-restore">
+<meta name="meow-ui-build" content="v187-schedule-more-collapse">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -5679,6 +5679,14 @@ if($('scheduleAddClear'))$('scheduleAddClear').onclick=()=>{
 };
 if($('scheduleMoreToggle'))$('scheduleMoreToggle').onclick=e=>{
   e.stopPropagation();
+  // When schedule settings are already expanded, tapping the three-dot button again
+  // collapses the settings immediately instead of reopening the menu.
+  if(scheduleOpen){
+    closeScheduleMoreMenu();
+    scheduleOpen=false;
+    render();
+    return;
+  }
   const menu=$('scheduleMoreMenu'),open=menu&&menu.classList.contains('hidden');
   if(menu)menu.classList.toggle('hidden',!open);
   $('scheduleMoreToggle').setAttribute('aria-expanded',String(!!open));
