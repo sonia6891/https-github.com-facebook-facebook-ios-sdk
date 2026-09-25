@@ -35,6 +35,9 @@ jobs:
       - name: Contextual operation safety
         run: node tests/meow-assistant-contextual-operations.test.cjs
 
+      - name: Multi-turn stateful E2E
+        run: node tests/meow-assistant-multiturn-e2e.test.cjs
+
       - name: Taiwan labor knowledge base
         run: node tests/meow-assistant-labor-kb.test.cjs
 
