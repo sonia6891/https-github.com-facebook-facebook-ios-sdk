@@ -2680,6 +2680,7 @@ async function handleSignedIn(user,session=null){
     document.documentElement.classList.remove('auth-needs-login');
     if($('welcomeDialog').open&&!welcomeManual)finishWelcome();
     applyTheme();render();await loadBillingHistory();setAccountStatus('帳號已登入');renderSettings();
+    void refreshMeowLaborRulesIfDue();
   }
 }
 function showSignedOutSplash(){
@@ -6929,8 +6930,34 @@ function meowAssistantPersonalFacts(intent,raw=''){
 }
 let meowLaborKnowledgeCache=null;
 const meowLaborRuleContextCache=new Map();
+let meowLaborRulesRefreshPromise=null;
+async function refreshMeowLaborRulesIfDue(){
+  if(!authUser||!navigator.onLine)return false;
+  const key='meow-labor-rules-refresh-at:'+authUser.id;
+  const last=Number(readLocalString(key))||0;
+  if(last&&Date.now()-last<6*3600_000)return true;
+  if(meowLaborRulesRefreshPromise)return meowLaborRulesRefreshPromise;
+  meowLaborRulesRefreshPromise=(async()=>{
+    try{
+      const result=await invokeUserFunction('labor-rules-refresh',{});
+      if(result&&result.ok){
+        try{localStorage.setItem(key,String(Date.now()))}catch(e){}
+        meowLaborRuleContextCache.clear();
+        meowLaborKnowledgeCache=null;
+        return true;
+      }
+    }catch(e){
+      console.warn('[meow-assistant] labor rule refresh unavailable',e&&e.message||e);
+    }finally{
+      meowLaborRulesRefreshPromise=null;
+    }
+    return false;
+  })();
+  return meowLaborRulesRefreshPromise;
+}
 async function meowAssistantLaborRuleContext(ruleKey){
   if(!ruleKey||!authUser)return null;
+  await refreshMeowLaborRulesIfDue();
   const today=iso(new Date()),cacheKey=ruleKey+'@'+today;
   if(meowLaborRuleContextCache.has(cacheKey))return meowLaborRuleContextCache.get(cacheKey);
   try{
