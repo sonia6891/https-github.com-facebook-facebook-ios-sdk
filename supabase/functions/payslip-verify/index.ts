@@ -81,7 +81,7 @@ const FIELD_DESCRIPTIONS: Record<string,string> = {
   actualNet: "薪資單明確標示的實發、實領、淨額或入帳金額。",
   base: "本薪、底薪、基本薪資或基本工資金額。",
   shiftAllowance: "輪班、夜班、小夜、大夜、中班等班別津貼或加給的金額合計。",
-  meal: "伙食、膳食、餐費津貼、餐費補助、伙食補助、膳食補助、餐補或誤餐費等與用餐直接相關的補助金額。",
+  meal: "只對應薪資單明確標示為『伙食津貼』的金額。『餐費補助』『伙食補助』『膳食補助』『餐補』『誤餐費』都是不同項目，不得併入 meal；這些項目若存在，應保留原名稱放入 extraItems。",
   performance: "表現、績效、工作、職務等明確獎金或津貼。",
   transport: "交通、通勤、車馬等津貼。",
   otherIncome: "薪資單明確標為其他收入、其他應發或其他薪資的金額。",
@@ -201,8 +201,10 @@ Deno.serve(async (req: Request) => {
     "confidence 代表你對『欄位分類 + 金額』整體的把握度；欄位為 null 時 confidence 應接近 0。",
     "evidence 請用很短的繁中證據，例如『夜班津貼 6,000』；不確定可填 null。",
     "不要根據一般薪資常識補數字，不要用總額反推缺少欄位。",
-    "『餐費補助』與『醫療補助』不得混淆。只要圖片或 OCR 有明確的『餐費、伙食、膳食、餐補、誤餐』字樣，就必須歸類到 meal，並保留餐費／伙食語意；除非圖片清楚出現『醫療』二字，否則不得改寫成『醫療補助』或其他醫療項目。",
+    "『伙食津貼』與『餐費補助』是兩個不同的薪資項目，絕對不得合併。只有圖片明確寫『伙食津貼』時才放入 fields.meal；若寫『餐費補助』，必須保留原名稱放入 extraItems，kind=income。",
+    "『餐費補助』與『醫療補助』『營運補助』也不得混淆。請逐字辨認前兩個中文字；看不清楚就降低 confidence 或標為不確定，不得依語意猜字。",
     "除了標準欄位外，請把薪資單上確實存在、會影響員工本期實發的其他『加項／應發』或『扣項／應扣』逐列放進 extraItems。",
+    "extraItems 的 label 是『逐字轉錄欄位』，不是語意摘要。必須照圖片原字逐字抄寫，不得把看不清楚的字改寫成較合理、較常見或較順口的薪資名稱。看不清楚就不要自創名稱，confidence 要降低。",
     "extraItems 必須盡量保留薪資單原本的項目名稱，例如『眷屬健保補扣』『停車費』『工會費』『職務加給』『專案獎金』；不得擅自把可辨識的原始名稱改成不同語意的名稱；kind 只能是 income 或 deduction。",
     "已經能分類到標準 fields 的項目不要重複放進 extraItems；實發、應發合計、應扣合計、總額、小計、時數、天數、費率、倍率也不要放進 extraItems。",
     "雇主負擔或雇主提撥的項目不屬於員工實發加減，不得放入 extraItems。",
@@ -289,106 +291,143 @@ Deno.serve(async (req: Request) => {
       return json({ ok: false, code: "ANALYSIS_OUTPUT_INVALID", usage: quota }, 502);
     }
 
-    // Dense payroll images can repeatedly confuse the printed label
-    // 「餐費補助」with「醫療補助」. When that suspicious label appears,
-    // run one independent image-only visual check so OCR text cannot anchor
-    // the answer. If still uncertain, do not keep a confident wrong label.
+    // Separate exact text transcription from semantic classification for ambiguous
+    // subsidy/allowance rows. The amount is used as a visual anchor so the model
+    // must locate the exact row, then copy the printed label character-by-character.
+    // Two independent image-only reads must agree before we normalize a standard field.
     const extraItems = Array.isArray(parsed?.extraItems) ? parsed.extraItems : [];
-    const suspiciousMedicalIndex = extraItems.findIndex((item: any) => {
-      const label = String(item?.label || "").replace(/\s+/g, "");
-      return /(醫療補助|醫療津貼|醫療費補助|醫療補貼)/.test(label);
-    });
+    const mealAlreadyReliable =
+      parsed?.fields?.meal !== null &&
+      parsed?.fields?.meal !== undefined &&
+      Number(parsed?.confidence?.meal || 0) >= .78;
 
-    if (suspiciousMedicalIndex >= 0) {
-      const suspicious = extraItems[suspiciousMedicalIndex];
-      const labelCheckSchema = {
+    const ambiguousIncomeIndexes = extraItems
+      .map((item: any, index: number) => ({ item, index }))
+      .filter(({ item }: any) => {
+        if (item?.kind !== "income") return false;
+        const label = String(item?.label || "").replace(/\s+/g, "");
+        return /(補助|補貼|津貼|加給|餐費|伙食|膳食|醫療|營運)/.test(label);
+      })
+      .slice(0, 3);
+
+    async function exactLabelRead(amount: number, pass: number) {
+      const exactLabelSchema = {
         type: "object",
         additionalProperties: false,
-        required: ["choice", "confidence", "evidence"],
+        required: ["transcription", "choice", "confidence", "evidence"],
         properties: {
+          transcription: { type: "string", minLength: 1, maxLength: 20 },
           choice: {
             type: "string",
-            enum: ["餐費補助", "醫療補助", "其他或不確定"]
+            enum: ["伙食津貼", "餐費補助", "伙食補助", "膳食補助", "醫療補助", "交通補助", "其他或不確定"]
           },
           confidence: { type: "number", minimum: 0, maximum: 1 },
           evidence: nullableString
         }
       };
-
-      const labelCheckBody = {
+      const body = {
         model: "gpt-5.6",
         store: false,
-        reasoning: { effort: "low" },
-        max_output_tokens: 350,
+        reasoning: { effort: pass === 1 ? "low" : "medium" },
+        max_output_tokens: 420,
         instructions: [
-          "你現在只做一件事：重新看薪資單原始圖片上的項目名稱字形，不做薪資推理。",
-          "不要參考 OCR 文字，不要根據常識或金額猜。",
-          "請找出先前疑似被讀成『醫療補助』的那個收入項目，仔細辨認圖片實際印的是『餐費補助』、『醫療補助』，或其他／無法確定。",
-          "『餐費補助』與『醫療補助』是不同項目；只有在圖片字形清楚支持時才選其中一個，否則選『其他或不確定』。"
+          "你是薪資單『逐字抄寫員』，不是薪資分類器。",
+          "請在圖片中找到金額 " + Math.round(amount).toLocaleString("zh-TW") + " 所在的同一列／同一欄位，然後逐字抄寫與該金額配對的項目名稱。",
+          "只看原始圖片字形，不參考 OCR 文字，也不要參考前一次判讀結果。",
+          "禁止依語意猜字、禁止把不常見名稱改成常見名稱、禁止補出圖片看不到的字。",
+          "『伙食津貼』『餐費補助』『醫療補助』『營運補助』是不同項目，禁止合併；必須逐字核對項目名稱。",
+          "如果無法清楚辨認，choice 必須選『其他或不確定』，confidence 必須低於 0.65。",
+          "transcription 要盡量逐字照抄圖片；choice 只用來標記是否明確屬於已知候選。"
         ].join("\n"),
         input: [{
           role: "user",
           content: [
-            { type: "input_text", text: "請只核對該項目的原始印刷名稱。不要使用 OCR 文字作為證據。" },
+            { type: "input_text", text: "請找金額 " + Math.round(amount).toLocaleString("zh-TW") + " 的那一列，只抄寫與這個金額配對的項目名稱。" },
             { type: "input_image", image_url: imageDataUrl, detail: "original" }
           ]
         }],
         text: {
           format: {
             type: "json_schema",
-            name: "payroll_label_visual_recheck",
+            name: "payroll_exact_label_read_" + pass,
             strict: true,
-            schema: labelCheckSchema
+            schema: exactLabelSchema
           }
         }
       };
+      const res = await fetch("https://api.openai.com/v1/responses", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer " + openaiKey,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(30_000)
+      });
+      const provider2 = await res.json().catch(() => null);
+      inTok += Number(provider2?.usage?.input_tokens || 0);
+      outTok += Number(provider2?.usage?.output_tokens || 0);
+      if (!res.ok) return null;
+      try { return JSON.parse(outputText(provider2)); }
+      catch (_) { return null; }
+    }
+
+    for (const { item, index } of ambiguousIncomeIndexes) {
+      const amount = Number(item?.amount);
+      if (!Number.isFinite(amount) || amount < 0) continue;
 
       try {
-        const labelRes = await fetch("https://api.openai.com/v1/responses", {
-          method: "POST",
-          headers: {
-            "Authorization": "Bearer " + openaiKey,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(labelCheckBody),
-          signal: AbortSignal.timeout(30_000)
-        });
-        const labelProvider = await labelRes.json().catch(() => null);
-        inTok += Number(labelProvider?.usage?.input_tokens || 0);
-        outTok += Number(labelProvider?.usage?.output_tokens || 0);
+        const first = await exactLabelRead(amount, 1);
+        const second = await exactLabelRead(amount, 2);
+        if (!first || !second) {
+          item.label = "名稱待確認";
+          item.confidence = Math.min(Number(item.confidence) || .5, .5);
+          continue;
+        }
 
-        if (labelRes.ok) {
-          const labelText = outputText(labelProvider);
-          const labelCheck = JSON.parse(labelText);
-          const choice = String(labelCheck?.choice || "");
-          const confidence = Math.max(0, Math.min(1, Number(labelCheck?.confidence) || 0));
+        const t1 = String(first.transcription || "").replace(/\s+/g, "");
+        const t2 = String(second.transcription || "").replace(/\s+/g, "");
+        const c1 = String(first.choice || "");
+        const c2 = String(second.choice || "");
+        const cf1 = Math.max(0, Math.min(1, Number(first.confidence) || 0));
+        const cf2 = Math.max(0, Math.min(1, Number(second.confidence) || 0));
+        const exactAgreement = t1 && t2 && t1 === t2 && cf1 >= .72 && cf2 >= .72;
+        const choiceAgreement = c1 === c2 && c1 !== "其他或不確定" && cf1 >= .78 && cf2 >= .78;
 
-          if (choice === "餐費補助" && confidence >= 0.72) {
+        if (exactAgreement || choiceAgreement) {
+          const resolved = choiceAgreement ? c1 : t1;
+          item.label = resolved;
+          item.confidence = Math.min(.99, Math.max(cf1, cf2));
+
+          if (resolved === "餐費補助") {
+            // Keep it as a separate extra income item. It is NOT 伙食津貼.
+            item.kind = "income";
+          }
+
+          if (!mealAlreadyReliable && resolved === "伙食津貼") {
             parsed.fields = parsed.fields || {};
             parsed.confidence = parsed.confidence || {};
             parsed.evidence = parsed.evidence || {};
-            parsed.fields.meal = Number(suspicious.amount);
-            parsed.confidence.meal = Math.max(Number(parsed.confidence.meal) || 0, Math.min(.98, confidence));
-            parsed.evidence.meal = String(labelCheck?.evidence || "餐費補助") + " " + Number(suspicious.amount).toLocaleString("zh-TW");
-            extraItems.splice(suspiciousMedicalIndex, 1);
+            parsed.fields.meal = amount;
+            parsed.confidence.meal = Math.min(.99, Math.min(cf1, cf2));
+            parsed.evidence.meal = resolved + " " + Math.round(amount).toLocaleString("zh-TW");
+            extraItems[index] = null;
             parsed.notes = Array.isArray(parsed.notes) ? parsed.notes : [];
-            parsed.notes.push("疑似醫療補助的項目經獨立影像字形複核後確認為餐費補助。");
-          } else if (choice === "醫療補助" && confidence >= 0.82) {
-            suspicious.label = "醫療補助";
-            suspicious.confidence = Math.max(Number(suspicious.confidence) || 0, confidence);
-          } else {
-            // Better to surface a missing/pending field than a confidently wrong label.
-            suspicious.label = "名稱待確認（疑似餐費補助／醫療補助）";
-            suspicious.confidence = Math.min(Number(suspicious.confidence) || .5, .5);
-            parsed.notes = Array.isArray(parsed.notes) ? parsed.notes : [];
-            parsed.notes.push("疑似餐費／醫療補助的項目名稱無法高信心辨認，請使用者確認。");
+            parsed.notes.push("補助項目已以金額定位並經兩次獨立影像逐字複核，確認為 " + resolved + "。");
           }
+        } else {
+          item.label = "名稱待確認（兩次逐字判讀不一致）";
+          item.confidence = Math.min(cf1 || .5, cf2 || .5, .5);
+          parsed.notes = Array.isArray(parsed.notes) ? parsed.notes : [];
+          parsed.notes.push("金額 " + Math.round(amount).toLocaleString("zh-TW") + " 的補助項目名稱兩次獨立影像逐字判讀不一致，未自動命名。");
         }
       } catch (_) {
-        suspicious.label = "名稱待確認（疑似餐費補助／醫療補助）";
-        suspicious.confidence = Math.min(Number(suspicious.confidence) || .5, .5);
+        item.label = "名稱待確認";
+        item.confidence = Math.min(Number(item.confidence) || .5, .5);
       }
     }
+
+    parsed.extraItems = extraItems.filter(Boolean);
 
     await rpc("meow_finalize_payslip_ai_usage", {
       p_user_id: userId, p_success: true,
