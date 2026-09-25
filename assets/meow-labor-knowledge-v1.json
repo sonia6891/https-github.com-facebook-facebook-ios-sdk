@@ -1,6 +1,6 @@
 {
-  "version": "2026-09-25-v2",
-  "verifiedAt": "2026-09-25",
+  "version": "2026-09-26-v3",
+  "verifiedAt": "2026-09-26",
   "jurisdiction": "Taiwan",
   "disclaimer": "知識庫提供一般性規則與判斷條件；涉及個案適法性時，仍須結合實際班表、工時制度、工作身分、勞資約定與最新主管機關規定。",
   "entries": {
@@ -703,6 +703,147 @@
         {
           "title": "勞動基準法第34條",
           "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC01.aspx?flno=34&id=FL014930"
+        }
+      ]
+    },
+    "minimumWage": {
+      "title": "最低工資／基本工資",
+      "ruleKey": "minimum_wage",
+      "baseAnswer": "最低工資會按生效年度變動。喵助理回答時應先讀取當日已生效版本；已公告但尚未核定或尚未生效的下一年度金額，只能當作即將上路資訊，不能提前套用。",
+      "requiredFacts": [
+        "要查詢的日期",
+        "計薪方式（月薪／時薪）"
+      ],
+      "appDataNeeded": [
+        "salary",
+        "employment"
+      ],
+      "cautions": [
+        "不能把下一年度預告或審議結果提前當成現行最低工資。",
+        "使用者薪資高於最低工資時，不代表薪資會隨最低工資調整而自動等比例增加。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部最低工資資訊",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28180/28182/28188/29025/"
+        }
+      ]
+    },
+    "marriageLeave": {
+      "title": "婚假",
+      "ruleKey": "marriage_leave",
+      "baseAnswer": "婚假日數與生效版本要以勞動部正式發布的《勞工請假規則》為準。若有已預告但尚未正式生效的新制，喵助理會分開說明『目前現行』與『即將／擬上路』，不會把草案當現行法。",
+      "requiredFacts": [
+        "結婚登記日期",
+        "要查詢的請假日期"
+      ],
+      "appDataNeeded": [
+        "employment",
+        "leave"
+      ],
+      "cautions": [
+        "新聞稿或修正草案不等於已生效法規。",
+        "請休期限與是否仍在可請期間，需要依結婚登記日判斷。"
+      ],
+      "sources": [
+        {
+          "title": "勞工請假規則第2條",
+          "url": "https://laws.mol.gov.tw/FLAW/PrintFLAWDOC01.aspx?flno=2&id=FL014935"
+        },
+        {
+          "title": "勞動部婚假新制預告",
+          "url": "https://www.mol.gov.tw/1607/1632/1633/99111/post"
+        }
+      ]
+    },
+    "familyCareLeave": {
+      "title": "家庭照顧假",
+      "ruleKey": "family_care_leave",
+      "baseAnswer": "家庭照顧假要先確認是否符合家庭成員預防接種、嚴重疾病或其他重大事故且需要親自照顧等法定情形；日數、是否可按小時請、工資與全勤權益，要依當期生效規則回答。",
+      "requiredFacts": [
+        "家庭成員發生的情形",
+        "是否需要本人親自照顧",
+        "今年已使用家庭照顧假／事假時數"
+      ],
+      "appDataNeeded": [
+        "leave",
+        "employment"
+      ],
+      "cautions": [
+        "家庭照顧假與一般事假會有日數併計關係，但全勤／考績保障不同。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部家庭照顧假規定",
+          "url": "https://www.mol.gov.tw/1607/28690/2282/2284/2320/7366/"
+        }
+      ]
+    },
+    "sickLeaveRights": {
+      "title": "普通傷病假權益",
+      "ruleKey": "sick_leave_rights",
+      "baseAnswer": "病假不只包含可請日數與工資，還有全勤獎金與不利處分保障；喵助理回答時要依當期《勞工請假規則》版本區分。",
+      "requiredFacts": [
+        "今年已請普通傷病假日數",
+        "是否住院",
+        "公司要做的處分或扣款"
+      ],
+      "appDataNeeded": [
+        "leave",
+        "salary",
+        "employment"
+      ],
+      "cautions": [
+        "病假工資、全勤獎金與是否可做不利處分是不同問題，不可混成同一個規則。"
+      ],
+      "sources": [
+        {
+          "title": "勞工請假規則部分條文修正Q&A",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/86988/87100/"
+        }
+      ]
+    },
+    "annualLeaveRule": {
+      "title": "法定特別休假日數",
+      "ruleKey": "annual_leave_rule",
+      "baseAnswer": "法定特休日數依年資級距計算；如果問『我依法有幾天』要先看年資，如果問『我還剩多少』則要再扣除已使用與已排未休時數。",
+      "requiredFacts": [
+        "到職日或年資"
+      ],
+      "appDataNeeded": [
+        "employment",
+        "leave",
+        "settings"
+      ],
+      "cautions": [
+        "『法定應有日數』與『目前剩餘日數』是兩個不同問題。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部假別及工資權益",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/81499/"
+        }
+      ]
+    },
+    "personalLeaveRule": {
+      "title": "事假",
+      "ruleKey": "personal_leave",
+      "baseAnswer": "一般事假的法定日數與工資規則應依當期《勞工請假規則》回答；若請假原因是照顧家人，還要區分是否符合家庭照顧假或照顧家人的事假新制。",
+      "requiredFacts": [
+        "請假原因",
+        "今年已使用事假日數／時數"
+      ],
+      "appDataNeeded": [
+        "leave",
+        "employment"
+      ],
+      "cautions": [
+        "家庭照顧假與一般事假不要混為同一假別。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部假別及工資權益",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/81499/"
         }
       ]
     }
