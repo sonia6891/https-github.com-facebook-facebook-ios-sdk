@@ -17,7 +17,7 @@
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v205-meow-personal-context">
+<meta name="meow-ui-build" content="v206-mobile-dashboard-approved">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1412,6 +1412,113 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   </div>
 
   <section class="page active" id="page-dashboard">
+    <div class="mobile-dashboard-approved" id="mobileDashboardApproved" aria-label="總覽">
+      <section class="mda-worktypes" aria-label="我的工作類型">
+        <div class="mda-section-title">
+          <span class="mda-title-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 7.5h16v11H4z"/><path d="M8 7.5V5.8c0-1 .8-1.8 1.8-1.8h4.4c1 0 1.8.8 1.8 1.8v1.7"/></svg>
+          </span>
+          <strong>我的工作類型</strong>
+        </div>
+        <div class="mda-worktype-row">
+          <button type="button" class="mda-worktype" data-mobile-worktype="hospital"><span class="mda-worktype-icon hospital"><svg viewBox="0 0 24 24"><path d="M9 4h6v5h5v6h-5v5H9v-5H4V9h5z"/></svg></span><b>醫院</b></button>
+          <button type="button" class="mda-worktype" data-mobile-worktype="restaurant"><span class="mda-worktype-icon restaurant"><svg viewBox="0 0 24 24"><path d="M7 3v7M4.5 3v7M9.5 3v7M4.5 10h5M7 10v11M16 3v7c0 2 1.2 3 3 3V3M19 13v8"/></svg></span><b>餐廳</b></button>
+          <button type="button" class="mda-worktype" data-mobile-worktype="security"><span class="mda-worktype-icon security"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.6-2.8 8.3-7 10-4.2-1.7-7-5.4-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span><b>保全</b></button>
+          <button type="button" class="mda-worktype" data-mobile-worktype="factory"><span class="mda-worktype-icon factory"><svg viewBox="0 0 24 24"><path d="M3 20V9l6 3V8l6 4V5h4v15z"/><path d="M7 16h2M12 16h2M17 16h2"/></svg></span><b>工廠</b></button>
+          <button type="button" class="mda-worktype" data-mobile-worktype="custom"><span class="mda-worktype-icon custom"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><b>自訂</b></button>
+        </div>
+      </section>
+
+      <section class="mda-kpis" aria-label="本月概況">
+        <article class="mda-kpi mda-kpi-blue">
+          <span class="mda-kpi-icon"><svg class="icon"><use href="#i-calendar"/></svg></span>
+          <b>本月出勤</b>
+          <strong id="mDashAttendance">0 天</strong>
+        </article>
+        <article class="mda-kpi mda-kpi-pink">
+          <span class="mda-kpi-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
+          <b>本月加班</b>
+          <strong id="mDashOvertime">0 小時</strong>
+        </article>
+        <article class="mda-kpi mda-kpi-sky">
+          <span class="mda-kpi-icon"><svg class="icon"><use href="#i-umbrella"/></svg></span>
+          <b>本月請假</b>
+          <strong id="mDashLeave">0 小時</strong>
+        </article>
+        <article class="mda-kpi mda-kpi-cream">
+          <span class="mda-kpi-icon"><svg class="icon"><use href="#i-money"/></svg></span>
+          <b>距離發薪日</b>
+          <strong id="mDashPayday">尚未設定</strong>
+        </article>
+      </section>
+
+      <section class="mda-next-shift" aria-label="下次上班">
+        <span class="mda-next-icon" aria-hidden="true"><svg class="icon"><use href="#i-clock"/></svg></span>
+        <b>下次上班</b>
+        <span id="mDashNextDate">尚未取得</span>
+        <span class="mda-next-pill" id="mDashNextShift">—</span>
+        <span id="mDashNextHours">—</span>
+        <em id="mDashNextCountdown"></em>
+        <span class="mda-chevron" aria-hidden="true">›</span>
+      </section>
+
+      <section class="mda-leave-shell" aria-label="我的假還剩多少">
+        <div class="mda-leave-head">
+          <div>
+            <span class="mda-leave-head-icon" aria-hidden="true"><svg class="icon"><use href="#i-umbrella"/></svg></span>
+            <strong>我的假還剩多少</strong>
+            <small id="mDashLeaveCycle">特休週期</small>
+          </div>
+          <button type="button" data-goto="settings">查看全部 <span aria-hidden="true">›</span></button>
+        </div>
+        <div class="mda-leave-grid">
+          <article class="mda-leave-card mda-leave-sick">
+            <span class="mda-leave-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48"><rect x="10" y="15" width="28" height="24" rx="5"/><path d="M18 15v-4h12v4"/><path d="M24 21v12M18 27h12"/></svg>
+            </span>
+            <b>病假</b>
+            <strong id="mDashSickRemain">剩 —</strong>
+            <small id="mDashSickUsed">已用 —</small>
+          </article>
+          <article class="mda-leave-card mda-leave-personal">
+            <span class="mda-leave-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48"><rect x="11" y="10" width="25" height="30" rx="4"/><path d="M17 7v7M29 7v7M17 21h13M17 27h8"/><path d="M29 34l8-8 3 3-8 8-5 2z"/></svg>
+            </span>
+            <b>事假</b>
+            <strong id="mDashPersonalRemain">剩 —</strong>
+            <small id="mDashPersonalUsed">已用 —</small>
+          </article>
+          <article class="mda-leave-card mda-leave-annual">
+            <span class="mda-leave-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48"><rect x="10" y="16" width="28" height="24" rx="5"/><path d="M19 16v-5h10v5M24 16v24"/><path d="M38 8l1.5 3 3 1.5-3 1.5-1.5 3-1.5-3-3-1.5 3-1.5z"/></svg>
+            </span>
+            <b>特休</b>
+            <strong id="mDashAnnualRemain">剩 —</strong>
+            <small id="mDashAnnualUsed">已用 —</small>
+          </article>
+          <article class="mda-leave-card mda-leave-menstrual">
+            <span class="mda-leave-icon" aria-hidden="true">
+              <svg viewBox="0 0 48 48">
+                <path class="moon" d="M30.5 9.5c-7.2 1.8-12.5 8.2-12.5 15.9 0 9 7.3 16.3 16.3 16.3 2.2 0 4.3-.4 6.2-1.2-2.6 3.5-6.8 5.8-11.5 5.8-8.1 0-14.7-6.6-14.7-14.7 0-9.7 8-17.7 17.7-17.7 2.7 0 5.2.6 7.5 1.7-2.5-3.7-5.4-5.8-9-6.1z"/>
+                <path class="drop" d="M37 16.5c0 3.2-2.5 5.8-5.6 5.8s-5.6-2.6-5.6-5.8c0-3.5 5.6-9.2 5.6-9.2s5.6 5.7 5.6 9.2z"/>
+              </svg>
+            </span>
+            <b>生理假</b>
+            <strong id="mDashMenstrualRemain">剩 —</strong>
+            <small id="mDashMenstrualUsed">本月已用 —</small>
+          </article>
+        </div>
+      </section>
+
+      <button type="button" class="mda-reminder" data-goto="settings">
+        <span class="mda-reminder-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48"><path d="M8 21h8l15-10v26L16 27H8z"/><path d="M15 29l3 9h7l-3-7"/><path d="M36 18c3 3 3 9 0 12M40 14c6 6 6 14 0 20"/></svg>
+        </span>
+        <span class="mda-reminder-copy"><b>重要提醒</b><small id="mDashReminder">目前沒有需要特別提醒的事項</small></span>
+        <span class="mda-chevron" aria-hidden="true">›</span>
+      </button>
+    </div>
+
     <div class="section dashboard-overview">
       <div class="card dashboard-overview-card">
         <div class="section-bar dashboard-card-head">
@@ -2297,7 +2404,7 @@ function canUse(feature){const meta=FEATURE_CATALOG[feature];return !!meta&&(isD
 const statusMap={
  none:{label:'正常班表',cls:'',icon:''},overtime:{label:'加班',cls:'st-ot',icon:'i-clock'},sick:{label:'病假',cls:'st-sick',icon:'i-cross'},menstrual:{label:'生理假',cls:'st-menstrual',icon:'i-drop'},personal:{label:'事假',cls:'st-personal',icon:'i-doc'},annual:{label:'特休',cls:'st-annual',icon:'i-star'},custom:{label:'自訂假別',cls:'st-custom',icon:'i-star'}
 };
-function defaultState(){const d=new Date();return{theme:'light',profile:{avatar:'',name:'喵星人'},schedule:{preset:'2-2',shiftName:'A班',workDays:2,offDays:2,startDate:iso(d)},scheduleOverrides:{},settings:{baseSalary:0,shiftAllowancePerDay:0,mealAllowance:0,performanceAllowance:0,transportAllowance:0,otherIncome:0,payday:0,hireDate:'',dailyWorkHours:8,defaultOvertimeHours:10,overtimeRateMode:'unselected',overtimeFixedRate:2,overtimeRegularFirst:4/3,overtimeRegularLater:5/3,overtimeRestFirst:4/3,overtimeRestLater:5/3,overtimeRestOver8:8/3,annualUsedHoursByPeriod:{},annualLeaveCycle:'anniversary',annualCustomDate:'',sickLeaveDays:0,personalLeaveDays:0,sickUsedHours:0,personalUsedHours:0},months:{},dayStatus:{},personalEvents:{}}}
+function defaultState(){const d=new Date();return{theme:'light',profile:{avatar:'',name:'喵星人'},schedule:{preset:'2-2',shiftName:'A班',workDays:2,offDays:2,startDate:iso(d)},scheduleOverrides:{},settings:{workType:'hospital',baseSalary:0,shiftAllowancePerDay:0,mealAllowance:0,performanceAllowance:0,transportAllowance:0,otherIncome:0,payday:0,hireDate:'',dailyWorkHours:8,defaultOvertimeHours:10,overtimeRateMode:'unselected',overtimeFixedRate:2,overtimeRegularFirst:4/3,overtimeRegularLater:5/3,overtimeRestFirst:4/3,overtimeRestLater:5/3,overtimeRestOver8:8/3,annualUsedHoursByPeriod:{},annualLeaveCycle:'anniversary',annualCustomDate:'',sickLeaveDays:0,personalLeaveDays:0,sickUsedHours:0,personalUsedHours:0},months:{},dayStatus:{},personalEvents:{}}}
 function loadSaved(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return{state:defaultState(),savedAt:null};const p=JSON.parse(raw);const s=defaultState(),v=p.state||p;s.theme=preferredTheme();s.profile=Object.assign({},s.profile,v.profile||{});s.schedule=Object.assign({},s.schedule,v.schedule||{});s.scheduleOverrides=v.scheduleOverrides||{};s.settings=Object.assign({},s.settings,v.settings||{});s.months=v.months||{};s.dayStatus=v.dayStatus||{};s.personalEvents=v.personalEvents||{};return{state:s,savedAt:p.savedAt||null}}catch(e){return{state:defaultState(),savedAt:null}}}
 let loaded=loadSaved(),state=loaded.state,lastSavedAt=loaded.savedAt,current=new Date();
 state.theme=preferredTheme();
@@ -3297,7 +3404,75 @@ function legalLeaveBalanceInfo(type,legalDays,carryHours=0,includeMenstrualExces
     pct:totalHours>0?Math.min(100,usedHours/totalHours*100):0
   };
 }
-function renderDashboard(){const mc=calcMonth();
+
+function renderMobileDashboardApproved(){
+  const root=$('mobileDashboardApproved');if(!root)return;
+  const now=new Date(),prev=current;
+  let mc;
+  try{current=new Date(now.getFullYear(),now.getMonth(),1);mc=calcMonth()}
+  finally{current=prev}
+  const workType=String(state.settings.workType||'hospital');
+  qsa('[data-mobile-worktype]').forEach(btn=>{
+    const active=btn.dataset.mobileWorktype===workType;
+    btn.classList.toggle('active',active);
+    btn.setAttribute('aria-pressed',active?'true':'false');
+  });
+  if($('mDashAttendance'))$('mDashAttendance').textContent=mc.attendance+' 天';
+  if($('mDashOvertime'))$('mDashOvertime').textContent=fmtHours(mc.overtimeHours)+' 小時';
+  if($('mDashLeave'))$('mDashLeave').textContent=fmtHours(mc.leaveHours)+' 小時';
+  const pay=nextPaydayInfo();
+  if($('mDashPayday'))$('mDashPayday').textContent=pay?(pay.days===0?'今天':pay.days+' 天'):'尚未設定';
+
+  const hit=meowAssistantNextDate('work');
+  if(hit){
+    const dt=hit.dt,days=Math.max(1,Math.round((Date.UTC(dt.getFullYear(),dt.getMonth(),dt.getDate())-Date.UTC(now.getFullYear(),now.getMonth(),now.getDate()))/DAY));
+    const rotating=threeShiftForDate(dt),override=state.scheduleOverrides&&state.scheduleOverrides[iso(dt)];
+    const shift=override&&override.kind==='work'?(override.shiftName||state.schedule.shiftName||'上班'):rotating&&rotating.work?rotating.label:(state.schedule.shiftName||'上班');
+    if($('mDashNextDate'))$('mDashNextDate').textContent=(dt.getMonth()+1)+'月'+dt.getDate()+'日（'+['日','一','二','三','四','五','六'][dt.getDay()]+'）';
+    if($('mDashNextShift'))$('mDashNextShift').textContent=shift;
+    if($('mDashNextHours'))$('mDashNextHours').textContent=fmtHours(Math.max(.5,num(state.settings.dailyWorkHours)||8))+' 小時班';
+    if($('mDashNextCountdown'))$('mDashNextCountdown').textContent='還有 '+days+' 天';
+  }else{
+    if($('mDashNextDate'))$('mDashNextDate').textContent='尚未取得';
+    if($('mDashNextShift'))$('mDashNextShift').textContent='—';
+    if($('mDashNextHours'))$('mDashNextHours').textContent='請先設定班表';
+    if($('mDashNextCountdown'))$('mDashNextCountdown').textContent='';
+  }
+
+  const sick=legalLeaveBalanceInfo('sick',30,state.settings.sickUsedHours,true);
+  const personal=legalLeaveBalanceInfo('personal',14,state.settings.personalUsedHours,false);
+  const annual=annualLeaveBalanceInfo();
+  const daily=Math.max(.5,num(state.settings.dailyWorkHours)||8);
+  const monthPrefix=now.getFullYear()+'-'+pad(now.getMonth()+1)+'-';
+  const menstrualUsed=Object.entries(state.dayStatus||{}).reduce((sum,[date,st])=>sum+(date.startsWith(monthPrefix)&&st&&st.type==='menstrual'?Math.max(0,num(st.hours)):0),0);
+  const menstrualRemain=Math.max(0,daily-menstrualUsed);
+  if($('mDashSickRemain'))$('mDashSickRemain').textContent='剩 '+fmtHours(sick.remainHours)+' h';
+  if($('mDashSickUsed'))$('mDashSickUsed').textContent='已用 '+fmtHours(sick.usedHours)+' / '+fmtHours(sick.totalHours)+' h';
+  if($('mDashPersonalRemain'))$('mDashPersonalRemain').textContent='剩 '+fmtHours(personal.remainHours)+' h';
+  if($('mDashPersonalUsed'))$('mDashPersonalUsed').textContent='已用 '+fmtHours(personal.usedHours)+' / '+fmtHours(personal.totalHours)+' h';
+  if($('mDashAnnualRemain'))$('mDashAnnualRemain').textContent=annual.period.missing?'待設定':'剩 '+fmtHours(annual.remainHours)+' h';
+  if($('mDashAnnualUsed'))$('mDashAnnualUsed').textContent=annual.period.missing?'請設定到職日':'已用 '+fmtHours(annual.usedHours)+' / '+fmtHours(annual.totalHours)+' h';
+  if($('mDashMenstrualRemain'))$('mDashMenstrualRemain').textContent='剩 '+fmtHours(menstrualRemain)+' h';
+  if($('mDashMenstrualUsed'))$('mDashMenstrualUsed').textContent='本月已用 '+fmtHours(menstrualUsed)+' / '+fmtHours(daily)+' h';
+  if($('mDashLeaveCycle')){
+    const mode=annual.period&&!annual.period.missing?annual.period.mode:'';
+    $('mDashLeaveCycle').textContent=mode==='anniversary'?'特休：到職週年制':mode==='calendar'?'特休：曆年制':mode==='custom'?'特休：自訂週期':'特休週期待設定';
+  }
+  const reminder=$('mDashReminder');
+  if(reminder){
+    const settlement=annualSettlementInfo();
+    if(!settlement.missing&&annual.remainHours>0){
+      const ds=(settlement.date.getMonth()+1)+'/'+settlement.date.getDate();
+      reminder.textContent='特休剩 '+fmtHours(annual.remainHours)+' 小時，'+ds+' 結算，記得安排使用。';
+    }else if(!state.settings.hireDate){
+      reminder.textContent='設定公司到職日後，我會自動計算特休與結算提醒。';
+    }else{
+      reminder.textContent='目前沒有需要特別提醒的假別事項。';
+    }
+  }
+}
+
+function renderDashboard(){const mc=calcMonth();renderMobileDashboardApproved();
 if($('dashMonthLabel'))$('dashMonthLabel').textContent=mc.y+' 年 '+(mc.m+1)+' 月';
 const dailyHours=Math.max(.5,num(state.settings.dailyWorkHours)||8),scheduledHours=mc.expected*dailyHours;
 const attendancePct=mc.expected?Math.min(100,mc.attendance/mc.expected*100):0;
@@ -5227,7 +5402,92 @@ function buildSalaryPrintHtml(){
     return '<!doctype html><html><head><meta charset="utf-8"><title>'+year+' 年薪資對帳</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+year+' 年薪資對帳</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>對帳月份</b><strong>'+rows.length+'</strong></div><div class="card"><b>全年公司實發</b><strong>'+money(actual)+'</strong></div><div class="card"><b>全年差額</b><strong>'+signedMoney(diff)+'</strong></div></div><table><thead><tr><th>月份</th><th>App 預估實領</th><th>公司實發</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">此報告依 App 中已儲存的排班、薪資與對帳資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
   }
   const r=exportMonthRecord(),tr=r.rows.map(x=>'<tr><td>'+escapeHtml(x.label)+'</td><td>'+money(x.expected)+'</td><td>'+(x.actual===null?'—':money(x.actual))+'</td><td>'+(x.actual===null?'—':signedMoney(x.actual-x.expected))+'</td></tr>').join('');
-  return '<!doctype html><html><head><meta charset="utf-8"><title>'+r.title+'</title><style>'+baseStyle+'</style></head><body><h1>喵的，又要上班了｜'+r.title+'</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>App 預估實領</b><strong>'+money(r.expectedNet)+'</strong></div><div class="card"><b>公司實發</b><strong>'+(r.actualNet===null?'—':money(r.actualNet))+'</strong></div><div class="card"><b>差額</b><strong>'+(r.diff===null?'—':signedMoney(r.diff))+'</strong></div></div><table><thead><tr><th>項目</th><th>App 預估</th><th>公司實際</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">本月實際出勤 '+r.attendance+' 天・加班 '+r.overtimeHours+' 小時・請假 '+r.leaveDays+' 天。此報告依 App 中已儲存資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
+  return '<!doctype html><html><head><meta charset="utf-8"><title>'+r.title+'</title><style>'+baseStyle+'
+/* === Approved mobile dashboard v206: mobile only; desktop dashboard remains unchanged === */
+.mobile-dashboard-approved{display:none}
+@media(max-width:760px){
+  #page-dashboard.active{display:block!important;padding:10px 12px 4px}
+  #page-dashboard.active>.section,
+  #page-dashboard.active>.mobile-rest-card{display:none!important}
+  #page-dashboard.active>.mobile-dashboard-approved{display:grid!important;gap:10px}
+  .mobile-dashboard-approved{
+    --mda-card:rgba(255,253,249,.97);
+    --mda-ink:#4c2b1e;
+    --mda-muted:#8c7466;
+    --mda-line:#eadfd3;
+    --mda-cream:#fff3d8;
+    color:var(--mda-ink);
+  }
+  html.dark .mobile-dashboard-approved{
+    --mda-card:#302923;
+    --mda-ink:#fff4eb;
+    --mda-muted:#e0cabb;
+    --mda-line:#765f51;
+    --mda-cream:#403323;
+  }
+  .mda-worktypes,.mda-leave-shell,.mda-next-shift,.mda-reminder{
+    border:1px solid var(--mda-line);
+    background:var(--mda-card);
+    box-shadow:0 7px 20px rgba(90,62,43,.055);
+  }
+  .mda-worktypes{border-radius:18px;padding:13px 12px 12px}
+  .mda-section-title{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+  .mda-section-title strong{font-size:17px;font-weight:950}
+  .mda-title-icon{width:25px;height:25px;color:#9d7059;display:grid;place-items:center}
+  .mda-title-icon svg,.mda-worktype-icon svg,.mda-reminder-icon svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .mda-worktype-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  .mda-worktype{min-width:0;border:1px solid transparent;background:rgba(255,255,255,.67);color:#7d5b49;border-radius:13px;padding:8px 4px 7px;display:flex;align-items:center;justify-content:center;gap:4px;font-weight:900;box-shadow:0 3px 10px rgba(80,57,42,.035)}
+  html.dark .mda-worktype{background:#241f1b;color:#e8d2c3}
+  .mda-worktype.active{background:#ffe7ae;border-color:#f5c76d;color:#7a4c29}
+  html.dark .mda-worktype.active{background:#4c3a28;border-color:#a97d3f;color:#ffe0a7}
+  .mda-worktype-icon{width:18px;height:18px;display:inline-grid;place-items:center;flex:0 0 auto}
+  .mda-worktype b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mda-worktype-icon.hospital{color:#dc865d}.mda-worktype-icon.restaurant{color:#936550}.mda-worktype-icon.security{color:#7f6858}.mda-worktype-icon.factory{color:#8a6a58}.mda-worktype-icon.custom{color:#916954}
+  .mda-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+  .mda-kpi{min-width:0;border:1px solid rgba(222,215,207,.72);border-radius:16px;padding:10px 7px 9px;text-align:center;box-shadow:0 5px 15px rgba(85,61,45,.04)}
+  .mda-kpi-blue{background:linear-gradient(145deg,#f5fbff,#edf6ff)}
+  .mda-kpi-pink{background:linear-gradient(145deg,#fffafb,#fff3f3)}
+  .mda-kpi-sky{background:linear-gradient(145deg,#f8fbff,#eef7ff)}
+  .mda-kpi-cream{background:linear-gradient(145deg,#fffdf6,#fff5dc)}
+  html.dark .mda-kpi{background:#302923;border-color:#59493f}
+  .mda-kpi-icon{display:grid;place-items:center;height:23px;margin-bottom:3px}
+  .mda-kpi-icon .icon{font-size:21px}.mda-kpi-blue .mda-kpi-icon{color:#8b6957}.mda-kpi-pink .mda-kpi-icon{color:#eb7479}.mda-kpi-sky .mda-kpi-icon{color:#4286df}.mda-kpi-cream .mda-kpi-icon{color:#d89a37}
+  .mda-kpi b{display:block;font-size:11px;font-weight:900;white-space:nowrap}
+  .mda-kpi strong{display:block;margin-top:4px;font-size:clamp(16px,5.2vw,23px);line-height:1.08;font-weight:950;white-space:nowrap}
+  .mda-next-shift{border-radius:15px;min-height:52px;padding:9px 12px;display:flex;align-items:center;gap:7px;overflow:hidden}
+  .mda-next-icon{display:grid;place-items:center;color:#9c735d;flex:0 0 auto}.mda-next-icon .icon{font-size:21px}
+  .mda-next-shift>b{font-size:14px;white-space:nowrap;flex:0 0 auto}
+  .mda-next-shift>span:not(.mda-next-icon):not(.mda-next-pill):not(.mda-chevron){font-size:12px;white-space:nowrap}
+  .mda-next-pill{padding:4px 8px;border-radius:999px;background:#fff1c9;color:#6c4b31;font-size:11px;font-weight:900;white-space:nowrap}
+  html.dark .mda-next-pill{background:#4b3a27;color:#ffe4ac}
+  .mda-next-shift em{font-style:normal;font-size:12px;font-weight:900;color:#b6693d;white-space:nowrap;margin-left:auto}
+  .mda-chevron{font-size:24px;line-height:1;color:#684838;flex:0 0 auto}
+  .mda-leave-shell{border-radius:18px;padding:12px 10px 11px}
+  .mda-leave-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+  .mda-leave-head>div{display:flex;align-items:center;gap:7px;min-width:0}
+  .mda-leave-head-icon{color:#4088e6;display:grid;place-items:center}.mda-leave-head-icon .icon{font-size:21px}
+  .mda-leave-head strong{font-size:16px;font-weight:950;white-space:nowrap}
+  .mda-leave-head small{font-size:10px;color:var(--mda-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mda-leave-head button{border:0;background:transparent;color:var(--mda-muted);font-size:11px;font-weight:800;padding:5px 2px;white-space:nowrap}
+  .mda-leave-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+  .mda-leave-card{min-width:0;border-radius:13px;padding:9px 4px 8px;text-align:center}
+  .mda-leave-sick{background:#f2f8ff}.mda-leave-personal{background:#fff6f4}.mda-leave-annual{background:#f2faef}.mda-leave-menstrual{background:#fff5f5}
+  html.dark .mda-leave-card{background:#29231f}
+  .mda-leave-icon{width:35px;height:35px;margin:0 auto 2px;display:grid;place-items:center}
+  .mda-leave-icon svg{width:100%;height:100%;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .mda-leave-sick .mda-leave-icon svg{stroke:#9a6c54}.mda-leave-sick .mda-leave-icon svg path:last-child{stroke:#ef7778}
+  .mda-leave-personal .mda-leave-icon svg{stroke:#a7785e}
+  .mda-leave-annual .mda-leave-icon svg{stroke:#9a7058}.mda-leave-annual .mda-leave-icon svg path:last-child{stroke:#efaf48}
+  .mda-leave-menstrual .mda-leave-icon .moon{stroke:#95654e}.mda-leave-menstrual .mda-leave-icon .drop{stroke:#ef7778;fill:#ff9b9d}
+  .mda-leave-card b{display:block;font-size:12px;font-weight:950}
+  .mda-leave-card strong{display:block;margin-top:5px;font-size:clamp(15px,4.6vw,20px);font-weight:950;white-space:nowrap}
+  .mda-leave-card small{display:block;margin-top:4px;color:var(--mda-muted);font-size:9px;line-height:1.25;white-space:nowrap}
+  .mda-reminder{width:100%;border-radius:17px;padding:11px 12px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:10px;color:var(--mda-ink);text-align:left}
+  .mda-reminder-icon{width:38px;height:38px;color:#eca23c;display:grid;place-items:center}
+  .mda-reminder-copy{min-width:0}.mda-reminder-copy b{display:block;font-size:16px;font-weight:950}.mda-reminder-copy small{display:block;margin-top:3px;font-size:11px;color:#785645;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  html.dark .mda-reminder-copy small{color:#e3cdbc}
+}
+</style></head><body><h1>喵的，又要上班了｜'+r.title+'</h1><div class="sub">產生日期：'+new Date().toLocaleDateString('zh-TW')+'</div><div class="cards"><div class="card"><b>App 預估實領</b><strong>'+money(r.expectedNet)+'</strong></div><div class="card"><b>公司實發</b><strong>'+(r.actualNet===null?'—':money(r.actualNet))+'</strong></div><div class="card"><b>差額</b><strong>'+(r.diff===null?'—':signedMoney(r.diff))+'</strong></div></div><table><thead><tr><th>項目</th><th>App 預估</th><th>公司實際</th><th>差額</th></tr></thead><tbody>'+tr+'</tbody></table><div class="foot">本月實際出勤 '+r.attendance+' 天・加班 '+r.overtimeHours+' 小時・請假 '+r.leaveDays+' 天。此報告依 App 中已儲存資料產生，實際薪資仍以公司薪資單為準。</div></body></html>';
 }
 function exportSalaryPdf(){
   if(!canUse('salary_export'))return;
@@ -5960,6 +6220,14 @@ function setTab(tab){
   render();
 }
 qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
+qsa('[data-mobile-worktype]').forEach(button=>button.onclick=()=>{
+  const value=button.dataset.mobileWorktype;
+  if(!['hospital','restaurant','security','factory','custom'].includes(value))return;
+  if(state.settings.workType===value)return;
+  state.settings.workType=value;
+  changedAndSync();
+  renderMobileDashboardApproved();
+});
 function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}if($('dashPrev'))$('dashPrev').onclick=()=>changeMonth(-1);if($('dashNext'))$('dashNext').onclick=()=>changeMonth(1);$('calPrev').onclick=()=>changeMonth(-1);$('calNext').onclick=()=>changeMonth(1);$('calToday').onclick=()=>{current=new Date();current.setDate(1);render()};
 function openAttendanceAddDialog(){
   const dialog=$('attendanceAddDialog');if(!dialog||dialog.open)return;
