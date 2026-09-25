@@ -130,4 +130,5 @@ assert(speechEdge.includes('meow_account_access'), 'speech backend must honor de
 assert(speechEdge.includes('PRO_REQUIRED'), 'speech backend must reject Free users');
 assert(speechEdge.includes('OPENAI_API_KEY'), 'speech backend must keep OpenAI key server-side');
 
+require('./meow-assistant-100.test.cjs');
 console.log('PASS cross-validated Pro payroll, final Meow Assistant, and removed schedule import checks');
