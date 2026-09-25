@@ -203,7 +203,7 @@ if(failures.length)console.error(JSON.stringify(failures,null,2));
 assert.strictEqual(failures.length,0,'round two adversarial corpus has routing failures');
 assert(html.includes("type:'knowledgeMulti'"),'mixed-question parser support missing');
 assert(html.includes('handleMeowAssistantKnowledgeMulti'),'mixed-question response handler missing');
-const build=(html.match(/<meta name="meow-ui-build" content="v(\\d+)[^"]*">/)||[])[1];
+const build=(html.match(/<meta name="meow-ui-build" content="v(\d+)[^"]*">/)||[])[1];
 assert(Number(build)>=200,'round two build marker missing');
 
 console.log('PASS Meow Assistant adversarial round two: 100/100');
