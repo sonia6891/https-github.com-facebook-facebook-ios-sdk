@@ -25,7 +25,7 @@ for(const key of required){
   }
 }
 assert(html.includes("fetch('./assets/meow-labor-knowledge-v1.json?v=205'"),'knowledge loader missing');
-assert(html.includes('meowAssistantLaborKnowledge(intent)'),'knowledge lookup not wired to AI route');
+assert(/meowAssistantLaborKnowledge\(intent(?:,\s*raw)?\)/.test(html),'knowledge lookup not wired to AI route');
 assert(html.includes('knowledge&&knowledge.baseAnswer'),'knowledge answer fallback missing');
 
 console.log('PASS Meow Assistant Taiwan labor knowledge base: '+required.length+' priority topics');
