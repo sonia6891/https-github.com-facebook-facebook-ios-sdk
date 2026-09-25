@@ -61,6 +61,9 @@ assert(payslipEdge.includes("考勤扣款、勞保費、健保費是三個不同
 assert(payslipEdge.includes("同一列或同一排同時出現考勤扣款、勞保費、健保費"), 'same-row deduction pairing instruction missing');
 assert(payslipEdge.includes("FIELD_DESCRIPTIONS"), 'structured output field descriptions missing');
 assert(payslipEdge.includes("『餐費補助』與『醫療補助』不得混淆"), 'meal subsidy semantic guard missing');
+assert(payslipEdge.includes('payroll_label_visual_recheck'), 'targeted meal/medical visual recheck missing');
+assert(payslipEdge.includes('不要使用 OCR 文字作為證據'), 'meal/medical recheck must be independent from OCR text');
+assert(payslipEdge.includes('名稱待確認（疑似餐費補助／醫療補助）'), 'ambiguous meal/medical labels must not be forced');
 assert(payslipEdge.includes('extraItems'), 'salary-slip-only extra income/deduction extraction missing');
 assert(html.includes("label:'伙食／餐費補助'"), 'meal subsidy label must be preserved in reconciliation UI');
 assert(html.includes('rawHasMeal') && html.includes('rawHasMedical'), 'front-end meal/medical safety correction missing');
