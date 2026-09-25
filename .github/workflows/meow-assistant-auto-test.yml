@@ -32,6 +32,9 @@ jobs:
       - name: Taiwan labor knowledge base
         run: node tests/meow-assistant-labor-kb.test.cjs
 
+      - name: Layer 4 App-data grounding
+        run: node tests/meow-assistant-layer4-grounding.test.cjs
+
       - name: Natural-language discovery — 400 cases
         run: node tests/meow-assistant-auto-discovery.test.cjs
 
