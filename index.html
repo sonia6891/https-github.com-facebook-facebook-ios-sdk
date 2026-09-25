@@ -17,7 +17,7 @@
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v187-login-no-hover-cursor">
+<meta name="meow-ui-build" content="v188-cloud-sync-v5">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -2366,7 +2366,7 @@ const WELCOME_REAUTH_KEY='meow-work-welcome-reauth-v1';
 let localOwner=readSnapshotOwner()||readLocalString(OWNER_KEY)||'guest';
 let accessEpoch=0,accessCheckedUser='',accessServerMs=0,accessLocalMs=0;
 let cloudRevision=null,cloudPayload=null,cloudReady=false,cloudStatus='未啟用・Pro 專屬';
-let cloudLastSuccess='',pendingCloud=null,localEditVersion=0,localSaveError=false;
+let cloudOwnerId='',cloudLastSuccess='',cloudBackupCount=0,cloudLastBackupAt='',pendingCloud=null,localEditVersion=0,localSaveError=false;
 let localDirty=readWorkspaceMeta().dirty!==false;
 let cloudConsent=readLocalString('meow-work-cloud-consent:'+localOwner)==='yes';
 let expiryTimer=null,entitlementRequest=0,authEventTimer=null,authBusyEpoch=-1;
@@ -2375,12 +2375,12 @@ function readLocalString(key){try{return localStorage.getItem(key)||''}catch(e){
 function readSnapshotOwner(){try{return JSON.parse(readLocalString(SAVE_KEY)||'null')?.owner||''}catch(e){return ''}}
 function workspaceKey(owner){return 'meow-work-workspace-v1:'+owner}
 function readWorkspaceMeta(){try{return JSON.parse(localStorage.getItem('meow-work-sync-meta:'+localOwner)||'{}')}catch(e){return {}}}
-function writeWorkspaceMeta(){try{localStorage.setItem('meow-work-sync-meta:'+localOwner,JSON.stringify({dirty:localDirty,revision:cloudRevision,lastSuccess:cloudLastSuccess}))}catch(e){}}
+function writeWorkspaceMeta(){try{localStorage.setItem('meow-work-sync-meta:'+localOwner,JSON.stringify({dirty:localDirty,revision:cloudRevision,lastSuccess:cloudLastSuccess,backupCount:cloudBackupCount,lastBackupAt:cloudLastBackupAt}))}catch(e){}}
 function snapshotOfLocal(){return {savedAt:lastSavedAt,state:JSON.parse(JSON.stringify(state)),owner:localOwner}}
 function archiveWorkspace(){try{localStorage.setItem(workspaceKey(localOwner),JSON.stringify(snapshotOfLocal()));return true}catch(e){localSaveError=true;return false}}
 function preserveBeforeReplace(){try{localStorage.setItem('meow-work-before-replace:'+localOwner,JSON.stringify(snapshotOfLocal()));return true}catch(e){localSaveError=true;return false}}
 function workFingerprint(s){return JSON.stringify([s.profile||{},s.schedule||{},s.scheduleOverrides||{},s.settings||{},s.months||{},s.dayStatus||{},s.personalEvents||{}])}
-function switchWorkspace(owner){
+function switchWorkspace(owner,deferRender=false){
   if(owner===localOwner)return true;
   if(!archiveWorkspace()){alert('本機儲存空間不足，請先匯出備份。現在不會切換或覆蓋工作資料。');return false}
   let next=null;
@@ -2395,9 +2395,10 @@ function switchWorkspace(owner){
   try{localStorage.setItem(OWNER_KEY,owner);localStorage.setItem(AVATAR_KEY,nextState.profile.avatar||'');localStorage.setItem(SCHEDULE_KEY,JSON.stringify(nextState.schedule))}catch(e){localSaveError=true}
   localOwner=owner;state=nextState;lastSavedAt=next&&next.savedAt||null;localEditVersion++;
   cloudRevision=null;cloudPayload=null;cloudReady=false;pendingCloud=null;
-  const meta=readWorkspaceMeta();localDirty=meta.dirty!==false;cloudLastSuccess=meta.lastSuccess||'';
+  const meta=readWorkspaceMeta();localDirty=meta.dirty!==false;cloudLastSuccess=meta.lastSuccess||'';cloudBackupCount=Number(meta.backupCount||0);cloudLastBackupAt=meta.lastBackupAt||'';
   cloudConsent=readLocalString('meow-work-cloud-consent:'+owner)==='yes';
-  applyTheme();render();return true;
+  if(!deferRender){applyTheme();render()}else{state.theme=preferredTheme();document.documentElement.classList.toggle('dark',state.theme==='dark');document.documentElement.style.colorScheme=state.theme}
+  return true;
 }
 function accountServerNow(){return accessServerMs?accessServerMs+(performance.now()-accessLocalMs):Date.now()}
 function entitlementIsActive(row){
@@ -2405,11 +2406,11 @@ function entitlementIsActive(row){
   const until=Date.parse(row.pro_until);return Number.isFinite(until)&&until>accountServerNow();
 }
 function hasCloudEntitlement(){return !!(authUser&&accessCheckedUser===authUser.id&&(developerAccess||entitlementIsActive({plan:serverPlan,status:entitlementStatus,pro_until:entitlementUntil})))}
-function canCloudSync(){return hasCloudEntitlement()&&localOwner===authUser.id&&cloudConsent}
+function canCloudSync(){return !!(hasCloudEntitlement()&&authUser&&localOwner===authUser.id)}
 function sameAccess(uid,epoch){return !!(authUser&&authUser.id===uid&&localOwner===uid&&accessEpoch===epoch)}
 function setAccountStatus(msg){accountStatusText=msg;if($('accountStatus'))$('accountStatus').textContent=msg;if($('welcomeMessage')&&$('welcomeDialog').open)$('welcomeMessage').textContent=msg}
 function setCloudStatus(msg){cloudStatus=msg;renderSyncStatus()}
-function resetEntitlement(){serverPlan='free';developerAccess=false;serverAccessTier='free';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;accessCheckedUser=''}
+function resetEntitlement(){serverPlan='free';developerAccess=false;serverAccessTier='free';cloudOwnerId='';entitlementStatus='free';entitlementUntil=null;trialStartedAt=null;billingProvider=null;providerSubscriptionId=null;cancelAtPeriodEnd=false;canceledAt=null;accessCheckedUser=''}
 async function stopAccountRealtime(){
   clearTimeout(authTimer);authTimer=null;
   const channel=authChannel;authChannel=null;
@@ -2436,10 +2437,10 @@ async function loadEntitlement(){
     const now=Date.parse(data&&data.server_now||'');
     if(!Number.isFinite(now))throw Error('access_time_unavailable');
     accessServerMs=now;accessLocalMs=performance.now();accessCheckedUser=uid;
-    developerAccess=!!(data&&data.developer);serverAccessTier=String(data&&data.access_tier||'free');
-    // Developer accounts always use their cloud workspace automatically.
-    // This also restores sync after reinstall / PWA path changes where localStorage consent is missing.
-    if(developerAccess){
+    developerAccess=!!(data&&data.developer);serverAccessTier=String(data&&data.access_tier||'free');cloudOwnerId=String(data&&data.cloud_owner_user_id||uid);
+    // Pro and developer accounts always use cloud sync + automatic versioned backup.
+    // This survives reinstall/new-device login because it no longer depends on local consent state.
+    if(developerAccess||serverAccessTier==='pro'){
       cloudConsent=true;
       try{localStorage.setItem('meow-work-cloud-consent:'+uid,'yes')}catch(e){}
     }
@@ -2447,6 +2448,7 @@ async function loadEntitlement(){
     trialStartedAt=row&&row.trial_started_at||null;billingProvider=row&&row.billing_provider||null;
     providerSubscriptionId=row&&row.provider_subscription_id||null;cancelAtPeriodEnd=!!(row&&row.cancel_at_period_end);canceledAt=row&&row.canceled_at||null;
     serverPlan=developerAccess?'pro':(entitlementIsActive(row)?'pro':'free');
+    if(serverPlan==='pro'){cloudConsent=true;try{localStorage.setItem('meow-work-cloud-consent:'+uid,'yes')}catch(e){}}
     scheduleExpiry();
     if(!canCloudSync()){
       await stopAccountRealtime();cloudReady=false;
@@ -2459,14 +2461,28 @@ async function loadEntitlement(){
   }
   if(sameAccess(uid,epoch)){renderProEntitlements();renderSettings()}
 }
+async function refreshCloudBackupStatus(){
+  if(!hasCloudEntitlement()||!authUser){cloudBackupCount=0;cloudLastBackupAt='';return}
+  const uid=authUser.id,epoch=accessEpoch;
+  try{
+    const client=await getAuthClient();
+    const {data,error}=await client.rpc('meow_cloud_backup_status');
+    if(!sameAccess(uid,epoch))return;
+    if(error)throw error;
+    cloudBackupCount=Number(data&&data.backup_count||0);
+    cloudLastBackupAt=String(data&&data.last_backup_at||'');
+    writeWorkspaceMeta();renderSyncStatus();
+  }catch(e){}
+}
 async function subscribeAccountRealtime(){
   if(!canCloudSync()||!navigator.onLine)return;
   const uid=authUser.id,epoch=accessEpoch,client=await getAuthClient();
   const previous=authChannel;authChannel=null;
   if(previous){try{await client.removeChannel(previous)}catch(e){}}
   if(!sameAccess(uid,epoch)||!canCloudSync())return;
-  authChannel=client.channel('meow-user-'+uid)
-    .on('postgres_changes',{event:'*',schema:'public',table:'user_sync_state',filter:'user_id=eq.'+uid},payload=>{
+  const owner=cloudOwnerId||uid;
+  authChannel=client.channel('meow-user-'+owner)
+    .on('postgres_changes',{event:'*',schema:'public',table:'user_sync_state',filter:'user_id=eq.'+owner},payload=>{
       if(!sameAccess(uid,epoch)||!canCloudSync())return;
       const cloud=payload.new&&payload.new.payload;
       if(cloud&&cloud.deviceId!==deviceId)void loadAccountState();
@@ -2488,15 +2504,15 @@ async function loadAccountState(){
   try{
     const client=await getAuthClient();
     if(!sameAccess(uid,epoch)||!canCloudSync())return;
-    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',cloudOwnerId||uid).maybeSingle();
     if(!sameAccess(uid,epoch)||!canCloudSync())return;
     if(error)throw error;
     cloudReady=true;cloudRevision=data&&data.updated_at||null;cloudPayload=data&&data.payload||null;
     if(!data){if(hasMeaningfulUserData()){localDirty=true;queueAccountSave(0)}else setCloudStatus('雲端已啟用・尚無工作資料');return}
     const remote=normalizeState((data.payload||{}).state||{});
-    if(workFingerprint(remote)===workFingerprint(state)){localDirty=false;cloudLastSuccess=data.updated_at;pendingCloud=null;writeWorkspaceMeta();setCloudStatus('已同步');return}
+    if(workFingerprint(remote)===workFingerprint(state)){localDirty=false;cloudLastSuccess=data.updated_at;pendingCloud=null;writeWorkspaceMeta();setCloudStatus('已同步');void refreshCloudBackupStatus();return}
     if(localDirty&&hasMeaningfulUserData()){pendingCloud=data;setCloudStatus('本機與雲端不同・請選擇要保留的版本');return}
-    applyRemoteRow(data);
+    applyRemoteRow(data);void refreshCloudBackupStatus();
   }catch(e){if(sameAccess(uid,epoch))setCloudStatus('雲端讀取失敗・本機資料仍可使用')}
 }
 async function saveAccountState(showAlert=false,resolveConflict=false){
@@ -2520,6 +2536,7 @@ async function saveAccountState(showAlert=false,resolveConflict=false){
     if(!data||!data.updated_at)throw Error('missing_sync_confirmation');
     cloudRevision=data.updated_at;cloudPayload=payload;cloudLastSuccess=data.updated_at;pendingCloud=null;
     if(localEditVersion===edit)localDirty=false;
+    void refreshCloudBackupStatus();
     writeWorkspaceMeta();setCloudStatus(localDirty?'仍有新變更待同步':'已同步');
     if(showAlert)alert('雲端已確認儲存這份資料。');
     return true;
@@ -2574,18 +2591,22 @@ function authCallbackMessage(issue){
   return label+' 登入未完成：'+raw;
 }
 async function handleSignedIn(user,session=null){
-  document.documentElement.classList.remove('auth-needs-login');
   const changed=!authUser||authUser.id!==user.id;
   if(changed){accessEpoch++;await stopAccountRealtime();resetEntitlement();cloudReady=false;pendingCloud=null}
   authUser=user;
-  if(!switchWorkspace(user.id)){setAccountStatus('已登入，但工作區尚未切換；雲端未啟用');return}
-  setAccountStatus('已登入・正在確認方案');
-  if($('welcomeDialog').open&&!welcomeManual)finishWelcome();
+  if(!switchWorkspace(user.id,true)){setAccountStatus('已登入，但工作區尚未切換；雲端未啟用');return}
+  setAccountStatus('已登入・正在載入雲端資料');
   await initStoreTransactionListener();
   void loadNativeStoreProducts();
   await syncUnfinishedStoreTransactions();
   await loadEntitlement();
-  if(authUser&&authUser.id===user.id){await loadBillingHistory();setAccountStatus('帳號已登入');renderSettings()}
+  if(authUser&&authUser.id===user.id){
+    if(canCloudSync()&&!cloudReady)await loadAccountState();
+    if(canCloudSync())await refreshCloudBackupStatus();
+    document.documentElement.classList.remove('auth-needs-login');
+    if($('welcomeDialog').open&&!welcomeManual)finishWelcome();
+    applyTheme();render();await loadBillingHistory();setAccountStatus('帳號已登入');renderSettings();
+  }
 }
 function showSignedOutSplash(){
   let splash=$('app-splash');
@@ -2647,11 +2668,14 @@ async function initAuth(){
   }
 }
 async function toggleCloud(){
-  if(!hasCloudEntitlement()){accountProOpen=true;setTab('settings');renderSettings();alert('登入只確認帳號身分。雲端同步為 Pro 專屬，請在上方展開的「Pro 方案」選擇試用或訂閱。');return}
-  if(cloudConsent){cloudConsent=false;try{localStorage.removeItem('meow-work-cloud-consent:'+localOwner)}catch(e){}await stopAccountRealtime();cloudReady=false;setCloudStatus('已關閉雲端同步・本機資料保留');return}
-  if(!confirm('啟用 Pro 雲端同步？\n\n將同步班表、薪資、假別、行程及個人資料。淺色／深色仍以這台裝置為準。若兩邊都有資料，會先請你選擇，不會直接覆蓋。'))return;
+  if(!hasCloudEntitlement()){accountProOpen=true;setTab('settings');renderSettings();alert('雲端即時同步與自動備份是 Pro 功能。請先啟用 Pro／試用方案。');return}
   cloudConsent=true;try{localStorage.setItem('meow-work-cloud-consent:'+localOwner,'yes')}catch(e){}
-  await loadAccountState();if(canCloudSync())await subscribeAccountRealtime();renderSyncStatus();
+  setCloudStatus('正在手動同步…');
+  await loadAccountState();
+  if(canCloudSync()&&localDirty&&!pendingCloud)await saveAccountState(false);
+  if(canCloudSync())await subscribeAccountRealtime();
+  await refreshCloudBackupStatus();
+  renderSyncStatus();
 }
 async function restoreLegacyCloud(){
   if(!authUser){alert('請先登入原本的帳號。');return false}
@@ -2661,7 +2685,7 @@ async function restoreLegacyCloud(){
   if(button&&button.querySelector('b'))button.querySelector('b').textContent='正在讀取舊版備份…';
   try{
     const client=await getAuthClient();
-    const {data,error}=await client.from('user_legacy_exports').select('payload,original_updated_at').eq('user_id',uid).maybeSingle();
+    const {data,error}=await client.from('user_legacy_exports').select('payload,original_updated_at').eq('user_id',cloudOwnerId||uid).maybeSingle();
     if(!sameAccess(uid,epoch))return false;
     if(error)throw error;
     if(!data){alert('這個帳號沒有舊版雲端備份。');return false}
@@ -2697,20 +2721,20 @@ function renderSyncStatus(){
   const entitled=hasCloudEntitlement(),enabled=canCloudSync();
   $('cloudProtection').classList.toggle('safe',enabled&&cloudStatus==='已同步'&&!localDirty);
   $('cloudProtection').textContent=enabled
-    ?('Pro 雲端：'+cloudStatus)
-    :(entitled?'Pro 已可使用・目前仍以本機保存為主':(entitlementStatus==='error'?'方案確認失敗・資料仍安全保存在本機':'Free：資料自動保存在這台裝置'));
-  if($('cloudDetail'))$('cloudDetail').textContent=enabled&&cloudLastSuccess
-    ?'最後成功同步：'+new Date(cloudLastSuccess).toLocaleString('zh-TW')
-    :(entitled?'可直接備份／還原；開啟同步後，之後的變更才會自動更新到雲端。':'升級 Pro 後可再使用雲端同步、備份與還原。');
-  if($('toggleCloudSync')){$('toggleCloudSync').textContent=enabled?'關閉雲端同步':(entitled?'啟用雲端同步':'查看 Pro 雲端同步')}
+    ?((isDeveloperAccount()?'開發者':'Pro')+' 雲端：'+cloudStatus+'・即時同步＋自動備份')
+    :(entitled?'Pro 雲端正在啟用':(entitlementStatus==='error'?'方案確認失敗・資料仍安全保存在本機':'Free：資料自動保存在這台裝置'));
+  if($('cloudDetail'))$('cloudDetail').textContent=enabled
+    ?('最後成功同步：'+(cloudLastSuccess?new Date(cloudLastSuccess).toLocaleString('zh-TW'):'尚未完成')+'；自動備份：'+cloudBackupCount+' 版'+(cloudLastBackupAt?'（最近 '+new Date(cloudLastBackupAt).toLocaleString('zh-TW')+'）':''))
+    :(entitled?'Pro 雲端正在初始化；登入後會先讀取雲端，再進入 App。':'升級 Pro 後可使用即時同步、自動備份與跨裝置還原。');
+  if($('toggleCloudSync')){$('toggleCloudSync').textContent=enabled?'立即同步':(entitled?'啟用中…':'查看 Pro 雲端同步')}
   if($('cloudBackupNow'))$('cloudBackupNow').disabled=!entitled;
   if($('cloudRestoreNow'))$('cloudRestoreNow').disabled=!entitled;
   if($('legacyCloudExport'))$('legacyCloudExport').classList.add('hidden');
   if($('cloudConflictBox'))$('cloudConflictBox').classList.toggle('hidden',!pendingCloud||!enabled);
   if($('saveState'))$('saveState').textContent=localSaveError?'本機儲存失敗，請匯出備份後檢查空間':(lastSavedAt?'本機已儲存：'+new Date(lastSavedAt).toLocaleString('zh-TW'):'資料會自動保存在這台裝置');
   if($('dataSyncBrief'))$('dataSyncBrief').textContent=enabled
-    ?'Pro：本機保存＋'+(cloudStatus||'雲端同步')
-    :(entitled?'Pro：本機已保存・雲端同步尚未啟用':'Free：資料自動保存在這台裝置');
+    ?((isDeveloperAccount()?'開發者':'Pro')+'：本機保存＋即時同步＋自動備份')
+    :(entitled?'Pro：雲端同步啟用中':'Free：資料自動保存在這台裝置');
 }
 function finishWelcome(){
   try{localStorage.setItem(WELCOME_KEY,'done');localStorage.setItem(WELCOME_FRAME_KEY,'done');localStorage.removeItem(WELCOME_REAUTH_KEY)}catch(e){}
@@ -5875,7 +5899,7 @@ function meowAssistantMonthSnapshotScore(snapshot,year,month){
 async function meowAssistantCloudSnapshot(year,month){
   if(!authUser||!hasCloudEntitlement())throw new Error('cloud_required');
   const uid=authUser.id,epoch=accessEpoch,client=await getAuthClient();
-  const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+  const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',cloudOwnerId||uid).maybeSingle();
   if(!sameAccess(uid,epoch))throw new Error('account_changed');
   if(error)throw error;
   const payload=data&&data.payload||null;
@@ -6491,14 +6515,14 @@ async function backupCloudNow(showAlert=true){
   setCloudStatus('正在備份到雲端…');
   try{
     const client=await getAuthClient();
-    const {data:remote,error:readError}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+    const {data:remote,error:readError}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',cloudOwnerId||uid).maybeSingle();
     if(!sameAccess(uid,epoch)||!hasCloudEntitlement())return false;
     if(readError)throw readError;
     const remotePayload=remote&&remote.payload||null;
     const remoteState=remotePayload&&remotePayload.state?normalizeState(remotePayload.state):null;
     if(remoteState&&workFingerprint(remoteState)!==workFingerprint(state)){
       if(!confirm('雲端目前有另一份不同的資料。\n\n要用這台裝置的資料更新雲端嗎？原本雲端版本會保留在安全歷史內。')){
-        setCloudStatus(cloudConsent?'已取消備份・自動同步仍開啟':'已取消備份・本機資料保留');
+        setCloudStatus('已取消手動備份・自動同步仍開啟');
         return false;
       }
     }
@@ -6511,7 +6535,7 @@ async function backupCloudNow(showAlert=true){
     if(error)throw error;
     if(!data||!data.updated_at)throw Error('missing_sync_confirmation');
     cloudRevision=data.updated_at;cloudPayload=payload;cloudLastSuccess=data.updated_at;pendingCloud=null;localDirty=false;writeWorkspaceMeta();
-    setCloudStatus(cloudConsent?'已同步':'已備份到雲端・自動同步未開啟');
+    setCloudStatus('已同步・已建立雲端備份');
     if(showAlert)alert('已備份到雲端。');
     return true;
   }catch(e){
@@ -6531,7 +6555,7 @@ async function restoreFromCloud(showAlert=true){
   setCloudStatus('正在讀取雲端備份…');
   try{
     const client=await getAuthClient();
-    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',uid).maybeSingle();
+    const {data,error}=await client.from('user_sync_state').select('payload,updated_at').eq('user_id',cloudOwnerId||uid).maybeSingle();
     if(!sameAccess(uid,epoch)||!hasCloudEntitlement())return false;
     if(error)throw error;
     if(!data){
