@@ -1984,7 +1984,11 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           <button class="btn primary" id="meowAiTestRun" type="button">執行 32 題正式測試</button>
           <button class="btn" id="meowAiTestRerunFailed" type="button">只重跑失敗題</button>
         </div>
-        <div class="hint" id="meowAiTestSummary" style="margin-top:10px">尚未執行正式 OpenAI 語意測試。</div>
+        <div class="hint" id="meowAiTestSummary" style="margin-top:10px" role="status" aria-live="polite">尚未執行正式 OpenAI 語意測試。</div>
+        <div id="meowAiTestProgressWrap" class="hidden" style="margin-top:10px">
+          <progress id="meowAiTestProgress" max="32" value="0" style="width:100%"></progress>
+          <div class="hint" id="meowAiTestProgressText" style="margin-top:6px">準備開始…</div>
+        </div>
         <details id="meowAiTestDetails" style="margin-top:8px">
           <summary>查看失敗案例與詳細結果</summary>
           <div id="meowAiTestFailures" class="hint" style="margin-top:8px;white-space:pre-wrap"></div>
@@ -6085,8 +6089,18 @@ $('toggleWorkSettings').onclick=()=>{workSettingsOpen=!workSettingsOpen;renderSe
 if($('toggleAppearance'))$('toggleAppearance').onclick=()=>{appearanceOpen=!appearanceOpen;renderSettings()};
 if($('toggleSchedulePrefs'))$('toggleSchedulePrefs').onclick=()=>{schedulePrefsOpen=!schedulePrefsOpen;renderSettings()};
 if($('toggleDataSync'))$('toggleDataSync').onclick=()=>{dataSyncOpen=!dataSyncOpen;renderSettings()};
-if($('meowAiTestRun'))$('meowAiTestRun').onclick=()=>void runMeowAssistantLiveQualityTest();
-if($('meowAiTestRerunFailed'))$('meowAiTestRerunFailed').onclick=()=>void runMeowAssistantLiveQualityTest({failedOnly:true});
+if($('meowAiTestRun'))$('meowAiTestRun').onclick=()=>{
+  if(meowAssistantLiveQualityRunning)return;
+  setMeowAssistantLiveQualityUi(true,0,MEOW_ASSISTANT_LIVE_QUALITY_CASES.length,'正在啟動正式 OpenAI 測試…');
+  void runMeowAssistantLiveQualityTest();
+};
+if($('meowAiTestRerunFailed'))$('meowAiTestRerunFailed').onclick=()=>{
+  if(meowAssistantLiveQualityRunning)return;
+  const report=meowAssistantReadLiveQualityReport();
+  const count=report&&Array.isArray(report.results)?report.results.filter(x=>!x.pass).length:0;
+  setMeowAssistantLiveQualityUi(true,0,Math.max(1,count),'正在準備重跑失敗題…');
+  void runMeowAssistantLiveQualityTest({failedOnly:true});
+};
 $('patternPreset').onchange=e=>selectSchedulePlan(e.target.value);
 $('editRotation').onclick=openRotationSetup;
 $('rotationSequence').oninput=rotationDraftPreview;
@@ -7044,6 +7058,38 @@ function meowAssistantLiveFailureSummary(results){
   });
   return counts;
 }
+let meowAssistantLiveQualityRunning=false;
+function setMeowAssistantLiveQualityUi(running,done=0,total=0,message=''){
+  meowAssistantLiveQualityRunning=!!running;
+  const run=$('meowAiTestRun'),retry=$('meowAiTestRerunFailed'),wrap=$('meowAiTestProgressWrap');
+  const progress=$('meowAiTestProgress'),text=$('meowAiTestProgressText'),summary=$('meowAiTestSummary');
+  if(run){
+    run.disabled=!!running;
+    run.textContent=running?'測試中…':'執行 32 題正式測試';
+  }
+  if(retry)retry.disabled=!!running||(meowAssistantReadLiveQualityReport()?.failed||0)===0;
+  if(wrap)wrap.classList.toggle('hidden',!running);
+  if(progress){
+    progress.max=Math.max(1,Number(total)||1);
+    progress.value=Math.max(0,Math.min(Number(done)||0,Number(total)||1));
+  }
+  const label=message||(running?'正在測試 '+done+'/'+total:'');
+  if(text)text.textContent=label;
+  if(summary&&running)summary.textContent=label;
+}
+async function routeMeowAssistantWithAILiveQuality(query,context){
+  const result=await invokeUserFunction('meow-assistant-route',{
+    query:String(query||'').slice(0,800),
+    context:Array.isArray(context)?context.slice(-8):[],
+    appContext:meowAssistantAppContext(query)
+  });
+  if(!result||!result.ok||!result.route){
+    const err=new Error(result&&result.code||'routing_output_missing');
+    err.payload=result||null;
+    throw err;
+  }
+  return result.route;
+}
 function meowAssistantReadLiveQualityReport(){
   if(window.meowAssistantLastLiveQualityReport)return window.meowAssistantLastLiveQualityReport;
   try{
@@ -7089,7 +7135,7 @@ function renderMeowAssistantLiveQualityReport(){
   if(summary)summary.textContent='上次結果：'+passed+'/'+total+' 通過（'+Math.round(passed/Math.max(1,total)*100)+'%）・失敗 '+failed+' 題'
     +(categoryText?'・'+categoryText:'')
     +(report.lastRunMode==='failed-only'?'・剛完成失敗題重測':'')+(when?'・'+when:'');
-  if(retry)retry.disabled=failed===0;
+  if(retry)retry.disabled=meowAssistantLiveQualityRunning||failed===0;
   const failures=(Array.isArray(report.results)?report.results:[]).filter(x=>!x.pass);
   if(failBox){
     failBox.textContent=failures.length?failures.map(x=>{
@@ -7100,8 +7146,17 @@ function renderMeowAssistantLiveQualityReport(){
   }
 }
 async function runMeowAssistantLiveQualityTest(options={}){
+  if(meowAssistantLiveQualityRunning)return false;
   if(!isDeveloperAccount()){
-    renderMeowAssistantReply('這個自我測試只開放開發者帳號。','error');
+    const msg='無法啟動測試：目前帳號不是開發者帳號，或開發者權限尚未載入。';
+    if($('meowAiTestSummary'))$('meowAiTestSummary').textContent=msg;
+    renderMeowAssistantReply(msg,'error');
+    return false;
+  }
+  if(!authUser){
+    const msg='無法啟動測試：請先重新登入開發者帳號。';
+    if($('meowAiTestSummary'))$('meowAiTestSummary').textContent=msg;
+    renderMeowAssistantReply(msg,'error');
     return false;
   }
   const failedOnly=!!options.failedOnly,previous=meowAssistantReadLiveQualityReport();
@@ -7115,40 +7170,72 @@ async function runMeowAssistantLiveQualityTest(options={}){
       return true;
     }
   }
-  const started=Date.now(),runResults=[];
+
+  const started=Date.now(),runResults=[],totalCases=cases.length;
+  setMeowAssistantLiveQualityUi(true,0,totalCases,failedOnly?'準備重跑失敗題…':'準備執行正式 OpenAI 測試…');
   renderMeowAssistantReply(failedOnly?'正在重跑失敗題…':'正在執行喵助理真實 OpenAI 語意測試…');
-  for(let i=0;i<cases.length;i++){
-    const {test,n}=cases[i];
-    let route=null,error='';
-    try{
-      route=await routeMeowAssistantWithAI(test.q,test.context||[]);
-    }catch(e){error=String(e&&e.message||e)}
-    const pass=!error&&meowAssistantLiveCasePass(route,test);
-    const failure=pass?null:meowAssistantLiveFailureKind(route,test,error);
-    runResults.push({n,q:test.q,pass,error,expected:test.intent||test.operation||null,route,failure});
-    renderMeowAssistantReply((failedOnly?'正在重跑失敗題… ':'正在執行喵助理真實 OpenAI 語意測試… ')+(i+1)+'/'+cases.length);
+
+  try{
+    for(let i=0;i<cases.length;i++){
+      const {test,n}=cases[i];
+      setMeowAssistantLiveQualityUi(true,i,totalCases,(failedOnly?'重跑失敗題 ':'正式 OpenAI 測試 ')+(i+1)+' / '+totalCases+'：'+test.q.slice(0,32));
+      let route=null,error='',fatalCode='';
+      try{
+        route=await routeMeowAssistantWithAILiveQuality(test.q,test.context||[]);
+      }catch(e){
+        error=String(e&&e.message||e);
+        fatalCode=String(e&&e.payload&&e.payload.code||'');
+      }
+
+      if(['NOT_AUTHENTICATED','PRO_REQUIRED','ENTITLEMENT_CHECK_FAILED'].includes(fatalCode)||error==='not_authenticated'){
+        const msg=fatalCode==='PRO_REQUIRED'
+          ?'測試中止：這個帳號目前沒有開發者／Pro 權限，請重新確認帳號權限。'
+          :'測試中止：登入憑證已失效，請重新登入開發者帳號後再試。';
+        if($('meowAiTestSummary'))$('meowAiTestSummary').textContent=msg;
+        if($('meowAiTestProgressText'))$('meowAiTestProgressText').textContent=msg;
+        renderMeowAssistantReply(msg,'error');
+        return false;
+      }
+
+      const pass=!error&&meowAssistantLiveCasePass(route,test);
+      const failure=pass?null:meowAssistantLiveFailureKind(route,test,error);
+      runResults.push({n,q:test.q,pass,error,expected:test.intent||test.operation||null,route,failure});
+      setMeowAssistantLiveQualityUi(true,i+1,totalCases,(failedOnly?'重跑失敗題 ':'正式 OpenAI 測試 ')+(i+1)+' / '+totalCases+(pass?' ✓':' ✕'));
+      renderMeowAssistantReply((failedOnly?'正在重跑失敗題… ':'正在執行喵助理真實 OpenAI 語意測試… ')+(i+1)+'/'+totalCases);
+    }
+
+    let results=runResults;
+    if(failedOnly&&previous&&Array.isArray(previous.results)){
+      const replacement=new Map(runResults.map(x=>[x.q,x]));
+      results=previous.results.map(x=>replacement.get(x.q)||x);
+    }
+    const passed=results.filter(x=>x.pass).length,total=results.length,failed=results.filter(x=>!x.pass);
+    window.meowAssistantLastLiveQualityReport={
+      generatedAt:new Date().toISOString(),
+      lastRunMode:failedOnly?'failed-only':'full',
+      testedThisRun:runResults.length,
+      total,passed,failed:failed.length,durationMs:Date.now()-started,
+      failureSummary:meowAssistantLiveFailureSummary(results),
+      results
+    };
+    try{localStorage.setItem('meow-assistant-live-quality-report',JSON.stringify(window.meowAssistantLastLiveQualityReport))}catch(e){}
+    setMeowAssistantLiveQualityUi(false,totalCases,totalCases,'測試完成');
+    renderMeowAssistantLiveQualityReport();
+    const examples=failed.slice(0,3).map(x=>'#'+x.n+'「'+x.q+'」').join('、');
+    const msg=(failedOnly?'失敗題重測完成：':'真實 OpenAI 語意測試完成：')+passed+'/'+total+' 通過（'+Math.round(passed/Math.max(1,total)*100)+'%）'
+      +(failed.length?'。仍失敗 '+failed.length+' 題：'+examples+'。設定頁開發者測試區可看完整結果。':'。目前沒有發現語意路由失敗。');
+    renderMeowAssistantReply(msg,failed.length?'error':'success');
+    return failed.length===0;
+  }catch(e){
+    const msg='測試發生未預期錯誤：'+String(e&&e.message||e);
+    if($('meowAiTestSummary'))$('meowAiTestSummary').textContent=msg;
+    if($('meowAiTestProgressText'))$('meowAiTestProgressText').textContent=msg;
+    renderMeowAssistantReply(msg,'error');
+    return false;
+  }finally{
+    setMeowAssistantLiveQualityUi(false,0,0,'');
+    renderMeowAssistantLiveQualityReport();
   }
-  let results=runResults;
-  if(failedOnly&&previous&&Array.isArray(previous.results)){
-    const replacement=new Map(runResults.map(x=>[x.q,x]));
-    results=previous.results.map(x=>replacement.get(x.q)||x);
-  }
-  const passed=results.filter(x=>x.pass).length,total=results.length,failed=results.filter(x=>!x.pass);
-  window.meowAssistantLastLiveQualityReport={
-    generatedAt:new Date().toISOString(),
-    lastRunMode:failedOnly?'failed-only':'full',
-    testedThisRun:runResults.length,
-    total,passed,failed:failed.length,durationMs:Date.now()-started,
-    failureSummary:meowAssistantLiveFailureSummary(results),
-    results
-  };
-  try{localStorage.setItem('meow-assistant-live-quality-report',JSON.stringify(window.meowAssistantLastLiveQualityReport))}catch(e){}
-  renderMeowAssistantLiveQualityReport();
-  const examples=failed.slice(0,3).map(x=>'#'+x.n+'「'+x.q+'」').join('、');
-  const msg=(failedOnly?'失敗題重測完成：':'真實 OpenAI 語意測試完成：')+passed+'/'+total+' 通過（'+Math.round(passed/Math.max(1,total)*100)+'%）'
-    +(failed.length?'。仍失敗 '+failed.length+' 題：'+examples+'。設定頁開發者測試區可看完整結果。':'。目前沒有發現語意路由失敗。');
-  renderMeowAssistantReply(msg,failed.length?'error':'success');
-  return failed.length===0;
 }
 
 async function routeMeowAssistantWithAI(query,context){
