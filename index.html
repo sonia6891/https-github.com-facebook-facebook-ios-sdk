@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=191">
+<link rel="manifest" href="./manifest.webmanifest?v=192">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v191-payslip-extra-items">
+<meta name="meow-ui-build" content="v192-private-crosscheck-meal-fix">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1604,7 +1604,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         <div class="salary-section-title"><span class="paw">🐾</span>智慧薪資對帳 <span class="salary-tab-tier pro">Pro</span></div>
         <div class="hint" style="margin-bottom:10px">免費版先看總額有沒有差；Pro 再幫你找出差在哪一項。</div>
         <div class="pro-grid">
-          <div class="pro-card" data-pro-feature="payslip_scan"><div class="pro-head"><b>📷 薪資單三層交叉檢查</b><span class="pro-badge">🔒 Pro</span></div><p>Apple Vision 先讀、OpenAI 再獨立判讀，最後由 App 薪資引擎逐項驗算；兩邊不一致時不自動猜答案。</p><button type="button" data-pro-action="payslip_scan">即將推出</button></div>
+          <div class="pro-card" data-pro-feature="payslip_scan"><div class="pro-head"><b>📷 薪資單三層交叉檢查</b><span class="pro-badge">🔒 Pro</span></div><p>以多重判讀與薪資邏輯交叉核對逐項找差異；結果不一致或信心不足時不自動猜，會標示請你確認。</p><button type="button" data-pro-action="payslip_scan">即將推出</button></div>
           <div class="pro-card" data-pro-feature="itemized_salary_compare"><div class="pro-head"><b>🧾 逐項薪資對帳</b><span class="pro-badge">🔒 Pro</span></div><p>逐項比較 App 預估與公司薪資單，直接標示一致、少發、多發、多扣或少扣，並整理總差額。</p><button type="button" data-pro-action="itemized_salary_compare">即將推出</button></div>
           <div class="pro-card" data-pro-feature="salary_history_unlimited"><div class="pro-head"><b>📚 歷史薪資對帳</b><span class="pro-badge">🔒 Pro</span></div><p>保存每月預估、實發與差額紀錄。</p><button type="button" data-pro-action="salary_history_unlimited">即將推出</button></div>
           <div class="pro-card" data-pro-feature="salary_export"><div class="pro-head"><b>📄 PDF／Excel 對帳報告</b><span class="pro-badge">🔒 Pro</span></div><p>匯出薪資與差額報告，方便保存核對。</p><button type="button" data-pro-action="salary_export">即將推出</button></div>
@@ -1612,9 +1612,9 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         <div class="payslip-scan-panel hidden" id="payslipScanPanel">
           <div class="scan-head">
             <div>
-              <b>📷 Pro 薪資單三層交叉檢查 <span style="font-size:10px;color:var(--mobile-gold-ink, #9a7a67);font-weight:800">Apple Vision × OpenAI</span></b>
-              <div class="hint">先由 Apple Vision 在 iPhone 本機辨識，再由 OpenAI 做一次獨立語意判讀，最後交給 App 薪資引擎逐項對帳。兩邊不一致時不自動猜，直接標出來請你確認。</div>
-              <div class="scan-privacy">🔒 班表辨識維持全本機；薪資單 Pro 交叉驗證會將一份處理後影像與 OCR 文字經受保護的 Supabase Edge Function 傳給 OpenAI。本 App 不把薪資單影像寫入 Supabase Storage／資料庫，OpenAI 請求使用 store:false。</div>
+              <b>📷 Pro 薪資單三層交叉檢查</b>
+              <div class="hint">使用多重判讀與薪資計算邏輯進行交叉核對；結果不一致或信心不足時會直接標示，請你確認後再導入。</div>
+              <div class="scan-privacy">🔒 薪資單只會為完成辨識與對帳進行必要處理；本 App 不會把薪資單影像保存到工作資料雲端。詳細資料處理方式請見隱私權政策。</div>
             </div>
             <button type="button" class="btn" id="closePayslipScan">收起</button>
           </div>
@@ -1624,7 +1624,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           </div>
           <div class="scan-preview-wrap"><div class="scan-preview-stage"><img id="payslipPreview" class="scan-preview" alt="薪資單預覽"><div class="scan-amount-overlay hidden" id="payslipAmountOverlay"></div></div><div class="scan-picker-hint hidden" id="payslipPickerHint"></div></div>
           <div class="scan-status" id="payslipScanStatus">
-            請點「拍照或上傳」選擇薪資單。iPhone 會直接使用 Apple Vision 本機辨識。
+            請點「拍照或上傳」選擇薪資單，系統會自動進行多重交叉檢查。
             <div class="scan-progress"><i id="payslipScanProgress"></i></div>
           </div>
           <div class="hint hidden" id="payslipMissingFields" style="margin:-4px 12px 12px;padding:8px 10px;border-radius:10px;background:var(--mobile-gold-icon, #fff6e9);color:var(--mobile-gold-ink, #8b5b31)"></div>
@@ -3645,7 +3645,7 @@ function toggleTodoDone(id){
 const ITEMIZED_FIELDS=[
   {key:'base',label:'底薪',kind:'income'},
   {key:'shiftAllowance',label:'輪班津貼',kind:'income'},
-  {key:'meal',label:'伙食津貼',kind:'income'},
+  {key:'meal',label:'伙食／餐費補助',kind:'income'},
   {key:'performance',label:'表現津貼',kind:'income'},
   {key:'transport',label:'交通津貼',kind:'income'},
   {key:'otherIncome',label:'其他收入',kind:'income'},
@@ -3673,7 +3673,7 @@ const PAYSLIP_OCR_FIELDS=[
   {key:'dedOther',label:'其他扣款',kind:'deduction',priority:5,minScore:.94,terms:['其他扣款','其他代扣','其他減項','應扣其他','代扣其他','雜項扣款','其他應扣'],mode:'sum'},
   {key:'base',label:'底薪／本薪',kind:'income',priority:28,terms:['基本工資','基本薪資','基本薪','基本薪俸','基本給','固定薪資','固定薪','固定月薪','固定工資','經常性薪資','經常性工資','月薪資','月薪','本薪資','本薪','底薪','本俸','薪俸','職務本俸','契約薪資','BASE PAY','BASIC PAY','BASIC SALARY'],mode:'max'},
   {key:'shiftAllowance',label:'輪班／夜班津貼',kind:'income',priority:25,terms:['輪班津貼','輪班加給','輪班獎金','輪值津貼','輪值加給','班別津貼','班別加給','班津','夜班津貼','夜班加給','夜勤津貼','夜勤加給','夜勤費','夜班費','夜班','輪班費','輪班','晚班津貼','中班津貼','中夜班津貼','大夜班津貼','大夜津貼','大夜加給','大夜','小夜班津貼','小夜津貼','小夜加給','小夜','特殊班津貼','三班津貼','二班津貼','值班津貼','值班加給','SHIFT ALLOWANCE','NIGHT SHIFT'],mode:'sum'},
-  {key:'meal',label:'伙食津貼',kind:'income',priority:24,terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','膳食','餐費津貼','餐費補助','餐費','餐貼','誤餐費','誤餐','餐補','MEAL ALLOWANCE'],mode:'sum'},
+  {key:'meal',label:'伙食／餐費補助',kind:'income',priority:26,terms:['伙食津貼','伙食費','伙食補助','伙食','伙食代金','膳食津貼','膳食費','膳食補助','膳食','餐費津貼','餐費補助','餐費','餐貼','誤餐費','誤餐','餐補','MEAL ALLOWANCE'],mode:'sum'},
   {key:'performance',label:'表現／績效津貼',kind:'income',priority:23,terms:['表現津貼','表現獎金','表現加給','表現','績效津貼','績效獎金','績效獎勵','績效加給','績效','工作獎金','工作津貼','職務津貼','職務加給','專業津貼','專業加給','責任津貼','責任加給','考績獎金','技術津貼','技能津貼','全勤獎金','全勤','獎勵金','PERFORMANCE BONUS','PERFORMANCE ALLOWANCE'],mode:'sum'},
   {key:'transport',label:'交通津貼',kind:'income',priority:20,terms:['交通津貼','交通費','交通補助','交通補貼','通勤津貼','通勤補助','車馬費','車資','油資','TRAVEL ALLOWANCE','TRANSPORT ALLOWANCE'],mode:'sum'},
   {key:'otPay',label:'加班費',kind:'income',priority:30,terms:['免稅加班費','加班免稅','免稅延長工時','免稅延時工資','應稅加班費','加班應稅','應稅延長工時','應稅延時工資','平日加班費','平日加班工資','休息日加班費','休息日加班工資','假日加班費','假日加班工資','國定假日加班費','國假加班費','例假日加班費','延長工時工資','延長工時費','延時工資','超時工資','加班薪資','加班工資','加班費','OVERTIME PAY','OVERTIME'],mode:'sum'},
@@ -4319,7 +4319,7 @@ function renderPayslipDetected(){
     return '<div class="scan-result-field'+(warn?' has-warning':'')+'"><label>'+escapeHtml(def.label)+'</label><input type="number" min="0" step="1" data-ocr-field="'+def.key+'" value="'+(value===''?'':escapeHtml(value))+'" placeholder="未辨識">'+
       '<div class="ocr-meta">'+(has?'<span class="ocr-confidence'+confClass+'">信心 '+conf+'%</span>':(labelSeen?'<span class="ocr-confidence mid">欄位已讀到</span>':'<span class="ocr-confidence low">未辨識</span>'))+'<span class="ocr-source">'+escapeHtml(source)+(hit&&hit.term?'・'+escapeHtml(hit.term):'')+'</span></div>'+
       (warn?'<span class="ocr-warning">⚠ '+escapeHtml(warn)+'</span>':'')+
-      (alt?'<button type="button" class="ocr-pick-btn" data-ocr-ai="'+def.key+'">採用 OpenAI：NT$'+Math.round(num(alt.value)).toLocaleString('zh-TW')+'</button>':'')+
+      (alt?'<button type="button" class="ocr-pick-btn" data-ocr-ai="'+def.key+'">採用第二判讀：NT$'+Math.round(num(alt.value)).toLocaleString('zh-TW')+'</button>':'')+
       '<button type="button" class="ocr-pick-btn" data-ocr-pick="'+def.key+'">從圖片指定金額</button></div>';
   }).join('');
   const extraItems=Array.isArray(payslipOcrResult.__extraItems)?payslipOcrResult.__extraItems:[];
@@ -4331,7 +4331,7 @@ function renderPayslipDetected(){
         const conf=Math.round(100*num(item.confidence));
         return '<div class="scan-result-field"><label>'+escapeHtml(item.label)+'</label>'+
           '<input type="number" min="0" step="1" data-ocr-extra-index="'+index+'" value="'+escapeHtml(Math.round(num(item.amount)))+'">'+
-          '<div class="ocr-meta"><span class="ocr-confidence'+(conf>=85?'':conf>=65?' mid':' low')+'">'+kindLabel+'・信心 '+conf+'%</span><span class="ocr-source">OpenAI 額外項目</span></div>'+
+          '<div class="ocr-meta"><span class="ocr-confidence'+(conf>=85?'':conf>=65?' mid':' low')+'">'+kindLabel+'・信心 '+conf+'%</span><span class="ocr-source">交叉判讀</span></div>'+
           (item.evidence?'<span class="ocr-warning" style="color:var(--mobile-muted,#765)">依據：'+escapeHtml(item.evidence)+'</span>':'')+
           '</div>';
       }).join('')
@@ -4405,7 +4405,7 @@ function resetPayslipScan(clearPreview=true){
   if($('payslipRawText'))$('payslipRawText').textContent='';
   if($('payslipMissingFields')){$('payslipMissingFields').textContent='';$('payslipMissingFields').classList.add('hidden')}
   if($('payslipScanProgress'))$('payslipScanProgress').style.width='0%';
-  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始三層交叉檢查：Apple Vision → OpenAI → App 薪資引擎。 ';
+  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始三層交叉檢查。 ';
   if($('payslipFileInput'))$('payslipFileInput').value='';
   if(clearPreview){
     if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}payslipPreviewUrl=''}
@@ -4466,7 +4466,7 @@ function mergePayslipAiVerification(ai){
       if(aiConf<.82)return;
       payslipOcrResult[def.key]=aiValue;
       payslipOcrResult.__confidence[def.key]=Math.min(.94,aiConf*.96);
-      payslipOcrResult.__matches.push({key:def.key,label:def.label,term:evidence||'OpenAI 第二判讀',amount:aiValue,value:aiValue,confidence:payslipOcrResult.__confidence[def.key],method:'OpenAI 第二判讀',source:'OpenAI 第二判讀',line:evidence||'OpenAI 從薪資單影像辨識'});
+      payslipOcrResult.__matches.push({key:def.key,label:def.label,term:evidence||'第二判讀',amount:aiValue,value:aiValue,confidence:payslipOcrResult.__confidence[def.key],method:'第二判讀',source:'第二判讀',line:evidence||'OpenAI 從薪資單影像辨識'});
       added++;return;
     }
     const appleValue=Number(payslipOcrResult[def.key]);
@@ -4474,7 +4474,7 @@ function mergePayslipAiVerification(ai){
     if(payslipAmountsAgree(appleValue,aiValue)){
       agreed++;
       payslipOcrResult.__confidence[def.key]=Math.max(Number(payslipOcrResult.__confidence[def.key])||0,Math.min(.99,.9+aiConf*.09));
-      if(hit){hit.confidence=payslipOcrResult.__confidence[def.key];hit.source='Apple Vision + OpenAI 一致'}
+      if(hit){hit.confidence=payslipOcrResult.__confidence[def.key];hit.source='多重判讀一致'}
       delete payslipOcrResult.__fieldWarnings[def.key];delete payslipOcrResult.__openAiAlternates[def.key];
     }else if(aiConf>=.68){
       const localConf=Number(payslipOcrResult.__confidence[def.key])||0;
@@ -4483,15 +4483,15 @@ function mergePayslipAiVerification(ai){
       if(directCritical&&aiConf>=.9&&weakLocal){
         payslipOcrResult[def.key]=aiValue;
         payslipOcrResult.__confidence[def.key]=Math.min(.96,.86+aiConf*.1);
-        if(hit){hit.value=aiValue;hit.amount=aiValue;hit.term=evidence||hit.term;hit.confidence=payslipOcrResult.__confidence[def.key];hit.method='OpenAI 高信心校正';hit.source='Apple Vision + OpenAI 校正'}
+        if(hit){hit.value=aiValue;hit.amount=aiValue;hit.term=evidence||hit.term;hit.confidence=payslipOcrResult.__confidence[def.key];hit.method='交叉判讀高信心校正';hit.source='交叉判讀校正'}
         delete payslipOcrResult.__fieldWarnings[def.key];delete payslipOcrResult.__openAiAlternates[def.key];
         added++;
       }else{
         conflicts++;
         payslipOcrResult.__openAiAlternates[def.key]={value:aiValue,confidence:aiConf,evidence};
         payslipOcrResult.__confidence[def.key]=Math.min(localConf||.64,.64);
-        payslipOcrResult.__fieldWarnings[def.key]='Apple Vision：'+appleValue.toLocaleString('zh-TW')+'；OpenAI：'+aiValue.toLocaleString('zh-TW')+'。兩邊不一致，請確認原圖。';
-        if(hit)hit.source='Apple Vision／OpenAI 不一致';
+        payslipOcrResult.__fieldWarnings[def.key]='第一判讀：'+appleValue.toLocaleString('zh-TW')+'；第二判讀：'+aiValue.toLocaleString('zh-TW')+'。兩邊不一致，請確認原圖。';
+        if(hit)hit.source='交叉判讀不一致';
       }
     }
   });
@@ -4528,7 +4528,7 @@ function applyOpenAiPayslipAmount(fieldKey){
   payslipOcrResult.__fieldWarnings=payslipOcrResult.__fieldWarnings||{};delete payslipOcrResult.__fieldWarnings[fieldKey];
   delete payslipOcrResult.__openAiAlternates[fieldKey];
   payslipOcrResult.__matches=Array.isArray(payslipOcrResult.__matches)?payslipOcrResult.__matches.filter(m=>m.key!==fieldKey):[];
-  payslipOcrResult.__matches.push({key:fieldKey,label:def.label,term:'使用者確認',amount:num(alt.value),value:num(alt.value),confidence:1,method:'使用者確認',source:'使用者採用 OpenAI 第二判讀',line:alt.evidence||''});
+  payslipOcrResult.__matches.push({key:fieldKey,label:def.label,term:'使用者確認',amount:num(alt.value),value:num(alt.value),confidence:1,method:'使用者確認',source:'使用者採用 第二判讀',line:alt.evidence||''});
   renderPayslipDetected();
 }
 
@@ -4554,7 +4554,7 @@ async function runPayslipOcr(file){
     if(nativeVision){
       for(currentPass=0;currentPass<variants.length;currentPass++){
         const variant=variants[currentPass];
-        status.childNodes[0].nodeValue='Apple Vision 第 '+(currentPass+1)+' / '+variants.length+' 次（'+variant.name+'）本機辨識中… ';
+        status.childNodes[0].nodeValue='本機辨識第 '+(currentPass+1)+' / '+variants.length+' 次（'+variant.name+'）本機辨識中… ';
         bar.style.width=Math.round((currentPass/variants.length)*100)+'%';
         const imageDataUrl=await blobDataUrl(variant.image);
         const vision=await nativeVision.recognize({imageDataUrl,purpose:'payslip'});
@@ -4609,17 +4609,17 @@ async function runPayslipOcr(file){
       missingDefs=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),
       labelOnlyDefs=missingDefs.filter(def=>payslipOcrResult.__labelOnly&&payslipOcrResult.__labelOnly[def.key]),
       reallyMissingDefs=missingDefs.filter(def=>!labelOnlyDefs.includes(def));
-    const engine=nativeVision?'Apple Vision':'Tesseract fallback';
+    const engine=nativeVision?'本機辨識':'相容辨識';
     const recognizedKeys=foundDefs.map(def=>def.key);
     const manualKeys=payslipOcrResult.__manualKeys||{};
     const lowConfidenceKeys=recognizedKeys.filter(key=>!manualKeys[key]&&num(payslipOcrResult.__confidence?.[key])<.72);
     const highConfidenceCount=recognizedKeys.filter(key=>manualKeys[key]||num(payslipOcrResult.__confidence?.[key])>=.85).length;
     const aiSummary=payslipOcrResult.__aiSummary||{};
     const aiText=payslipAiStatus==='verified'
-      ?'・OpenAI 交叉驗證完成（一致 '+num(aiSummary.agreed)+'、衝突 '+num(aiSummary.conflicts)+'、補足 '+num(aiSummary.added)+'、額外項目 '+num(aiSummary.extra)+'）'
-      :payslipAiStatus==='limit'?'・本月 OpenAI 第二判讀次數已用完'
-      :payslipAiStatus==='not_configured'?'・OpenAI 第二判讀尚未完成設定'
-      :'・OpenAI 第二判讀暫時無法使用';
+      ?'・交叉判讀完成（一致 '+num(aiSummary.agreed)+'、衝突 '+num(aiSummary.conflicts)+'、補足 '+num(aiSummary.added)+'、額外項目 '+num(aiSummary.extra)+'）'
+      :payslipAiStatus==='limit'?'・本月 第二判讀次數已用完'
+      :payslipAiStatus==='not_configured'?'・第二判讀尚未完成設定'
+      :'・第二判讀暫時無法使用';
     status.childNodes[0].nodeValue=engine+' 辨識完成：找到 '+foundDefs.length+' / '+PAYSLIP_OCR_FIELDS.length+' 個欄位・高信心 '+highConfidenceCount+' 項・需確認 '+lowConfidenceKeys.length+' 項'+aiText+(payslipOcrResult.__usedMemory?'・已套用本機格式記憶':'')+'。 ';
     if($('payslipMissingFields')){
       const valueWarnings=validatePayslipValues(payslipOcrResult);
@@ -7087,7 +7087,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v191';
+    const reloadKey='meow-sw-reloaded-v192';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -7096,7 +7096,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=191',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=192',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
