@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-25-v1",
+  "version": "2026-09-25-v2",
   "verifiedAt": "2026-09-25",
   "jurisdiction": "Taiwan",
   "disclaimer": "知識庫提供一般性規則與判斷條件；涉及個案適法性時，仍須結合實際班表、工時制度、工作身分、勞資約定與最新主管機關規定。",
@@ -381,6 +381,332 @@
         {
           "title": "勞動部工資認定與給付",
           "url": "https://www.mol.gov.tw/1607/28162/28166/28180/28194/29050/"
+        }
+      ]
+    },
+    "splitShift": {
+      "title": "兩頭班／兩段班中間時段",
+      "baseAnswer": "兩頭班中間的空檔是否算工作時間，不能只看班表寫成「休息」。關鍵是這段時間勞工是否真的能脫離雇主指揮監督、自由利用；如果仍須留在現場、待命、接電話或隨時提供勞務，可能仍應計入工作時間。",
+      "requiredFacts": [
+        "兩段班的實際起訖時間",
+        "中間時段是否可自由離開",
+        "是否仍須待命或處理工作",
+        "整日實際工作總時數"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "attendance",
+        "settings"
+      ],
+      "cautions": [
+        "若中間時段確實可自由利用，才較可能屬不計工時的休息時間。",
+        "餐飲業稱為兩頭班，不代表中間時段當然不算工時。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部：工作時間及延長工時",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/30382/"
+        },
+        {
+          "title": "勞動部：休息時間",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/81476/"
+        }
+      ]
+    },
+    "onCallStandby": {
+      "title": "On Call／待命時間",
+      "baseAnswer": "待命是否算工作時間要看實際拘束程度。勞工若受雇主指示等待提供勞務、不能自由支配時間，原則上屬工作時間；若在家待命但可以相當自由利用時間，是否全部計入要再看實際限制。被召回後實際提供勞務的時段則要另行計算。",
+      "requiredFacts": [
+        "待命期間是否可自由活動",
+        "是否限制地點或要求立即回應",
+        "被召回的實際起訖時間",
+        "公司待命制度或約定"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "attendance",
+        "overtime",
+        "settings"
+      ],
+      "cautions": [
+        "不能一看到「在家」就認定不是工作時間，也不能一概把所有待命時段都算成工作時間。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部：工作時間及延長工時",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/30382/"
+        }
+      ]
+    },
+    "handoverWorkTime": {
+      "title": "交班／交接／事前準備與事後整理",
+      "baseAnswer": "如果交班、交接、事前準備或事後整理是工作必要流程，且勞工仍在雇主指揮監督下，這段時間原則上屬工作時間。若因此超過正常工作時間，應再依加班規則核對。",
+      "requiredFacts": [
+        "排定上下班時間",
+        "實際開始與結束交班時間",
+        "交班是否為公司要求或工作必要程序",
+        "公司是否已計入工時或加班"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "attendance",
+        "overtime"
+      ],
+      "cautions": [
+        "不要只用打卡時間判斷，應看實際受指揮監督、提供勞務的時間。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部：工作時間及延長工時",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/30382/"
+        },
+        {
+          "title": "勞動基準法法令概要",
+          "url": "https://service.mol.gov.tw/download_file.php?f=_OSL256_LQtDmGOv-M68-lxtDRtkQqK1k0DWSm8QF35qxfGL3VmFzTCcdc_RTxKvf4e3rZqk&g=_OSL256_99ft9RbTq5wUeETjAxvVL73SsjkW2fsroh5QXBTKODFwS-rRAVhwohUJIsFUKrTq"
+        }
+      ]
+    },
+    "crossMidnightShift": {
+      "title": "跨午夜班次的工時歸屬",
+      "baseAnswer": "跨午夜的班次應依實際開始與結束時間完整計算，不能因日期跨過午夜就漏掉其中一段。App 可以用班次起始日作為班表顯示基準，但薪資、加班與休息間隔仍要依完整實際時段及當日性質逐段核對。",
+      "requiredFacts": [
+        "班次實際開始時間",
+        "班次實際結束時間",
+        "跨午夜後是否另有加班",
+        "涉及的工作日／休息日／國定假日性質"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "attendance",
+        "overtime",
+        "salary"
+      ],
+      "cautions": [
+        "顯示在哪一天和法律上工時是否被完整計入是兩件事。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部：工作時間及延長工時",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/30382/"
+        }
+      ]
+    },
+    "scheduleChange": {
+      "title": "臨時改班",
+      "baseAnswer": "一般法規沒有一個適用所有產業的「班表一定要提前幾天才能改」數字。工作開始與終止時間、休息、休假與輪班換班本來就應在勞動契約等規範中約定；臨時改班仍不能因此違反工時上限、例假休息日或輪班換班休息間隔。",
+      "requiredFacts": [
+        "原班次",
+        "新班次",
+        "通知時間",
+        "勞動契約／工作規則怎麼約定",
+        "改班後是否影響休息間隔或休息日"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "settings",
+        "attendance"
+      ],
+      "cautions": [
+        "沒有全國統一『X天前』不代表雇主可以任意改班。",
+        "若改班同時涉及更換班次，還要另外檢查第34條休息間隔。"
+      ],
+      "sources": [
+        {
+          "title": "勞動基準法施行細則第7條",
+          "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC01.aspx?flno=7&id=FL014931"
+        },
+        {
+          "title": "勞動基準法第34條",
+          "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC01.aspx?flno=34&id=FL014930"
+        }
+      ]
+    },
+    "shiftSwap": {
+      "title": "與同事換班",
+      "baseAnswer": "換班後應依實際出勤的日期、班次與日別重新判斷工時、休息間隔、國定假日與加班。即使是同事間協調換班，也不會因此讓法定工時或休假權益消失；是否需要主管核准則要再看公司工作規則或排班制度。",
+      "requiredFacts": [
+        "原班表",
+        "換班後班表",
+        "換班是否經公司確認",
+        "換班後涉及的國定假日／休息日",
+        "兩班間實際休息時間"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "attendance",
+        "overtime",
+        "salary"
+      ],
+      "cautions": [
+        "不能只沿用換班前的日別與薪資計算。"
+      ],
+      "sources": [
+        {
+          "title": "勞動基準法施行細則第7條",
+          "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC01.aspx?flno=7&id=FL014931"
+        },
+        {
+          "title": "勞動部：工作時間及延長工時",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/30382/"
+        }
+      ]
+    },
+    "mandatoryOvertime": {
+      "title": "臨時要求／強制加班",
+      "baseAnswer": "加班本身必須符合勞動基準法第32條的程序與工時上限；另外，勞工如果因健康或其他正當理由不能接受正常工時以外的工作，第42條明定雇主不得強制。是否能拒絕要依實際理由與公司程序判斷，不能只用一句「公司要求就一定要加」。",
+      "requiredFacts": [
+        "此次加班原因",
+        "本月及近三個月加班時數",
+        "公司是否完成加班程序",
+        "勞工是否有健康或其他正當理由"
+      ],
+      "appDataNeeded": [
+        "overtime",
+        "schedule",
+        "settings"
+      ],
+      "cautions": [
+        "天災、事變或突發事件另有特殊規定，不能直接套一般情形。"
+      ],
+      "sources": [
+        {
+          "title": "勞動基準法第32條",
+          "url": "https://laws.mol.gov.tw/flaw/FLAWDOC01.aspx?flno=32&id=FL014930"
+        },
+        {
+          "title": "勞動基準法第42條",
+          "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC01.aspx?flno=42&id=FL014930"
+        }
+      ]
+    },
+    "attendanceRecord": {
+      "title": "打卡與實際工作時間不一致",
+      "baseAnswer": "出勤紀錄是工資、工時與職災查核的重要依據，但是否屬工作時間仍要看實際是否在雇主指揮監督下提供勞務。若公司要求先打卡下班再繼續工作，不能只因打卡已結束就把後面的實際工作時間當成不存在。",
+      "requiredFacts": [
+        "打卡時間",
+        "實際開始／結束工作時間",
+        "主管是否知情或指示繼續工作",
+        "可佐證的訊息、系統或工作紀錄"
+      ],
+      "appDataNeeded": [
+        "attendance",
+        "overtime",
+        "schedule"
+      ],
+      "cautions": [
+        "若有爭議，保留實際工作紀錄會比只看單一打卡時間更重要。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部：出勤紀錄",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/81480/"
+        },
+        {
+          "title": "勞動部函釋：超過正常工時提供勞務之認定",
+          "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC03.aspx?cnt=1078&datatype=etype&keyword=%E5%85%B6%E4%BB%96&recordno=216&searchmode=global"
+        }
+      ]
+    },
+    "trainingMeetingTime": {
+      "title": "教育訓練／會議是否算工作時間",
+      "baseAnswer": "如果教育訓練、晨會或下班後會議是雇主要求參加，且勞工處於雇主指揮監督下，原則上要納入工作時間判斷；若排在正常工時之外，還要再檢查是否形成加班。純粹自願且與工作義務無關的活動則需另看實際情況。",
+      "requiredFacts": [
+        "活動是否強制參加",
+        "活動起訖時間",
+        "是否在正常工時之外",
+        "未參加是否影響考核或工作"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "attendance",
+        "overtime"
+      ],
+      "cautions": [
+        "名稱叫『訓練』或『會議』不會自動排除工時。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部：工作時間及延長工時",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/30382/"
+        },
+        {
+          "title": "勞動基準法施行細則第7條",
+          "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC01.aspx?flno=7&id=FL014931"
+        }
+      ]
+    },
+    "mealBreakOnDuty": {
+      "title": "用餐／休息時仍須待命",
+      "baseAnswer": "真正的休息時間原則上應讓勞工脫離雇主指揮監督並自由利用。如果吃飯時仍被要求留在崗位、接電話、看設備或隨時提供勞務，勞動部明確說明這類實際未給予休息的時段仍應計入工作時間。",
+      "requiredFacts": [
+        "用餐／休息時是否能離開",
+        "是否仍須接電話或處理工作",
+        "實際休息多久",
+        "當日總工時"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "attendance",
+        "overtime"
+      ],
+      "cautions": [
+        "排班表上標示『休息』不代表實際就一定是可不計工時的休息。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部：休息時間",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28226/81476/"
+        }
+      ]
+    },
+    "scheduleNotice": {
+      "title": "班表公布與變更通知",
+      "baseAnswer": "台灣一般勞動法規沒有一個適用所有行業的固定「班表必須提前X天公布」標準。要先看勞動契約、工作規則、團體協約或公司已承諾的排班制度；即使沒有統一提前天數，班表安排仍要符合工時、休息日與輪班換班等強制規定。",
+      "requiredFacts": [
+        "公司工作規則或勞動契約",
+        "公司平常班表公布方式",
+        "這次實際提前多久通知",
+        "改班後是否影響休息或休假"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "settings"
+      ],
+      "cautions": [
+        "不要回答成全台一律『一定要提前7天／14天』，除非有特定產業規定或契約依據。"
+      ],
+      "sources": [
+        {
+          "title": "勞動基準法施行細則第7條",
+          "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC01.aspx?flno=7&id=FL014931"
+        }
+      ]
+    },
+    "fixedShift": {
+      "title": "固定班與輪班更換班次",
+      "baseAnswer": "勞動基準法第34條的11小時規定，是針對採輪班制且發生『更換班次』的情形。固定大夜、固定晚班若沒有發生班次更換，不能直接套用第34條的換班11小時結論；但仍要另外檢查一般工時、休息時間、例假與加班規則。",
+      "requiredFacts": [
+        "是否長期固定同一班別",
+        "這次是否實際發生班次更換",
+        "前一班實際下班時間",
+        "下一班實際上班時間"
+      ],
+      "appDataNeeded": [
+        "schedule",
+        "attendance",
+        "settings"
+      ],
+      "cautions": [
+        "固定班若某次被臨時改成另一班，該次可能就進入『更換班次』的判斷。"
+      ],
+      "sources": [
+        {
+          "title": "勞動部：第34條輪班換班休息時間適用範圍",
+          "url": "https://www.mol.gov.tw/1607/28162/28166/28218/28232/29068/"
+        },
+        {
+          "title": "勞動基準法第34條",
+          "url": "https://laws.mol.gov.tw/FLAW/FLAWDOC01.aspx?flno=34&id=FL014930"
         }
       ]
     }
