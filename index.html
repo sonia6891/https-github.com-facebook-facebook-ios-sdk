@@ -17,7 +17,7 @@
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v187-schedule-more-collapse">
+<meta name="meow-ui-build" content="v187-login-no-hover-cursor">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1203,6 +1203,27 @@ html.auth-needs-login #app-splash{opacity:1!important;pointer-events:none}
   background:rgba(6,199,85,.54);
   border-color:rgba(255,255,255,.28);
   box-shadow:0 4px 14px rgba(6,120,60,.14);
+}
+.meow-welcome.welcome-auto-login .welcome-button,
+.meow-welcome.welcome-auto-login .welcome-button:hover,
+.meow-welcome.welcome-auto-login .welcome-button:active,
+.meow-welcome.welcome-auto-login .welcome-button:focus{
+  cursor:default!important;
+  transform:none!important;
+  filter:none!important;
+  transition:none!important;
+}
+.meow-welcome.welcome-auto-login .welcome-google:hover,
+.meow-welcome.welcome-auto-login .welcome-google:active,
+.meow-welcome.welcome-auto-login .welcome-google:focus{
+  background:rgba(255,255,255,.30)!important;
+  box-shadow:0 4px 14px rgba(45,35,28,.10)!important;
+}
+.meow-welcome.welcome-auto-login .welcome-line:hover,
+.meow-welcome.welcome-auto-login .welcome-line:active,
+.meow-welcome.welcome-auto-login .welcome-line:focus{
+  background:rgba(6,199,85,.54)!important;
+  box-shadow:0 4px 14px rgba(6,120,60,.14)!important;
 }
 .meow-welcome.welcome-auto-login .welcome-line-mark{
   width:24px;
