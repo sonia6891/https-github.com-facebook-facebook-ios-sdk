@@ -61,20 +61,39 @@ async function hasAssistantAccess(authHeader: string) {
 }
 
 function decodeDataUrl(dataUrl: string) {
-  const match = dataUrl.match(/^data:(audio\/[a-z0-9.+-]+);base64,(.+)$/i);
-  if (!match) return null;
-  const mime = match[1].toLowerCase();
-  const raw = atob(match[2]);
-  const bytes = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
-  return { mime, bytes };
+  // Safari may emit e.g. data:audio/mp4;codecs=mp4a.40.2;base64,...
+  // Parse Data URL parameters instead of assuming the MIME is followed
+  // immediately by ";base64".
+  if (!dataUrl.startsWith("data:")) return null;
+  const comma = dataUrl.indexOf(",");
+  if (comma < 0) return null;
+
+  const meta = dataUrl.slice(5, comma);
+  const parts = meta.split(";").map((p) => p.trim()).filter(Boolean);
+  const mime = (parts.shift() || "").toLowerCase();
+  const isBase64 = parts.some((p) => p.toLowerCase() === "base64");
+  if (!/^audio\/[a-z0-9.+-]+$/i.test(mime) || !isBase64) return null;
+
+  const encoded = dataUrl.slice(comma + 1).replace(/\s+/g, "");
+  if (!encoded) return null;
+
+  try {
+    const raw = atob(encoded);
+    const bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    return { mime, bytes };
+  } catch (_) {
+    return null;
+  }
 }
 
 function extensionFor(mime: string) {
-  if (mime.includes("mp4") || mime.includes("m4a")) return "m4a";
-  if (mime.includes("webm")) return "webm";
-  if (mime.includes("ogg")) return "ogg";
-  if (mime.includes("wav")) return "wav";
+  const base = mime.split(";")[0].toLowerCase();
+  if (base.includes("mp4") || base.includes("m4a")) return "m4a";
+  if (base.includes("webm")) return "webm";
+  if (base.includes("ogg")) return "ogg";
+  if (base.includes("wav")) return "wav";
+  if (base.includes("mpeg") || base.includes("mp3")) return "mp3";
   return "webm";
 }
 
@@ -112,8 +131,15 @@ Deno.serve(async (req: Request) => {
   const form = new FormData();
   form.append("model", "gpt-4o-mini-transcribe");
   form.append("language", "zh");
-  form.append("prompt", "台灣繁體中文。這是輪班工作 App 的簡短語音指令，請保留日期、時數、班別、加班、請假、特休等詞意。");
-  form.append("file", new Blob([decoded.bytes], { type: decoded.mime }), "voice." + extensionFor(decoded.mime));
+  form.append(
+    "prompt",
+    "台灣繁體中文。這是輪班工作 App 的簡短語音指令，請保留日期、時數、班別、加班、取消加班、請假、特休，以及智慧薪資對帳、薪資對帳、薪資單、幫我對薪資單、核對薪資單等詞意。"
+  );
+  form.append(
+    "file",
+    new Blob([decoded.bytes], { type: decoded.mime }),
+    "voice." + extensionFor(decoded.mime)
+  );
 
   let upstream: Response;
   try {
@@ -129,7 +155,12 @@ Deno.serve(async (req: Request) => {
 
   const provider = await upstream.json().catch(() => null);
   if (!upstream.ok) {
-    console.warn("speech-transcribe upstream error", upstream.status, provider?.error?.code || "");
+    console.warn(
+      "speech-transcribe upstream error",
+      upstream.status,
+      provider?.error?.code || "",
+      provider?.error?.type || ""
+    );
     return json({ ok: false, code: "TRANSCRIPTION_FAILED" }, 502);
   }
 
