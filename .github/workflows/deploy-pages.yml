@@ -29,6 +29,8 @@ jobs:
         run: node tests/meow-assistant-round2-100.test.cjs
       - name: Meow Assistant OpenAI NLU integration contract
         run: node tests/meow-assistant-ai-nlu.test.cjs
+      - name: Meow Assistant Taiwan labor knowledge base
+        run: node tests/meow-assistant-labor-kb.test.cjs
       - name: Meow Assistant natural-language discovery baseline
         run: node tests/meow-assistant-auto-discovery.test.cjs
       - name: Install browser tests
