@@ -10,6 +10,15 @@ assert(html.includes("invokeUserFunction('meow-assistant-route'"),'live self-tes
 assert(html.includes('window.meowAssistantLastLiveQualityReport'),'live report storage missing');
 assert(html.includes("'meow-assistant-live-quality-report'"),'local live report persistence missing');
 assert(html.includes('/^正在執行喵助理真實 OpenAI 語意測試/'),'self-test progress must be excluded from memory');
+assert(html.includes('id="meowAiTestProgress"'),'visible progress bar missing');
+assert(html.includes('id="meowAiTestProgressText"'),'visible progress text missing');
+assert(html.includes('setMeowAssistantLiveQualityUi'),'live test UI state helper missing');
+assert(html.includes("run.textContent=running?'測試中…':'執行 32 題正式測試'"),'test button loading state missing');
+assert(html.includes('routeMeowAssistantWithAILiveQuality'),'live test must preserve routing errors instead of swallowing them');
+assert(html.includes('登入憑證已失效'),'auth-expiry feedback missing');
+assert(html.includes('測試中止：這個帳號目前沒有開發者／Pro 權限'),'entitlement feedback missing');
+assert(!html.includes("setMeowAssistantLiveQualityUi(true,0,MEOW_ASSISTANT_LIVE_QUALITY_CASES.length,'正在啟動正式 OpenAI 測試…');\n  void runMeowAssistantLiveQualityTest();"),'click handler must not pre-lock runner before start');
+
 
 const corpusMatch=html.match(/const MEOW_ASSISTANT_LIVE_QUALITY_CASES=\[([\s\S]*?)\];\nfunction meowAssistantLiveCasePass/);
 assert(corpusMatch,'could not locate live quality corpus');
