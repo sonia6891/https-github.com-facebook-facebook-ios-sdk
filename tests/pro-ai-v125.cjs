@@ -66,7 +66,7 @@ assert(payslipEdge.includes('function exactLabelRead'), 'amount-anchored exact-l
 assert(payslipEdge.includes('rowCrops'), 'server must accept amount-anchored row crops');
 assert(html.includes('buildPayslipRowCrops'), 'client must build amount-anchored row crops');
 assert(html.includes("rowCrops=await buildPayslipRowCrops"), 'client must send row crops during payslip verification');
-assert(payslipEdge.includes('只看原始圖片字形，不參考 OCR 文字'), 'exact-label recheck must be independent from OCR text');
+assert(payslipEdge.includes('逐字抄寫員') && payslipEdge.includes('禁止依語意猜字'), 'exact-label recheck must be image-transcription focused rather than semantic guessing');
 assert(payslipEdge.includes('名稱待確認（兩次逐字判讀不一致）'), 'ambiguous payroll labels must not be forced');
 assert(payslipEdge.includes('trustedKnown = exactAgreement && choiceAgreement'), 'exact label and semantic choice must both agree before auto-labeling');
 assert(html.includes('修正項目名稱'), 'unresolved extra payroll labels need a manual correction action');
