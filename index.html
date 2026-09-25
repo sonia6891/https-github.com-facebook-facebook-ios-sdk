@@ -6895,6 +6895,125 @@ async function meowAssistantLaborKnowledge(intent,raw=''){
   if(intent==='article841'&&/保全/.test(String(raw||''))&&meowLaborKnowledgeCache.entries.security841)return meowLaborKnowledgeCache.entries.security841;
   return meowLaborKnowledgeCache.entries[intent]||null;
 }
+const MEOW_ASSISTANT_LIVE_QUALITY_CASES=[
+  {q:'我昨天大夜今天早班，中間才休8小時這樣可以喔？',intent:'shiftRestInterval'},
+  {q:'主管排我連續上班9天都沒休，這樣正常嗎？',intent:'consecutiveWorkDays'},
+  {q:'12小時班只休30分鐘可以嗎？',intent:'workBreak'},
+  {q:'餐廳兩頭班中間空3小時還要留在店裡，這算休息嗎？',intent:'splitShift'},
+  {q:'護理師休假在家 on call 算工時嗎？',intent:'onCallStandby'},
+  {q:'我下班後還要交班30分鐘，公司都沒算加班',intent:'handoverWorkTime'},
+  {q:'晚上8點做到隔天早上8點，這班到底算哪一天？',intent:'crossMidnightShift'},
+  {q:'主管今天才跟我說明天早班改大夜，這樣可以嗎？',intent:'scheduleChange'},
+  {q:'我跟同事換班後兩個班只隔9小時，這樣有問題嗎？',intent:'shiftRestInterval',secondaryAny:['shiftSwap']},
+  {q:'這個月已經加班50小時，公司還可以再叫我加嗎？',intent:'overtimeLimit'},
+  {q:'加班換補休，結果補休到期還沒休完怎麼辦？',intent:'compensatoryLeave'},
+  {q:'公司把國定假日移到別天，原本那天上班怎麼算？',intent:'holidayTransfer'},
+  {q:'夜班津貼每個月固定都有，算加班費時要算進去嗎？',intent:'overtimeWageBase'},
+  {q:'我要離職了還有5天特休沒休怎麼處理？',intent:'annualLeaveTermination'},
+  {q:'懷孕還可以被排大夜嗎？',intent:'pregnancyNightShift'},
+  {q:'公司說我們四週變形，所以可以連續上很多天，是真的嗎？',intent:'flexibleWorkingHours'},
+  {q:'我是保全，每天12小時，公司說84-1所以都合法？',intent:'article841'},
+  {q:'我是工讀生，國定假日上班薪水怎麼算？',intent:'partTimeRights',secondaryAny:['holidayPay']},
+  {q:'颱風天原本有班但我沒去，公司可以扣薪嗎？',intent:'naturalDisaster'},
+  {q:'主管臨時叫我留下來加班，我可以拒絕嗎？',intent:'mandatoryOvertime'},
+  {q:'公司叫我先打下班卡再繼續做，這樣可以嗎？',intent:'attendanceRecord'},
+  {q:'休假日被叫回公司上教育訓練，這算加班嗎？',intent:'trainingMeetingTime'},
+  {q:'吃飯時間不能離開櫃台還要接電話，這算休息嗎？',intent:'mealBreakOnDuty'},
+  {q:'公司每天都臨時改班表，班表到底要提前多久公布？',intent:'scheduleNotice'},
+  {q:'我固定大夜，不是輪來輪去，11小時間隔還適用嗎？',intent:'fixedShift'},
+  {q:'這個月薪水怎麼又少這麼多？',intent:'whyPayChanged'},
+  {q:'薪次單那個勞退怎麼怪怪的？',intent:'unknownDeduction'},
+  {
+    q:'那個幫我拿掉',
+    context:[
+      {role:'user',text:'22號幫我加班10小時'},
+      {role:'assistant',text:'已更新班表。'}
+    ],
+    operation:{kind:'remove_overtime',date:'2026-09-22'},
+    prior:true
+  },
+  {
+    q:'不是22，是24',
+    context:[
+      {role:'user',text:'22號幫我加班10小時'},
+      {role:'assistant',text:'已更新班表。'}
+    ],
+    operation:{kind:'move_overtime',from:'2026-09-22',to:'2026-09-24'},
+    prior:true
+  },
+  {
+    q:'剛剛那個不要了',
+    context:[
+      {role:'user',text:'22號幫我加班10小時'},
+      {role:'assistant',text:'已更新班表。'}
+    ],
+    operation:{kind:'undo_last'},
+    prior:true
+  },
+  {
+    q:'那九月呢？',
+    context:[
+      {role:'user',text:'幫我看八月班表'},
+      {role:'assistant',text:'已打開 8 月班表。'}
+    ],
+    operation:{kind:'view_schedule',year:2026,month:9},
+    prior:true
+  },
+  {
+    q:'今天大夜，明天又早班，而且這個月已經加50小時，公司還叫我留下來，這樣可以嗎？',
+    intent:'shiftRestInterval',
+    secondaryAny:['overtimeLimit','mandatoryOvertime']
+  }
+];
+function meowAssistantLiveCasePass(route,test){
+  if(!route||route.understood===false)return false;
+  if(test.intent&&route.primaryIntent!==test.intent)return false;
+  if(test.secondaryAny&&test.secondaryAny.length){
+    const all=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])];
+    if(!test.secondaryAny.some(x=>all.includes(x)))return false;
+  }
+  if(test.prior&&route.referencesPriorContext!==true)return false;
+  if(test.operation){
+    const op=route.operation||{};
+    if(op.kind!==test.operation.kind)return false;
+    if(test.operation.date&&!(Array.isArray(op.dates)&&op.dates.includes(test.operation.date)))return false;
+    if(test.operation.from&&op.fromDate!==test.operation.from)return false;
+    if(test.operation.to&&op.toDate!==test.operation.to)return false;
+    if(test.operation.year&&Number(op.year)!==Number(test.operation.year))return false;
+    if(test.operation.month&&Number(op.month)!==Number(test.operation.month))return false;
+  }
+  return true;
+}
+async function runMeowAssistantLiveQualityTest(){
+  if(!isDeveloperAccount()){
+    renderMeowAssistantReply('這個自我測試只開放開發者帳號。','error');
+    return false;
+  }
+  const started=Date.now(),results=[];
+  renderMeowAssistantReply('正在執行喵助理真實 OpenAI 語意測試…');
+  for(let i=0;i<MEOW_ASSISTANT_LIVE_QUALITY_CASES.length;i++){
+    const test=MEOW_ASSISTANT_LIVE_QUALITY_CASES[i];
+    let route=null,error='';
+    try{
+      route=await routeMeowAssistantWithAI(test.q,test.context||[]);
+    }catch(e){error=String(e&&e.message||e)}
+    const pass=!error&&meowAssistantLiveCasePass(route,test);
+    results.push({n:i+1,q:test.q,pass,error,expected:test.intent||test.operation||null,route});
+    const done=i+1;
+    renderMeowAssistantReply('正在執行喵助理真實 OpenAI 語意測試… '+done+'/'+MEOW_ASSISTANT_LIVE_QUALITY_CASES.length);
+  }
+  const passed=results.filter(x=>x.pass).length,total=results.length,failed=results.filter(x=>!x.pass);
+  window.meowAssistantLastLiveQualityReport={
+    generatedAt:new Date().toISOString(),
+    total,passed,failed:failed.length,durationMs:Date.now()-started,results
+  };
+  try{localStorage.setItem('meow-assistant-live-quality-report',JSON.stringify(window.meowAssistantLastLiveQualityReport))}catch(e){}
+  const examples=failed.slice(0,3).map(x=>'#'+x.n+'「'+x.q+'」').join('、');
+  const msg='真實 OpenAI 語意測試完成：'+passed+'/'+total+' 通過（'+Math.round(passed/Math.max(1,total)*100)+'%）'
+    +(failed.length?'。失敗 '+failed.length+' 題：'+examples+'。完整結果已保存在開發者測試報告。':'。目前沒有發現語意路由失敗。');
+  renderMeowAssistantReply(msg,failed.length?'error':'success');
+  return failed.length===0;
+}
 async function routeMeowAssistantWithAI(query,context){
   try{
     const result=await invokeUserFunction('meow-assistant-route',{
@@ -7049,6 +7168,12 @@ async function previewMeowAssistant(){
   }
   const input=$('meowAssistantInput'),raw=String(input&&input.value||'').trim();
   if(!raw){renderMeowAssistantReply('直接告訴我你要做什麼。','error');return}
+  if(isDeveloperAccount()&&/(執行|開始|跑).{0,8}(喵助理)?(自我測試|語意測試|OpenAI測試|AI測試)/i.test(raw)){
+    meowAssistantRemember('user',raw);
+    await runMeowAssistantLiveQualityTest();
+    if(input)input.value='';
+    return;
+  }
   const priorContext=meowAssistantConversation.slice(-8);
   const parsed=meowAssistantPlanCheck(meowAssistantParse(raw));
   const genericKnowledge=parsed&&parsed.ok&&(
