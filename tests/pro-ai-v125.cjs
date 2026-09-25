@@ -82,6 +82,9 @@ assert(html.includes('照片不會顯示在畫面上'), 'smart payroll scan priv
 assert(html.includes('id="itemizedSmartGroups"'), 'smart payroll grouped review UI missing');
 assert(html.includes('未判讀或兩次判讀不一致的項目不會自動猜'), 'smart payroll pending-review copy missing');
 assert(html.includes('payslipCurrentFile'), 'session-only payslip rerun file state missing');
+assert(html.includes("$('closePayslipScan').onclick=()=>{payslipScanOpen=false;renderSalary()}"), 'closing the scan panel must keep the current payslip in memory');
+assert(html.includes('更不會刪除你 iPhone 相簿裡的原始照片'), 'payslip original photo must not be deleted');
+assert(!html.includes("$('closePayslipScan').onclick=()=>{resetPayslipScan(true)"), 'closing the scan panel must not release the current payslip');
 
 
 // Dedicated verifier must be server-side, stateless and cost-protected.
