@@ -109,6 +109,11 @@ assert(html.includes('<b>喵助理</b></button>'), 'floating assistant label mis
 assert(html.includes("input.dispatchEvent(new Event('input',{bubbles:true}))"), 'voice transcript must be written into the input');
 assert(html.includes("setTimeout(()=>{if(token===meowAssistantRecognitionToken)void previewMeowAssistant()},120)"), 'voice transcript must auto-submit after recognition');
 assert(html.includes("type:'smartPayslipReconcile'"), 'smart salary reconciliation intent missing');
+assert(html.includes("MEOW_ASSISTANT_KNOWLEDGE_VERSION='2026-09-shift-payroll-v1'"), 'Meow Assistant payroll knowledge version missing');
+for (const intent of ['todayShift','tomorrowShift','nextWork','nextOff','monthSummary','overtimeHours','estimatedPay','overtimePay','deductions','payday','annualLeave','reconcileSummary','whyPayChanged','missingOvertime','missingShiftAllowance','holidayPay','unknownDeduction','missingItem','rerunPayslip']) {
+  assert(html.includes("['"+intent+"'"), 'Meow Assistant intent missing: '+intent);
+}
+assert(html.includes('handleMeowAssistantKnowledge'), 'Meow Assistant knowledge handler missing');
 assert(html.includes('function openSmartPayslipFromMeowAssistant()'), 'Meow Assistant smart payroll navigator missing');
 assert(html.includes("setTab('salary')"), 'Meow Assistant must navigate to salary page');
 assert(html.includes("payslipScanOpen=true"), 'Meow Assistant must open smart payslip reconciliation');
