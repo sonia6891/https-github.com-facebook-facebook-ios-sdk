@@ -7021,6 +7021,21 @@ function meowAssistantLiveFailureKind(route,test,error=''){
   }
   return{code:'unknown',label:'未分類失敗',layer:'待確認'};
 }
+function meowAssistantLiveRepairHint(failure){
+  const code=failure&&failure.code||'unknown';
+  const hints={
+    provider_error:'先檢查 Supabase Edge Function、OpenAI API 狀態、權限與 timeout，不要先改語意規則。',
+    no_route:'檢查第 2 層 OpenAI 路由輸出與 schema；確認模型有正常回傳結構化結果。',
+    not_understood:'補第 0 層自然語言範例、台灣口語／錯字／省略句理解，不要先堆本機關鍵字。',
+    primary_intent:'補第 0／2 層 intent guide 與對比範例，特別加入容易混淆的反例。',
+    secondary_intent:'強化一句多需求拆解，要求 secondaryIntents 保留其他可執行或需回答的需求。',
+    context_reference:'補 recentContext 承接範例，確認「那個／那筆／那天／剛剛」解析到唯一前文對象。',
+    operation_kind:'修第 2 層 structured operation 指令與示例；AI 只解析，不放寬本機驗證。',
+    operation_argument:'修相對日期、年月日、from/to 解析；若不唯一應追問，不能猜。',
+    unknown:'先看完整 route 與 expected，再決定是語意、context、operation 或測試期望值問題。'
+  };
+  return hints[code]||hints.unknown;
+}
 function meowAssistantLiveFailureSummary(results){
   const rows=(Array.isArray(results)?results:[]).filter(x=>!x.pass),counts={};
   rows.forEach(x=>{
@@ -7080,7 +7095,7 @@ function renderMeowAssistantLiveQualityReport(){
     failBox.textContent=failures.length?failures.map(x=>{
       const expected=typeof x.expected==='string'?x.expected:JSON.stringify(x.expected);
       const failure=x.failure||{label:'未分類失敗',layer:'待確認'};
-      return '#'+x.n+' '+x.q+'\n類型：'+failure.label+'（'+failure.layer+'）\n期望：'+expected+'\n實際：'+meowAssistantLiveRouteSummary(x.route)+(x.error?'\n錯誤：'+x.error:'');
+      return '#'+x.n+' '+x.q+'\n類型：'+failure.label+'（'+failure.layer+'）\n期望：'+expected+'\n實際：'+meowAssistantLiveRouteSummary(x.route)+'\n建議修正：'+meowAssistantLiveRepairHint(failure)+(x.error?'\n錯誤：'+x.error:'');
     }).join('\n\n'):'全部通過，目前沒有失敗案例。';
   }
 }
