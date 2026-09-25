@@ -81,7 +81,7 @@ const FIELD_DESCRIPTIONS: Record<string,string> = {
   actualNet: "薪資單明確標示的實發、實領、淨額或入帳金額。",
   base: "本薪、底薪、基本薪資或基本工資金額。",
   shiftAllowance: "輪班、夜班、小夜、大夜、中班等班別津貼或加給的金額合計。",
-  meal: "伙食、膳食或餐費津貼金額。",
+  meal: "伙食、膳食、餐費津貼、餐費補助、伙食補助、膳食補助、餐補或誤餐費等與用餐直接相關的補助金額。",
   performance: "表現、績效、工作、職務等明確獎金或津貼。",
   transport: "交通、通勤、車馬等津貼。",
   otherIncome: "薪資單明確標為其他收入、其他應發或其他薪資的金額。",
@@ -104,7 +104,7 @@ const evidenceProperties = Object.fromEntries(FIELD_KEYS.map((k) => [k, nullable
 const schema = {
   type: "object",
   additionalProperties: false,
-  required: ["fields", "confidence", "evidence", "notes"],
+  required: ["fields", "confidence", "evidence", "extraItems", "notes"],
   properties: {
     fields: {
       type: "object",
@@ -124,6 +124,22 @@ const schema = {
       required: [...FIELD_KEYS],
       properties: evidenceProperties
     },
+    extraItems: {
+      type: "array",
+      maxItems: 20,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["label", "amount", "kind", "confidence", "evidence"],
+        properties: {
+          label: { type: "string", minLength: 1, maxLength: 80 },
+          amount: { type: "number", minimum: 0 },
+          kind: { type: "string", enum: ["income", "deduction"] },
+          confidence: { type: "number", minimum: 0, maximum: 1 },
+          evidence: nullableString
+        }
+      }
+    },
     notes: {
       type: "array",
       items: { type: "string" },
@@ -137,7 +153,7 @@ Deno.serve(async (req: Request) => {
   if (req.method !== "POST") return json({ ok: false, code: "METHOD_NOT_ALLOWED" }, 405);
 
   const openaiKey = Deno.env.get("OPENAI_API_KEY") || "";
-  if (!openaiKey) return json({ ok: false, code: "OPENAI_NOT_CONFIGURED" }, 503);
+  if (!openaiKey) return json({ ok: false, code: "AI_NOT_CONFIGURED" }, 503);
 
   const userId = userIdFromAuth(req.headers.get("Authorization"));
   if (!userId) return json({ ok: false, code: "NOT_AUTHENTICATED" }, 401);
@@ -184,7 +200,13 @@ Deno.serve(async (req: Request) => {
     "actualNet 必須是薪資單明確的實發/實領/淨額/入帳金額。",
     "confidence 代表你對『欄位分類 + 金額』整體的把握度；欄位為 null 時 confidence 應接近 0。",
     "evidence 請用很短的繁中證據，例如『夜班津貼 6,000』；不確定可填 null。",
-    "不要根據一般薪資常識補數字，不要用總額反推缺少欄位。"
+    "不要根據一般薪資常識補數字，不要用總額反推缺少欄位。",
+    "『餐費補助』與『醫療補助』不得混淆。只要圖片或 OCR 有明確的『餐費、伙食、膳食、餐補、誤餐』字樣，就必須歸類到 meal，並保留餐費／伙食語意；除非圖片清楚出現『醫療』二字，否則不得改寫成『醫療補助』或其他醫療項目。",
+    "除了標準欄位外，請把薪資單上確實存在、會影響員工本期實發的其他『加項／應發』或『扣項／應扣』逐列放進 extraItems。",
+    "extraItems 必須盡量保留薪資單原本的項目名稱，例如『眷屬健保補扣』『停車費』『工會費』『職務加給』『專案獎金』；不得擅自把可辨識的原始名稱改成不同語意的名稱；kind 只能是 income 或 deduction。",
+    "已經能分類到標準 fields 的項目不要重複放進 extraItems；實發、應發合計、應扣合計、總額、小計、時數、天數、費率、倍率也不要放進 extraItems。",
+    "雇主負擔或雇主提撥的項目不屬於員工實發加減，不得放入 extraItems。",
+    "extraItems 看不清楚名稱、金額或加扣方向時不要猜，寧可省略；confidence 低於 0.55 的項目不要輸出。"
   ].join("\n");
 
   const userText = "請從薪資單影像獨立抽取標準欄位。以下是 Apple Vision 產生的原始 OCR 文字，只作輔助；請以圖片證據為主。\n\n【OCR 原文】\n" + (ocrText || "（無）");
@@ -248,7 +270,7 @@ Deno.serve(async (req: Request) => {
       }).catch(() => null);
       return json({
         ok: false,
-        code: "OPENAI_REQUEST_FAILED",
+        code: "ANALYSIS_REQUEST_FAILED",
         provider_status: res.status,
         provider_code: String(provider?.error?.code || ""),
         usage: quota
@@ -264,7 +286,7 @@ Deno.serve(async (req: Request) => {
         p_user_id: userId, p_success: false,
         p_input_tokens: inTok, p_output_tokens: outTok
       }).catch(() => null);
-      return json({ ok: false, code: "OPENAI_OUTPUT_INVALID", usage: quota }, 502);
+      return json({ ok: false, code: "ANALYSIS_OUTPUT_INVALID", usage: quota }, 502);
     }
 
     await rpc("meow_finalize_payslip_ai_usage", {
@@ -278,6 +300,7 @@ Deno.serve(async (req: Request) => {
       fields: parsed.fields,
       confidence: parsed.confidence,
       evidence: parsed.evidence,
+      extraItems: Array.isArray(parsed.extraItems) ? parsed.extraItems : [],
       notes: parsed.notes,
       usage: quota
     });
@@ -288,6 +311,6 @@ Deno.serve(async (req: Request) => {
       p_user_id: userId, p_success: false,
       p_input_tokens: inTok, p_output_tokens: outTok
     }).catch(() => null);
-    return json({ ok: false, code: "OPENAI_UNAVAILABLE", usage: quota }, 502);
+    return json({ ok: false, code: "ANALYSIS_UNAVAILABLE", usage: quota }, 502);
   }
 });
