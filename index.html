@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=192">
+<link rel="manifest" href="./manifest.webmanifest?v=193">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
@@ -3687,7 +3687,7 @@ const ITEMIZED_FIELDS=[
   {key:'dedHealthExtra',label:'健保補扣',kind:'deduction'},
   {key:'dedOther',label:'其他扣款',kind:'deduction'}
 ];
-let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salaryExportOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),aiSchedulePending=null,payslipOcrResult={},payslipRawText='',payslipPreviewUrl='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0},payslipManualFieldKey='',payslipAiResult=null,payslipAiStatus='idle';
+let itemizedOpen=false,salaryHistoryOpen=false,payslipScanOpen=false,salaryExportOpen=false,salarySubTab='calc',historyYear=current.getFullYear(),aiSchedulePending=null,payslipOcrResult={},payslipRawText='',payslipOcrRuns=[],payslipOcrDocument={width:0,height:0},payslipManualFieldKey='',payslipAiResult=null,payslipAiStatus='idle',payslipCurrentFile=null,payslipPreviousRun=null;
 const PAYSLIP_FORMAT_MEMORY_KEY='meow-work-payslip-format-memory-v3';
 const PAYSLIP_OCR_FIELDS=[
   {key:'actualNet',label:'實發金額',kind:'net',priority:30,terms:['實發金額','實領金額','實領薪資','實領工資','實領合計','實發合計','本期實發','本期實領','實付金額','實付薪資','實付額','實領','實發','淨額','淨薪','入帳金額','轉帳金額','銀行入帳','匯款金額','應付淨額','應領淨額','應領金額','實際入帳','薪資入帳','NET PAY','NETPAY','TAKE HOME'],mode:'last'},
@@ -4348,7 +4348,7 @@ function renderPayslipDetected(){
       '<div class="ocr-meta">'+(has?'<span class="ocr-confidence'+confClass+'">信心 '+conf+'%</span>':(labelSeen?'<span class="ocr-confidence mid">欄位已讀到</span>':'<span class="ocr-confidence low">未辨識</span>'))+'<span class="ocr-source">'+escapeHtml(source)+(hit&&hit.term?'・'+escapeHtml(hit.term):'')+'</span></div>'+
       (warn?'<span class="ocr-warning">⚠ '+escapeHtml(warn)+'</span>':'')+
       (alt?'<button type="button" class="ocr-pick-btn" data-ocr-ai="'+def.key+'">採用第二判讀：NT$'+Math.round(num(alt.value)).toLocaleString('zh-TW')+'</button>':'')+
-      '<button type="button" class="ocr-pick-btn" data-ocr-pick="'+def.key+'">從圖片指定金額</button></div>';
+      '</div>';
   }).join('');
   const extraItems=Array.isArray(payslipOcrResult.__extraItems)?payslipOcrResult.__extraItems:[];
   if(extraItems.length){
@@ -4373,6 +4373,14 @@ function renderPayslipDetected(){
     renderPayslipDetected();
   });
 
+  const rerunBox=$('payslipRerunDiff'),rerunChanges=Array.isArray(payslipOcrResult.__rerunChanges)?payslipOcrResult.__rerunChanges:[];
+  if(rerunBox){
+    if(rerunChanges.length){
+      rerunBox.innerHTML='<b>這次重新判讀與上次有 '+rerunChanges.length+' 個欄位不同</b><br>'+
+        rerunChanges.slice(0,6).map(x=>escapeHtml(x.label)+'：'+(x.before===null?'未辨識':money(x.before))+' → '+(x.after===null?'未辨識':money(x.after))).join('；');
+      rerunBox.classList.remove('hidden');
+    }else{rerunBox.innerHTML='';rerunBox.classList.add('hidden')}
+  }
   qsa('[data-ocr-field]').forEach(input=>input.onchange=e=>{
     const key=e.target.dataset.ocrField,raw=e.target.value;
     if(raw==='')delete payslipOcrResult[key];
@@ -4427,18 +4435,54 @@ function ocrStatusLabel(status){
   const map={'loading tesseract core':'載入 OCR 核心','initializing tesseract':'初始化 OCR','loading language traineddata':'下載中文字庫','initializing api':'準備辨識','recognizing text':'辨識文字'};
   return map[status]||status||'處理中';
 }
-function resetPayslipScan(clearPreview=true){
+function setPayslipScanStage(stage,message,percent){
+  const n=Math.max(0,Math.min(4,Number(stage)||0));
+  qsa('[data-scan-step]').forEach(el=>{
+    const v=Number(el.dataset.scanStep)||0;
+    el.classList.toggle('done',v<n||(n===4&&v===4));
+    el.classList.toggle('active',v===n&&n<4);
+  });
+  if($('payslipScanStatus')){
+    const node=$('payslipScanStatus').childNodes[0];
+    if(node)node.nodeValue=(message||'')+' ';
+  }
+  if($('payslipScanProgress'))$('payslipScanProgress').style.width=Math.max(0,Math.min(100,Number(percent)||0))+'%';
+}
+function payslipResultSnapshot(result){
+  const fields={};
+  PAYSLIP_OCR_FIELDS.forEach(def=>{
+    if(Object.prototype.hasOwnProperty.call(result||{},def.key))fields[def.key]=num(result[def.key]);
+  });
+  const extra=(Array.isArray(result&&result.__extraItems)?result.__extraItems:[]).map(x=>({label:String(x.label||''),amount:num(x.amount),kind:x.kind==='deduction'?'deduction':'income'}));
+  return{fields,extra};
+}
+function comparePayslipSnapshots(before,after){
+  if(!before||!after)return[];
+  const changes=[];
+  const keys=new Set([...Object.keys(before.fields||{}),...Object.keys(after.fields||{})]);
+  keys.forEach(key=>{
+    const a=Object.prototype.hasOwnProperty.call(before.fields||{},key)?before.fields[key]:null;
+    const b=Object.prototype.hasOwnProperty.call(after.fields||{},key)?after.fields[key]:null;
+    if(a===null&&b===null)return;
+    if(a===null||b===null||Math.round(num(a))!==Math.round(num(b))){
+      const def=PAYSLIP_OCR_FIELDS.find(x=>x.key===key);
+      changes.push({key,label:def?def.label:key,before:a,after:b});
+    }
+  });
+  return changes.slice(0,12);
+}
+function resetPayslipScan(releaseFile=true){
   payslipOcrResult={};payslipRawText='';payslipOcrRuns=[];payslipOcrDocument={width:0,height:0};payslipAiResult=null;payslipAiStatus='idle';hidePayslipAmountPicker();
   if($('payslipScanResult'))$('payslipScanResult').classList.add('hidden');
   if($('payslipRawText'))$('payslipRawText').textContent='';
   if($('payslipMissingFields')){$('payslipMissingFields').textContent='';$('payslipMissingFields').classList.add('hidden')}
-  if($('payslipScanProgress'))$('payslipScanProgress').style.width='0%';
-  if($('payslipScanStatus'))$('payslipScanStatus').childNodes[0].nodeValue='選擇薪資單後開始三層交叉檢查。 ';
-  if($('payslipFileInput'))$('payslipFileInput').value='';
-  if(clearPreview){
-    if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}payslipPreviewUrl=''}
-    if($('payslipPreview')){$('payslipPreview').removeAttribute('src');$('payslipPreview').classList.remove('show')}
+  if($('payslipRerunDiff')){$('payslipRerunDiff').innerHTML='';$('payslipRerunDiff').classList.add('hidden')}
+  setPayslipScanStage(0,'尚未選取薪資單。',0);
+  if(releaseFile){
+    payslipCurrentFile=null;payslipPreviousRun=null;
+    if($('payslipFileInput'))$('payslipFileInput').value='';
   }
+  if($('rerunPayslipScan'))$('rerunPayslipScan').disabled=!payslipCurrentFile;
 }
 function localVisionTextBridge(){
   return scheduleVisionBridge();
@@ -4469,7 +4513,8 @@ function payslipAiEvidenceSupportsField(key,evidence){
   const t=normalizeOcrText(evidence||'');
   if(key==='dedAttendance')return /(考勤|缺勤|曠職|遲到|早退|請假|病假|事假).*(扣款|扣除|扣薪|減項)?/.test(t);
   if(key==='dedLabor')return /(勞保|勞工保險)/.test(t)&&!/(雇主|僱主|公司|單位).*(負擔|提繳|提撥)/.test(t);
-  if(key==='dedHealth')return /(健保|全民健保|健康保險)/.test(t)&&!/(補扣|補充|二代|雇主|僱主|公司|單位)/.test(t);
+  if(key==='dedHealth')return /(健保|全民健保|健康保險)/.test(t)&&!/(補扣|補充|二代|追補|補繳|雇主|僱主|公司|單位)/.test(t);
+  if(key==='dedHealthExtra')return /(健保|健康保險|補充保費|二代健保)/.test(t)&&/(補扣|補繳|補收|追補|補充|二代)/.test(t)&&!/(雇主|僱主|公司|單位).*(負擔|提繳|提撥)/.test(t);
   return false;
 }
 function payslipAmountsAgree(a,b){
@@ -4595,13 +4640,16 @@ async function runPayslipOcr(file){
   if(!canUse('payslip_scan'))return;
   if(!file||!String(file.type||'').startsWith('image/')){alert('目前本機辨識先支援圖片檔。');return}
   if(file.size>20*1024*1024){alert('圖片太大，請使用 20MB 以下的薪資單照片。');return}
+  const isRerun=!!(payslipCurrentFile&&file===payslipCurrentFile&&Object.keys(payslipOcrResult||{}).some(k=>!k.startsWith('__')));
+  const previous=isRerun?payslipResultSnapshot(payslipOcrResult):null;
+  payslipCurrentFile=file;
   resetPayslipScan(false);
-  if(payslipPreviewUrl){try{URL.revokeObjectURL(payslipPreviewUrl)}catch(e){}}
-  payslipPreviewUrl=URL.createObjectURL(file);$('payslipPreview').src=payslipPreviewUrl;$('payslipPreview').classList.add('show');
+  payslipCurrentFile=file;
+  if($('rerunPayslipScan'))$('rerunPayslipScan').disabled=false;
   const status=$('payslipScanStatus'),bar=$('payslipScanProgress');
   let worker=null,currentPass=0;
   try{
-    status.childNodes[0].nodeValue='正在產生 3 種影像版本… ';
+    setPayslipScanStage(1,'已接收薪資單，正在準備辨識…',8);
     const variants=await preprocessPayslipVariants(file);
     payslipOcrDocument={width:variants[0].width,height:variants[0].height};
     const nativeVision=localVisionTextBridge();
@@ -4610,8 +4658,7 @@ async function runPayslipOcr(file){
     if(nativeVision){
       for(currentPass=0;currentPass<variants.length;currentPass++){
         const variant=variants[currentPass];
-        status.childNodes[0].nodeValue='本機辨識第 '+(currentPass+1)+' / '+variants.length+' 次（'+variant.name+'）本機辨識中… ';
-        bar.style.width=Math.round((currentPass/variants.length)*100)+'%';
+        setPayslipScanStage(2,'正在解析薪資單內容…',20+Math.round((currentPass/variants.length)*38));
         const imageDataUrl=await blobDataUrl(variant.image);
         const vision=await nativeVision.recognize({imageDataUrl,purpose:'payslip'});
         const data=visionWordsToOcrData(vision);
@@ -4621,8 +4668,7 @@ async function runPayslipOcr(file){
       if(!window.Tesseract)throw new Error('本機 OCR 元件尚未載入，請確認網路後重新整理。');
       const logger=m=>{
         const local=Math.max(0,Math.min(1,m.progress||0)),overall=Math.round(((currentPass+local)/variants.length)*100);
-        status.childNodes[0].nodeValue='相容辨識第 '+(currentPass+1)+' / '+variants.length+' 次（'+variants[currentPass].name+'）：'+ocrStatusLabel(m.status)+(m.progress!==undefined?' '+Math.round(local*100)+'%':'')+' ';
-        bar.style.width=overall+'%';
+        setPayslipScanStage(2,'正在解析薪資單內容…',Math.max(20,Math.min(58,20+Math.round(overall*.38/100))));
       };
       if(window.Tesseract.createWorker){
         worker=await window.Tesseract.createWorker('chi_tra+eng',window.Tesseract.OEM?.LSTM_ONLY||1,{logger});
@@ -4649,8 +4695,7 @@ async function runPayslipOcr(file){
     payslipRawText=runs.map(r=>'【'+r.variant+'】\n'+(r.text||'')).join('\n\n');
     payslipOcrResult=mergePayslipRuns(runs);
     payslipAiStatus='running';
-    status.childNodes[0].nodeValue=(nativeVision?'本機辨識':'相容辨識')+' 已完成，正在進行第二判讀… ';
-    bar.style.width='92%';
+    setPayslipScanStage(3,'解析完成，正在交叉核對各項金額…',66);
     try{
       const aiImageDataUrl=await blobDataUrl(variants[0].image);
       const ai=await verifyPayslipWithOpenAI(aiImageDataUrl);
@@ -4659,6 +4704,10 @@ async function runPayslipOcr(file){
     }catch(aiError){
       const code=aiError&&aiError.payload&&aiError.payload.code;
       payslipAiStatus=code==='MONTHLY_LIMIT'?'limit':code==='PRO_REQUIRED'?'pro_required':code==='AI_NOT_CONFIGURED'?'not_configured':'unavailable';
+    }
+    if(previous){
+      payslipPreviousRun=previous;
+      payslipOcrResult.__rerunChanges=comparePayslipSnapshots(previous,payslipResultSnapshot(payslipOcrResult));
     }
     renderPayslipDetected();$('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';$('payslipScanResult').classList.remove('hidden');
     const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),
@@ -4684,10 +4733,10 @@ async function runPayslipOcr(file){
       $('payslipMissingFields').classList.toggle('hidden',missingDefs.length===0&&warningKeys.length===0);
       $('payslipMissingFields').textContent=(labelOnlyDefs.length?'已讀到欄位名稱但尚未抓到金額：'+labelOnlyDefs.map(def=>def.label).join('、')+'。 ':'')+(reallyMissingDefs.length?'完全未辨識：'+reallyMissingDefs.map(def=>def.label).join('、')+'。 ':'')+(warningKeys.length?'需要人工確認：'+warningKeys.map(k=>(PAYSLIP_OCR_FIELDS.find(x=>x.key===k)||{label:k}).label).join('、')+'。':'');
     }
-    bar.style.width='100%';
+    setPayslipScanStage(4,'交叉檢查完成，請確認需要留意的項目。',100);
   }catch(e){
     if(worker){try{await worker.terminate()}catch(_){}}
-    status.childNodes[0].nodeValue='辨識失敗：'+((e&&e.message)||'請換一張較清楚的照片再試。')+' ';bar.style.width='0%';
+    setPayslipScanStage(0,'辨識失敗：'+((e&&e.message)||'請換一張較清楚的照片再試。'),0);
   }
 }
 function importPayslipDetected(){
@@ -4703,6 +4752,11 @@ function importPayslipDetected(){
     if(!confirm('以下欄位辨識信心較低、交叉結果不一致，或金額看起來需要確認：'+labels+'。\n\n請先核對畫面上的金額；如果已確認正確，再繼續導入逐項對帳。'))return;
   }
   const mm=mb();mm.actualItems=mm.actualItems||{};
+  const reviewConfidence=Object.assign({},payslipOcrResult.__confidence||{});
+  const reviewWarnings=Object.assign({},payslipOcrResult.__fieldWarnings||{});
+  const reviewAlternates=JSON.parse(JSON.stringify(payslipOcrResult.__openAiAlternates||{}));
+  const reviewLabelOnly=Object.keys(payslipOcrResult.__labelOnly||{});
+  const reviewMissing=PAYSLIP_OCR_FIELDS.filter(def=>!Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)).map(def=>def.key);
   Object.entries(confirmed).forEach(([key,value])=>{if(key==='actualNet')mm.actualNet=value;else mm.actualItems[key]=value});
   mm.actualExtraItems=extraItems.map(item=>({
     label:String(item.label||'').trim(),
@@ -4711,6 +4765,15 @@ function importPayslipDetected(){
     confidence:num(item.confidence),
     evidence:String(item.evidence||'').trim()
   }));
+  mm.payslipReview={
+    importedAt:new Date().toISOString(),
+    confidence:reviewConfidence,
+    warnings:reviewWarnings,
+    alternates:reviewAlternates,
+    labelOnly:reviewLabelOnly,
+    missing:reviewMissing,
+    rerunChanges:Array.isArray(payslipOcrResult.__rerunChanges)?payslipOcrResult.__rerunChanges.slice(0,12):[]
+  };
   rememberPayslipFormat(confirmed);
   captureSalarySnapshot(calcMonth(),mm);changedAndSync();
   payslipScanOpen=false;itemizedOpen=true;salaryHistoryOpen=false;salaryExportOpen=false;salarySubTab='pro';renderSalary();
@@ -4722,6 +4785,38 @@ function renderPayslipScan(){
   const unlocked=canUse('payslip_scan');if(!unlocked)payslipScanOpen=false;
   $('payslipScanPanel').classList.toggle('hidden',!unlocked||!payslipScanOpen);
   if($('payslipImportMonth'))$('payslipImportMonth').textContent=(current.getFullYear())+' 年 '+(current.getMonth()+1)+' 月';
+}
+function editSmartActualItem(key){
+  const field=ITEMIZED_FIELDS.find(x=>x.key===key);if(!field)return;
+  const mm=mb();mm.actualItems=mm.actualItems||{};
+  const currentValue=Object.prototype.hasOwnProperty.call(mm.actualItems,key)?mm.actualItems[key]:'';
+  const raw=prompt('輸入薪資單上的「'+field.label+'」實際金額：',currentValue);
+  if(raw===null)return;
+  if(String(raw).trim()===''){delete mm.actualItems[key]}
+  else{
+    const value=Number(String(raw).replace(/,/g,''));
+    if(!Number.isFinite(value)||value<0){alert('請輸入正確的金額。');return}
+    mm.actualItems[key]=value;
+  }
+  mm.payslipReview=mm.payslipReview||{};
+  mm.payslipReview.confidence=mm.payslipReview.confidence||{};mm.payslipReview.confidence[key]=1;
+  if(mm.payslipReview.warnings)delete mm.payslipReview.warnings[key];
+  if(mm.payslipReview.alternates)delete mm.payslipReview.alternates[key];
+  captureSalarySnapshot(calcMonth(),mm);changedAndSync();renderSalary();
+}
+function applySmartAlternate(key){
+  const mm=mb(),alt=mm.payslipReview&&mm.payslipReview.alternates&&mm.payslipReview.alternates[key];
+  if(!alt||!Number.isFinite(Number(alt.value)))return;
+  mm.actualItems=mm.actualItems||{};mm.actualItems[key]=num(alt.value);
+  mm.payslipReview.confidence=mm.payslipReview.confidence||{};mm.payslipReview.confidence[key]=1;
+  if(mm.payslipReview.warnings)delete mm.payslipReview.warnings[key];
+  delete mm.payslipReview.alternates[key];
+  captureSalarySnapshot(calcMonth(),mm);changedAndSync();renderSalary();
+}
+function rerunCurrentPayslip(){
+  payslipScanOpen=true;itemizedOpen=false;salaryHistoryOpen=false;salaryExportOpen=false;salarySubTab='pro';renderSalary();
+  if(payslipCurrentFile){void runPayslipOcr(payslipCurrentFile)}
+  else if($('payslipFileInput'))$('payslipFileInput').click();
 }
 function itemizedExpectedMap(mc){
   return{
@@ -4751,99 +4846,110 @@ function renderItemizedComparison(mc,mm){
   if(!unlocked||!itemizedOpen)return;
 
   mm.actualItems=mm.actualItems||{};
+  const review=mm.payslipReview||{},expected=itemizedExpectedMap(mc);
   const extraItems=Array.isArray(mm.actualExtraItems)?mm.actualExtraItems.filter(item=>item&&item.label&&Number.isFinite(Number(item.amount))):[];
-  const expected=itemizedExpectedMap(mc);
-  let filled=0,matched=0,issues=0,explainedNetDiff=0;
-  const differences=[];
+  const pending=[],differences=[],matched=[];
+  let filled=0,matchedCount=0,issues=0,explainedNetDiff=0;
 
   ITEMIZED_FIELDS.forEach(field=>{
-    const exp=num(expected[field.key]);
+    const exp=num(expected[field.key]),has=Object.prototype.hasOwnProperty.call(mm.actualItems,field.key);
+    const actual=has?num(mm.actualItems[field.key]):null;
     const expEl=document.querySelector('[data-exp="'+field.key+'"]');
     const input=document.querySelector('[data-item-actual="'+field.key+'"]');
     const status=document.querySelector('[data-item-status="'+field.key+'"]');
     if(expEl)expEl.textContent=money(exp);
-    const has=Object.prototype.hasOwnProperty.call(mm.actualItems,field.key);
-    if(input&&document.activeElement!==input)input.value=has?mm.actualItems[field.key]:'';
-    if(!status)return;
-    status.classList.remove('ok','bad','warn');
-    if(!has){status.textContent='未辨識';return}
+    if(input&&document.activeElement!==input)input.value=has?actual:'';
+    const warning=String(review.warnings&&review.warnings[field.key]||'');
+    const alt=review.alternates&&review.alternates[field.key];
+    const conf=review.confidence&&Object.prototype.hasOwnProperty.call(review.confidence,field.key)?num(review.confidence[field.key]):1;
+    const labelOnly=Array.isArray(review.labelOnly)&&review.labelOnly.includes(field.key);
+    const shouldRequireMissing=!has&&(exp>0||labelOnly);
+    const needsReview=!!(warning||alt||(has&&conf<.72)||shouldRequireMissing);
 
-    filled++;
-    const actual=num(mm.actualItems[field.key]),diff=actual-exp;
-    explainedNetDiff+=field.kind==='income'?diff:-diff;
-
-    if(Math.round(diff)===0){
-      matched++;
-      status.textContent='一致';
-      status.classList.add('ok');
-      return;
+    if(status){
+      status.classList.remove('ok','bad','warn');
+      if(!has){status.textContent=shouldRequireMissing?'待確認':'未辨識';if(shouldRequireMissing)status.classList.add('warn')}
+      else{
+        const diff=actual-exp;
+        if(needsReview){status.textContent='待確認';status.classList.add('warn')}
+        else if(Math.round(diff)===0){status.textContent='一致';status.classList.add('ok')}
+        else{
+          const label=field.kind==='income'?(diff<0?'少發 ':'多發 ')+money(Math.abs(diff)):(diff>0?'多扣 ':'少扣 ')+money(Math.abs(diff));
+          status.textContent=label;status.classList.add((field.kind==='income'&&diff<0)||(field.kind==='deduction'&&diff>0)?'bad':'warn');
+        }
+      }
     }
-
-    issues++;
-    let label='';
-    if(field.kind==='income')label=(diff<0?'少發 ':'多發 ')+money(Math.abs(diff));
-    else label=(diff>0?'多扣 ':'少扣 ')+money(Math.abs(diff));
-    status.textContent=label;
-    status.classList.add((field.kind==='income'&&diff<0)||(field.kind==='deduction'&&diff>0)?'bad':'warn');
-    differences.push({field,diff,label,impact:field.kind==='income'?diff:-diff});
+    if(has){filled++;explainedNetDiff+=field.kind==='income'?(actual-exp):-(actual-exp)}
+    if(needsReview){
+      pending.push({field,exp,actual,has,warning,alt,conf});
+      issues++;return;
+    }
+    if(!has)return;
+    const diff=actual-exp;
+    if(Math.round(diff)===0){matched.push({field,exp,actual});matchedCount++;return}
+    const label=field.kind==='income'?(diff<0?'少發 ':'多發 ')+money(Math.abs(diff)):(diff>0?'多扣 ':'少扣 ')+money(Math.abs(diff));
+    differences.push({field,exp,actual,diff,label,impact:field.kind==='income'?diff:-diff});issues++;
   });
 
   extraItems.forEach(item=>{
     const amount=num(item.amount),kind=item.kind==='deduction'?'deduction':'income';
-    filled++;issues++;
-    const impact=kind==='income'?amount:-amount;
-    explainedNetDiff+=impact;
-    differences.push({
-      field:{label:'薪資單額外項目－'+item.label,kind},
-      diff:amount,
-      label:kind==='income'?'薪資單新增的加項 '+money(amount):'薪資單新增的扣項 '+money(amount),
-      impact
-    });
+    filled++;issues++;explainedNetDiff+=kind==='income'?amount:-amount;
+    differences.push({field:{label:item.label,kind},exp:null,actual:amount,diff:amount,label:kind==='income'?'額外加項':'額外扣項',impact:kind==='income'?amount:-amount,extra:true});
   });
 
-  const extraBox=$('itemizedExtraItems');
-  if(extraBox){
-    extraBox.innerHTML=extraItems.length
-      ?'<div class="itemized-group">薪資單額外項目</div>'+
-        extraItems.map(item=>{
-          const amount=num(item.amount),isDed=item.kind==='deduction';
-          return '<div class="itemized-row">'+
-            '<span class="item-label">'+escapeHtml(item.label)+'</span>'+
-            '<span class="expected">試算未列</span>'+
-            '<span style="text-align:right;font-weight:900">'+money(amount)+'</span>'+
-            '<span class="itemized-status warn">'+(isDed?'額外扣項':'額外加項')+'</span>'+
-            '</div>';
-        }).join('')
-      :'';
-  }
-
   const hasActualNet=Object.prototype.hasOwnProperty.call(mm,'actualNet')&&mm.actualNet!==null&&String(mm.actualNet)!=='';
-  const actualNet=hasActualNet?num(mm.actualNet):null;
-  const totalDiff=hasActualNet?actualNet-num(mc.net):null;
-
+  const actualNet=hasActualNet?num(mm.actualNet):null,totalDiff=hasActualNet?actualNet-num(mc.net):null;
   $('itemizedExpectedNet').textContent=money(mc.net);
   $('itemizedActualNet').textContent=hasActualNet?money(actualNet):'尚未辨識';
   $('itemizedNetDiff').textContent=totalDiff===null?'—':signedMoney(totalDiff);
-  $('itemizedProgress').textContent='已辨識 '+filled+' 項（預設 '+ITEMIZED_FIELDS.length+' 項'+(extraItems.length?'＋額外 '+extraItems.length+' 項':'')+'）・一致 '+matched+'・有差異 '+issues+'・預設未辨識 '+Math.max(0,ITEMIZED_FIELDS.length-(filled-extraItems.length));
+  if($('smartDiffCard')){$('smartDiffCard').classList.remove('negative','positive','equal');if(totalDiff<0)$('smartDiffCard').classList.add('negative');else if(totalDiff>0)$('smartDiffCard').classList.add('positive');else if(totalDiff===0)$('smartDiffCard').classList.add('equal')}
+
+  const totalKnown=filled,missingCount=pending.filter(x=>!x.has).length;
+  $('itemizedProgress').textContent='已辨識 '+totalKnown+' 項・待確認 '+pending.length+'・有差異 '+differences.length+'・一致 '+matched.length+(missingCount?'・其中未判讀 '+missingCount+' 項':'');
+  const attention=$('itemizedNeedsAttention');
+  if(attention){
+    const netMissing=!hasActualNet;
+    const count=pending.length+(netMissing?1:0);
+    attention.classList.toggle('hidden',count===0);
+    attention.textContent=count?'發現 '+count+' 個項目需要你確認。未判讀或兩次判讀不一致的項目不會自動猜。':'';
+  }
+
+  const groups=$('itemizedSmartGroups');
+  if(groups){
+    const valueText=(label,value)=>'<span>'+escapeHtml(label)+' <b>'+(value===null?'未判讀':money(value))+'</b></span>';
+    const pendingHtml=pending.length?'<div class="smart-review-section"><header><b>⚠ 待你確認的項目</b><span>'+pending.length+' 項</span></header>'+
+      pending.map(x=>'<div class="smart-review-row"><div class="smart-review-main"><div><div class="smart-review-label">'+escapeHtml(x.field.label)+'</div><div class="smart-review-values">'+
+        valueText('App 預估',x.exp)+valueText('薪資單',x.has?x.actual:null)+(x.alt&&Number.isFinite(Number(x.alt.value))?valueText('第二判讀',num(x.alt.value)):'')+
+        '</div>'+(x.warning?'<div class="ocr-warning">'+escapeHtml(x.warning)+'</div>':'')+'</div><span class="smart-review-status pending">'+(x.has?'判讀衝突':'未判讀')+'</span></div>'+
+        '<div class="smart-review-actions"><button type="button" data-smart-edit="'+x.field.key+'">手動輸入</button>'+
+        (x.alt&&Number.isFinite(Number(x.alt.value))?'<button type="button" data-smart-alt="'+x.field.key+'">採用第二判讀 '+money(num(x.alt.value))+'</button>':'')+
+        '<button type="button" data-smart-rerun="1">重新判讀</button></div></div>').join('')+'</div>':'';
+
+    const diffHtml=differences.length?'<div class="smart-review-section"><header><b>● 有差異的項目</b><span>'+differences.length+' 項</span></header>'+
+      differences.map(x=>'<div class="smart-review-row"><div class="smart-review-main"><div><div class="smart-review-label">'+escapeHtml(x.field.label)+'</div><div class="smart-review-values">'+
+        (x.extra?'<span>App <b>試算未列</b></span>':valueText('App 預估',x.exp))+valueText('薪資單',x.actual)+'</div></div><span class="smart-review-status '+(x.extra?'extra':'bad')+'">'+escapeHtml(x.label)+'</span></div>'+
+        (!x.extra?'<div class="smart-review-actions"><button type="button" data-smart-edit="'+x.field.key+'">修正金額</button></div>':'')+'</div>').join('')+'</div>':'';
+
+    const matchedHtml=matched.length?'<details class="smart-review-section smart-matched"><summary style="padding:10px 11px;font-weight:900">✓ 已確認一致的項目（'+matched.length+'）</summary>'+
+      matched.map(x=>'<div class="smart-review-row"><div class="smart-review-main"><div><div class="smart-review-label">'+escapeHtml(x.field.label)+'</div><div class="smart-review-values">'+valueText('App / 薪資單',x.actual)+'</div></div><span class="smart-review-status ok">一致</span></div></div>').join('')+'</details>':'';
+    groups.innerHTML=pendingHtml+diffHtml+matchedHtml;
+    qsa('[data-smart-edit]').forEach(btn=>btn.onclick=()=>editSmartActualItem(btn.dataset.smartEdit));
+    qsa('[data-smart-alt]').forEach(btn=>btn.onclick=()=>applySmartAlternate(btn.dataset.smartAlt));
+    qsa('[data-smart-rerun]').forEach(btn=>btn.onclick=rerunCurrentPayslip);
+  }
 
   const conclusion=$('itemizedConclusion');
   if(conclusion){
-    differences.sort((a,b)=>Math.abs(b.impact)-Math.abs(a.impact));
+    differences.sort((a,b)=>Math.abs(b.impact||0)-Math.abs(a.impact||0));
     let headline='',detail='';
-    if(!hasActualNet&&filled===0){
-      headline='尚未開始對帳';
-      detail='先使用薪資單辨識，或手動輸入公司實際金額。';
-    }else if(!hasActualNet){
-      headline='逐項資料已辨識，但缺少「實發金額」';
-      detail='目前已辨識 '+filled+' 項，仍無法判定整張薪資單的總差額。請確認薪資單上的實發／實領／入帳金額。';
-    }else if(Math.round(totalDiff)===0&&issues===0){
-      headline='目前對帳一致';
-      detail='公司實發與 App 預估一致，已辨識的逐項金額也沒有差異。';
-    }else{
+    if(!hasActualNet&&filled===0){headline='尚未開始對帳';detail='先上傳薪資單，系統會把差異與待確認項目整理出來。'}
+    else if(!hasActualNet){headline='逐項資料已辨識，但缺少實發金額';detail='請確認薪資單上的實發／實領／入帳金額。'}
+    else if(pending.length){headline='總額已完成比較，但還有 '+pending.length+' 項待確認';detail='先處理未判讀或判讀衝突的項目，再看最終差額會更準確。'}
+    else if(Math.round(totalDiff)===0&&differences.length===0){headline='目前對帳一致';detail='公司實發與 App 預估一致，已辨識的逐項金額也沒有差異。'}
+    else{
       headline=totalDiff<0?'公司實發比 App 預估少 '+money(Math.abs(totalDiff)):totalDiff>0?'公司實發比 App 預估多 '+money(Math.abs(totalDiff)):'總額一致，但逐項有差異';
-      const top=differences.slice(0,3).map(x=>x.field.label+'：'+x.label).join('；');
-      const unexplained=totalDiff-explainedNetDiff;
-      detail=(top?'主要差異：'+top+'。':'')+(Math.abs(unexplained)>=1?' 已辨識項目仍有 '+signedMoney(unexplained)+' 尚未解釋，請檢查未辨識項目或其他收入／扣款。':' 已辨識的逐項差額可解釋目前總差額。');
+      const top=differences.slice(0,3).map(x=>x.field.label+'：'+x.label).join('；'),unexplained=totalDiff-explainedNetDiff;
+      detail=(top?'主要差異：'+top+'。':'')+(Math.abs(unexplained)>=1?' 目前仍有 '+signedMoney(unexplained)+' 尚未被已辨識項目解釋。':' 已辨識項目可解釋目前總差額。');
     }
     conclusion.innerHTML='<b>'+escapeHtml(headline)+'</b><p class="hint" style="margin:6px 0 0">'+escapeHtml(detail)+'</p>';
   }
@@ -5068,6 +5174,17 @@ function exportSalaryPdf(){
   w.document.open();w.document.write(buildSalaryPrintHtml());w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(e){}},250);
 }
 
+function renderProRecentReconcile(){
+  const box=$('proRecentReconcileList');if(!box)return;
+  const rows=salaryHistoryRows(current.getFullYear()).slice(0,3);
+  if(!rows.length){box.innerHTML='<div class="pro-recent-empty">目前還沒有薪資對帳紀錄。完成第一份對帳後，最近紀錄會顯示在這裡。</div>';return}
+  box.innerHTML=rows.map(r=>{
+    const month=Number(r.key.slice(5,7)),date=r.snap&&r.snap.capturedAt?new Date(r.snap.capturedAt).toLocaleDateString('zh-TW'):'';
+    const diff=r.diff===null?'尚未完成':signedMoney(r.diff),cls=r.diff===null?'':r.diff<0?'neg':r.diff>0?'pos':'';
+    return '<button type="button" class="pro-recent-row" data-pro-recent-month="'+r.key+'"><span class="month">'+month+' 月</span><span class="meta">'+escapeHtml(date)+(r.itemCount?'・逐項 '+r.itemCount+' 項':'')+'</span><span class="diff '+cls+'">'+diff+' ›</span></button>';
+  }).join('');
+  qsa('[data-pro-recent-month]').forEach(btn=>btn.onclick=()=>{openSalaryHistoryMonth(btn.dataset.proRecentMonth);itemizedOpen=true;renderSalary()});
+}
 function renderProEntitlements(){
   placeProPanel('payslip_scan','payslipScanPanel');
   placeProPanel('itemized_salary_compare','itemizedComparePanel');
@@ -5081,7 +5198,7 @@ function renderProEntitlements(){
     card.classList.toggle('unlocked',unlocked);
     if(badge)badge.textContent=unlocked?(isDeveloperAccount()?'✓ 開發者全功能':'✓ Pro'):'🔒 Pro';
     if(btn){
-      if(feature==='payslip_scan')btn.textContent=unlocked?(payslipScanOpen?'收起':'拍照／選照片'):'Pro 解鎖';
+      if(feature==='payslip_scan')btn.textContent=unlocked?(payslipScanOpen?'收起檢查':(btn.classList.contains('pro-start-btn')?'開始對帳':'拍照／選照片')):'Pro 解鎖';
       else if(feature==='itemized_salary_compare')btn.textContent=unlocked?(itemizedOpen?'收起逐項對帳':'開啟逐項對帳'):'Pro 解鎖';
       else if(feature==='salary_history_unlimited')btn.textContent=unlocked?(salaryHistoryOpen?'收起歷史對帳':'開啟歷史對帳'):'Pro 解鎖';
       else if(feature==='salary_export')btn.textContent=unlocked?(salaryExportOpen?'收起報告匯出':'開啟報告匯出'):'Pro 解鎖';
@@ -5129,6 +5246,7 @@ function renderSalary(){
   setSalarySubTab(salarySubTab);
   renderSalaryCompare(mc,mm);
   renderProEntitlements();
+  renderProRecentReconcile();
   renderPayslipScan();
   renderItemizedComparison(mc,mm);
   renderSalaryHistory();
@@ -7138,11 +7256,15 @@ qsa('[data-pro-action]').forEach(btn=>btn.onclick=()=>{
 if($('salaryTabCalc'))$('salaryTabCalc').onclick=()=>{setSalarySubTab('calc')};
 if($('salaryTabReconcile'))$('salaryTabReconcile').onclick=()=>{setSalarySubTab('reconcile')};
 if($('salaryTabPro'))$('salaryTabPro').onclick=()=>{setSalarySubTab('pro')};
-if($('closePayslipScan'))$('closePayslipScan').onclick=()=>{payslipScanOpen=false;renderSalary()};
+if($('closePayslipScan'))$('closePayslipScan').onclick=()=>{resetPayslipScan(true);payslipScanOpen=false;renderSalary()};
 
-if($('payslipFileInput'))$('payslipFileInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file)runPayslipOcr(file)};
+if($('payslipFileInput'))$('payslipFileInput').onchange=e=>{const file=e.target.files&&e.target.files[0];if(file){payslipCurrentFile=file;void runPayslipOcr(file)}};
 if($('importPayslipResult'))$('importPayslipResult').onclick=importPayslipDetected;
-if($('resetPayslipScan'))$('resetPayslipScan').onclick=()=>resetPayslipScan(true);
+if($('rerunPayslipScan'))$('rerunPayslipScan').onclick=()=>{if(payslipCurrentFile)void runPayslipOcr(payslipCurrentFile);else $('payslipFileInput').click()};
+if($('clearPayslipScan'))$('clearPayslipScan').onclick=()=>resetPayslipScan(true);
+if($('itemizedRerun'))$('itemizedRerun').onclick=rerunCurrentPayslip;
+if($('openProHistory'))$('openProHistory').onclick=()=>{salaryHistoryOpen=true;itemizedOpen=false;payslipScanOpen=false;salaryExportOpen=false;historyYear=current.getFullYear();renderSalary()};
+if($('openSalaryHistoryFromResult'))$('openSalaryHistoryFromResult').onclick=()=>{salaryHistoryOpen=true;itemizedOpen=false;payslipScanOpen=false;salaryExportOpen=false;historyYear=current.getFullYear();renderSalary()};
 if($('closeItemizedCompare'))$('closeItemizedCompare').onclick=()=>{itemizedOpen=false;renderSalary()};
 if($('closeSalaryHistory'))$('closeSalaryHistory').onclick=()=>{salaryHistoryOpen=false;renderSalary()};
 if($('closeSalaryExport'))$('closeSalaryExport').onclick=()=>{salaryExportOpen=false;renderSalary()};
@@ -7170,7 +7292,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v192';
+    const reloadKey='meow-sw-reloaded-v193';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -7179,7 +7301,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=192',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=193',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
