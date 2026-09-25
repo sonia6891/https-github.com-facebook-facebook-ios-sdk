@@ -29,6 +29,14 @@ jobs:
         run: node tests/meow-assistant-round2-100.test.cjs
       - name: Meow Assistant OpenAI NLU integration contract
         run: node tests/meow-assistant-ai-nlu.test.cjs
+      - name: Meow Assistant multi-turn conversation memory
+        run: node tests/meow-assistant-conversation-memory.test.cjs
+      - name: Meow Assistant contextual operation safety
+        run: node tests/meow-assistant-contextual-operations.test.cjs
+      - name: Meow Assistant multi-turn stateful E2E
+        run: node tests/meow-assistant-multiturn-e2e.test.cjs
+      - name: Meow Assistant multi-turn fuzz — 1000 stateful turns
+        run: node tests/meow-assistant-multiturn-fuzz-1000.test.cjs
       - name: Meow Assistant Taiwan labor knowledge base
         run: node tests/meow-assistant-labor-kb.test.cjs
       - name: Meow Assistant natural-language discovery baseline
