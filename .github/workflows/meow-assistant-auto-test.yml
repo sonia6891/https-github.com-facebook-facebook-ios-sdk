@@ -26,6 +26,9 @@ jobs:
       - name: Core regression — round two
         run: node tests/meow-assistant-round2-100.test.cjs
 
+      - name: OpenAI NLU integration contract
+        run: node tests/meow-assistant-ai-nlu.test.cjs
+
       - name: Natural-language discovery — 400 cases
         run: node tests/meow-assistant-auto-discovery.test.cjs
 
