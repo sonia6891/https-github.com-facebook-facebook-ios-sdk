@@ -5,6 +5,8 @@ on:
     branches: [main]
     paths:
       - 'index.html'
+      - 'assets/meow-labor-knowledge-v1.json'
+      - 'supabase/functions/meow-assistant-route/index.ts'
       - 'tests/meow-assistant-*.test.cjs'
       - '.github/workflows/meow-assistant-auto-test.yml'
   workflow_dispatch:
