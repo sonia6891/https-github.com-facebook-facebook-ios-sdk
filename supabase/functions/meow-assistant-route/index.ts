@@ -153,7 +153,7 @@ const schema = {
       properties: {
         kind: {
           type: "string",
-          enum: ["none","add_overtime","remove_overtime","move_overtime","view_schedule"]
+          enum: ["none","add_overtime","remove_overtime","move_overtime","view_schedule","undo_last"]
         },
         dates: {
           type: "array",
@@ -255,6 +255,7 @@ Deno.serve(async (req: Request) => {
     "承接前文的操作，例如『那個拿掉』『不是22，是24』『移到禮拜五』，只有在 recentContext 能唯一解析對象時才輸出 operation，並 referencesPriorContext=true、contextResolution 說明解析結果。",
     "新增／取消／移動資料屬 sensitive_mutation。若日期或對象無法唯一確定，不可猜測。",
     "查看班表使用 view_schedule，year/month 必須解析完成；修改加班則分別使用 add_overtime、remove_overtime、move_overtime。",
+    "如果使用者明確表示『撤回剛才』『復原上一個動作』『剛剛那個不要了』『取消剛才那一步』，且 recentContext 顯示上一個動作是 App 修改，operation.kind=undo_last；若無法確認上一個動作，不可猜測。",
     "意圖對照：\n" + intentGuide
   ].join("\n");
 
