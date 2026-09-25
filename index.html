@@ -4466,7 +4466,7 @@ function mergePayslipAiVerification(ai){
       if(aiConf<.82)return;
       payslipOcrResult[def.key]=aiValue;
       payslipOcrResult.__confidence[def.key]=Math.min(.94,aiConf*.96);
-      payslipOcrResult.__matches.push({key:def.key,label:def.label,term:evidence||'第二判讀',amount:aiValue,value:aiValue,confidence:payslipOcrResult.__confidence[def.key],method:'第二判讀',source:'第二判讀',line:evidence||'OpenAI 從薪資單影像辨識'});
+      payslipOcrResult.__matches.push({key:def.key,label:def.label,term:evidence||'第二判讀',amount:aiValue,value:aiValue,confidence:payslipOcrResult.__confidence[def.key],method:'第二判讀',source:'第二判讀',line:evidence||'第二判讀從薪資單影像辨識'});
       added++;return;
     }
     const appleValue=Number(payslipOcrResult[def.key]);
@@ -4511,6 +4511,34 @@ function mergePayslipAiVerification(ai){
       extraSeen.add(k);return true;
     })
     .slice(0,20);
+  const rawPayText=normalizeOcrText(payslipRawText||'');
+  const rawHasMeal=/(餐費|伙食|膳食|餐補|誤餐)/.test(rawPayText);
+  const rawHasMedical=/(醫療|醫藥)/.test(rawPayText);
+  const mealLike=item=>{
+    const label=normalizeOcrText(item&&item.label||''),evidence=normalizeOcrText(item&&item.evidence||'');
+    if(/(餐費|伙食|膳食|餐補|誤餐)/.test(label+evidence))return true;
+    return /醫療補助/.test(label)&&rawHasMeal&&!rawHasMedical;
+  };
+  const mealExtra=payslipOcrResult.__extraItems.find(mealLike);
+  if(mealExtra){
+    if(!Object.prototype.hasOwnProperty.call(payslipOcrResult,'meal')){
+      payslipOcrResult.meal=num(mealExtra.amount);
+      payslipOcrResult.__confidence.meal=Math.max(.82,num(mealExtra.confidence));
+      payslipOcrResult.__matches.push({
+        key:'meal',
+        label:'伙食／餐費補助',
+        term:'餐費補助',
+        amount:num(mealExtra.amount),
+        value:num(mealExtra.amount),
+        confidence:payslipOcrResult.__confidence.meal,
+        method:'交叉判讀語意校正',
+        source:'多重判讀',
+        line:mealExtra.evidence||mealExtra.label
+      });
+      added++;
+    }
+    payslipOcrResult.__extraItems=payslipOcrResult.__extraItems.filter(item=>!mealLike(item));
+  }
   payslipOcrResult.__aiVerified=true;
   payslipOcrResult.__aiSummary={agreed,conflicts,added,extra:payslipOcrResult.__extraItems.length,model:ai.model||'',remaining:ai.usage&&ai.usage.remaining};
   payslipOcrResult.__aiNotes=Array.isArray(ai.notes)?ai.notes.slice(0,12):[];
@@ -4565,7 +4593,7 @@ async function runPayslipOcr(file){
       if(!window.Tesseract)throw new Error('本機 OCR 元件尚未載入，請確認網路後重新整理。');
       const logger=m=>{
         const local=Math.max(0,Math.min(1,m.progress||0)),overall=Math.round(((currentPass+local)/variants.length)*100);
-        status.childNodes[0].nodeValue='Tesseract fallback 第 '+(currentPass+1)+' / '+variants.length+' 次（'+variants[currentPass].name+'）：'+ocrStatusLabel(m.status)+(m.progress!==undefined?' '+Math.round(local*100)+'%':'')+' ';
+        status.childNodes[0].nodeValue='相容辨識第 '+(currentPass+1)+' / '+variants.length+' 次（'+variants[currentPass].name+'）：'+ocrStatusLabel(m.status)+(m.progress!==undefined?' '+Math.round(local*100)+'%':'')+' ';
         bar.style.width=overall+'%';
       };
       if(window.Tesseract.createWorker){
@@ -4593,7 +4621,7 @@ async function runPayslipOcr(file){
     payslipRawText=runs.map(r=>'【'+r.variant+'】\n'+(r.text||'')).join('\n\n');
     payslipOcrResult=mergePayslipRuns(runs);
     payslipAiStatus='running';
-    status.childNodes[0].nodeValue=(nativeVision?'Apple Vision':'本機 OCR')+' 已完成，正在由 OpenAI 進行第二判讀… ';
+    status.childNodes[0].nodeValue=(nativeVision?'本機辨識':'相容辨識')+' 已完成，正在進行第二判讀… ';
     bar.style.width='92%';
     try{
       const aiImageDataUrl=await blobDataUrl(variants[0].image);
@@ -4602,7 +4630,7 @@ async function runPayslipOcr(file){
       else payslipAiStatus='unavailable';
     }catch(aiError){
       const code=aiError&&aiError.payload&&aiError.payload.code;
-      payslipAiStatus=code==='MONTHLY_LIMIT'?'limit':code==='PRO_REQUIRED'?'pro_required':code==='OPENAI_NOT_CONFIGURED'?'not_configured':'unavailable';
+      payslipAiStatus=code==='MONTHLY_LIMIT'?'limit':code==='PRO_REQUIRED'?'pro_required':code==='AI_NOT_CONFIGURED'?'not_configured':'unavailable';
     }
     renderPayslipDetected();$('payslipRawText').textContent=payslipRawText||'（沒有辨識到文字）';$('payslipScanResult').classList.remove('hidden');
     const foundDefs=PAYSLIP_OCR_FIELDS.filter(def=>Object.prototype.hasOwnProperty.call(payslipOcrResult,def.key)),
