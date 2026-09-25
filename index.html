@@ -6967,28 +6967,53 @@ async function handleMeowAssistantAiRoute(route,raw){
   if(!route||route.understood===false)return false;
   if(await handleMeowAssistantAiOperation(route))return true;
   const intents=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])]
-    .filter((x,i,a)=>x&&a.indexOf(x)===i);
-  if(intents.length&&MEOW_ASSISTANT_AI_LEGACY_INTENTS.has(intents[0])){
-    const local=intents.filter(x=>MEOW_ASSISTANT_AI_LEGACY_INTENTS.has(x)).slice(0,4);
-    if(local.length>1)await handleMeowAssistantKnowledgeMulti(local,raw);
-    else await handleMeowAssistantKnowledge(local[0],raw);
+    .filter((x,i,a)=>x&&x!=='unknown'&&a.indexOf(x)===i)
+    .slice(0,3);
+  const allLegacy=intents.length&&intents.every(x=>MEOW_ASSISTANT_AI_LEGACY_INTENTS.has(x));
+  if(allLegacy){
+    if(intents.length>1)await handleMeowAssistantKnowledgeMulti(intents,raw);
+    else await handleMeowAssistantKnowledge(intents[0],raw);
     return true;
   }
-  const intent=route.primaryIntent||'unknown',label=MEOW_ASSISTANT_AI_INTENT_LABELS[intent]||route.userGoal||'這個問題';
-  const routedMissing=(Array.isArray(route.missingInformation)?route.missingInformation:[]).filter(Boolean).slice(0,4);
+
+  const routedMissing=(Array.isArray(route.missingInformation)?route.missingInformation:[]).filter(Boolean).slice(0,5);
   const data=(Array.isArray(route.appDataNeeded)?route.appDataNeeded:[]).filter(x=>x&&x!=='none');
-  const personal=meowAssistantPersonalFacts(intent,raw);
-  const knowledge=await meowAssistantLaborKnowledge(intent,raw);
-  let msg=knowledge&&knowledge.baseAnswer?String(knowledge.baseAnswer):('我理解你是在問「'+label+'」。');
-  if(personal.facts.length)msg+='\n\n你的 App 目前資料：'+personal.facts.join(' ');
-  const missing=[...new Set([...personal.missing,...routedMissing])]
-    .filter(x=>!personal.facts.some(f=>f.includes(String(x))))
-    .slice(0,3);
+  const selected=intents.length?intents:[route.primaryIntent||'unknown'];
+  const sections=[],personalFacts=[],personalMissing=[];
+  let knowledgeCount=0;
+
+  for(const intent of selected){
+    const label=MEOW_ASSISTANT_AI_INTENT_LABELS[intent]||intent||route.userGoal||'這個問題';
+    if(MEOW_ASSISTANT_AI_LEGACY_INTENTS.has(intent)){
+      const snippet=meowAssistantKnowledgeSnippet(intent,raw);
+      if(snippet)sections.push('【'+label+'】'+snippet);
+      else sections.push('【'+label+'】我有抓到這個需求，會一起納入判斷。');
+    }else{
+      const knowledge=await meowAssistantLaborKnowledge(intent,raw);
+      if(knowledge&&knowledge.baseAnswer){
+        sections.push((selected.length>1?'【'+label+'】':'')+String(knowledge.baseAnswer));
+        knowledgeCount++;
+      }else{
+        sections.push('【'+label+'】我理解你是在問這件事，但目前知識庫還需要更多個案條件才能判斷。');
+      }
+    }
+    const personal=meowAssistantPersonalFacts(intent,raw);
+    if(personal&&Array.isArray(personal.facts))personalFacts.push(...personal.facts);
+    if(personal&&Array.isArray(personal.missing))personalMissing.push(...personal.missing);
+  }
+
+  let msg=sections.filter(Boolean).join('\n\n');
+  const uniqueFacts=[...new Set(personalFacts.filter(Boolean))];
+  if(uniqueFacts.length)msg+='\n\n你的 App 目前資料：'+uniqueFacts.join(' ');
+
+  const missing=[...new Set([...personalMissing,...routedMissing])]
+    .filter(x=>!uniqueFacts.some(f=>f.includes(String(x))))
+    .slice(0,4);
   if(missing.length){
     msg+='\n\n還需要確認：'+missing.join('、')+'。';
-  }else if(knowledge&&Array.isArray(knowledge.requiredFacts)&&knowledge.requiredFacts.length&&route.confidence<.72){
-    msg+='\n\n如果要做個案判斷，我還會依實際班表與公司制度逐項核對，不會只靠一般規則。';
-  }else if(data.length&&!personal.facts.length){
+  }else if(knowledgeCount&&route.confidence<.72){
+    msg+='\n\n如果要做個案判斷，我還會依實際班表、公司制度與適用身分逐項核對，不會只靠一般規則。';
+  }else if(data.length&&!uniqueFacts.length){
     msg+='\n\n這題還需要結合你的 App 資料判斷。';
   }
   if(route.shouldClarify&&route.clarifyingQuestion&&missing.length){
