@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=204">
+<link rel="manifest" href="./manifest.webmanifest?v=205">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v204-meow-labor-kb">
+<meta name="meow-ui-build" content="v205-meow-personal-context">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -6767,23 +6767,117 @@ function meowAssistantRemember(role,text){
   meowAssistantConversation.push({role:role==='assistant'?'assistant':'user',text:value.slice(0,600)});
   if(meowAssistantConversation.length>12)meowAssistantConversation=meowAssistantConversation.slice(-12);
 }
-function meowAssistantAppContext(){
+function meowAssistantMaxConsecutiveWorkDays(year,month){
+  const start=new Date(year,month,1),from=new Date(year,month,1-14),to=new Date(year,month+1,14);
+  let run=0,max=0,maxStart=null,maxEnd=null,runStart=null;
+  for(let dt=new Date(from);dt<=to;dt.setDate(dt.getDate()+1)){
+    const text=meowAssistantShiftText(dt),working=!/休假|病假|事假|特休|請假/.test(text);
+    if(working){
+      if(!run)runStart=new Date(dt);
+      run++;if(run>max){max=run;maxStart=new Date(runStart);maxEnd=new Date(dt)}
+    }else{run=0;runStart=null}
+  }
+  return{days:max,start:maxStart?iso(maxStart):null,end:maxEnd?iso(maxEnd):null};
+}
+function meowAssistantAppContext(raw=''){
   const now=new Date(),settings=state.settings||{},schedule=state.schedule||{};
+  const target=meowAssistantMonthDataFromText(raw||''),mc=meowAssistantCalcMonthAt(target.year,target.month);
+  const mm=state.months&&state.months[monthKey(target.year,target.month)]||{};
+  const hasActual=Object.prototype.hasOwnProperty.call(mm,'actualNet')&&mm.actualNet!==null&&String(mm.actualNet)!=='';
+  const threeMonth=[];
+  let threeMonthOvertime=0;
+  for(let i=0;i<3;i++){
+    const d=new Date(target.year,target.month-i,1),x=meowAssistantCalcMonthAt(d.getFullYear(),d.getMonth());
+    threeMonth.push({month:d.getFullYear()+'-'+pad(d.getMonth()+1),overtimeHours:num(x.overtimeHours)});
+    threeMonthOvertime+=num(x.overtimeHours);
+  }
+  let annual=null;
+  try{
+    const a=annualLeaveBalanceInfo();
+    annual=a&&a.period&&!a.period.missing?{
+      totalDays:num(a.totalDays),usedHours:num(a.usedHours),plannedHours:num(a.plannedHours),remainHours:num(a.remainHours)
+    }:null;
+  }catch(e){}
+  const consecutive=meowAssistantMaxConsecutiveWorkDays(target.year,target.month);
   return{
     today:iso(now),
     currentMonth:now.getFullYear()+'-'+pad(now.getMonth()+1),
     viewedMonth:current.getFullYear()+'-'+pad(current.getMonth()+1),
+    targetMonth:target.year+'-'+pad(target.month+1),
     scheduleName:typeof scheduleName==='function'?scheduleName():'',
+    schedulePreset:schedule.preset||null,
     scheduleStartDate:schedule.startDate||null,
+    todayShift:meowAssistantShiftText(now),
+    tomorrowShift:meowAssistantShiftText(new Date(now.getFullYear(),now.getMonth(),now.getDate()+1)),
+    shiftClockTimesConfigured:false,
     dailyWorkHours:num(settings.dailyWorkHours)||8,
     defaultOvertimeHours:num(settings.defaultOvertimeHours)||10,
     overtimeRateConfigured:settings.overtimeRateMode&&settings.overtimeRateMode!=='unselected',
     hasPayday:num(settings.payday)>0,
-    hasHireDate:!!settings.hireDate
+    payday:num(settings.payday)||null,
+    hasHireDate:!!settings.hireDate,
+    hireDate:settings.hireDate||null,
+    monthSummary:{
+      expectedWorkDays:num(mc.expected),attendanceDays:num(mc.attendance),leaveDays:num(mc.leaveDays),
+      overtimeHours:num(mc.overtimeHours),overtimeDays:num(mc.overtimeDays),
+      estimatedGross:num(mc.gross),estimatedNet:num(mc.net),deductions:num(mc.dedTotal),
+      shiftAllowance:num(mc.shiftAllowance),
+      actualNet:hasActual?num(mm.actualNet):null
+    },
+    overtimeLast3Months:threeMonth,
+    overtimeLast3MonthsTotal:threeMonthOvertime,
+    maxConsecutiveWorkDays:consecutive,
+    annualLeave:annual
   };
 }
+function meowAssistantPersonalFacts(intent,raw=''){
+  const ctx=meowAssistantAppContext(raw),facts=[],missing=[];
+  const month=ctx.targetMonth.replace('-', ' 年 ')+' 月';
+  if(['overtimeLimit','consecutiveWorkDays','flexibleWorkingHours','workBreak'].includes(intent)){
+    facts.push(month+'目前 App 記錄加班 '+fmtHours(ctx.monthSummary.overtimeHours)+' 小時；近 3 個月合計 '+fmtHours(ctx.overtimeLast3MonthsTotal)+' 小時。');
+  }
+  if(['overtimeLimit','consecutiveWorkDays','flexibleWorkingHours'].includes(intent)&&ctx.maxConsecutiveWorkDays.days){
+    facts.push('依目前班表資料，這段範圍最長連續出勤約 '+ctx.maxConsecutiveWorkDays.days+' 天（'+ctx.maxConsecutiveWorkDays.start+'～'+ctx.maxConsecutiveWorkDays.end+'）。');
+  }
+  if(intent==='shiftRestInterval'){
+    const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
+    facts.push('App 目前班表：昨天「'+meowAssistantShiftText(yesterday)+'」、今天「'+meowAssistantShiftText(new Date())+'」。');
+    const statesInterval=/(?:隔|間隔|中間(?:只有)?|只休)\s*\d+(?:\.\d+)?\s*(?:小時|鐘頭)/.test(String(raw));
+    const hasTwoTimes=(String(raw).match(/(?:\d{1,2}:\d{2}|\d{1,2}\s*點(?:\s*\d{1,2}\s*分)?)/g)||[]).length>=2;
+    if(!statesInterval&&!hasTwoTimes){
+      missing.push('前一班實際下班時間','下一班實際上班時間');
+      facts.push('目前 App 尚未設定各班別的實際起訖時刻，所以我不會自行猜班次間隔。');
+    }
+  }
+  if(intent==='annualLeaveTermination'){
+    if(ctx.annualLeave)facts.push('App 目前特休：已使用 '+fmtHours(ctx.annualLeave.usedHours)+' 小時、已排未休 '+fmtHours(ctx.annualLeave.plannedHours)+' 小時、剩餘可排 '+fmtHours(ctx.annualLeave.remainHours)+' 小時。');
+    else missing.push('有效的到職日／目前特休資料');
+    if(!/(\d{1,2}[\/月]\d{1,2}|今天|明天|月底|月末|離職日|最後工作日)/.test(String(raw)))missing.push('預計離職／契約終止日期');
+  }
+  if(intent==='overtimeWageBase'){
+    const s=state.settings||{},parts=[
+      ['底薪',s.baseSalary],['輪班津貼',s.shiftAllowancePerDay],['伙食津貼',s.mealAllowance],
+      ['表現津貼',s.performanceAllowance],['交通津貼',s.transportAllowance],['其他收入',s.otherIncome]
+    ].filter(x=>num(x[1])>0);
+    if(parts.length)facts.push('App 目前薪資設定：'+parts.map(x=>x[0]+' '+money(num(x[1]))).join('、')+'。');
+    else missing.push('薪資各給付項目的名稱與金額');
+  }
+  if(['holidayTransfer','naturalDisaster','scheduleChange','shiftSwap','fixedShift'].includes(intent)){
+    facts.push('目前排班方案是「'+ctx.scheduleName+'」，今天「'+ctx.todayShift+'」、明天「'+ctx.tomorrowShift+'」。');
+  }
+  if(intent==='workBreak'){
+    facts.push('App 設定的每日工時為 '+fmtHours(ctx.dailyWorkHours)+' 小時，但目前沒有記錄每次實際休息開始／結束時間。');
+  }
+  if(intent==='article841'){
+    facts.push('App 目前沒有儲存 84-1 書面約定／主管機關核備資料，這部分不能由班表自動推定。');
+  }
+  if(['pregnancyNightShift','partTimeRights'].includes(intent)){
+    facts.push('App 不會從班表自行推定懷孕／哺乳狀態或部分工時身分；只會依使用者這次提供的資訊判斷。');
+  }
+  return{context:ctx,facts,missing:[...new Set(missing)]};
+}
 let meowLaborKnowledgeCache=null;
-async function meowAssistantLaborKnowledge(intent){
+async function meowAssistantLaborKnowledge(intent,raw=''){
   if(!intent)return null;
   if(!meowLaborKnowledgeCache){
     try{
@@ -6791,14 +6885,16 @@ async function meowAssistantLaborKnowledge(intent){
       if(res.ok)meowLaborKnowledgeCache=await res.json();
     }catch(e){console.warn('[meow-assistant] labor knowledge unavailable',e)}
   }
-  return meowLaborKnowledgeCache&&meowLaborKnowledgeCache.entries?meowLaborKnowledgeCache.entries[intent]||null:null;
+  if(!meowLaborKnowledgeCache||!meowLaborKnowledgeCache.entries)return null;
+  if(intent==='article841'&&/保全/.test(String(raw||''))&&meowLaborKnowledgeCache.entries.security841)return meowLaborKnowledgeCache.entries.security841;
+  return meowLaborKnowledgeCache.entries[intent]||null;
 }
 async function routeMeowAssistantWithAI(query,context){
   try{
     const result=await invokeUserFunction('meow-assistant-route',{
       query:String(query||'').slice(0,800),
       context:Array.isArray(context)?context.slice(-8):meowAssistantConversation.slice(-8),
-      appContext:meowAssistantAppContext()
+      appContext:meowAssistantAppContext(query)
     });
     return result&&result.ok&&result.route?result.route:null;
   }catch(e){
@@ -6808,10 +6904,6 @@ async function routeMeowAssistantWithAI(query,context){
 }
 async function handleMeowAssistantAiRoute(route,raw){
   if(!route||route.understood===false)return false;
-  if(route.shouldClarify&&route.clarifyingQuestion){
-    const msg=String(route.clarifyingQuestion||'').trim();
-    if(msg){renderMeowAssistantReply(msg);meowAssistantRemember('assistant',msg);return true}
-  }
   const intents=[route.primaryIntent,...(Array.isArray(route.secondaryIntents)?route.secondaryIntents:[])]
     .filter((x,i,a)=>x&&a.indexOf(x)===i);
   if(intents.length&&MEOW_ASSISTANT_AI_LEGACY_INTENTS.has(intents[0])){
@@ -6821,19 +6913,24 @@ async function handleMeowAssistantAiRoute(route,raw){
     return true;
   }
   const intent=route.primaryIntent||'unknown',label=MEOW_ASSISTANT_AI_INTENT_LABELS[intent]||route.userGoal||'這個問題';
-  const missing=(Array.isArray(route.missingInformation)?route.missingInformation:[]).filter(Boolean).slice(0,3);
+  const routedMissing=(Array.isArray(route.missingInformation)?route.missingInformation:[]).filter(Boolean).slice(0,4);
   const data=(Array.isArray(route.appDataNeeded)?route.appDataNeeded:[]).filter(x=>x&&x!=='none');
-  const knowledge=await meowAssistantLaborKnowledge(intent);
+  const personal=meowAssistantPersonalFacts(intent,raw);
+  const knowledge=await meowAssistantLaborKnowledge(intent,raw);
   let msg=knowledge&&knowledge.baseAnswer?String(knowledge.baseAnswer):('我理解你是在問「'+label+'」。');
-  if(knowledge&&Array.isArray(knowledge.requiredFacts)&&knowledge.requiredFacts.length){
-    const need=missing.length?missing:knowledge.requiredFacts.slice(0,3);
-    if(need.length)msg+='\n\n要判斷你的實際情況，還要確認：'+need.join('、')+'。';
-  }else if(data.length){
-    msg+='這題需要結合你的 App 資料判斷。';
-  }else if(missing.length){
-    msg+='還需要確認：'+missing.join('、')+'。';
-  }else{
-    msg+='目前我先不直接下法律或薪資結論，避免在規則資料還沒核對前亂答。';
+  if(personal.facts.length)msg+='\n\n你的 App 目前資料：'+personal.facts.join(' ');
+  const missing=[...new Set([...personal.missing,...routedMissing])]
+    .filter(x=>!personal.facts.some(f=>f.includes(String(x))))
+    .slice(0,3);
+  if(missing.length){
+    msg+='\n\n還需要確認：'+missing.join('、')+'。';
+  }else if(knowledge&&Array.isArray(knowledge.requiredFacts)&&knowledge.requiredFacts.length&&route.confidence<.72){
+    msg+='\n\n如果要做個案判斷，我還會依實際班表與公司制度逐項核對，不會只靠一般規則。';
+  }else if(data.length&&!personal.facts.length){
+    msg+='\n\n這題還需要結合你的 App 資料判斷。';
+  }
+  if(route.shouldClarify&&route.clarifyingQuestion&&missing.length){
+    msg+='\n'+String(route.clarifyingQuestion).trim();
   }
   renderMeowAssistantReply(msg);
   meowAssistantRemember('assistant',msg);
