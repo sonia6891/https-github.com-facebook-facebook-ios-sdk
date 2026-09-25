@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=199">
+<link rel="manifest" href="./manifest.webmanifest?v=200">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v199-meow-100-pass">
+<meta name="meow-ui-build" content="v200-meow-adversarial-round2">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -6100,8 +6100,17 @@ function normalizeMeowAssistantText(raw){
   return String(raw||'').trim()
     .replace(/[０-９]/g,ch=>String('０１２３４５６７８９'.indexOf(ch)))
     .replace(/[兩两一二三四五六七八九十廿卅]{1,3}(?=[號号日月])/g,m=>String(meowAssistantChineseNumber(m)))
-    .replace(/下个月/g,'下個月').replace(/这个月/g,'這個月').replace(/号/g,'號').replace(/小时/g,'小時')
-    .replace(/[，,；;]/g,'、').replace(/\s+/g,' ');
+    .replace(/薪次單|薪資但|新資單|新子單|心資單|薪姿單|新姿單|薪次单|新资单|心资单/g,'薪資單')
+    .replace(/新資|心資|薪姿|新子|新资|薪资/g,'薪資')
+    .replace(/對賬|对账|對仗|兌帳|兑账/g,'對帳')
+    .replace(/班錶|板表|班标|班標/g,'班表')
+    .replace(/排半/g,'排班').replace(/家班/g,'加班')
+    .replace(/特修/g,'特休').replace(/老保/g,'勞保').replace(/建保/g,'健保')
+    .replace(/津贴/g,'津貼').replace(/实领/g,'實領').replace(/实发/g,'實發')
+    .replace(/發新日|发薪日/g,'發薪日').replace(/扣款明细/g,'扣款明細')
+    .replace(/下个月/g,'下個月').replace(/这个月/g,'這個月').replace(/这月/g,'這月')
+    .replace(/上个月/g,'上個月').replace(/号/g,'號').replace(/小时/g,'小時')
+    .replace(/[，,；;。！？!?]+/g,'、').replace(/\s+/g,' ');
 }
 function meowAssistantMonthStart(reference=current){return new Date(reference.getFullYear(),reference.getMonth(),1)}
 function meowAssistantContextDate(text,fallback=current){
@@ -6137,43 +6146,53 @@ function meowAssistantHours(text){
 
 const MEOW_ASSISTANT_KNOWLEDGE_VERSION='2026-09-shift-payroll-v1';
 
+const MEOW_ASSISTANT_KNOWLEDGE_RULES=[
+  ['help',/(你能做什麼|可以問什麼|可以問你什麼|能問什麼|可以幫我做什麼|能幫我做什麼|怎麼用喵助理|幫助|使用說明)/],
+  ['todayShift',/(今天|今日).{0,12}(什麼班|上什麼班|什麼班別|有上班|要上班|要不要上班|休假|放假|休息|休不休)/],
+  ['tomorrowShift',/(明天|明日).{0,12}(什麼班|上什麼班|什麼班別|有上班|要上班|要不要上班|休假|放假|休息|休不休)/],
+  ['nextWork',/(下次|下一次|最近|哪一天|哪天|幾號).{0,10}(上班|工作|出勤)/],
+  ['nextOff',/(下次|下一次|最近|哪一天|哪天|幾號).{0,10}(休假|放假|休息)/],
+  ['monthSummary',/(本月|這個月|這月).{0,14}(上班幾天|出勤幾天|休幾天|班表統計|工時統計|出勤統計|上幾天班|要上幾天)/],
+  ['overtimeHours',/(本月|這個月|這月).{0,12}(加班幾小時|加班時數|總加班|加了幾小時)|加班總時數/],
+  ['estimatedPay',/(本月|這個月|這月).{0,14}(預估薪資|預估薪水|預估實領|大概領多少|應該領多少|能領多少|會領多少|領多少錢)|預估實領|薪資預估/],
+  ['grossPay',/(應發薪資|應發總額|稅前薪資|稅前多少|總薪資多少|應發多少)/],
+  ['holidayPay',/(國定假日|休息日|例假|假日).{0,14}(薪資|工資|加班費|怎麼算|有沒有加倍|多少|怎麼給)/],
+  ['missingOvertime',/(加班費).{0,12}(沒|沒有|少了|少發|少算|短少|漏|漏掉|不見|沒算|怎麼沒)|漏算加班/],
+  ['overtimePay',/(本月|這個月|這月).{0,12}加班費|加班費.{0,12}(多少|幾塊|多少錢|怎麼算|試算|預估|大概)/],
+  ['missingShiftAllowance',/(輪班|夜班|班別).{0,8}(津貼|加給).{0,12}(沒|沒有|少了|少發|少算|少給|漏|漏掉|不見|怎麼沒)/],
+  ['shiftAllowance',/(輪班津貼|夜班津貼|班別津貼|夜班加給).{0,12}(多少|幾塊|多少錢|有沒有|怎麼算|大概)?/],
+  ['deductions',/(本月|這個月|這月).{0,12}(扣款|勞保|健保|福利金|勞退|所得稅)|扣款明細|總扣款|扣了多少/],
+  ['payday',/(發薪日|幾號發薪|多久領薪|多久發薪|什麼時候領薪|何時發薪|哪天領薪|哪天發薪)/],
+  ['annualLeave',/(特休|年假).{0,12}(剩多少|還有多少|還有幾天|還有幾小時|幾天|幾小時|餘額|剩餘|剩幾天|剩幾小時)/],
+  ['reconcileSummary',/(對帳結果|薪資差額|實發差額|少發多少|多發多少|多扣多少|少扣多少|公司實發.{0,14}(App|預估).{0,10}(差多少|差額)|公司實發.{0,10}(差多少|差額)|到底差多少)/],
+  ['whyPayChanged',/(為什麼|怎麼).{0,10}(薪水|薪資|實領).{0,10}(變少|少了|不一樣|變多)|(薪水|薪資|實領).{0,10}(怎麼|為什麼).{0,10}(變少|少了|不一樣|變多)|這月.{0,10}(實領|薪水|薪資).{0,10}(怎麼|為什麼).{0,10}(少了|變少|不一樣)|這個月.{0,10}(比上個月|比上月).{0,10}(少|多)/],
+  ['history',/(歷史|之前|過去|上個月|上月).{0,12}(薪資|對帳)|薪資歷史|對帳歷史|之前領多少/],
+  ['unknownDeduction',/(不認識|看不懂|不知道|不明|奇怪).{0,10}(扣款|薪資單項目)|這是什麼扣款|多了一筆扣款|這筆為什麼扣/],
+  ['extraItem',/(薪資單|對帳).{0,12}(多一個|多了一個|多出|額外).{0,10}(項目|扣款|收入|加項)/],
+  ['missingItem',/(薪資單|智慧對帳|對帳).{0,12}(沒辨識|辨識不到|沒抓到|漏項|漏掉|讀不到|沒讀到)/],
+  ['rerunPayslip',/(重新判讀|再判讀|重跑|再跑一次|再掃一次).{0,10}(薪資單|對帳)?|(薪資單|對帳).{0,10}(重新判讀|重跑|再跑一次|再掃一次)/],
+  ['salaryCalc',/(打開|去|跳到|我要看|帶我去).{0,10}(薪資試算|薪資計算)|薪資試算頁/],
+  ['freeReconcile',/(打開|去|跳到|我要看|帶我去).{0,10}(免費對帳|快速對帳)|免費薪資對帳/],
+  ['leaveConflict',/(行程|請假|特休|代辦).{0,12}(班表|排班).{0,10}(衝突|撞到|重疊)|衝突.{0,10}(班表|排班)/],
+  ['paystubContents',/(薪資單|薪資明細).{0,14}(應該|需要|必須).{0,8}(列|寫|有|包含)|薪資單要有哪些項目|薪資單.{0,10}(要)?包含什麼|薪資單.{0,10}(有|包含).{0,8}(哪些|什麼)/],
+  ['sickLeavePay',/(病假|事假).{0,14}(扣薪|扣多少|薪水|工資|全勤|怎麼算|會扣多少)/],
+  ['rotationHelp',/(四班二輪|四班三輪|做二休二|做四休三|輪班週期|排班模式).{0,14}(怎麼排|怎麼設|怎麼看|是什麼|怎麼用)?/]
+];
+function meowAssistantKnowledgeIntents(text){
+  const t=normalizeMeowAssistantText(text),matches=[];
+  for(const [id,re] of MEOW_ASSISTANT_KNOWLEDGE_RULES)if(re.test(t)&&!matches.includes(id))matches.push(id);
+  const remove=id=>{const i=matches.indexOf(id);if(i>=0)matches.splice(i,1)};
+  if(matches.includes('missingOvertime'))remove('overtimePay');
+  if(matches.includes('missingShiftAllowance'))remove('shiftAllowance');
+  if(matches.includes('holidayPay'))remove('overtimePay');
+  if(matches.includes('unknownDeduction'))remove('deductions');
+  if(matches.length)return matches;
+  if(/班表|排班|輪班/.test(t))return['scheduleGeneral'];
+  if(/薪資|薪水|薪資單|工資|加班費|扣款|對帳/.test(t))return['payrollGeneral'];
+  return[];
+}
 function meowAssistantKnowledgeIntent(text){
-  const rules=[
-    ['help',/(你能做什麼|可以問什麼|可以問你什麼|能問什麼|可以幫我做什麼|能幫我做什麼|怎麼用喵助理|幫助|使用說明)/],
-    ['todayShift',/(今天|今日).{0,10}(什麼班|上什麼班|有上班|要上班|休假|放假|休息)/],
-    ['tomorrowShift',/(明天|明日).{0,10}(什麼班|上什麼班|有上班|要上班|休假|放假|休息)/],
-    ['nextWork',/(下次|下一次|最近|哪一天|哪天).{0,8}(上班|工作|出勤)/],
-    ['nextOff',/(下次|下一次|最近|哪一天|哪天).{0,8}(休假|放假|休息)/],
-    ['monthSummary',/(本月|這個月|這月).{0,12}(上班幾天|出勤幾天|休幾天|班表統計|工時統計|出勤統計)/],
-    ['overtimeHours',/(本月|這個月|這月).{0,10}(加班幾小時|加班時數|總加班)|加班總時數/],
-    ['estimatedPay',/(本月|這個月|這月).{0,12}(預估薪資|預估薪水|預估實領|大概領多少|應該領多少)|預估實領|薪資預估/],
-    ['grossPay',/(應發薪資|應發總額|稅前薪資|稅前多少|總薪資多少)/],
-    ['holidayPay',/(國定假日|休息日|例假|假日).{0,12}(薪資|工資|加班費|怎麼算|有沒有加倍|多少)/],
-    ['missingOvertime',/(加班費).{0,10}(沒|沒有|少了|少發|少算|短少|漏|漏掉|不見|沒算)|漏算加班/],
-    ['overtimePay',/(本月|這個月|這月).{0,10}加班費|加班費.{0,10}(多少|怎麼算|試算|預估)/],
-    ['missingShiftAllowance',/(輪班|夜班|班別).{0,6}(津貼|加給).{0,10}(沒|沒有|少了|少發|少算|少給|漏|漏掉|不見)/],
-    ['shiftAllowance',/(輪班津貼|夜班津貼|班別津貼|夜班加給).{0,10}(多少|有沒有|少了|怎麼算)?/],
-    ['deductions',/(本月|這個月|這月).{0,10}(扣款|勞保|健保|福利金|勞退|所得稅)|扣款明細|總扣款/],
-    ['payday',/(發薪日|幾號發薪|多久領薪|多久發薪|什麼時候領薪|何時發薪)/],
-    ['annualLeave',/(特休|年假).{0,10}(剩多少|還有多少|還有幾天|還有幾小時|幾天|幾小時|餘額|剩餘)/],
-    ['reconcileSummary',/(對帳結果|薪資差額|實發差額|少發多少|多發多少|多扣多少|少扣多少|公司實發.{0,12}(App|預估).{0,8}(差多少|差額)|公司實發.{0,8}(差多少|差額))/],
-    ['whyPayChanged',/(為什麼|怎麼).{0,8}(薪水|薪資|實領).{0,8}(變少|少了|不一樣|變多)|(薪水|薪資|實領).{0,8}(怎麼|為什麼).{0,8}(變少|少了|不一樣|變多)|這月.{0,8}(實領|薪水|薪資).{0,8}(怎麼|為什麼).{0,8}(少了|變少|不一樣)|這個月.{0,8}(比上個月|比上月).{0,8}(少|多)/],
-    ['history',/(歷史|之前|過去|上個月|上月).{0,10}(薪資|對帳)|薪資歷史|對帳歷史/],
-    ['unknownDeduction',/(不認識|看不懂|不知道|不明).{0,8}(扣款|薪資單項目)|這是什麼扣款|多了一筆扣款/],
-    ['extraItem',/(薪資單|對帳).{0,10}(多一個|多了一個|多出|額外).{0,8}(項目|扣款|收入|加項)/],
-    ['missingItem',/(薪資單|智慧對帳|對帳).{0,10}(沒辨識|辨識不到|沒抓到|漏項|漏掉)/],
-    ['rerunPayslip',/(重新判讀|再判讀|重跑|再跑一次).{0,8}(薪資單|對帳)?|(薪資單|對帳).{0,8}(重新判讀|重跑)/],
-    ['salaryCalc',/(打開|去|跳到|我要看).{0,8}(薪資試算|薪資計算)|薪資試算頁/],
-    ['freeReconcile',/(打開|去|跳到|我要看).{0,8}(免費對帳|快速對帳)|免費薪資對帳/],
-    ['leaveConflict',/(行程|請假|特休|代辦).{0,10}(班表|排班).{0,8}(衝突|撞到)|衝突.{0,8}(班表|排班)/],
-    ['paystubContents',/(薪資單|薪資明細).{0,12}(應該|需要|必須).{0,6}(列|寫|有|包含)|薪資單要有哪些項目|薪資單.{0,8}(要)?包含什麼|薪資單.{0,8}(有|包含).{0,6}(哪些|什麼)/],
-    ['sickLeavePay',/(病假|事假).{0,12}(扣薪|扣多少|薪水|工資|全勤|怎麼算)/],
-    ['rotationHelp',/(四班二輪|四班三輪|做二休二|做四休三|輪班週期|排班模式).{0,12}(怎麼排|怎麼設|怎麼看|是什麼)?/]
-  ];
-  for(const [id,re] of rules)if(re.test(text))return id;
-  if(/班表|排班|輪班/.test(text))return 'scheduleGeneral';
-  if(/薪資|薪水|薪資單|工資|加班費|扣款|對帳/.test(text))return 'payrollGeneral';
-  return '';
+  return meowAssistantKnowledgeIntents(text)[0]||'';
 }
 function meowAssistantCalcMonthAt(year,month){
   const prev=current;
@@ -6238,6 +6257,42 @@ function meowAssistantOpenHistory(){
   if(!canUse('salary_history_unlimited')){renderMeowAssistantReply('歷史薪資對帳是 Pro 功能。','error');return false}
   salarySubTab='pro';salaryHistoryOpen=true;payslipScanOpen=false;itemizedOpen=false;salaryExportOpen=false;
   setTab('salary');renderSalary();closeMeowAssistant();return true;
+}
+function meowAssistantKnowledgeSnippet(id,text){
+  const month=meowAssistantMonthDataFromText(text),mc=meowAssistantCalcMonthAt(month.year,month.month),label=(mc.m+1)+' 月';
+  if(id==='todayShift'||id==='tomorrowShift'){
+    const d=new Date();if(id==='tomorrowShift')d.setDate(d.getDate()+1);
+    return(id==='todayShift'?'今天':'明天')+'：'+meowAssistantShiftText(d);
+  }
+  if(id==='nextWork'||id==='nextOff'){
+    const hit=meowAssistantNextDate(id==='nextWork'?'work':'off');
+    return hit?(hit.dt.getMonth()+1)+'/'+hit.dt.getDate()+'：'+hit.text:'找不到接下來 120 天的資料';
+  }
+  if(id==='monthSummary')return label+'預排 '+mc.expected+' 天、實際出勤 '+mc.attendance+' 天、請假 '+mc.leaveDays+' 天';
+  if(id==='overtimeHours')return label+'加班 '+fmtHours(mc.overtimeHours)+' 小時';
+  if(id==='estimatedPay')return label+'預估實領 '+money(mc.net);
+  if(id==='grossPay')return label+'預估應發 '+money(mc.gross);
+  if(id==='overtimePay')return overtimeRates().mode==='unselected'?'加班費率尚未設定':label+'預估加班費 '+money(mc.otPay);
+  if(id==='shiftAllowance')return label+'輪班津貼預估 '+money(mc.shiftAllowance);
+  if(id==='deductions')return label+'扣款合計 '+money(mc.dedTotal);
+  if(id==='payday'){const p=nextPaydayInfo();return p?'下次發薪 '+(p.date.getMonth()+1)+'/'+p.date.getDate()+'（'+p.days+' 天後）':'尚未設定發薪日'}
+  if(id==='annualLeave'){const a=annualLeaveBalanceInfo();return a.period.missing?a.period.reason:'特休剩餘可排 '+fmtHours(a.remainHours)+' 小時'}
+  if(id==='reconcileSummary'){
+    const r=meowAssistantMonthReconcile(mc);
+    return r.hasActual?(label+'公司實發 '+money(r.actual)+'，與 App 預估差 '+signedMoney(r.diff)):(label+'尚未有公司實發金額');
+  }
+  if(id==='whyPayChanged'){
+    const r=meowAssistantMonthReconcile(mc),top=meowAssistantTopPayDifferences(mc,r.mm,2);
+    return r.hasActual?('薪資差額 '+signedMoney(r.diff)+(top.length?'；主要差異 '+top.map(x=>x.label).join('、'):'')):'還沒有公司實發資料';
+  }
+  return'';
+}
+async function handleMeowAssistantKnowledgeMulti(ids,text){
+  const unique=[...new Set((ids||[]).filter(Boolean))].slice(0,4);
+  const snippets=unique.map(id=>meowAssistantKnowledgeSnippet(id,text)).filter(Boolean);
+  if(snippets.length>=2){renderMeowAssistantReply(snippets.join('｜'));return}
+  if(unique[0]){await handleMeowAssistantKnowledge(unique[0],text);return}
+  renderMeowAssistantReply('我有聽到你的問題，但目前資料還不夠明確，可以換個方式再說一次。','error');
 }
 async function handleMeowAssistantKnowledge(id,text){
   const month=meowAssistantMonthDataFromText(text),mc=meowAssistantCalcMonthAt(month.year,month.month),label=(mc.m+1)+' 月';
@@ -6322,7 +6377,9 @@ function meowAssistantParse(raw){
   }
   const wantsPayslipReconcile=/(智慧.{0,4}對帳|薪資.{0,4}對帳|對帳.{0,4}薪資|對.{0,3}薪資單|核對.{0,4}薪資單|幫我.{0,6}(對|核對).{0,4}薪資單|薪資單.{0,4}(對帳|核對))/.test(text);
   if(wantsPayslipReconcile)return{ok:true,type:'smartPayslipReconcile',raw:text};
-  const knowledge=meowAssistantKnowledgeIntent(text);
+  const knowledgeList=meowAssistantKnowledgeIntents(text);
+  if(knowledgeList.length>1)return{ok:true,type:'knowledgeMulti',knowledgeList,raw:text};
+  const knowledge=knowledgeList[0]||'';
   if(knowledge)return{ok:true,type:'knowledge',knowledge,raw:text};
   if(!/加班/.test(text))return{ok:false,message:'我可以幫你處理班表、加班、薪資、對帳、扣款、發薪日與特休。你也可以直接問「你能做什麼」。'};
   const moveWord=text.match(/換到|換成|改到|改成|移到|移至|挪到/);
@@ -6347,7 +6404,7 @@ function meowAssistantDateLabel(date){
 }
 function meowAssistantPlanCheck(plan){
   if(!plan||!plan.ok)return plan;
-  if(plan.type==='viewSchedule'||plan.type==='smartPayslipReconcile'||plan.type==='knowledge')return plan;
+  if(plan.type==='viewSchedule'||plan.type==='smartPayslipReconcile'||plan.type==='knowledge'||plan.type==='knowledgeMulti')return plan;
   if(plan.type==='move'){
     const src=state.dayStatus[plan.from],dest=state.dayStatus[plan.to];
     if(!src||src.type!=='overtime')return{ok:false,message:'目前 '+meowAssistantDateLabel(plan.from)+' 沒有加班紀錄，所以我沒有移動任何資料。'};
@@ -6699,6 +6756,11 @@ async function previewMeowAssistant(){
   }
   if(parsed.type==='knowledge'){
     await handleMeowAssistantKnowledge(parsed.knowledge,parsed.raw||'');
+    $('meowAssistantInput').value='';
+    return;
+  }
+  if(parsed.type==='knowledgeMulti'){
+    await handleMeowAssistantKnowledgeMulti(parsed.knowledgeList,parsed.raw||'');
     $('meowAssistantInput').value='';
     return;
   }
@@ -7540,7 +7602,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v199';
+    const reloadKey='meow-sw-reloaded-v200';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -7549,7 +7611,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=199',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=200',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
