@@ -43,6 +43,9 @@ jobs:
       - name: Multi-turn fuzz — 1000 stateful turns
         run: node tests/meow-assistant-multiturn-fuzz-1000.test.cjs
 
+      - name: Live OpenAI semantic quality harness contract
+        run: node tests/meow-assistant-live-quality-harness.test.cjs
+
       - name: Multi-intent response composition
         run: node tests/meow-assistant-multi-intent-response.test.cjs
 
