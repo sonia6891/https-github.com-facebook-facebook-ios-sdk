@@ -6,9 +6,10 @@ const edge=fs.readFileSync('supabase/functions/meow-assistant-route/index.ts','u
 
 function extractFunction(name){
   const marker='function '+name+'(';
-  const start=html.indexOf(marker);
-  assert(start>=0,'missing function '+name);
-  const brace=html.indexOf('{',start);
+  const rawStart=html.indexOf(marker);
+  assert(rawStart>=0,'missing function '+name);
+  const start=html.slice(Math.max(0,rawStart-6),rawStart)==='async '?rawStart-6:rawStart;
+  const brace=html.indexOf('{',rawStart);
   let depth=0,inStr='',esc=false,inRegex=false,inClass=false;
   for(let i=brace;i<html.length;i++){
     const ch=html[i],prev=html[i-1]||'';
