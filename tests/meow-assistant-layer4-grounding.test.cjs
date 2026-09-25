@@ -16,6 +16,8 @@ for(const token of [
   'todayShift:meowAssistantShiftText(now)',
   'tomorrowShift:meowAssistantShiftText',
   'const personal=meowAssistantPersonalFacts(intent,raw)',
+  'personalFacts.push(...personal.facts)',
+  'const missing=[...new Set([...personalMissing,...routedMissing])]',
   "appContext:meowAssistantAppContext(query)"
 ]) assert(html.includes(token),'missing layer 4 token: '+token);
 
@@ -23,8 +25,9 @@ assert(!html.includes("if(route.shouldClarify&&route.clarifyingQuestion){\n    c
   'AI must not clarify before checking App data');
 
 const pPersonal=html.indexOf('const personal=meowAssistantPersonalFacts(intent,raw)');
-const pMissing=html.indexOf('const missing=[...new Set([...personal.missing,...routedMissing])]');
-assert(pPersonal>=0&&pMissing>pPersonal,'personal facts must be evaluated before final missing-info prompt');
+const pMerge=html.indexOf('personalFacts.push(...personal.facts)');
+const pMissing=html.indexOf('const missing=[...new Set([...personalMissing,...routedMissing])]');
+assert(pPersonal>=0&&pMerge>pPersonal&&pMissing>pMerge,'each intent must be grounded before merged missing-info prompt');
 
 assert(html.includes("if(intent==='shiftRestInterval')"),'shift-rest grounding missing');
 assert(html.includes('shiftClockTimesConfigured:false'),'clock-time absence must be explicit');
