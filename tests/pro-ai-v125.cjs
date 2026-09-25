@@ -49,7 +49,8 @@ for (const label of ['勞退自提','福利金','勞保費','健保費','輪班�
   assert(html.includes(label), 'payroll synonym/field coverage missing: '+label);
 }
 assert(html.includes('rateLike||quantityLike'), 'rates/hours must be excluded from payroll money candidates');
-assert(html.includes('3 種影像版本'), 'three-pass payroll image preprocessing missing');
+assert(html.includes('preprocessPayslipVariants'), 'payroll image preprocessing helper missing');
+assert(html.includes("name:'原圖增強'") && html.includes("name:'高對比'") && html.includes("name:'二值化'"), 'three-pass payroll image preprocessing missing');
 
 assert(html.includes("meow-work-payslip-format-memory-v3"), 'stale payroll format memory must be invalidated after deduction mapping changes');
 assert(html.includes(".replace(/考前扣款/g,'考勤扣款')"), 'attendance OCR confusion normalization missing');
@@ -63,6 +64,12 @@ assert(payslipEdge.includes("『餐費補助』與『醫療補助』不得混淆
 assert(payslipEdge.includes('extraItems'), 'salary-slip-only extra income/deduction extraction missing');
 assert(html.includes("label:'伙食／餐費補助'"), 'meal subsidy label must be preserved in reconciliation UI');
 assert(html.includes('rawHasMeal') && html.includes('rawHasMedical'), 'front-end meal/medical safety correction missing');
+assert(html.includes('id="rerunPayslipScan"'), 'smart payroll rerun action missing');
+assert(html.includes('id="clearPayslipScan"'), 'smart payroll clear action missing');
+assert(html.includes('照片不會顯示在畫面上'), 'smart payroll scan privacy copy missing');
+assert(html.includes('id="itemizedSmartGroups"'), 'smart payroll grouped review UI missing');
+assert(html.includes('未判讀或兩次判讀不一致的項目不會自動猜'), 'smart payroll pending-review copy missing');
+assert(html.includes('payslipCurrentFile'), 'session-only payslip rerun file state missing');
 
 
 // Dedicated verifier must be server-side, stateless and cost-protected.
