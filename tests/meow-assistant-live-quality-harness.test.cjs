@@ -46,8 +46,8 @@ for(const phrase of [
   assert(html.includes(phrase),'multi-intent live case must not require a fixed primary ordering: '+phrase);
 }
 assert(corpusMatch[1].includes("requiredIntents:['shiftRestInterval','overtimeLimit','mandatoryOvertime']"),'multi-risk case must score complete intent coverage rather than fixed primary order');
-assert(corpusMatch[1].includes("intent:'partTimeRights',secondaryAny:['holidayPay']"),'part-time holiday case must preserve status-specific primary intent');
-assert(corpusMatch[1].includes("intent:'fixedShift',secondaryAny:['shiftRestInterval']"),'fixed-shift interval case must preserve applicability primary intent');
+assert(corpusMatch[1].includes("requiredIntents:['holidayPay','partTimeRights']"),'part-time holiday case must score complete intent coverage without fixed primary ordering');
+assert(corpusMatch[1].includes("requiredIntents:['shiftRestInterval','fixedShift']"),'fixed-shift interval case must score complete intent coverage without fixed primary ordering');
 assert(html.includes('test.requiredIntents&&test.requiredIntents.length'),'live scorer must support requiredIntents coverage');
 
 console.log('PASS Meow Assistant developer-only live OpenAI semantic quality harness: '+count+' cases');
