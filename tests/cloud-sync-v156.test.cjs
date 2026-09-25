@@ -91,4 +91,40 @@ assert(
   'Restore persistence failures must leave the previous in-memory data intact.'
 );
 
-console.log('Cloud sync v156 regression checks passed.');
+
+
+assert(
+  html.includes("function canCloudSync(){return !!(hasCloudEntitlement()&&authUser&&localOwner===authUser.id)}"),
+  'Pro/developer cloud sync must be automatic and must not depend on device-local consent.'
+);
+assert(
+  html.includes("cloudOwnerId=String(data&&data.cloud_owner_user_id||uid)") &&
+  html.includes(".eq('user_id',cloudOwnerId||uid)") &&
+  html.includes("filter:'user_id=eq.'+owner"),
+  'Cloud reads and realtime subscriptions must use the canonical cloud workspace owner.'
+);
+assert(
+  html.includes("正在載入雲端資料") &&
+  html.includes("switchWorkspace(user.id,true)") &&
+  html.includes("if(canCloudSync()&&!cloudReady)await loadAccountState()"),
+  'Login must hydrate cloud state before revealing the signed-in app.'
+);
+assert(
+  html.includes("syncReason:'auto'") &&
+  html.includes("syncReason:'manual_backup'"),
+  'Automatic sync and manual backup writes must be distinguishable for versioned backup retention.'
+);
+assert(
+  html.includes("async function refreshCloudBackupStatus()") &&
+  html.includes("meow_cloud_backup_status") &&
+  html.includes("自動備份："),
+  'The app must surface automatic backup status and last successful cloud state.'
+);
+assert(
+  html.includes("async function restorePreviousCloudBackup(showAlert=true)") &&
+  html.includes("meow_restore_latest_backup") &&
+  html.includes("還原上一個自動備份"),
+  'Pro users must be able to restore a previous automatic cloud backup from the app.'
+);
+
+console.log('Cloud sync v190 regression checks passed.');
