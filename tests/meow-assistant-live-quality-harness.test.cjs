@@ -13,7 +13,7 @@ assert(html.includes('/^正在執行喵助理真實 OpenAI 語意測試/'),'self
 assert(html.includes('id="meowAiTestProgress"'),'visible progress bar missing');
 assert(html.includes('id="meowAiTestProgressText"'),'visible progress text missing');
 assert(html.includes('setMeowAssistantLiveQualityUi'),'live test UI state helper missing');
-assert(html.includes("run.textContent=running?'測試中…':'執行 32 題正式測試'"),'test button loading state missing');
+assert(html.includes("run.textContent=running?'測試中…':'執行正式測試'"),'test button loading state missing');
 assert(html.includes('routeMeowAssistantWithAILiveQuality'),'live test must preserve routing errors instead of swallowing them');
 assert(html.includes('登入憑證已失效'),'auth-expiry feedback missing');
 assert(html.includes('測試中止：這個帳號目前沒有開發者／Pro 權限'),'entitlement feedback missing');
@@ -31,7 +31,8 @@ for(const token of [
   'compensatoryLeave','holidayTransfer','overtimeWageBase','annualLeaveTermination',
   'pregnancyNightShift','flexibleWorkingHours','article841','partTimeRights',
   'naturalDisaster','mandatoryOvertime','attendanceRecord','trainingMeetingTime',
-  'mealBreakOnDuty','scheduleNotice','fixedShift','whyPayChanged','unknownDeduction'
+  'mealBreakOnDuty','scheduleNotice','fixedShift','whyPayChanged','unknownDeduction',
+  'minimumWage','marriageLeave','familyCareLeave','sickLeaveRights','annualLeaveRule','personalLeaveRule'
 ]){
   assert(corpusMatch[1].includes(token),'missing live quality intent '+token);
 }
@@ -46,6 +47,17 @@ for(const phrase of [
   assert(html.includes(phrase),'multi-intent live case must not require a fixed primary ordering: '+phrase);
 }
 assert(corpusMatch[1].includes("requiredIntents:['shiftRestInterval','overtimeLimit','mandatoryOvertime']"),'multi-risk case must score complete intent coverage rather than fixed primary order');
+for(const phrase of [
+  "我現在結婚到底可以請幾天婚假？',intent:'marriageLeave'",
+  "新聞不是說婚假變14天了嗎？現在就算14天嗎？',intent:'marriageLeave'",
+  "家庭照顧假我可以請幾小時？',intent:'familyCareLeave'",
+  "公司說要扣我考績，這樣可以嗎？',intent:'sickLeaveRights'",
+  "依法到底有幾天特休？',intent:'annualLeaveRule'",
+  "現在最低時薪多少？明年是不是又要調？',intent:'minimumWage'",
+  "事假一年依法最多可以請幾天？有薪水嗎？',intent:'personalLeaveRule'"
+]){
+  assert(corpusMatch[1].includes(phrase),'missing leave/wage live quality case '+phrase);
+}
 assert(corpusMatch[1].includes("requiredIntents:['holidayPay','partTimeRights']"),'part-time holiday case must score complete intent coverage without fixed primary ordering');
 assert(corpusMatch[1].includes("requiredIntents:['shiftRestInterval','fixedShift']"),'fixed-shift interval case must score complete intent coverage without fixed primary ordering');
 assert(html.includes('test.requiredIntents&&test.requiredIntents.length'),'live scorer must support requiredIntents coverage');
