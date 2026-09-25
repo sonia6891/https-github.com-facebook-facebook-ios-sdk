@@ -25,6 +25,12 @@ jobs:
         run: node tests/ui-v129.test.cjs
       - name: v156 cloud sync hardening checks
         run: node tests/cloud-sync-v156.test.cjs
+      - name: Meow Assistant core regression
+        run: node tests/meow-assistant-round2-100.test.cjs
+      - name: Meow Assistant OpenAI NLU integration contract
+        run: node tests/meow-assistant-ai-nlu.test.cjs
+      - name: Meow Assistant natural-language discovery baseline
+        run: node tests/meow-assistant-auto-discovery.test.cjs
       - name: Install browser tests
         run: |
           npm install --no-save playwright@1.57.0
