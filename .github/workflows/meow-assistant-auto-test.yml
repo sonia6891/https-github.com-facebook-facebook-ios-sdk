@@ -32,6 +32,9 @@ jobs:
       - name: Multi-turn conversation memory
         run: node tests/meow-assistant-conversation-memory.test.cjs
 
+      - name: Contextual operation safety
+        run: node tests/meow-assistant-contextual-operations.test.cjs
+
       - name: Taiwan labor knowledge base
         run: node tests/meow-assistant-labor-kb.test.cjs
 
