@@ -59,6 +59,9 @@ jobs:
       - name: Taiwan labor knowledge base
         run: node tests/meow-assistant-labor-kb.test.cjs
 
+      - name: Leave-law and minimum-wage routing
+        run: node tests/meow-assistant-leave-law.test.cjs
+
       - name: Layer 4 App-data grounding
         run: node tests/meow-assistant-layer4-grounding.test.cjs
 
