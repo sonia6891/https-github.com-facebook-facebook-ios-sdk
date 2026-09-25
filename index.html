@@ -1981,12 +1981,12 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         <div class="section-title"><span class="paw">🧪</span>喵助理 OpenAI 品質測試</div>
         <div class="hint">僅開發者帳號可見。使用正式 Supabase → OpenAI 路由測真人口語，不會修改班表或薪資資料。</div>
         <div class="settings-actions" style="margin-top:10px">
-          <button class="btn primary" id="meowAiTestRun" type="button">執行 32 題正式測試</button>
+          <button class="btn primary" id="meowAiTestRun" type="button">執行正式測試</button>
           <button class="btn" id="meowAiTestRerunFailed" type="button">只重跑失敗題</button>
         </div>
         <div class="hint" id="meowAiTestSummary" style="margin-top:10px" role="status" aria-live="polite">尚未執行正式 OpenAI 語意測試。</div>
         <div id="meowAiTestProgressWrap" class="hidden" style="margin-top:10px">
-          <progress id="meowAiTestProgress" max="32" value="0" style="width:100%"></progress>
+          <progress id="meowAiTestProgress" max="40" value="0" style="width:100%"></progress>
           <div class="hint" id="meowAiTestProgressText" style="margin-top:6px">準備開始…</div>
         </div>
         <details id="meowAiTestDetails" style="margin-top:8px">
@@ -7065,7 +7065,15 @@ const MEOW_ASSISTANT_LIVE_QUALITY_CASES=[
   {
     q:'今天大夜，明天又早班，而且這個月已經加50小時，公司還叫我留下來，這樣可以嗎？',
     requiredIntents:['shiftRestInterval','overtimeLimit','mandatoryOvertime']
-  }
+  },
+  {q:'我現在結婚到底可以請幾天婚假？',intent:'marriageLeave'},
+  {q:'新聞不是說婚假變14天了嗎？現在就算14天嗎？',intent:'marriageLeave'},
+  {q:'小孩明天要打預防針，家庭照顧假我可以請幾小時？',intent:'familyCareLeave'},
+  {q:'我今年已經請病假8天，公司說要扣我考績，這樣可以嗎？',intent:'sickLeaveRights'},
+  {q:'我做滿三年了，依法到底有幾天特休？',intent:'annualLeaveRule'},
+  {q:'現在最低時薪多少？明年是不是又要調？',intent:'minimumWage'},
+  {q:'事假一年依法最多可以請幾天？有薪水嗎？',intent:'personalLeaveRule'},
+  {q:'我不是問依法幾天，我是問我自己的特休還剩多少？',intent:'annualLeave'}
 ];
 function meowAssistantLiveCasePass(route,test){
   if(!route||route.understood===false)return false;
@@ -7145,7 +7153,7 @@ function setMeowAssistantLiveQualityUi(running,done=0,total=0,message=''){
   const progress=$('meowAiTestProgress'),text=$('meowAiTestProgressText'),summary=$('meowAiTestSummary');
   if(run){
     run.disabled=!!running;
-    run.textContent=running?'測試中…':'執行 32 題正式測試';
+    run.textContent=running?'測試中…':'執行正式測試';
   }
   if(retry)retry.disabled=!!running||(meowAssistantReadLiveQualityReport()?.failed||0)===0;
   if(wrap)wrap.classList.toggle('hidden',!running);
