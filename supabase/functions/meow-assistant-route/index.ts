@@ -110,7 +110,7 @@ const schema = {
   required: [
     "understood","normalizedQuery","primaryIntent","secondaryIntents","userGoal","action",
     "appDataNeeded","missingInformation","shouldClarify","clarifyingQuestion","confidence",
-    "risk","referencesPriorContext","contextResolution","facts"
+    "risk","referencesPriorContext","contextResolution","facts","operation"
   ],
   properties: {
     understood: { type: "boolean" },
@@ -145,6 +145,26 @@ const schema = {
     facts: {
       type: "array",
       items: { type: "string" }
+    },
+    operation: {
+      type: "object",
+      additionalProperties: false,
+      required: ["kind","dates","fromDate","toDate","hours","year","month"],
+      properties: {
+        kind: {
+          type: "string",
+          enum: ["none","add_overtime","remove_overtime","move_overtime","view_schedule"]
+        },
+        dates: {
+          type: "array",
+          items: { type: "string" }
+        },
+        fromDate: nullableString,
+        toDate: nullableString,
+        hours: { anyOf: [{ type: "number" }, { type: "null" }] },
+        year: { anyOf: [{ type: "integer" }, { type: "null" }] },
+        month: { anyOf: [{ type: "integer", minimum: 1, maximum: 12 }, { type: "null" }] }
+      }
     }
   }
 };
@@ -230,6 +250,11 @@ Deno.serve(async (req: Request) => {
     "涉及薪資計算但需要實際班表／薪資資料時 risk=financial_calculation。",
     "涉及刪除、移動、覆蓋紀錄等資料變更時 risk=sensitive_mutation。",
     "如果只是情緒抱怨但同時包含可辨識需求，要理解需求，不要只把它當情緒。",
+    "如果使用者明確要求 App 新增／取消／移動加班，或查看某月班表，operation 要輸出結構化操作；不要直接執行，只負責解析。",
+    "operation 的日期一律使用 YYYY-MM-DD。相對日期（今天、昨天、明天、禮拜五等）要以 appContext.today 與 recentContext 解析；不確定就 kind=none 並 shouldClarify=true。",
+    "承接前文的操作，例如『那個拿掉』『不是22，是24』『移到禮拜五』，只有在 recentContext 能唯一解析對象時才輸出 operation，並 referencesPriorContext=true、contextResolution 說明解析結果。",
+    "新增／取消／移動資料屬 sensitive_mutation。若日期或對象無法唯一確定，不可猜測。",
+    "查看班表使用 view_schedule，year/month 必須解析完成；修改加班則分別使用 add_overtime、remove_overtime、move_overtime。",
     "意圖對照：\n" + intentGuide
   ].join("\n");
 
