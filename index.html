@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=203">
+<link rel="manifest" href="./manifest.webmanifest?v=204">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v203-meow-openai-nlu">
+<meta name="meow-ui-build" content="v204-meow-labor-kb">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -6782,6 +6782,17 @@ function meowAssistantAppContext(){
     hasHireDate:!!settings.hireDate
   };
 }
+let meowLaborKnowledgeCache=null;
+async function meowAssistantLaborKnowledge(intent){
+  if(!intent)return null;
+  if(!meowLaborKnowledgeCache){
+    try{
+      const res=await fetch('./assets/meow-labor-knowledge-v1.json?v=204',{cache:'no-store'});
+      if(res.ok)meowLaborKnowledgeCache=await res.json();
+    }catch(e){console.warn('[meow-assistant] labor knowledge unavailable',e)}
+  }
+  return meowLaborKnowledgeCache&&meowLaborKnowledgeCache.entries?meowLaborKnowledgeCache.entries[intent]||null:null;
+}
 async function routeMeowAssistantWithAI(query,context){
   try{
     const result=await invokeUserFunction('meow-assistant-route',{
@@ -6812,10 +6823,18 @@ async function handleMeowAssistantAiRoute(route,raw){
   const intent=route.primaryIntent||'unknown',label=MEOW_ASSISTANT_AI_INTENT_LABELS[intent]||route.userGoal||'這個問題';
   const missing=(Array.isArray(route.missingInformation)?route.missingInformation:[]).filter(Boolean).slice(0,3);
   const data=(Array.isArray(route.appDataNeeded)?route.appDataNeeded:[]).filter(x=>x&&x!=='none');
-  let msg='我理解你是在問「'+label+'」。';
-  if(data.length)msg+='這題需要結合你的 App 資料判斷。';
-  if(missing.length)msg+='還需要確認：'+missing.join('、')+'。';
-  else msg+='目前我先不直接下法律或薪資結論，避免在規則資料還沒核對前亂答。';
+  const knowledge=await meowAssistantLaborKnowledge(intent);
+  let msg=knowledge&&knowledge.baseAnswer?String(knowledge.baseAnswer):('我理解你是在問「'+label+'」。');
+  if(knowledge&&Array.isArray(knowledge.requiredFacts)&&knowledge.requiredFacts.length){
+    const need=missing.length?missing:knowledge.requiredFacts.slice(0,3);
+    if(need.length)msg+='\n\n要判斷你的實際情況，還要確認：'+need.join('、')+'。';
+  }else if(data.length){
+    msg+='這題需要結合你的 App 資料判斷。';
+  }else if(missing.length){
+    msg+='還需要確認：'+missing.join('、')+'。';
+  }else{
+    msg+='目前我先不直接下法律或薪資結論，避免在規則資料還沒核對前亂答。';
+  }
   renderMeowAssistantReply(msg);
   meowAssistantRemember('assistant',msg);
   return true;
