@@ -6191,7 +6191,8 @@ const MEOW_ASSISTANT_KNOWLEDGE_RULES=[
   ['shiftAllowance',/((輪班|夜班|晚班|大夜|小夜|班別).{0,4}(津貼|加給)).{0,12}(多少|幾塊|多少錢|有沒有|怎麼算|大概)?/],
   ['deductions',/(本月|這個月|這月).{0,14}(扣款|勞保|健保|福利金|勞退|所得稅|被扣多少|扣多少)|扣款明細|總扣款|扣了多少|被扣多少/],
   ['payday',/(發薪日|幾號發薪|多久領薪|多久發薪|什麼時候領薪|何時發薪|哪天領薪|哪天發薪|(薪水|薪資).{0,8}哪天.{0,6}(進來|入帳|匯入))/],
-  ['annualLeave',/(特休|年假).{0,12}(剩多少|還有多少|還有幾天|還有幾小時|幾天|幾小時|餘額|剩餘|剩幾天|剩幾小時)/],
+  ['annualLeaveRule',/(依法|法定|年資|做滿|工作滿).{0,12}(特休|年假)|(特休|年假).{0,12}(依法|法定|有幾天|給幾天|年資怎麼算)/],
+  ['annualLeave',/(特休|年假).{0,12}(剩多少|還有多少|還有幾天|還有幾小時|餘額|剩餘|剩幾天|剩幾小時)/],
   ['reconcileSummary',/(對帳結果|薪資差額|實發差額|少發多少|多發多少|多扣多少|少扣多少|公司實發.{0,14}(App|預估).{0,10}(差多少|差額)|公司實發.{0,10}(差多少|差額)|(公司匯進來|公司入帳).{0,16}(你算的|App|預估).{0,10}(差多少|差額)|到底差多少)/],
   ['whyPayChanged',/(為什麼|怎麼).{0,10}(薪水|薪資|實領).{0,10}(變少|少了|不一樣|變多)|(薪水|薪資|實領).{0,10}(怎麼|為什麼).{0,10}(變少|少了|不一樣|變多)|這月.{0,10}(實領|薪水|薪資).{0,10}(怎麼|為什麼).{0,10}(少了|變少|不一樣)|這個月.{0,10}(比上個月|比上月).{0,10}(少|多)|(薪水|薪資|實領).{0,8}(縮水|變薄)/],
   ['history',/(歷史|之前|過去|上個月|上月).{0,12}(薪資|對帳)|薪資歷史|對帳歷史|(之前|過去).{0,10}(領多少|領了多少)/],
@@ -6203,6 +6204,11 @@ const MEOW_ASSISTANT_KNOWLEDGE_RULES=[
   ['freeReconcile',/(打開|去|跳到|我要看|帶我去).{0,10}(免費對帳|快速對帳)|免費薪資對帳/],
   ['leaveConflict',/(行程|請假|特休|代辦).{0,12}(班表|排班).{0,10}(衝突|撞到|重疊)|衝突.{0,10}(班表|排班)/],
   ['paystubContents',/(薪資單|薪資明細).{0,14}(應該|需要|必須).{0,8}(列|寫|有|包含)|薪資單要有哪些項目|薪資單.{0,10}(要)?包含什麼|薪資單.{0,10}(有|包含).{0,8}(哪些|什麼)/],
+  ['minimumWage',/(最低工資|基本工資|最低時薪|基本時薪).{0,18}(多少|幾塊|調整|調漲|明年|現在|目前|何時|生效)?/],
+  ['marriageLeave',/(婚假|結婚假).{0,18}(幾天|多少天|怎麼請|怎麼用|有幾天|14天|十四天|增加|新制|何時生效|上路)?/],
+  ['familyCareLeave',/(家庭照顧假|家照假|照顧家人).{0,20}(幾天|幾小時|怎麼請|怎麼用|條件|資格|小時|全勤|薪水|工資)?/],
+  ['sickLeaveRights',/(病假|傷病假).{0,18}(可以請幾天|能請幾天|有幾天|被懲處|不利處分|考績|全勤怎麼扣|扣全勤|新制|權益)/],
+  ['personalLeaveRule',/(事假).{0,16}(幾天|有幾天|怎麼請|怎麼用|有沒有薪|薪水|工資|法定|依法)/],
   ['sickLeavePay',/(病假|事假).{0,14}(扣薪|扣多少|薪水|工資|全勤|怎麼算|會扣多少)/],
   ['rotationHelp',/(四班二輪|四班三輪|做二休二|做四休三|輪班週期|排班模式).{0,14}(怎麼排|怎麼設|怎麼看|是什麼|怎麼用)?/]
 ];
@@ -6214,6 +6220,8 @@ function meowAssistantKnowledgeIntents(text){
   if(matches.includes('missingShiftAllowance'))remove('shiftAllowance');
   if(matches.includes('holidayPay'))remove('overtimePay');
   if(matches.includes('unknownDeduction'))remove('deductions');
+  if(matches.includes('sickLeaveRights'))remove('sickLeavePay');
+  if(matches.includes('annualLeaveRule'))remove('annualLeave');
   if(matches.length)return matches;
   if(/班表|排班|輪班/.test(t))return['scheduleGeneral'];
   if(/薪資|薪水|薪資單|工資|加班費|扣款|對帳/.test(t))return['payrollGeneral'];
@@ -6324,7 +6332,7 @@ async function handleMeowAssistantKnowledgeMulti(ids,text){
 }
 async function handleMeowAssistantKnowledge(id,text){
   const month=meowAssistantMonthDataFromText(text),mc=meowAssistantCalcMonthAt(month.year,month.month),label=(mc.m+1)+' 月';
-  if(id==='help'){renderMeowAssistantReply('你可以問我：今天／明天什麼班、下次上班或休假、本月出勤與加班、本月預估薪資、加班費、扣款、發薪日、特休餘額、薪資差額、為什麼薪資變少、薪資單漏項／多扣，或直接說「幫我對薪資單」。');return}
+  if(id==='help'){renderMeowAssistantReply('你可以問我：今天／明天什麼班、下次上班或休假、本月出勤與加班、本月預估薪資、加班費、扣款、發薪日、特休餘額、依法特休有幾天、婚假、家庭照顧假、病假權益、最低工資、薪資差額、為什麼薪資變少、薪資單漏項／多扣，或直接說「幫我對薪資單」。');return}
   if(id==='todayShift'||id==='tomorrowShift'){
     const d=new Date();if(id==='tomorrowShift')d.setDate(d.getDate()+1);
     renderMeowAssistantReply((id==='todayShift'?'今天':'明天')+'是「'+meowAssistantShiftText(d)+'」。');return;
@@ -6386,6 +6394,11 @@ async function handleMeowAssistantKnowledge(id,text){
   if(id==='leaveConflict'){renderMeowAssistantReply('行程／請假若和班表撞到，App 會做衝突提醒。你可以先看班表，再決定是否改日期；我不會自動覆蓋既有假別或出勤紀錄。');return}
   if(id==='paystubContents'){renderMeowAssistantReply('薪資明細至少要能看出：議定工資總額、各給付項目、各扣除項目、實際發給金額。加班、津貼、保險／福利等若有發生，也應能在明細中被核對。');return}
   if(id==='sickLeavePay'){renderMeowAssistantReply('病假／事假的工資與全勤扣發會受請假類型、公司制度與當期法規影響。我可以先幫你看本月請假時數與實際扣款，再用薪資單對帳；不要只靠單一公式判定是否合法。');return}
+  if(['minimumWage','marriageLeave','familyCareLeave','sickLeaveRights','annualLeaveRule','personalLeaveRule'].includes(id)){
+    const knowledge=await meowAssistantLaborKnowledge(id,text);
+    if(knowledge&&knowledge.baseAnswer){renderMeowAssistantReply(String(knowledge.baseAnswer));return}
+    renderMeowAssistantReply('我有抓到你在問勞動法規，但目前法規資料暫時無法讀取，請稍後再試。','error');return;
+  }
   if(id==='rotationHelp'){renderMeowAssistantReply('你目前排班是「'+scheduleName()+'」。我可以看月份班表、查今天／明天班別，也能新增／取消／移動加班；排班週期本身請到「排班設定」調整。');return}
   if(id==='scheduleGeneral'){renderMeowAssistantReply('班表方面你可以問：今天／明天什麼班、下次上班／休假、本月上班幾天、加班幾小時，或直接叫我新增／取消／移動加班。');return}
   if(id==='payrollGeneral'){renderMeowAssistantReply('薪資方面你可以問：本月預估實領、加班費、輪班津貼、扣款、發薪日、特休、薪資差額、為什麼少發／多扣，或直接說「幫我對薪資單」。');return}
@@ -6788,6 +6801,12 @@ const MEOW_ASSISTANT_AI_INTENT_LABELS={
   mealBreakOnDuty:'用餐時仍須待命',
   scheduleNotice:'班表公布／改班通知',
   fixedShift:'固定班與輪班的差異',
+  minimumWage:'最低工資／基本工資',
+  marriageLeave:'婚假',
+  familyCareLeave:'家庭照顧假',
+  sickLeaveRights:'病假權益',
+  annualLeaveRule:'法定特休日數',
+  personalLeaveRule:'事假規則',
   unknown:'這個問題'
 };
 let meowAssistantConversation=[];
@@ -6909,17 +6928,48 @@ function meowAssistantPersonalFacts(intent,raw=''){
   return{context:ctx,facts,missing:[...new Set(missing)]};
 }
 let meowLaborKnowledgeCache=null;
+const meowLaborRuleContextCache=new Map();
+async function meowAssistantLaborRuleContext(ruleKey){
+  if(!ruleKey||!authUser)return null;
+  const today=iso(new Date()),cacheKey=ruleKey+'@'+today;
+  if(meowLaborRuleContextCache.has(cacheKey))return meowLaborRuleContextCache.get(cacheKey);
+  try{
+    const client=await getAuthClient();
+    const {data,error}=await client.rpc('meow_labor_rule_context',{p_rule_key:ruleKey,p_on_date:today});
+    if(error)throw error;
+    meowLaborRuleContextCache.set(cacheKey,data||null);
+    return data||null;
+  }catch(e){
+    console.warn('[meow-assistant] live labor rule unavailable',ruleKey,e&&e.message||e);
+    return null;
+  }
+}
 async function meowAssistantLaborKnowledge(intent,raw=''){
   if(!intent)return null;
   if(!meowLaborKnowledgeCache){
     try{
-      const res=await fetch('./assets/meow-labor-knowledge-v1.json?v=205',{cache:'no-store'});
+      const res=await fetch('./assets/meow-labor-knowledge-v1.json?v=206',{cache:'no-store'});
       if(res.ok)meowLaborKnowledgeCache=await res.json();
     }catch(e){console.warn('[meow-assistant] labor knowledge unavailable',e)}
   }
   if(!meowLaborKnowledgeCache||!meowLaborKnowledgeCache.entries)return null;
-  if(intent==='article841'&&/保全/.test(String(raw||''))&&meowLaborKnowledgeCache.entries.security841)return meowLaborKnowledgeCache.entries.security841;
-  return meowLaborKnowledgeCache.entries[intent]||null;
+  let entry=intent==='article841'&&/保全/.test(String(raw||''))&&meowLaborKnowledgeCache.entries.security841
+    ?meowLaborKnowledgeCache.entries.security841
+    :meowLaborKnowledgeCache.entries[intent]||null;
+  if(!entry)return null;
+  entry=JSON.parse(JSON.stringify(entry));
+  if(entry.ruleKey){
+    const live=await meowAssistantLaborRuleContext(entry.ruleKey);
+    const currentAnswer=live&&live.current&&live.current.value&&live.current.value.assistantAnswer;
+    const upcomingAnswer=live&&live.upcoming&&live.upcoming.value&&live.upcoming.value.assistantAnswer;
+    if(currentAnswer)entry.baseAnswer=String(currentAnswer);
+    if(upcomingAnswer){
+      const stage=live.upcoming.status==='approved'?'已核定、尚未生效':'尚未正式生效';
+      entry.baseAnswer+=(entry.baseAnswer?'\n\n':'')+'另外（'+stage+'）：'+String(upcomingAnswer);
+    }
+    if(live)entry.liveRuleContext=live;
+  }
+  return entry;
 }
 const MEOW_ASSISTANT_LIVE_QUALITY_CASES=[
   {q:'我昨天大夜今天早班，中間才休8小時這樣可以喔？',intent:'shiftRestInterval'},
