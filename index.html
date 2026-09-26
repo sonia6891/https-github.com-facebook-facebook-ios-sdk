@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=213">
+<link rel="manifest" href="./manifest.webmanifest?v=214">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v213-dark-hero-image">
+<meta name="meow-ui-build" content="v214-matched-hero-geometry">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1801,6 +1801,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 </style>
 
 <style id="meow-dark-hero-v213">
+/* v214: identical Hero geometry in light and dark. Dark mode only swaps artwork. */
 /* v213 — use a dedicated dark hero artwork, never a filter over the light hero. */
 @media(max-width:760px){
   .hero-mobile-dark{display:none!important}
@@ -1810,12 +1811,27 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
     overflow:hidden;
     isolation:isolate;
   }
-  html.dark .hero-wrap .hero-mobile:not(.hero-mobile-dark){
-    display:none!important;
+  /* Keep the light Hero in layout as the geometry baseline so dark/light are exactly the same size. */
+  html.dark .hero-wrap>picture{
+    display:block;
+  }
+  html.dark .hero-wrap>picture .hero-mobile{
+    display:block!important;
+    visibility:hidden!important;
+    opacity:0!important;
+    pointer-events:none!important;
   }
   html.dark .hero-wrap .hero-mobile-dark{
     display:block!important;
-    position:relative;
+    position:absolute!important;
+    left:-10px!important;
+    top:0!important;
+    width:calc(100% + 20px)!important;
+    height:100%!important;
+    margin-left:0!important;
+    max-width:none!important;
+    object-fit:cover!important;
+    object-position:center center!important;
     z-index:1;
     filter:none!important;
     transform:none!important;
