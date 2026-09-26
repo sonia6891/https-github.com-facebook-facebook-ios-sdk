@@ -2459,7 +2459,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         </div>
       </div>
       <div class="ref-ai-card">
-        <div class="ref-block-title"><svg class="icon"><use href="#i-camera"/></svg><b>AI 匯入班表</b></div>
+        <div class="ref-block-title"><svg class="icon"><use href="#i-calendar"/></svg><b>AI 匯入班表</b></div>
         <p>拍照或上傳班表<br>讓 AI 幫你快速建立</p>
         <button type="button" id="refScheduleAdd">新增班表</button>
       </div>
@@ -3963,7 +3963,7 @@ function saveSchedulePrefs(){
   try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));}catch(e){}
   changedAndSync();
 }
-current.setDate(1);let activeTab='dashboard';document.documentElement.dataset.activeTab=activeTab,editingDate='',scheduleOpen=false,workSettingsOpen=false,appearanceOpen=false,schedulePrefsOpen=false,accountProOpen=false,dataSyncOpen=false,deferredPrompt=null,editingEventId='';
+current.setDate(1);let activeTab='dashboard',editingDate='',scheduleOpen=false,workSettingsOpen=false,appearanceOpen=false,schedulePrefsOpen=false,accountProOpen=false,dataSyncOpen=false,deferredPrompt=null,editingEventId='';document.documentElement.dataset.activeTab=activeTab;
 function mb(){const k=monthKey(current.getFullYear(),current.getMonth());state.months[k]=state.months[k]||{};return state.months[k]}
 // Display-only hierarchy. Keep existing saved preset keys and date calculations intact.
 function chineseScheduleCount(value){
