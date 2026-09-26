@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=215">
+<link rel="manifest" href="./manifest.webmanifest?v=216">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v215-reference-pages">
+<meta name="meow-ui-build" content="v216-reference-pages-live">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -2136,6 +2136,103 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   .ref-page-hero-copy>b{font-size:23px}
 }
 </style>
+
+<style id="meow-salary-reference-v216">
+/* v216 salary reference styling */
+@media(max-width:760px){
+  html[data-active-tab="salary"] .hero-wrap{display:none!important}
+  html[data-active-tab="salary"] .main{padding-top:0}
+
+  #page-salary.active{
+    color:#3b241b;
+    background:linear-gradient(180deg,#fffdf9 0%,#fff9f1 100%);
+  }
+  .ref-salary-hero{
+    position:relative;min-height:176px;margin:0 -10px 12px;padding:22px 43% 18px 18px;
+    overflow:hidden;border-radius:0 0 28px 28px;border-bottom:1px solid rgba(178,123,84,.12);
+    background:
+      radial-gradient(circle at 80% 15%,rgba(255,173,81,.11),transparent 28%),
+      linear-gradient(180deg,#fffdf8,#fff8ef);
+    box-shadow:0 10px 28px rgba(115,72,42,.06);
+  }
+  .ref-salary-hero img{
+    position:absolute;right:2%;bottom:-7px;width:43%;height:96%;object-fit:contain;
+    filter:saturate(.96) contrast(1.02);
+  }
+  #page-salary .salary-card{
+    border-radius:20px!important;
+    border:1px solid #eee1d6!important;
+    background:#fff!important;
+    box-shadow:0 10px 28px rgba(115,72,42,.08)!important;
+    padding:13px!important;
+  }
+  #page-salary .salary-card>.page-head{
+    padding:2px 2px 10px!important;
+    border-bottom:1px solid #f1e7df;
+  }
+  #page-salary .page-title{
+    color:#4a271b!important;font-size:22px!important;font-weight:950!important
+  }
+  #page-salary .mini-note{color:#a46c4d!important;font-size:10px!important}
+  #page-salary .salary-tabs{
+    display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:6px!important;
+    margin:10px 0 12px!important;padding:4px!important;border-radius:16px!important;
+    background:#fff4e8!important;border:1px solid #f1dcc9!important;
+  }
+  #page-salary .salary-tab{
+    min-height:44px!important;border:0!important;border-radius:12px!important;
+    background:transparent!important;color:#8b583f!important;
+    font-size:10px!important;font-weight:950!important
+  }
+  #page-salary .salary-tab.active{
+    background:#fff!important;color:#ff6e0e!important;
+    box-shadow:inset 0 0 0 2px #ffb271,0 4px 12px rgba(179,96,39,.08)!important
+  }
+  #page-salary .salary-tab-tier{
+    display:inline-grid!important;place-items:center!important;
+    min-width:31px!important;height:18px!important;border-radius:999px!important;
+    font-size:8px!important;margin-left:3px!important
+  }
+  #page-salary .salary-section{
+    margin-top:9px!important;padding:12px!important;border:1px solid #efe4da!important;
+    border-radius:17px!important;background:#fffdfb!important
+  }
+  #page-salary .salary-section-title{
+    color:#5c3425!important;font-size:14px!important;font-weight:950!important
+  }
+  #page-salary .salary-grid{gap:8px!important}
+  #page-salary .salary-field{
+    border:1px solid #f0e6dd!important;border-radius:14px!important;
+    background:#fff!important;padding:10px!important
+  }
+  #page-salary .salary-field label{color:#6b4838!important;font-size:10px!important;font-weight:850!important}
+  #page-salary .salary-field input,
+  #page-salary .salary-field select{
+    border-color:#eadfd7!important;background:#fffdfb!important;border-radius:10px!important
+  }
+  #page-salary .salary-results{
+    display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important
+  }
+  #page-salary .result-card{
+    border:1px solid #efe3d8!important;border-radius:15px!important;background:#fff!important;
+    box-shadow:none!important;padding:10px!important
+  }
+  #page-salary .result-card strong{color:#4c2c20!important}
+  #page-salary .compare-card,
+  #page-salary .pro-card,
+  #page-salary .pro-recent-card{
+    border-radius:16px!important;border-color:#efe2d6!important;background:#fff!important
+  }
+  #page-salary .pro-smart-hero{
+    background:linear-gradient(135deg,#fff5e8,#fffdf9)!important;
+    border-color:#f1d5af!important
+  }
+  #page-salary .pro-start-btn{
+    background:linear-gradient(135deg,#ffa13f,#ff7112)!important;
+    border-radius:13px!important;color:#fff!important
+  }
+}
+</style>
 </head>
 <body>
 <div id="app-splash" aria-hidden="true"><img src="./splash-v183.jpg?v=183" alt=""></div>
@@ -2545,6 +2642,14 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   </section>
 
   <section class="page" id="page-salary">
+    <div class="ref-salary-hero">
+      <div class="ref-page-hero-copy">
+        <b>薪資</b>
+        <p>每一筆辛苦，都要算得清清楚楚 ♡</p>
+        <small>薪資、加班、對帳，一次整理好。</small>
+      </div>
+      <img src="./assets/meow-assistant-pro-v169.webp?v=169" alt="" aria-hidden="true">
+    </div>
     <div class="card salary-card"><div class="page-head" style="margin:0"><div class="page-title"><svg class="icon" style="font-size:28px;color:var(--mobile-gold-ink, #8f583e)"><use href="#i-money"/></svg>薪資</div><div class="mini-note" id="salaryHeaderNote">試算與對帳，左右切換更直覺 🐾</div></div>
       <div class="salary-tabs" role="tablist" aria-label="薪資功能">
         <button type="button" class="salary-tab active" id="salaryTabCalc" role="tab" aria-selected="true">薪資試算</button>
