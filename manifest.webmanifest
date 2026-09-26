@@ -2,7 +2,7 @@
   "name": "喵的，又要上班了",
   "short_name": "喵的，又要上班了",
   "description": "社畜排班、出勤、請假與薪資試算工具",
-  "start_url": "./?v=213",
+  "start_url": "./?v=214",
   "scope": "./",
   "display": "standalone",
   "background_color": "#fff8ef",
