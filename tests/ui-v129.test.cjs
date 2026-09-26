@@ -101,8 +101,8 @@ assert(html.includes("kind:'todo'"),'todo data must be stored in personalEvents'
 assert(html.includes('function toggleTodoDone(id)'),'todo completion toggle missing');
 assert(html.includes("e.kind!=='note'&&e.kind!=='todo'"),'itinerary list must exclude todos');
 assert(html.includes('>行程與待辦</button>'),'desktop navigation label missing');
-assert(html.includes('<span>行程待辦</span>'),'mobile navigation label missing');
-console.log('PASS v142 itinerary/todo structure');
+assert(html.includes('<span>行程</span>'),'mobile navigation label missing');
+console.log('PASS v215 itinerary/todo reference navigation');
 
 
 for(const id of ['scheduleAddDialogClose','eventDialogClose','eventDialogCancel','todoDialogClose','todoDialogCancel']){
