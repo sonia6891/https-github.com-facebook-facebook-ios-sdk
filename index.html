@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=211">
+<link rel="manifest" href="./manifest.webmanifest?v=212">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v211-natural-dark-hero">
+<meta name="meow-ui-build" content="v212-reference-dark-dashboard">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1561,6 +1561,243 @@ html.dark .meow-welcome::backdrop{background:rgba(28,22,18,.85)}
 html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-local,html.dark .welcome-foot,html.dark .welcome-apple-note,html.dark .welcome-benefits p{color:#d5beaf}html.dark .welcome-divider{color:#d5beaf}html.dark .welcome-benefit-icon{background:#493322}html.dark .welcome-guest{background:#483322;color:#ffd49b}html.dark .welcome-email{background:#3b302a;color:#fff4eb}
 .welcome-benefit-icon svg{width:27px;height:27px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
+</style>
+
+<style id="meow-dark-dashboard-v212">
+/* v212 — reference-matched mobile dark mode. Layout/content/assets stay unchanged. */
+@media(max-width:760px){
+  html.dark,
+  html.dark body{
+    background:
+      radial-gradient(circle at 18% -8%, rgba(47,73,119,.20), transparent 34%),
+      radial-gradient(circle at 88% 10%, rgba(187,132,58,.08), transparent 28%),
+      linear-gradient(180deg,#0b1020 0%,#101624 50%,#0d1320 100%);
+    color:#f5f2ee;
+  }
+
+  html.dark .main{
+    background:transparent;
+  }
+
+  /* HERO — preserve the exact approved artwork; only give it the same deep navy/gold atmosphere. */
+  html.dark .hero-wrap{
+    background:#0d1422;
+    overflow:hidden;
+    isolation:isolate;
+  }
+  html.dark .hero-wrap .hero-mobile{
+    filter:brightness(.84) contrast(1.035) saturate(.95);
+    transform:none;
+  }
+  html.dark .hero-wrap::before{
+    content:"";
+    position:absolute;
+    inset:0 -10px;
+    z-index:2;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 76% 26%, rgba(244,190,93,.10), transparent 25%),
+      linear-gradient(180deg, rgba(7,12,22,.10) 0%, rgba(8,13,23,.18) 55%, rgba(9,14,24,.28) 100%);
+  }
+  html.dark .hero-wrap::after{
+    content:"";
+    position:absolute;
+    left:-10px;
+    right:-10px;
+    bottom:0;
+    height:26%;
+    z-index:3;
+    pointer-events:none;
+    background:linear-gradient(180deg,rgba(11,16,27,0),rgba(11,16,27,.48));
+  }
+  html.dark .mobile-hero-actions{z-index:9}
+  html.dark .hero-theme .mobile-theme-sun{color:#f2bd63}
+  html.dark .hero-theme .mobile-theme-moon{color:#f6e3bb}
+  html.dark .hero-theme .mobile-theme-track{
+    background:linear-gradient(180deg,#6a5947,#4b4037);
+    box-shadow:inset 0 0 0 1px rgba(255,216,144,.14),0 2px 8px rgba(0,0,0,.18);
+  }
+  html.dark .mobile-avatar-button .hero-avatar{
+    border-color:rgba(244,218,182,.62);
+    background:#202636;
+    box-shadow:0 3px 12px rgba(0,0,0,.28);
+  }
+
+  /* Dashboard canvas */
+  html.dark #page-dashboard.active{
+    background:
+      radial-gradient(circle at 14% 0%,rgba(42,72,123,.16),transparent 30%),
+      radial-gradient(circle at 90% 18%,rgba(160,111,47,.08),transparent 30%),
+      linear-gradient(180deg,#0e1421 0%,#111827 54%,#0d1320 100%);
+    border-radius:0;
+  }
+  html.dark .mobile-dashboard-approved{
+    --mda-card:rgba(21,29,44,.88);
+    --mda-ink:#f6f2ed;
+    --mda-muted:#c8cfda;
+    --mda-line:rgba(178,193,215,.16);
+    --mda-cream:#2d2519;
+    color:var(--mda-ink);
+  }
+
+  /* Main glass cards */
+  html.dark .mda-worktypes,
+  html.dark .mda-next-shift,
+  html.dark .mda-leave-shell,
+  html.dark .mda-reminder{
+    background:linear-gradient(180deg,rgba(24,33,49,.94),rgba(17,24,37,.95));
+    border:1px solid rgba(191,204,224,.15);
+    box-shadow:
+      0 10px 26px rgba(0,0,0,.26),
+      inset 0 1px 0 rgba(255,255,255,.035);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+  html.dark .mda-worktypes,
+  html.dark .mda-leave-shell{border-radius:18px}
+  html.dark .mda-next-shift,
+  html.dark .mda-reminder{border-radius:16px}
+
+  /* Work types */
+  html.dark .mda-section-title strong,
+  html.dark .mda-leave-head strong,
+  html.dark .mda-next-shift>b,
+  html.dark .mda-reminder-copy b{
+    color:#f7f3ee;
+  }
+  html.dark .mda-title-icon{color:#ddd4c8}
+  html.dark .mda-worktype{
+    background:linear-gradient(180deg,rgba(31,40,56,.92),rgba(23,30,43,.92));
+    border:1px solid rgba(192,204,222,.12);
+    color:#e6e2de;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.025);
+  }
+  html.dark .mda-worktype.active{
+    background:linear-gradient(180deg,#f2c879 0%,#d8a657 100%);
+    border-color:rgba(255,224,164,.72);
+    color:#2e2114;
+    box-shadow:
+      0 6px 18px rgba(215,163,80,.25),
+      inset 0 1px 0 rgba(255,255,255,.30);
+  }
+  html.dark .mda-worktype.active .mda-worktype-icon{color:#312417}
+  html.dark .mda-worktype-icon.hospital{color:#e8a984}
+  html.dark .mda-worktype-icon.restaurant{color:#d1b7a4}
+  html.dark .mda-worktype-icon.security{color:#c9d0db}
+  html.dark .mda-worktype-icon.factory{color:#d2c3b6}
+  html.dark .mda-worktype-icon.custom{color:#d5d9e0}
+  html.dark .mda-worktype-feedback{color:#c8cfda}
+
+  /* KPI cards — deep glow like the reference */
+  html.dark .mda-kpi{
+    border:1px solid rgba(205,217,233,.15);
+    box-shadow:
+      0 10px 24px rgba(0,0,0,.24),
+      inset 0 1px 0 rgba(255,255,255,.035);
+  }
+  html.dark .mda-kpi-blue{
+    background:
+      radial-gradient(circle at 20% 10%,rgba(83,161,255,.12),transparent 38%),
+      linear-gradient(160deg,#173453 0%,#15263e 100%);
+  }
+  html.dark .mda-kpi-pink{
+    background:
+      radial-gradient(circle at 18% 12%,rgba(255,153,100,.10),transparent 38%),
+      linear-gradient(160deg,#493126 0%,#2e2320 100%);
+  }
+  html.dark .mda-kpi-sky{
+    background:
+      radial-gradient(circle at 18% 10%,rgba(170,117,255,.13),transparent 40%),
+      linear-gradient(160deg,#3d2d59 0%,#2a243c 100%);
+  }
+  html.dark .mda-kpi-cream{
+    background:
+      radial-gradient(circle at 18% 12%,rgba(255,195,88,.11),transparent 40%),
+      linear-gradient(160deg,#493a22 0%,#30291d 100%);
+  }
+  html.dark .mda-kpi b{color:#e8e5e1}
+  html.dark .mda-kpi strong{color:#fff}
+  html.dark .mda-kpi-blue .mda-kpi-icon{color:#7dbdff}
+  html.dark .mda-kpi-pink .mda-kpi-icon{color:#ff9a71}
+  html.dark .mda-kpi-sky .mda-kpi-icon{color:#c699ff}
+  html.dark .mda-kpi-cream .mda-kpi-icon{color:#f3c46f}
+
+  /* Next shift */
+  html.dark .mda-next-icon{color:#ded7ce}
+  html.dark .mda-next-shift>span:not(.mda-next-icon):not(.mda-next-pill):not(.mda-chevron){color:#dde3eb}
+  html.dark .mda-next-pill{
+    background:linear-gradient(180deg,#6a4d2b,#4e3b24);
+    color:#ffe2a6;
+    border:1px solid rgba(243,194,103,.28);
+  }
+  html.dark .mda-next-shift em{color:#f3c46f}
+  html.dark .mda-chevron{color:#d9dee6}
+
+  /* Leave cards */
+  html.dark .mda-leave-head small,
+  html.dark .mda-leave-head button{color:#c8cfda}
+  html.dark .mda-leave-card{
+    border:1px solid rgba(209,219,232,.14);
+    box-shadow:
+      0 7px 18px rgba(0,0,0,.18),
+      inset 0 1px 0 rgba(255,255,255,.025);
+  }
+  html.dark .mda-leave-sick{
+    background:
+      radial-gradient(circle at 22% 8%,rgba(93,165,255,.12),transparent 42%),
+      linear-gradient(160deg,#183958,#172b43);
+  }
+  html.dark .mda-leave-personal{
+    background:
+      radial-gradient(circle at 22% 8%,rgba(236,159,103,.10),transparent 42%),
+      linear-gradient(160deg,#473327,#30251f);
+  }
+  html.dark .mda-leave-annual{
+    background:
+      radial-gradient(circle at 22% 8%,rgba(102,208,121,.10),transparent 42%),
+      linear-gradient(160deg,#24422e,#1f3226);
+  }
+  html.dark .mda-leave-menstrual{
+    background:
+      radial-gradient(circle at 22% 8%,rgba(245,143,175,.11),transparent 42%),
+      linear-gradient(160deg,#4a2e3a,#352630);
+  }
+  html.dark .mda-leave-card b,
+  html.dark .mda-leave-card strong{color:#f9f7f4}
+  html.dark .mda-leave-card small{color:#c8cfda}
+  html.dark .mda-leave-sick .mda-leave-icon svg{stroke:#86c1ff}
+  html.dark .mda-leave-sick .mda-leave-icon svg path:last-child{stroke:#f4a0a4}
+  html.dark .mda-leave-personal .mda-leave-icon svg{stroke:#efb38b}
+  html.dark .mda-leave-annual .mda-leave-icon svg{stroke:#8fd79b}
+  html.dark .mda-leave-annual .mda-leave-icon svg path:last-child{stroke:#f1c46f}
+  html.dark .mda-leave-menstrual .mda-leave-icon .moon{stroke:#f19db2;fill:rgba(241,157,178,.06)}
+
+  /* Reminder */
+  html.dark .mda-reminder{
+    background:
+      radial-gradient(circle at 10% 50%,rgba(236,184,93,.08),transparent 34%),
+      linear-gradient(180deg,rgba(24,31,45,.96),rgba(17,23,35,.98));
+    border-color:rgba(229,180,94,.28);
+  }
+  html.dark .mda-reminder-icon{color:#f0bf69}
+  html.dark .mda-reminder-copy small{color:#c8cfda}
+  html.dark .mda-reminder .mda-chevron{color:#d8dde5}
+
+  /* Bottom nav */
+  html.dark .bottom-nav{
+    background:linear-gradient(180deg,rgba(18,25,39,.96),rgba(13,18,29,.985));
+    border-color:rgba(198,210,229,.13);
+    box-shadow:0 -8px 28px rgba(0,0,0,.28),inset 0 1px rgba(255,255,255,.025);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+  }
+  html.dark .bottom-nav button{color:#d3d7df}
+  html.dark .bottom-nav button.active{
+    background:rgba(247,197,112,.075);
+    color:#f5c976;
+    box-shadow:inset 0 0 0 1px rgba(239,185,96,.09);
+  }
+}
 </style>
 </head>
 <body>
@@ -8821,7 +9058,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v211';
+    const reloadKey='meow-sw-reloaded-v212';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -8830,7 +9067,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=211',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=212',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
