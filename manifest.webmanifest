@@ -2,7 +2,7 @@
   "name": "喵的，又要上班了",
   "short_name": "喵的，又要上班了",
   "description": "社畜排班、出勤、請假與薪資試算工具",
-  "start_url": "./",
+  "start_url": "./?v=209",
   "scope": "./",
   "display": "standalone",
   "background_color": "#fff8ef",
@@ -15,17 +15,17 @@
   ],
   "icons": [
     {
-      "src": "./app-icon-v178-192.png?v=205",
+      "src": "./app-icon-v178-192.png?v=209",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "./app-icon-v178-512.png?v=205",
+      "src": "./app-icon-v178-512.png?v=209",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
     }
   ],
-  "id": "/meow-work-app/?v=205"
+  "id": "/meow-work-app/"
 }
