@@ -17,7 +17,7 @@
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v208-dashboard-color-separation">
+<meta name="meow-ui-build" content="v209-soft-dark-dashboard">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1235,7 +1235,111 @@ html.dark .settings-pro-v129{
   .mda-reminder{width:100%;border-radius:17px;padding:11px 12px;display:grid;grid-template-columns:42px minmax(0,1fr) auto;align-items:center;gap:10px;color:var(--mda-ink);text-align:left}
   .mda-reminder-icon{width:38px;height:38px;color:#eca23c;display:grid;place-items:center}
   .mda-reminder-copy{min-width:0}.mda-reminder-copy b{display:block;font-size:16px;font-weight:950}.mda-reminder-copy small{display:block;margin-top:3px;font-size:11px;color:#785645;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  html.dark .mda-reminder-copy small{color:#e3cdbc}
+  html.dark .mda-reminder-copy small{color:#d7c7ba}
+
+  /* v209: softer warm-night dashboard colors; layout and artwork unchanged */
+  html.dark #page-dashboard.active{
+    background:
+      radial-gradient(circle at 18% 4%,rgba(111,82,58,.10),transparent 31%),
+      radial-gradient(circle at 82% 18%,rgba(74,92,118,.10),transparent 34%),
+      linear-gradient(180deg,#171a1f 0%,#1a1918 58%,#17191d 100%);
+  }
+  html.dark .mobile-dashboard-approved{
+    --mda-card:rgba(34,35,38,.94);
+    --mda-ink:#f6efe9;
+    --mda-muted:#c9baae;
+    --mda-line:rgba(216,194,176,.18);
+    --mda-cream:#3a3024;
+  }
+  html.dark .mda-worktypes,
+  html.dark .mda-leave-shell,
+  html.dark .mda-next-shift{
+    background:linear-gradient(145deg,rgba(39,40,43,.97),rgba(29,29,31,.97));
+    border-color:rgba(222,201,181,.15);
+    box-shadow:0 10px 28px rgba(0,0,0,.18),inset 0 1px rgba(255,255,255,.025);
+  }
+  html.dark .mda-worktype{
+    background:linear-gradient(145deg,#25262a,#202124);
+    border-color:rgba(230,211,194,.10);
+    color:#dfd2c7;
+    box-shadow:none;
+  }
+  html.dark .mda-worktype.active{
+    background:linear-gradient(145deg,#4a3827,#3d3024);
+    border-color:rgba(239,190,105,.50);
+    color:#ffe0a4;
+    box-shadow:0 5px 14px rgba(214,154,61,.12),inset 0 1px rgba(255,242,211,.06);
+  }
+  html.dark .mda-title-icon{color:#d4b091}
+  html.dark .mda-worktype-icon.hospital{color:#e4a66f}
+  html.dark .mda-worktype-icon.restaurant{color:#c7a18b}
+  html.dark .mda-worktype-icon.security{color:#b9aaa0}
+  html.dark .mda-worktype-icon.factory{color:#bda38f}
+  html.dark .mda-worktype-icon.custom{color:#c5aa96}
+  html.dark .mda-worktype-feedback{color:#cdb9a8}
+
+  html.dark .mda-kpi{
+    border-color:rgba(232,218,205,.15);
+    box-shadow:0 9px 24px rgba(0,0,0,.17),inset 0 1px rgba(255,255,255,.02);
+  }
+  html.dark .mda-kpi-blue{background:linear-gradient(145deg,#1b2b3b,#21364c)}
+  html.dark .mda-kpi-pink{background:linear-gradient(145deg,#35261f,#452d23)}
+  html.dark .mda-kpi-sky{background:linear-gradient(145deg,#2b263a,#3a2d4d)}
+  html.dark .mda-kpi-cream{background:linear-gradient(145deg,#342d20,#443721)}
+  html.dark .mda-kpi-blue .mda-kpi-icon{color:#82b8ec}
+  html.dark .mda-kpi-pink .mda-kpi-icon{color:#ef9b72}
+  html.dark .mda-kpi-sky .mda-kpi-icon{color:#b38be8}
+  html.dark .mda-kpi-cream .mda-kpi-icon{color:#f0bf67}
+
+  html.dark .mda-next-icon{color:#d1b097}
+  html.dark .mda-next-pill{
+    background:linear-gradient(145deg,#493a25,#3d3122);
+    color:#ffe0a0;
+    border:1px solid rgba(235,185,92,.20);
+  }
+  html.dark .mda-next-shift em{color:#efb76a}
+  html.dark .mda-chevron{color:#d4c4b8}
+
+  html.dark .mda-leave-shell{
+    background:linear-gradient(145deg,rgba(38,40,45,.97),rgba(30,31,35,.97));
+  }
+  html.dark .mda-leave-head-icon{color:#78aee7}
+  html.dark .mda-leave-card{
+    border:1px solid rgba(234,219,206,.12);
+    box-shadow:inset 0 1px rgba(255,255,255,.02);
+  }
+  html.dark .mda-leave-sick{background:linear-gradient(145deg,#1d3043,#233a51)}
+  html.dark .mda-leave-personal{background:linear-gradient(145deg,#3a2c24,#493327)}
+  html.dark .mda-leave-annual{background:linear-gradient(145deg,#23382b,#2c4733)}
+  html.dark .mda-leave-menstrual{background:linear-gradient(145deg,#3d2831,#4a2f3a)}
+  html.dark .mda-leave-sick .mda-leave-icon svg{stroke:#87b7e7}
+  html.dark .mda-leave-sick .mda-leave-icon svg path:last-child{stroke:#eb9b9d}
+  html.dark .mda-leave-personal .mda-leave-icon svg{stroke:#e0ad83}
+  html.dark .mda-leave-annual .mda-leave-icon svg{stroke:#8bc090}
+  html.dark .mda-leave-annual .mda-leave-icon svg path:last-child{stroke:#e6bd73}
+  html.dark .mda-leave-menstrual .mda-leave-icon .moon{stroke:#ed9aaa;fill:rgba(237,154,170,.08)}
+
+  html.dark .mda-reminder{
+    background:
+      linear-gradient(110deg,rgba(60,48,36,.88),rgba(42,39,38,.92) 44%,rgba(34,35,39,.96));
+    border-color:rgba(231,182,99,.23);
+    box-shadow:0 9px 24px rgba(0,0,0,.15),inset 0 1px rgba(255,238,208,.035);
+  }
+  html.dark .mda-reminder-icon{color:#efbd6e}
+  html.dark .mda-reminder-copy b{color:#f7eee7}
+  html.dark .mda-reminder-copy small{color:#d3c2b3}
+
+  html.dark .bottom-nav{
+    background:linear-gradient(180deg,rgba(31,32,35,.96),rgba(25,26,29,.98));
+    border-color:rgba(218,198,181,.14);
+    box-shadow:0 -8px 28px rgba(0,0,0,.20),inset 0 1px rgba(255,255,255,.02);
+  }
+  html.dark .bottom-nav button{color:#cfc2b9}
+  html.dark .bottom-nav button.active{
+    background:linear-gradient(145deg,#453522,#3a2e22);
+    color:#f1bd68;
+    box-shadow:inset 0 0 0 1px rgba(233,183,94,.12);
+  }
 }
 </style>
 <style id="meow-splash-login-v184">
