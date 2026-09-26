@@ -17,7 +17,7 @@
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v206-mobile-dashboard-approved">
+<meta name="meow-ui-build" content="v207-worktype-linked">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1190,6 +1190,9 @@ html.dark .settings-pro-v129{
   .mda-worktype-icon{width:18px;height:18px;display:inline-grid;place-items:center;flex:0 0 auto}
   .mda-worktype b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .mda-worktype-icon.hospital{color:#dc865d}.mda-worktype-icon.restaurant{color:#936550}.mda-worktype-icon.security{color:#7f6858}.mda-worktype-icon.factory{color:#8a6a58}.mda-worktype-icon.custom{color:#916954}
+  .mda-worktype-feedback{min-height:0;margin-top:0;padding:0 5px;color:#92705d;font-size:10px;font-weight:800;line-height:1.35;opacity:0;transform:translateY(-2px);transition:.18s ease}
+  .mda-worktype-feedback.show{min-height:16px;margin-top:7px;opacity:1;transform:none}
+  html.dark .mda-worktype-feedback{color:#e0c7b5}
   .mda-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
   .mda-kpi{min-width:0;border:1px solid rgba(222,215,207,.72);border-radius:16px;padding:10px 7px 9px;text-align:center;box-shadow:0 5px 15px rgba(85,61,45,.04)}
   .mda-kpi-blue{background:linear-gradient(145deg,#f5fbff,#edf6ff)}
@@ -1225,7 +1228,7 @@ html.dark .settings-pro-v129{
   .mda-leave-sick .mda-leave-icon svg{stroke:#9a6c54}.mda-leave-sick .mda-leave-icon svg path:last-child{stroke:#ef7778}
   .mda-leave-personal .mda-leave-icon svg{stroke:#a7785e}
   .mda-leave-annual .mda-leave-icon svg{stroke:#9a7058}.mda-leave-annual .mda-leave-icon svg path:last-child{stroke:#efaf48}
-  .mda-leave-menstrual .mda-leave-icon .moon{stroke:#95654e}.mda-leave-menstrual .mda-leave-icon .drop{stroke:#ef7778;fill:#ff9b9d}
+  .mda-leave-menstrual .mda-leave-icon .moon{stroke:#d9787e;fill:#fff1f2}
   .mda-leave-card b{display:block;font-size:12px;font-weight:950}
   .mda-leave-card strong{display:block;margin-top:5px;font-size:clamp(15px,4.6vw,20px);font-weight:950;white-space:nowrap}
   .mda-leave-card small{display:block;margin-top:4px;color:var(--mda-muted);font-size:9px;line-height:1.25;white-space:nowrap}
@@ -1511,6 +1514,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           <button type="button" class="mda-worktype" data-mobile-worktype="factory"><span class="mda-worktype-icon factory"><svg viewBox="0 0 24 24"><path d="M3 20V9l6 3V8l6 4V5h4v15z"/><path d="M7 16h2M12 16h2M17 16h2"/></svg></span><b>工廠</b></button>
           <button type="button" class="mda-worktype" data-mobile-worktype="custom"><span class="mda-worktype-icon custom"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></span><b>自訂</b></button>
         </div>
+        <div class="mda-worktype-feedback" id="mDashWorkTypeFeedback" aria-live="polite"></div>
       </section>
 
       <section class="mda-kpis" aria-label="本月概況">
@@ -1583,8 +1587,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
           <article class="mda-leave-card mda-leave-menstrual">
             <span class="mda-leave-icon" aria-hidden="true">
               <svg viewBox="0 0 48 48">
-                <path class="moon" d="M30.5 9.5c-7.2 1.8-12.5 8.2-12.5 15.9 0 9 7.3 16.3 16.3 16.3 2.2 0 4.3-.4 6.2-1.2-2.6 3.5-6.8 5.8-11.5 5.8-8.1 0-14.7-6.6-14.7-14.7 0-9.7 8-17.7 17.7-17.7 2.7 0 5.2.6 7.5 1.7-2.5-3.7-5.4-5.8-9-6.1z"/>
-                <path class="drop" d="M37 16.5c0 3.2-2.5 5.8-5.6 5.8s-5.6-2.6-5.6-5.8c0-3.5 5.6-9.2 5.6-9.2s5.6 5.7 5.6 9.2z"/>
+                <path class="moon" d="M33.5 10.5c-1.4 1.1-2.7 2.5-3.6 4.2-3.7 6.8-1.1 15.3 5.8 19 1.1.6 2.2 1 3.4 1.3-3.4 3.4-8.7 4.4-13.2 2-6.7-3.6-9.2-11.9-5.7-18.6 2.7-5 8.2-7.9 13.3-7.9z"/>
               </svg>
             </span>
             <b>生理假</b>
@@ -2488,6 +2491,16 @@ function canUse(feature){const meta=FEATURE_CATALOG[feature];return !!meta&&(isD
 const statusMap={
  none:{label:'正常班表',cls:'',icon:''},overtime:{label:'加班',cls:'st-ot',icon:'i-clock'},sick:{label:'病假',cls:'st-sick',icon:'i-cross'},menstrual:{label:'生理假',cls:'st-menstrual',icon:'i-drop'},personal:{label:'事假',cls:'st-personal',icon:'i-doc'},annual:{label:'特休',cls:'st-annual',icon:'i-star'},custom:{label:'自訂假別',cls:'st-custom',icon:'i-star'}
 };
+const WORK_TYPE_META={
+  hospital:{label:'醫院',recommendations:['四班二輪','四班三輪','固定早／晚／大夜']},
+  restaurant:{label:'餐廳',recommendations:['固定早／晚班','拆班／兩頭班','自訂循環']},
+  security:{label:'保全',recommendations:['固定大夜','長工時固定班','自訂循環']},
+  factory:{label:'工廠',recommendations:['四班二輪','2-2-3','四班三輪']},
+  custom:{label:'自訂',recommendations:['自訂循環','固定班','自由排班']}
+};
+function workTypeMeta(value=state.settings.workType){
+  return WORK_TYPE_META[value]||WORK_TYPE_META.custom;
+}
 function defaultState(){const d=new Date();return{theme:'light',profile:{avatar:'',name:'喵星人'},schedule:{preset:'2-2',shiftName:'A班',workDays:2,offDays:2,startDate:iso(d)},scheduleOverrides:{},settings:{workType:'hospital',baseSalary:0,shiftAllowancePerDay:0,mealAllowance:0,performanceAllowance:0,transportAllowance:0,otherIncome:0,payday:0,hireDate:'',dailyWorkHours:8,defaultOvertimeHours:10,overtimeRateMode:'unselected',overtimeFixedRate:2,overtimeRegularFirst:4/3,overtimeRegularLater:5/3,overtimeRestFirst:4/3,overtimeRestLater:5/3,overtimeRestOver8:8/3,annualUsedHoursByPeriod:{},annualLeaveCycle:'anniversary',annualCustomDate:'',sickLeaveDays:0,personalLeaveDays:0,sickUsedHours:0,personalUsedHours:0},months:{},dayStatus:{},personalEvents:{}}}
 function loadSaved(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return{state:defaultState(),savedAt:null};const p=JSON.parse(raw);const s=defaultState(),v=p.state||p;s.theme=preferredTheme();s.profile=Object.assign({},s.profile,v.profile||{});s.schedule=Object.assign({},s.schedule,v.schedule||{});s.scheduleOverrides=v.scheduleOverrides||{};s.settings=Object.assign({},s.settings,v.settings||{});s.months=v.months||{};s.dayStatus=v.dayStatus||{};s.personalEvents=v.personalEvents||{};return{state:s,savedAt:p.savedAt||null}}catch(e){return{state:defaultState(),savedAt:null}}}
 let loaded=loadSaved(),state=loaded.state,lastSavedAt=loaded.savedAt,current=new Date();
@@ -6219,13 +6232,22 @@ function setTab(tab){
   render();
 }
 qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
+let mobileWorkTypeFeedbackTimer=null;
+function showMobileWorkTypeFeedback(value){
+  const box=$('mDashWorkTypeFeedback');if(!box)return;
+  const meta=workTypeMeta(value);
+  box.textContent='已切換：'+meta.label+'｜排班頁會優先推薦 '+meta.recommendations.join('、');
+  box.classList.add('show');
+  clearTimeout(mobileWorkTypeFeedbackTimer);
+  mobileWorkTypeFeedbackTimer=setTimeout(()=>box.classList.remove('show'),2600);
+}
 qsa('[data-mobile-worktype]').forEach(button=>button.onclick=()=>{
   const value=button.dataset.mobileWorktype;
   if(!['hospital','restaurant','security','factory','custom'].includes(value))return;
-  if(state.settings.workType===value)return;
   state.settings.workType=value;
-  changedAndSync();
   renderMobileDashboardApproved();
+  showMobileWorkTypeFeedback(value);
+  changedAndSync();
 });
 function changeMonth(delta){current.setMonth(current.getMonth()+delta);render()}if($('dashPrev'))$('dashPrev').onclick=()=>changeMonth(-1);if($('dashNext'))$('dashNext').onclick=()=>changeMonth(1);$('calPrev').onclick=()=>changeMonth(-1);$('calNext').onclick=()=>changeMonth(1);$('calToday').onclick=()=>{current=new Date();current.setDate(1);render()};
 function openAttendanceAddDialog(){
@@ -7123,6 +7145,9 @@ function meowAssistantAppContext(raw=''){
     currentMonth:now.getFullYear()+'-'+pad(now.getMonth()+1),
     viewedMonth:current.getFullYear()+'-'+pad(current.getMonth()+1),
     targetMonth:target.year+'-'+pad(target.month+1),
+    workTypeKey:settings.workType||'custom',
+    workType:workTypeMeta(settings.workType).label,
+    workTypeScheduleRecommendations:workTypeMeta(settings.workType).recommendations,
     scheduleName:typeof scheduleName==='function'?scheduleName():'',
     schedulePreset:schedule.preset||null,
     scheduleStartDate:schedule.startDate||null,
