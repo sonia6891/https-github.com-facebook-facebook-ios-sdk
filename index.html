@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=214">
+<link rel="manifest" href="./manifest.webmanifest?v=215">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v214-matched-hero-geometry">
+<meta name="meow-ui-build" content="v215-reference-pages">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1879,6 +1879,263 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 }
 </style>
 
+
+<style id="meow-reference-pages-v215">
+/* v215 — page layouts rebuilt to follow the user's supplied light-mode references. */
+:root{
+  --ref-cream:#fffaf3;
+  --ref-paper:#fffdf9;
+  --ref-line:#eadfd5;
+  --ref-brown:#8f583e;
+  --ref-deep:#5c2a18;
+  --ref-orange:#ff7a16;
+  --ref-orange2:#ffa34e;
+  --ref-soft:#fff1e3;
+  --ref-shadow:0 10px 28px rgba(115,72,42,.08);
+}
+@media(max-width:760px){
+  html[data-active-tab="attendance"] .hero-wrap,
+  html[data-active-tab="settings"] .hero-wrap{display:none!important}
+  html[data-active-tab="attendance"] .main,
+  html[data-active-tab="settings"] .main{padding-top:0}
+
+  #page-calendar.active,
+  #page-attendance.active,
+  #page-settings.active{
+    color:#3b241b;
+    background:linear-gradient(180deg,#fffdf9 0%,#fff9f1 100%);
+  }
+
+  .ref-schedule-page-heading{
+    display:flex;align-items:center;justify-content:space-between;
+    margin:8px 0 10px;padding:0 2px;
+  }
+  .ref-schedule-page-heading b{display:block;font-size:22px;font-weight:950;color:#432219}
+  .ref-schedule-page-heading small{display:block;margin-top:3px;font-size:10px;color:#9b6b52;font-weight:750}
+
+  .ref-worktype-panel,.ref-template-card,.ref-ai-card,
+  .ref-itinerary-hero,.ref-settings-hero,.ref-itinerary-footer-note{
+    border:1px solid rgba(178,123,84,.12);
+    background:rgba(255,255,255,.88);
+    box-shadow:var(--ref-shadow);
+  }
+  .ref-worktype-panel{border-radius:20px;padding:11px;margin-bottom:10px}
+  .ref-block-title{display:flex;align-items:center;gap:8px;color:#613822}
+  .ref-block-title .icon{width:20px;height:20px}
+  .ref-block-title b{font-size:14px;font-weight:950}
+  .ref-worktype-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:9px}
+  .ref-worktype-row button{
+    min-width:0;border:1px solid #f0e3d7;background:#fff;border-radius:13px;
+    padding:10px 4px;color:#8a5439;font-size:10px;font-weight:900;
+  }
+  .ref-worktype-row button.active{
+    color:#fff;background:linear-gradient(135deg,#ffa33e,#ff7c18);
+    border-color:transparent;box-shadow:0 6px 14px rgba(255,126,27,.2)
+  }
+
+  .ref-schedule-top-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:9px;margin-bottom:10px}
+  .ref-template-card,.ref-ai-card{border-radius:18px;padding:11px}
+  .ref-template-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-top:9px}
+  .ref-template-buttons button{
+    border:1px solid #ece4df;background:#fff;border-radius:11px;padding:8px 10px;
+    color:#55423b;font-size:10px;font-weight:850
+  }
+  .ref-template-buttons button.active{
+    border-color:#ff7a16;color:#8b3f12;background:#fff8ef;
+    box-shadow:inset 0 0 0 1px rgba(255,122,22,.12)
+  }
+  .ref-ai-card{text-align:center;background:linear-gradient(145deg,#fffaf3,#fff)}
+  .ref-ai-card .ref-block-title{justify-content:center}
+  .ref-ai-card p{font-size:10px;line-height:1.55;color:#765c4d;margin:10px 0}
+  .ref-ai-card>button{
+    width:100%;border:0;border-radius:12px;padding:10px 8px;
+    color:#fff;background:linear-gradient(135deg,#c68761,#a96645);
+    font-size:11px;font-weight:950
+  }
+
+  #page-calendar .schedule-card-v136{
+    border-radius:18px;background:#fff;padding:0;border-color:#eee1d6;
+    box-shadow:var(--ref-shadow);overflow:visible;margin-bottom:10px
+  }
+  #page-calendar .schedule-v136-tools{padding:12px 13px;border-bottom:1px solid #f0e7df}
+  #page-calendar .schedule-v138-heading b{font-size:16px;color:#3d251e}
+  #page-calendar .schedule-v138-heading small{font-size:9px;color:#9a7765}
+  #page-calendar .schedule-v129-summary{
+    display:grid!important;grid-template-columns:repeat(4,1fr);gap:0!important;
+    margin:0!important;padding:0!important;border:0!important;border-radius:0!important;
+    background:#fff!important;box-shadow:none!important
+  }
+  #page-calendar .schedule-v129-summary>div{
+    display:block!important;padding:10px 7px;border-right:1px solid #f0e8e1;text-align:center
+  }
+  #page-calendar .schedule-v129-summary>div:last-child{border-right:0}
+  #page-calendar .schedule-v129-summary span{display:block;font-size:8px!important;color:#9b8174!important}
+  #page-calendar .schedule-v129-summary strong{display:block;margin-top:4px;font-size:10px!important;color:#4a3025!important}
+  #page-calendar .schedule-settings{margin:8px!important}
+  #page-calendar>.hint{display:none}
+  #page-calendar .month-toolbar{
+    margin:10px 0 6px;grid-template-columns:38px minmax(0,1fr) 38px auto;gap:6px
+  }
+  #page-calendar .month-title{font-size:20px;color:#4b2b20;font-weight:950}
+  #page-calendar .calendar-card{
+    border-radius:18px;border-color:#eee1d6;background:#fff;box-shadow:var(--ref-shadow);overflow:hidden
+  }
+  #page-calendar .weekdays{background:#fffaf5;color:#755a4d}
+  #page-calendar .day{border-color:#f1ebe5}
+  #page-calendar .legend{padding:8px 10px}
+  #page-calendar .footer-banner{display:none!important}
+
+  .ref-itinerary-hero,.ref-settings-hero{
+    position:relative;min-height:178px;margin:0 -10px 12px;padding:22px 42% 18px 18px;
+    border-width:0 0 1px;border-radius:0 0 28px 28px;overflow:hidden;
+    background:
+      radial-gradient(circle at 80% 15%,rgba(255,173,81,.10),transparent 28%),
+      linear-gradient(180deg,#fffdf8,#fff8ef);
+  }
+  .ref-itinerary-hero img,.ref-settings-hero img{
+    position:absolute;right:3%;bottom:-8px;width:42%;height:94%;object-fit:contain;
+    filter:saturate(.96) contrast(1.02)
+  }
+  .ref-page-hero-copy{position:relative;z-index:2}
+  .ref-page-hero-copy>b{display:block;font-size:27px;line-height:1.08;color:#4a2014;font-weight:950}
+  .ref-page-hero-copy p{margin:10px 0 0;font-size:13px;line-height:1.55;color:#5f3a2a;font-weight:850}
+  .ref-page-hero-copy small{display:block;margin-top:10px;font-size:10px;color:#df6b34;font-weight:850;line-height:1.5}
+
+  #page-attendance .attendance-v142-head{display:none!important}
+  .ref-itinerary-create{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:9px}
+  .ref-itinerary-create button{
+    border:1px solid #f0dfd2;border-radius:15px;padding:12px 8px;font-size:12px;font-weight:950
+  }
+  #refAddEvent{background:linear-gradient(135deg,#ffa446,#ff7a16);color:#fff;border-color:transparent}
+  #refAddTodo{background:#fff5ea;color:#8c5338}
+  #page-attendance .attendance-v142-tabs{
+    display:grid;grid-template-columns:1fr 1fr;border:1px solid #efd7c4;border-radius:17px;padding:3px;
+    background:#fff6ed;margin-bottom:9px
+  }
+  #page-attendance .attendance-v142-tabs button{
+    min-height:44px;border-radius:13px;color:#83553f;font-size:12px;font-weight:950
+  }
+  #page-attendance .attendance-v142-tabs button.active{
+    background:#fff;color:#ff6f0f;box-shadow:inset 0 0 0 2px #ffad67,0 4px 12px rgba(179,96,39,.08)
+  }
+  .ref-attendance-list-head{display:flex;justify-content:space-between;align-items:center;margin:10px 3px 7px}
+  .ref-attendance-list-head b{font-size:17px;color:#40251c}
+  .ref-attendance-list-head span{font-size:10px;color:#a36b50}
+  #page-attendance .itinerary-upcoming-list{
+    display:grid;grid-template-columns:1fr 1fr;gap:9px;align-items:start
+  }
+  #page-attendance .itinerary-list-card,
+  #page-attendance .todo-card-v142,
+  #page-attendance .itinerary-empty-list,
+  #page-attendance .todo-empty-v142{
+    border:1px solid #efe4da;border-radius:17px;background:#fff;box-shadow:var(--ref-shadow)
+  }
+  #page-attendance .itinerary-list-card{padding:11px}
+  #page-attendance .todo-card-v142{padding:7px 9px}
+  .ref-itinerary-footer-note{
+    border-radius:18px;margin-top:10px;padding:12px 14px;color:#a65b35;font-size:11px;
+    font-weight:800;line-height:1.55;text-align:center;background:#fff9f3
+  }
+
+  #page-settings .settings-stack{gap:9px}
+  #page-settings .settings-ui-v129>.card{
+    border-radius:18px!important;background:#fff!important;border-color:#eee1d6!important;
+    box-shadow:var(--ref-shadow)!important
+  }
+  #page-settings .settings-account-v129{padding:13px 14px}
+  #page-settings .settings-account-copy>b{font-size:18px;color:#47291f}
+  #page-settings .settings-section-icon{background:#fff2e6;color:#9a5d3e}
+  #page-settings .settings-pro-v129{
+    background:linear-gradient(135deg,#fff7e9,#fffdf8)!important;border-color:#f3d8b3!important
+  }
+  #page-settings .settings-pro-cta{
+    background:linear-gradient(135deg,#ffa33e,#ff7212)!important;border-radius:14px!important
+  }
+  #page-settings .settings-modern-head,
+  #page-settings .settings-fold-toggle{min-height:52px}
+  #page-settings #appearanceCard{order:10}
+  #page-settings #aboutCard{order:20}
+
+  .pro-plan-dialog{
+    width:min(430px,calc(100vw - 14px))!important;
+    max-height:92dvh;border-radius:28px 28px 0 0!important;
+    margin:auto auto 0!important;padding:0!important;
+    background:#fffdf9!important;color:#4a2b20!important;
+  }
+  .pro-plan-dialog::backdrop{background:rgba(34,25,20,.48)}
+  .pro-plan-dialog .dialog-head{
+    padding:16px 18px 9px;border-bottom:0;background:#fffdf9
+  }
+  .pro-plan-dialog .dialog-head b{font-size:18px;color:#5b291a}
+  .pro-plan-dialog .dialog-head .hint{font-size:10px;color:#a26442}
+  .pro-plan-dialog .dialog-close{width:36px;height:36px;border-radius:50%;background:#fff3e8;color:#6d3322}
+  .ref-pro-dialog-hero{
+    display:grid;grid-template-columns:112px 1fr;gap:8px;align-items:center;
+    margin:0 14px 8px;padding:8px 12px;border-radius:20px;background:linear-gradient(135deg,#fff4e7,#fff);
+  }
+  .ref-pro-dialog-hero img{width:112px;height:112px;object-fit:contain}
+  .ref-pro-dialog-hero b{display:block;font-size:15px;color:#5d2a19}
+  .ref-pro-dialog-hero span{display:block;margin-top:5px;font-size:10px;line-height:1.5;color:#8b5e49}
+  .pro-plan-dialog .dialog-body{padding:0 14px 18px!important;max-height:62dvh!important}
+
+  .meow-assistant-dialog{
+    width:100vw!important;max-width:none!important;height:min(78dvh,760px)!important;
+    left:0!important;right:0!important;top:auto!important;bottom:0!important;margin:0!important;
+    border-radius:30px 30px 0 0!important;padding:0!important;background:#fffdf9!important;
+    color:#44281f!important;box-shadow:0 -18px 50px rgba(43,28,20,.22)!important;
+    transform:none!important;
+  }
+  .meow-assistant-dialog::backdrop{background:rgba(31,27,25,.45)}
+  .meow-assistant-sheet{height:100%;padding:0 14px 14px;display:flex;flex-direction:column;overflow:auto}
+  .meow-assistant-head{
+    position:sticky;top:0;z-index:5;padding:11px 2px 6px;background:#fffdf9;border-bottom:0
+  }
+  .meow-assistant-title b{font-size:14px;color:#6a331f}
+  .ref-assistant-hero{
+    display:grid;grid-template-columns:126px 1fr;align-items:center;gap:8px;
+    padding:2px 5px 6px;border-bottom:1px solid #f0e3d7
+  }
+  .ref-assistant-hero img{width:126px;height:126px;object-fit:contain}
+  .ref-assistant-hero b{display:block;font-size:27px;color:#7b3518;font-weight:950}
+  .ref-assistant-hero strong{display:block;margin-top:5px;font-size:12px;color:#4b3025}
+  .ref-assistant-hero small{display:block;margin-top:6px;font-size:10px;color:#df6b34}
+  .ref-assistant-quick{padding:10px 0 7px}
+  .ref-assistant-quick>b{font-size:12px;color:#4b3025}
+  .ref-assistant-quick>div{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:7px}
+  .ref-assistant-quick button{
+    border:0;border-radius:13px;background:linear-gradient(135deg,#fff4ef,#fff9f7);
+    color:#5b3527;padding:10px 6px;font-size:9px;font-weight:850;line-height:1.35
+  }
+  .meow-assistant-chat{border-radius:17px;background:#fff8f0;padding:11px;margin:7px 0;min-height:86px}
+  .meow-assistant-compose{margin-top:auto;display:grid;grid-template-columns:1fr 48px 54px;gap:7px;align-items:end}
+  .meow-assistant-compose textarea{
+    border:2px solid #ebe6e3!important;border-radius:18px!important;background:#fff!important;
+    min-height:52px!important;padding:13px!important;color:#4d352c!important
+  }
+  .meow-assistant-mic{width:48px;height:48px;border-radius:15px!important;background:#fff4ed!important;color:#84452d!important}
+  #meowAssistantSend{
+    min-width:54px;height:48px;border:0;border-radius:15px!important;
+    background:linear-gradient(135deg,#ff9b3e,#ff6f13)!important;color:#fff!important
+  }
+
+  .bottom-nav{
+    background:rgba(255,253,249,.96)!important;border-color:#eee1d6!important;
+    box-shadow:0 -8px 28px rgba(83,56,39,.08)!important
+  }
+  .bottom-nav button{color:#9a654d!important}
+  .bottom-nav button.active{color:#ff6d0d!important;background:transparent!important;box-shadow:none!important}
+}
+
+@media(max-width:430px){
+  .ref-schedule-top-grid{grid-template-columns:1fr}
+  .ref-worktype-row{grid-template-columns:repeat(3,1fr)}
+  #page-calendar .schedule-v129-summary{grid-template-columns:repeat(2,1fr)}
+  #page-attendance .itinerary-upcoming-list{grid-template-columns:1fr}
+  .ref-assistant-quick>div{grid-template-columns:1fr 1fr}
+  .ref-itinerary-hero,.ref-settings-hero{min-height:160px;padding-right:44%}
+  .ref-page-hero-copy>b{font-size:23px}
+}
+</style>
 </head>
 <body>
 <div id="app-splash" aria-hidden="true"><img src="./splash-v183.jpg?v=183" alt=""></div>
@@ -2176,11 +2433,42 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 </section>
 
   <section class="page" id="page-calendar">
+    <div class="ref-schedule-page-heading">
+      <div><b>我的班表</b><small>排好班，生活也跟著有節奏。</small></div>
+    </div>
+    <div class="ref-worktype-panel">
+      <div class="ref-block-title"><svg class="icon"><use href="#i-bag"/></svg><b>我的工作類型</b></div>
+      <div class="ref-worktype-row">
+        <button type="button" data-ref-worktype="hospital">✚ 醫院</button>
+        <button type="button" data-ref-worktype="restaurant">🍴 餐廳</button>
+        <button type="button" data-ref-worktype="security">👮 保全</button>
+        <button type="button" data-ref-worktype="factory">▥ 工廠</button>
+        <button type="button" data-ref-worktype="custom">＋ 自訂</button>
+      </div>
+    </div>
+    <div class="ref-schedule-top-grid">
+      <div class="ref-template-card">
+        <div class="ref-block-title"><svg class="icon"><use href="#i-calendar"/></svg><b>班別模板</b></div>
+        <div class="ref-template-buttons">
+          <button type="button" class="active" data-ref-preset="2-2">做2休2</button>
+          <button type="button" data-ref-preset="4-3">做4休3</button>
+          <button type="button" data-ref-preset="custom" data-ref-shift="早班">固定早班</button>
+          <button type="button" data-ref-preset="custom" data-ref-shift="夜班">固定夜班</button>
+          <button type="button" data-ref-open-settings="1">2-2-3</button>
+          <button type="button" data-ref-preset="custom">自訂循環</button>
+        </div>
+      </div>
+      <div class="ref-ai-card">
+        <div class="ref-block-title"><svg class="icon"><use href="#i-camera"/></svg><b>AI 匯入班表</b></div>
+        <p>拍照或上傳班表<br>讓 AI 幫你快速建立</p>
+        <button type="button" id="refScheduleAdd">新增班表</button>
+      </div>
+    </div>
     <div class="card schedule-card schedule-card-v129 schedule-card-v136">
       <div class="schedule-v136-tools" aria-label="班表工具">
         <div class="schedule-v138-heading">
-          <b>我的班表</b>
-          <small>規劃每一天，讓工作與生活更平衡！</small>
+          <b>排班設定</b>
+          <small>調整班制、第一個上班日與班別資料</small>
         </div>
         <div class="schedule-v138-actions">
           <button type="button" class="schedule-v136-action" id="scheduleAddDay" aria-label="新增日期班表" title="新增日期班表">
@@ -2225,6 +2513,14 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   </section>
 
   <section class="page" id="page-attendance">
+    <div class="ref-itinerary-hero">
+      <div class="ref-page-hero-copy">
+        <b>行程與待辦事項</b>
+        <p>把重要的事，也放進你的日子裡 ♡</p>
+        <small>工作再忙，也別忘了照顧自己！</small>
+      </div>
+      <img src="./workcat-home-v12.png" alt="" aria-hidden="true">
+    </div>
     <div class="itinerary-list-head attendance-v142-head">
       <div>
         <div class="page-title itinerary-title"><span class="paw" aria-hidden="true">🐾</span>行程與待辦事項</div>
@@ -2235,11 +2531,17 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
         <button type="button" class="itinerary-add-fab" id="addItinerary" aria-label="新增行程或待辦事項">＋</button>
       </div>
     </div>
+    <div class="ref-itinerary-create">
+      <button type="button" id="refAddEvent">＋ 新增行程</button>
+      <button type="button" id="refAddTodo">＋ 新增待辦</button>
+    </div>
     <div class="attendance-v142-tabs" role="tablist" aria-label="行程與待辦事項">
       <button type="button" class="active" id="attendanceTabEvents" role="tab" aria-selected="true">行程</button>
       <button type="button" id="attendanceTabTodos" role="tab" aria-selected="false">待辦事項 <span id="todoOpenCount">0</span></button>
     </div>
+    <div class="ref-attendance-list-head"><b id="refAttendanceListTitle">今天的安排</b><span id="refAttendanceCount"></span></div>
     <div class="itinerary-upcoming-list" id="itineraryUpcomingList"></div>
+    <div class="ref-itinerary-footer-note">🐾 把生活的大小事都安排好，就算上班很累，也能好好過日子。♡</div>
   </section>
 
   <section class="page" id="page-salary">
@@ -2423,9 +2725,13 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   </section>
 
   <section class="page" id="page-settings">
-    <div class="settings-v129-intro">
-      <h2>設定</h2>
-      <p>打造屬於你的工作生活節奏 🐾</p>
+    <div class="ref-settings-hero">
+      <div class="ref-page-hero-copy">
+        <b>⚙ 設定</b>
+        <p>把日子過好，上班也沒那麼難！♡</p>
+        <small>辛苦了！有你真棒！</small>
+      </div>
+      <img src="./workcat-home-v12.png" alt="" aria-hidden="true">
     </div>
     <div class="settings-stack settings-ui-v129">
       <div class="card settings-card settings-account-v129">
@@ -2526,8 +2832,12 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 
       <dialog class="dialog pro-plan-dialog" id="proPlanDialog">
         <div class="dialog-head">
-          <div><b>Free／Pro 方案比較</b><div class="hint">先看差異，再決定是否升級。</div></div>
+          <div><b>🐾 升級 Pro 助理</b><div class="hint">更厲害的喵助理，陪你搞定工作大小事！</div></div>
           <button type="button" class="dialog-close" id="proPlanDialogClose" aria-label="關閉">×</button>
+        </div>
+        <div class="ref-pro-dialog-hero">
+          <img src="./assets/meow-assistant-pro-v169.webp?v=169" alt="" aria-hidden="true">
+          <div><b>你目前是 Free 方案</b><span>升級 Pro 後可使用更多智慧工作功能</span></div>
         </div>
         <div class="dialog-body" id="proPlanDialogContent"></div>
       </dialog>
@@ -2666,7 +2976,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
 <nav class="bottom-nav">
 <button class="active" data-tab="dashboard"><svg class="icon"><use href="#i-home"/></svg><span>總覽</span></button>
 <button data-tab="calendar"><svg class="icon"><use href="#i-calendar"/></svg><span>排班</span></button>
-<button data-tab="attendance"><svg class="icon"><use href="#i-clock"/></svg><span>行程待辦</span></button>
+<button data-tab="attendance"><svg class="icon"><use href="#i-clock"/></svg><span>行程</span></button>
 <button data-tab="salary"><svg class="icon"><use href="#i-money"/></svg><span>薪資</span></button>
 <button data-tab="settings"><svg class="icon"><use href="#i-gear"/></svg><span>設定</span></button>
 </nav>
@@ -2730,6 +3040,21 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       <div class="meow-assistant-head-actions">
         <button type="button" class="meow-assistant-minimize" id="meowAssistantMinimize" aria-label="縮小喵助理">—</button>
         <button type="button" class="dialog-close" id="meowAssistantClose" aria-label="關閉">×</button>
+      </div>
+    </div>
+    <div class="ref-assistant-hero">
+      <img src="./assets/meow-assistant-pro-v169.webp?v=169" alt="" aria-hidden="true">
+      <div><b>喵助理 Pro</b><strong>你的職場大小事，我來幫你！♡</strong><small>更懂社畜，也更懂你！</small></div>
+    </div>
+    <div class="ref-assistant-quick">
+      <b>你可以直接問我：</b>
+      <div>
+        <button type="button" data-meow-prompt="我今天上什麼班？">📅 我今天上什麼班？</button>
+        <button type="button" data-meow-prompt="婚假有幾天？">✈ 婚假有幾天？</button>
+        <button type="button" data-meow-prompt="家庭照顧假怎麼請？">♥ 家庭照顧假怎麼請？</button>
+        <button type="button" data-meow-prompt="幫我看薪資差額">💰 幫我看薪資差額</button>
+        <button type="button" data-meow-prompt="下次發薪日是哪天？">📆 下次發薪日是哪天？</button>
+        <button type="button" data-meow-prompt="這筆加班費對嗎？">▤ 這筆加班費對嗎？</button>
       </div>
     </div>
     <div class="meow-assistant-chat hidden" id="meowAssistantReply" aria-live="polite"></div>
@@ -3638,7 +3963,7 @@ function saveSchedulePrefs(){
   try{localStorage.setItem(SCHEDULE_KEY,JSON.stringify(state.schedule));}catch(e){}
   changedAndSync();
 }
-current.setDate(1);let activeTab='dashboard',editingDate='',scheduleOpen=false,workSettingsOpen=false,appearanceOpen=false,schedulePrefsOpen=false,accountProOpen=false,dataSyncOpen=false,deferredPrompt=null,editingEventId='';
+current.setDate(1);let activeTab='dashboard';document.documentElement.dataset.activeTab=activeTab,editingDate='',scheduleOpen=false,workSettingsOpen=false,appearanceOpen=false,schedulePrefsOpen=false,accountProOpen=false,dataSyncOpen=false,deferredPrompt=null,editingEventId='';
 function mb(){const k=monthKey(current.getFullYear(),current.getMonth());state.months[k]=state.months[k]||{};return state.months[k]}
 // Display-only hierarchy. Keep existing saved preset keys and date calculations intact.
 function chineseScheduleCount(value){
@@ -3688,7 +4013,7 @@ function syncScheduleEditing(){
   $('patternPreset').classList.toggle('hidden',!open);
   $('schedulePlanValue').classList.add('hidden');
   $('scheduleSettings').classList.toggle('hidden',!open);
-  if(summary)summary.classList.toggle('hidden',!open);
+  if(summary)summary.classList.remove('hidden');
   if(card)card.classList.toggle('schedule-settings-open',open);
   $('editRotation').disabled=!open;
   $('editRotation').classList.toggle('hidden',!open);
@@ -4313,6 +4638,8 @@ function renderAttendance(){
   $('attendanceTabTodos').setAttribute('aria-selected',String(!eventsActive));
   const openTodos=todoItems().filter(t=>!t.completed).length;
   $('todoOpenCount').textContent=String(openTodos);
+  if($('refAttendanceListTitle'))$('refAttendanceListTitle').textContent=eventsActive?'今天的安排':'待辦清單';
+  if($('refAttendanceCount'))$('refAttendanceCount').textContent=eventsActive?'近期行程':openTodos+' 項未完成';
   $('addItinerary').setAttribute('aria-label','新增行程或待辦事項');
   $('itineraryAllBtn').innerHTML=eventsActive
     ?(itineraryShowAll?'近期行程':'全部行程')+' <span>›</span>'
@@ -6678,22 +7005,63 @@ function placeMobileRestCard(){
   }
   if(page)page.appendChild(card);
 }
+function syncReferencePageControls(){
+  const wt=state.settings.workType||'hospital';
+  qsa('[data-ref-worktype]').forEach(x=>x.classList.toggle('active',x.dataset.refWorktype===wt));
+  qsa('[data-ref-preset]').forEach(x=>x.classList.toggle('active',x.dataset.refPreset===state.schedule.preset && !x.dataset.refShift));
+}
 function render(){
   safeRender('dashboard',renderDashboard);
   safeRender('calendar',renderCalendar);
   safeRender('attendance',renderAttendance);
   safeRender('salary',renderSalary);
   safeRender('settings',renderSettings);
+  syncReferencePageControls();
   placeMobileRestCard();
 }
 function setTab(tab){
   activeTab=tab;
+  document.documentElement.dataset.activeTab=tab;
   qsa('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+tab));
   qsa('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
   window.scrollTo({top:0,behavior:'smooth'});
   if(tab==='calendar')safeRender('calendar',renderCalendar);
   render();
 }
+
+// v215 reference controls
+qsa('[data-ref-worktype]').forEach(button=>button.onclick=()=>{
+  const value=button.dataset.refWorktype;
+  if(!['hospital','restaurant','security','factory','custom'].includes(value))return;
+  state.settings.workType=value;
+  qsa('[data-ref-worktype]').forEach(x=>x.classList.toggle('active',x.dataset.refWorktype===value));
+  changedAndSync();render();
+});
+qsa('[data-ref-preset]').forEach(button=>button.onclick=()=>{
+  const value=button.dataset.refPreset;
+  if(button.dataset.refShift){
+    state.schedule.shiftName=button.dataset.refShift;
+    state.schedule.preset='custom';
+    scheduleOpen=true;
+    saveSchedulePrefs();render();return;
+  }
+  if(['2-2','4-3','four-three','custom'].includes(value)){
+    scheduleOpen=true;
+    if(value!==state.schedule.preset)changeSchedulePreset(value);else render();
+    qsa('[data-ref-preset]').forEach(x=>x.classList.toggle('active',x===button));
+  }
+});
+qsa('[data-ref-open-settings]').forEach(button=>button.onclick=()=>{scheduleOpen=true;render()});
+if($('refScheduleAdd'))$('refScheduleAdd').onclick=()=>openScheduleAddDialog();
+if($('refAddEvent'))$('refAddEvent').onclick=()=>openEvent(iso(new Date()));
+if($('refAddTodo'))$('refAddTodo').onclick=()=>openTodo();
+qsa('[data-meow-prompt]').forEach(button=>button.onclick=()=>{
+  const input=$('meowAssistantInput');if(!input)return;
+  input.value=button.dataset.meowPrompt||button.textContent.trim();
+  input.focus();
+  void previewMeowAssistant();
+});
+
 qsa('[data-tab]').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));qsa('[data-goto]').forEach(b=>b.onclick=()=>setTab(b.dataset.goto));
 let mobileWorkTypeFeedbackTimer=null;
 function showMobileWorkTypeFeedback(value){
