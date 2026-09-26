@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=216">
+<link rel="manifest" href="./manifest.webmanifest?v=217">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v216-reference-pages-live">
+<meta name="meow-ui-build" content="v217-reference-pages-live">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -2018,9 +2018,11 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
   #page-attendance .attendance-v142-tabs button.active{
     background:#fff;color:#ff6f0f;box-shadow:inset 0 0 0 2px #ffad67,0 4px 12px rgba(179,96,39,.08)
   }
-  .ref-attendance-list-head{display:flex;justify-content:space-between;align-items:center;margin:10px 3px 7px}
-  .ref-attendance-list-head b{font-size:17px;color:#40251c}
-  .ref-attendance-list-head span{font-size:10px;color:#a36b50}
+  .ref-attendance-list-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:10px 3px 7px}
+  .ref-attendance-list-head>div{min-width:0}
+  .ref-attendance-list-head b{display:block;font-size:17px;color:#40251c}
+  .ref-attendance-list-head span{display:block;margin-top:2px;font-size:10px;color:#a36b50}
+  .ref-attendance-list-head button{border:0;background:#fff4e9;color:#9a5d3e;border-radius:999px;padding:8px 10px;font-size:9px;font-weight:900;white-space:nowrap}
   #page-attendance .itinerary-upcoming-list{
     display:grid;grid-template-columns:1fr 1fr;gap:9px;align-items:start
   }
@@ -2636,7 +2638,7 @@ html.dark .welcome-sheet{background:#241d19;color:#fff4eb}html.dark .welcome-loc
       <button type="button" class="active" id="attendanceTabEvents" role="tab" aria-selected="true">行程</button>
       <button type="button" id="attendanceTabTodos" role="tab" aria-selected="false">待辦事項 <span id="todoOpenCount">0</span></button>
     </div>
-    <div class="ref-attendance-list-head"><b id="refAttendanceListTitle">今天的安排</b><span id="refAttendanceCount"></span></div>
+    <div class="ref-attendance-list-head"><div><b id="refAttendanceListTitle">今天的安排</b><span id="refAttendanceCount"></span></div><button type="button" id="refItineraryAllBtn">查看全部 ›</button></div>
     <div class="itinerary-upcoming-list" id="itineraryUpcomingList"></div>
     <div class="ref-itinerary-footer-note">🐾 把生活的大小事都安排好，就算上班很累，也能好好過日子。♡</div>
   </section>
@@ -4745,6 +4747,9 @@ function renderAttendance(){
   $('todoOpenCount').textContent=String(openTodos);
   if($('refAttendanceListTitle'))$('refAttendanceListTitle').textContent=eventsActive?'今天的安排':'待辦清單';
   if($('refAttendanceCount'))$('refAttendanceCount').textContent=eventsActive?'近期行程':openTodos+' 項未完成';
+  if($('refItineraryAllBtn'))$('refItineraryAllBtn').textContent=eventsActive
+    ?(itineraryShowAll?'近期行程':'查看全部')+' ›'
+    :(todoShowCompleted?'隱藏已完成':'顯示已完成')+' ›';
   $('addItinerary').setAttribute('aria-label','新增行程或待辦事項');
   $('itineraryAllBtn').innerHTML=eventsActive
     ?(itineraryShowAll?'近期行程':'全部行程')+' <span>›</span>'
@@ -7160,6 +7165,7 @@ qsa('[data-ref-open-settings]').forEach(button=>button.onclick=()=>{scheduleOpen
 if($('refScheduleAdd'))$('refScheduleAdd').onclick=()=>openScheduleAddDialog();
 if($('refAddEvent'))$('refAddEvent').onclick=()=>openEvent(iso(new Date()));
 if($('refAddTodo'))$('refAddTodo').onclick=()=>openTodo();
+if($('refItineraryAllBtn'))$('refItineraryAllBtn').onclick=()=>{if(attendanceMode==='events')itineraryShowAll=!itineraryShowAll;else todoShowCompleted=!todoShowCompleted;renderAttendance()};
 qsa('[data-meow-prompt]').forEach(button=>button.onclick=()=>{
   const input=$('meowAssistantInput');if(!input)return;
   input.value=button.dataset.meowPrompt||button.textContent.trim();
