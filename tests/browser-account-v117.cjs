@@ -283,7 +283,7 @@ async function openPage(browser, base, width, user = null, billingConfigured = t
       await page.locator('#accountUpgrade').scrollIntoViewIfNeeded();
       await page.locator('#accountUpgrade').click();
       check(`${width}px Pro 方案改用比較視窗`, await page.locator('#proPlanDialog').isVisible() && await page.locator('#proPlanSettings').isVisible());
-      check(`${width}px 比較視窗顯示 Free／Pro 差異`, (await page.locator('#proPlanDialog').innerText()).includes('Free／Pro 方案比較') && (await page.locator('#proPlanSettings').innerText()).includes('薪資單三層交叉檢查'));
+      check(`${width}px 比較視窗顯示 Free／Pro 差異`, (await page.locator('#proPlanDialog').innerText()).includes('升級 Pro 助理') && (await page.locator('#proPlanSettings').innerText()).includes('薪資單三層交叉檢查'));
       check(`${width}px 比較視窗不再出現 AI 班表匯入`, !(await page.locator('#proPlanDialog').innerText()).includes('AI 班表'));
       check(`${width}px 方案視窗顯示目前 Free 與 3 天免費試用`, await page.locator('#settingsPlanBadge').innerText() === 'Free' && (await page.locator('#proPlanSettings').innerText()).includes('3 天免費試用'));
       check(`${width}px 顯示商店月繳與年繳價格`, await page.locator('#liveBillingActions').isVisible() && (await page.locator('#liveMonthlyCheckout').innerText()).includes('NT$99') && (await page.locator('#liveYearlyCheckout').innerText()).includes('NT$790'));
