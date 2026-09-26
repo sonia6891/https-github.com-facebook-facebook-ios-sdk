@@ -11,13 +11,13 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="喵的，又要上班了">
-<link rel="manifest" href="./manifest.webmanifest?v=209">
+<link rel="manifest" href="./manifest.webmanifest?v=211">
 <link rel="apple-touch-icon" sizes="180x180" href="./app-icon-v178-180.png?v=178">
 <link rel="icon" type="image/png" sizes="192x192" href="./app-icon-v178-192.png?v=178">
 
 <link rel="shortcut icon" type="image/png" href="./app-icon-v178-192.png?v=178">
 <title>喵的，又要上班了</title>
-<meta name="meow-ui-build" content="v210-dark-hero-treatment">
+<meta name="meow-ui-build" content="v211-natural-dark-hero">
 <script id="meow-theme-boot">
 // Apply the device preference before CSS/first paint; never import a cloud theme.
 (function(){
@@ -1341,15 +1341,15 @@ html.dark .settings-pro-v129{
     box-shadow:inset 0 0 0 1px rgba(233,183,94,.12);
   }
 
-  /* v210: dark-mode Hero treatment only. Layout/artwork asset remain unchanged. */
+  /* v211: preserve the approved Hero artwork exactly; add only a soft night veil. */
   html.dark .hero-wrap{
     position:relative;
     overflow:hidden;
-    background:linear-gradient(180deg,#17202d 0%,#1a2028 58%,#1b1b1b 100%);
+    background:#1b1d21;
   }
   html.dark .hero-wrap .hero-mobile{
-    filter:brightness(.66) contrast(1.10) saturate(.78) sepia(.04);
-    transform:translateZ(0);
+    filter:none;
+    transform:none;
   }
   html.dark .hero-wrap::after{
     content:"";
@@ -1360,22 +1360,9 @@ html.dark .settings-pro-v129{
     right:-10px;
     top:0;
     bottom:0;
-    background:
-      radial-gradient(circle at 54% 44%,rgba(255,205,139,.08),transparent 34%),
-      linear-gradient(180deg,rgba(12,21,34,.22) 0%,rgba(15,22,31,.30) 58%,rgba(20,21,23,.50) 100%);
-    mix-blend-mode:multiply;
+    background:linear-gradient(180deg,rgba(14,20,29,.12) 0%,rgba(18,21,27,.16) 58%,rgba(22,22,24,.22) 100%);
   }
-  html.dark .hero-wrap::before{
-    content:"";
-    position:absolute;
-    z-index:3;
-    pointer-events:none;
-    left:-10px;
-    right:-10px;
-    bottom:-1px;
-    height:34%;
-    background:linear-gradient(180deg,rgba(25,26,29,0) 0%,rgba(25,26,29,.34) 55%,rgba(25,26,29,.92) 100%);
-  }
+  html.dark .hero-wrap::before{content:none}
   html.dark .mobile-hero-actions{
     z-index:9;
   }
@@ -8834,7 +8821,7 @@ window.addEventListener('load',()=>{void initStoreTransactionListener();void loa
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&authUser&&!DEV_TESTING_ENABLED)loadEntitlement()});
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;$('installHint').textContent='可以直接安裝到主畫面'});$('installApp').onclick=async()=>{const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);if(ios){alert('iPhone：請使用 Safari 開啟，點分享，再選「加入主畫面」。');return}if(deferredPrompt){deferredPrompt.prompt();try{await deferredPrompt.userChoice}catch(e){}deferredPrompt=null}else alert('請用 Chrome 或 Edge 的瀏覽器選單，選擇「安裝應用程式／加入主畫面」。')};if('serviceWorker'in navigator){
   window.addEventListener('load',async()=>{
-    const reloadKey='meow-sw-reloaded-v209';
+    const reloadKey='meow-sw-reloaded-v211';
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       try{
         if(sessionStorage.getItem(reloadKey))return;
@@ -8843,7 +8830,7 @@ window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPro
       location.reload();
     });
     try{
-      const reg=await navigator.serviceWorker.register('./sw.js?v=209',{updateViaCache:'none'});
+      const reg=await navigator.serviceWorker.register('./sw.js?v=211',{updateViaCache:'none'});
       await reg.update();
       if(reg.waiting)reg.waiting.postMessage({type:'SKIP_WAITING'});
     }catch(e){}
